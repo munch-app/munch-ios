@@ -15,7 +15,11 @@
 		032F89111E82DFA300AD3818 /* MunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F89101E82DFA300AD3818 /* MunchTests.swift */; };
 		032F891C1E82DFA300AD3818 /* MunchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F891B1E82DFA300AD3818 /* MunchUITests.swift */; };
 		032F892A1E82E79000AD3818 /* Cartfile in Resources */ = {isa = PBXBuildFile; fileRef = 032F89291E82E79000AD3818 /* Cartfile */; };
-		032F892C1E82EE3A00AD3818 /* Carthage in Resources */ = {isa = PBXBuildFile; fileRef = 032F892B1E82EE3A00AD3818 /* Carthage */; };
+		032F892E1E82EF3D00AD3818 /* Carthage in Resources */ = {isa = PBXBuildFile; fileRef = 032F892D1E82EF3D00AD3818 /* Carthage */; };
+		032F89311E82EF8B00AD3818 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89301E82EF8B00AD3818 /* Alamofire.framework */; };
+		032F89341E82F14A00AD3818 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89331E82F14A00AD3818 /* SwiftyJSON.framework */; };
+		032F89381E82F21B00AD3818 /* RestfulClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F89371E82F21B00AD3818 /* RestfulClient.swift */; };
+		032F893A1E82F22600AD3818 /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F89391E82F22600AD3818 /* Place.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,7 +54,11 @@
 		032F891B1E82DFA300AD3818 /* MunchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MunchUITests.swift; sourceTree = "<group>"; };
 		032F891D1E82DFA300AD3818 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		032F89291E82E79000AD3818 /* Cartfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
-		032F892B1E82EE3A00AD3818 /* Carthage */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Carthage; sourceTree = "<group>"; };
+		032F892D1E82EF3D00AD3818 /* Carthage */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Carthage; sourceTree = "<group>"; };
+		032F89301E82EF8B00AD3818 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
+		032F89331E82F14A00AD3818 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
+		032F89371E82F21B00AD3818 /* RestfulClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestfulClient.swift; sourceTree = "<group>"; };
+		032F89391E82F22600AD3818 /* Place.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Place.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +66,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				032F89311E82EF8B00AD3818 /* Alamofire.framework in Frameworks */,
+				032F89341E82F14A00AD3818 /* SwiftyJSON.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,12 +91,13 @@
 		032F88EF1E82DFA200AD3818 = {
 			isa = PBXGroup;
 			children = (
-				032F892B1E82EE3A00AD3818 /* Carthage */,
+				032F892D1E82EF3D00AD3818 /* Carthage */,
 				032F89291E82E79000AD3818 /* Cartfile */,
 				032F88FA1E82DFA300AD3818 /* Munch */,
 				032F890F1E82DFA300AD3818 /* MunchTests */,
 				032F891A1E82DFA300AD3818 /* MunchUITests */,
 				032F88F91E82DFA300AD3818 /* Products */,
+				032F892F1E82EF8B00AD3818 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -103,6 +114,8 @@
 		032F88FA1E82DFA300AD3818 /* Munch */ = {
 			isa = PBXGroup;
 			children = (
+				032F89361E82F1FB00AD3818 /* Struct */,
+				032F89351E82F1F300AD3818 /* Restful */,
 				032F88FB1E82DFA300AD3818 /* AppDelegate.swift */,
 				032F88FD1E82DFA300AD3818 /* ViewController.swift */,
 				032F88FF1E82DFA300AD3818 /* Main.storyboard */,
@@ -131,6 +144,31 @@
 			path = MunchUITests;
 			sourceTree = "<group>";
 		};
+		032F892F1E82EF8B00AD3818 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				032F89331E82F14A00AD3818 /* SwiftyJSON.framework */,
+				032F89301E82EF8B00AD3818 /* Alamofire.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		032F89351E82F1F300AD3818 /* Restful */ = {
+			isa = PBXGroup;
+			children = (
+				032F89371E82F21B00AD3818 /* RestfulClient.swift */,
+			);
+			name = Restful;
+			sourceTree = "<group>";
+		};
+		032F89361E82F1FB00AD3818 /* Struct */ = {
+			isa = PBXGroup;
+			children = (
+				032F89391E82F22600AD3818 /* Place.swift */,
+			);
+			name = Struct;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -141,6 +179,7 @@
 				032F88F41E82DFA200AD3818 /* Sources */,
 				032F88F51E82DFA200AD3818 /* Frameworks */,
 				032F88F61E82DFA200AD3818 /* Resources */,
+				032F89321E82EFB300AD3818 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -241,7 +280,7 @@
 				032F89061E82DFA300AD3818 /* LaunchScreen.storyboard in Resources */,
 				032F89031E82DFA300AD3818 /* Assets.xcassets in Resources */,
 				032F892A1E82E79000AD3818 /* Cartfile in Resources */,
-				032F892C1E82EE3A00AD3818 /* Carthage in Resources */,
+				032F892E1E82EF3D00AD3818 /* Carthage in Resources */,
 				032F89011E82DFA300AD3818 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -262,13 +301,33 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		032F89321E82EFB300AD3818 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SwiftyJSON.framework",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		032F88F41E82DFA200AD3818 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				032F88FE1E82DFA300AD3818 /* ViewController.swift in Sources */,
+				032F89381E82F21B00AD3818 /* RestfulClient.swift in Sources */,
 				032F88FC1E82DFA300AD3818 /* AppDelegate.swift in Sources */,
+				032F893A1E82F22600AD3818 /* Place.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -418,6 +477,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = Munch/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = co.munch.Munch;
@@ -430,6 +493,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = Munch/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = co.munch.Munch;
