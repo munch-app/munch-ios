@@ -19,7 +19,16 @@
 		032F89311E82EF8B00AD3818 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89301E82EF8B00AD3818 /* Alamofire.framework */; };
 		032F89341E82F14A00AD3818 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89331E82F14A00AD3818 /* SwiftyJSON.framework */; };
 		032F89381E82F21B00AD3818 /* RestfulClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F89371E82F21B00AD3818 /* RestfulClient.swift */; };
-		032F893A1E82F22600AD3818 /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F89391E82F22600AD3818 /* Place.swift */; };
+		032F893A1E82F22600AD3818 /* Egress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F89391E82F22600AD3818 /* Egress.swift */; };
+		03D3FEDF1E893CC300ACFF50 /* RestfulClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F89371E82F21B00AD3818 /* RestfulClient.swift */; };
+		03D3FEE21E8947D200ACFF50 /* MunchClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FEE01E8947D200ACFF50 /* MunchClientTests.swift */; };
+		03D3FEE31E89487500ACFF50 /* Egress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F89391E82F22600AD3818 /* Egress.swift */; };
+		03D3FEE41E89494300ACFF50 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89301E82EF8B00AD3818 /* Alamofire.framework */; };
+		03D3FEE51E89494600ACFF50 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89331E82F14A00AD3818 /* SwiftyJSON.framework */; };
+		03D3FEEA1E895A3B00ACFF50 /* Ingress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FEE91E895A3B00ACFF50 /* Ingress.swift */; };
+		03D3FEEB1E895A3B00ACFF50 /* Ingress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FEE91E895A3B00ACFF50 /* Ingress.swift */; };
+		03EE235E1E83039A009AFBFC /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03EE235D1E83039A009AFBFC /* MapKit.framework */; };
+		03EE23601E83342F009AFBFC /* DiscoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EE235F1E83342F009AFBFC /* DiscoverController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,7 +67,12 @@
 		032F89301E82EF8B00AD3818 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		032F89331E82F14A00AD3818 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 		032F89371E82F21B00AD3818 /* RestfulClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestfulClient.swift; sourceTree = "<group>"; };
-		032F89391E82F22600AD3818 /* Place.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Place.swift; sourceTree = "<group>"; };
+		032F89391E82F22600AD3818 /* Egress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Egress.swift; sourceTree = "<group>"; };
+		03D3FEE01E8947D200ACFF50 /* MunchClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchClientTests.swift; sourceTree = "<group>"; };
+		03D3FEE61E89589B00ACFF50 /* HandyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HandyJSON.framework; path = Carthage/Build/iOS/HandyJSON.framework; sourceTree = "<group>"; };
+		03D3FEE91E895A3B00ACFF50 /* Ingress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ingress.swift; sourceTree = "<group>"; };
+		03EE235D1E83039A009AFBFC /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		03EE235F1E83342F009AFBFC /* DiscoverController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +80,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				03EE235E1E83039A009AFBFC /* MapKit.framework in Frameworks */,
 				032F89311E82EF8B00AD3818 /* Alamofire.framework in Frameworks */,
 				032F89341E82F14A00AD3818 /* SwiftyJSON.framework in Frameworks */,
 			);
@@ -75,6 +90,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				03D3FEE41E89494300ACFF50 /* Alamofire.framework in Frameworks */,
+				03D3FEE51E89494600ACFF50 /* SwiftyJSON.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,6 +135,7 @@
 				032F89351E82F1F300AD3818 /* Restful */,
 				032F88FB1E82DFA300AD3818 /* AppDelegate.swift */,
 				032F88FD1E82DFA300AD3818 /* ViewController.swift */,
+				03EE235F1E83342F009AFBFC /* DiscoverController.swift */,
 				032F88FF1E82DFA300AD3818 /* Main.storyboard */,
 				032F89021E82DFA300AD3818 /* Assets.xcassets */,
 				032F89041E82DFA300AD3818 /* LaunchScreen.storyboard */,
@@ -130,6 +148,7 @@
 			isa = PBXGroup;
 			children = (
 				032F89101E82DFA300AD3818 /* MunchTests.swift */,
+				03D3FEE01E8947D200ACFF50 /* MunchClientTests.swift */,
 				032F89121E82DFA300AD3818 /* Info.plist */,
 			);
 			path = MunchTests;
@@ -147,6 +166,8 @@
 		032F892F1E82EF8B00AD3818 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				03D3FEE61E89589B00ACFF50 /* HandyJSON.framework */,
+				03EE235D1E83039A009AFBFC /* MapKit.framework */,
 				032F89331E82F14A00AD3818 /* SwiftyJSON.framework */,
 				032F89301E82EF8B00AD3818 /* Alamofire.framework */,
 			);
@@ -164,7 +185,8 @@
 		032F89361E82F1FB00AD3818 /* Struct */ = {
 			isa = PBXGroup;
 			children = (
-				032F89391E82F22600AD3818 /* Place.swift */,
+				032F89391E82F22600AD3818 /* Egress.swift */,
+				03D3FEE91E895A3B00ACFF50 /* Ingress.swift */,
 			);
 			name = Struct;
 			sourceTree = "<group>";
@@ -324,10 +346,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				03EE23601E83342F009AFBFC /* DiscoverController.swift in Sources */,
+				03D3FEEA1E895A3B00ACFF50 /* Ingress.swift in Sources */,
 				032F88FE1E82DFA300AD3818 /* ViewController.swift in Sources */,
 				032F89381E82F21B00AD3818 /* RestfulClient.swift in Sources */,
 				032F88FC1E82DFA300AD3818 /* AppDelegate.swift in Sources */,
-				032F893A1E82F22600AD3818 /* Place.swift in Sources */,
+				032F893A1E82F22600AD3818 /* Egress.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,7 +359,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				03D3FEE21E8947D200ACFF50 /* MunchClientTests.swift in Sources */,
+				03D3FEEB1E895A3B00ACFF50 /* Ingress.swift in Sources */,
+				03D3FEDF1E893CC300ACFF50 /* RestfulClient.swift in Sources */,
 				032F89111E82DFA300AD3818 /* MunchTests.swift in Sources */,
+				03D3FEE31E89487500ACFF50 /* Egress.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -510,6 +538,10 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = MunchTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = co.munch.MunchTests;
@@ -524,6 +556,10 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = MunchTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = co.munch.MunchTests;
@@ -578,6 +614,7 @@
 				032F89221E82DFA300AD3818 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		032F89231E82DFA300AD3818 /* Build configuration list for PBXNativeTarget "MunchTests" */ = {
 			isa = XCConfigurationList;
@@ -586,6 +623,7 @@
 				032F89251E82DFA300AD3818 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		032F89261E82DFA300AD3818 /* Build configuration list for PBXNativeTarget "MunchUITests" */ = {
 			isa = XCConfigurationList;
@@ -594,6 +632,7 @@
 				032F89281E82DFA300AD3818 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
