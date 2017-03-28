@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		032F88FC1E82DFA300AD3818 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F88FB1E82DFA300AD3818 /* AppDelegate.swift */; };
-		032F88FE1E82DFA300AD3818 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F88FD1E82DFA300AD3818 /* ViewController.swift */; };
 		032F89011E82DFA300AD3818 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 032F88FF1E82DFA300AD3818 /* Main.storyboard */; };
 		032F89031E82DFA300AD3818 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 032F89021E82DFA300AD3818 /* Assets.xcassets */; };
 		032F89061E82DFA300AD3818 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 032F89041E82DFA300AD3818 /* LaunchScreen.storyboard */; };
@@ -18,15 +17,19 @@
 		032F892E1E82EF3D00AD3818 /* Carthage in Resources */ = {isa = PBXBuildFile; fileRef = 032F892D1E82EF3D00AD3818 /* Carthage */; };
 		032F89311E82EF8B00AD3818 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89301E82EF8B00AD3818 /* Alamofire.framework */; };
 		032F89341E82F14A00AD3818 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89331E82F14A00AD3818 /* SwiftyJSON.framework */; };
-		032F89381E82F21B00AD3818 /* RestfulClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F89371E82F21B00AD3818 /* RestfulClient.swift */; };
-		032F893A1E82F22600AD3818 /* Egress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F89391E82F22600AD3818 /* Egress.swift */; };
-		03D3FEDF1E893CC300ACFF50 /* RestfulClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F89371E82F21B00AD3818 /* RestfulClient.swift */; };
 		03D3FEE21E8947D200ACFF50 /* MunchClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FEE01E8947D200ACFF50 /* MunchClientTests.swift */; };
-		03D3FEE31E89487500ACFF50 /* Egress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F89391E82F22600AD3818 /* Egress.swift */; };
 		03D3FEE41E89494300ACFF50 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89301E82EF8B00AD3818 /* Alamofire.framework */; };
 		03D3FEE51E89494600ACFF50 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89331E82F14A00AD3818 /* SwiftyJSON.framework */; };
-		03D3FEEA1E895A3B00ACFF50 /* Ingress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FEE91E895A3B00ACFF50 /* Ingress.swift */; };
-		03D3FEEB1E895A3B00ACFF50 /* Ingress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FEE91E895A3B00ACFF50 /* Ingress.swift */; };
+		03D3FEF01E8A647E00ACFF50 /* SwiftLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */; };
+		03D3FEF11E8A648700ACFF50 /* SwiftLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */; };
+		03D3FEF31E8A8DA500ACFF50 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEF21E8A8DA500ACFF50 /* SDWebImage.framework */; };
+		03D3FEF41E8A8DB500ACFF50 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEF21E8A8DA500ACFF50 /* SDWebImage.framework */; };
+		03D3FEFF1E8ABEE300ACFF50 /* Place.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 03D3FEFC1E8ABEE300ACFF50 /* Place.storyboard */; };
+		03D3FF001E8ABEE300ACFF50 /* PlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FEFD1E8ABEE300ACFF50 /* PlaceController.swift */; };
+		03D3FF011E8ABEE300ACFF50 /* PlacePage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 03D3FEFE1E8ABEE300ACFF50 /* PlacePage.xib */; };
+		03D3FF041E8ABF2400ACFF50 /* Egress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FF021E8ABF2400ACFF50 /* Egress.swift */; };
+		03D3FF051E8ABF2400ACFF50 /* Ingress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FF031E8ABF2400ACFF50 /* Ingress.swift */; };
+		03D3FF071E8ABF3100ACFF50 /* RestfulClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FF061E8ABF3100ACFF50 /* RestfulClient.swift */; };
 		03EE235E1E83039A009AFBFC /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03EE235D1E83039A009AFBFC /* MapKit.framework */; };
 		03EE23601E83342F009AFBFC /* DiscoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EE235F1E83342F009AFBFC /* DiscoverController.swift */; };
 /* End PBXBuildFile section */
@@ -51,7 +54,6 @@
 /* Begin PBXFileReference section */
 		032F88F81E82DFA300AD3818 /* Munch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Munch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		032F88FB1E82DFA300AD3818 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		032F88FD1E82DFA300AD3818 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		032F89001E82DFA300AD3818 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		032F89021E82DFA300AD3818 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		032F89051E82DFA300AD3818 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -66,11 +68,16 @@
 		032F892D1E82EF3D00AD3818 /* Carthage */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Carthage; sourceTree = "<group>"; };
 		032F89301E82EF8B00AD3818 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		032F89331E82F14A00AD3818 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
-		032F89371E82F21B00AD3818 /* RestfulClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestfulClient.swift; sourceTree = "<group>"; };
-		032F89391E82F22600AD3818 /* Egress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Egress.swift; sourceTree = "<group>"; };
 		03D3FEE01E8947D200ACFF50 /* MunchClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchClientTests.swift; sourceTree = "<group>"; };
 		03D3FEE61E89589B00ACFF50 /* HandyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HandyJSON.framework; path = Carthage/Build/iOS/HandyJSON.framework; sourceTree = "<group>"; };
-		03D3FEE91E895A3B00ACFF50 /* Ingress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ingress.swift; sourceTree = "<group>"; };
+		03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftLocation.framework; path = Carthage/Build/iOS/SwiftLocation.framework; sourceTree = "<group>"; };
+		03D3FEF21E8A8DA500ACFF50 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = Carthage/Build/iOS/SDWebImage.framework; sourceTree = "<group>"; };
+		03D3FEFC1E8ABEE300ACFF50 /* Place.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Place.storyboard; path = Place/Place.storyboard; sourceTree = "<group>"; };
+		03D3FEFD1E8ABEE300ACFF50 /* PlaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceController.swift; path = Place/PlaceController.swift; sourceTree = "<group>"; };
+		03D3FEFE1E8ABEE300ACFF50 /* PlacePage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PlacePage.xib; path = Place/PlacePage.xib; sourceTree = "<group>"; };
+		03D3FF021E8ABF2400ACFF50 /* Egress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Egress.swift; path = Struct/Egress.swift; sourceTree = "<group>"; };
+		03D3FF031E8ABF2400ACFF50 /* Ingress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Ingress.swift; path = Struct/Ingress.swift; sourceTree = "<group>"; };
+		03D3FF061E8ABF3100ACFF50 /* RestfulClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RestfulClient.swift; path = Restful/RestfulClient.swift; sourceTree = "<group>"; };
 		03EE235D1E83039A009AFBFC /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		03EE235F1E83342F009AFBFC /* DiscoverController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -83,6 +90,8 @@
 				03EE235E1E83039A009AFBFC /* MapKit.framework in Frameworks */,
 				032F89311E82EF8B00AD3818 /* Alamofire.framework in Frameworks */,
 				032F89341E82F14A00AD3818 /* SwiftyJSON.framework in Frameworks */,
+				03D3FEF11E8A648700ACFF50 /* SwiftLocation.framework in Frameworks */,
+				03D3FEF31E8A8DA500ACFF50 /* SDWebImage.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -92,6 +101,8 @@
 			files = (
 				03D3FEE41E89494300ACFF50 /* Alamofire.framework in Frameworks */,
 				03D3FEE51E89494600ACFF50 /* SwiftyJSON.framework in Frameworks */,
+				03D3FEF01E8A647E00ACFF50 /* SwiftLocation.framework in Frameworks */,
+				03D3FEF41E8A8DB500ACFF50 /* SDWebImage.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,11 +143,11 @@
 			isa = PBXGroup;
 			children = (
 				032F89361E82F1FB00AD3818 /* Struct */,
-				032F89351E82F1F300AD3818 /* Restful */,
+				032F89351E82F1F300AD3818 /* Api */,
 				032F88FB1E82DFA300AD3818 /* AppDelegate.swift */,
-				032F88FD1E82DFA300AD3818 /* ViewController.swift */,
-				03EE235F1E83342F009AFBFC /* DiscoverController.swift */,
 				032F88FF1E82DFA300AD3818 /* Main.storyboard */,
+				03EE235F1E83342F009AFBFC /* DiscoverController.swift */,
+				03D3FEF91E8ABDF500ACFF50 /* Place */,
 				032F89021E82DFA300AD3818 /* Assets.xcassets */,
 				032F89041E82DFA300AD3818 /* LaunchScreen.storyboard */,
 				032F89071E82DFA300AD3818 /* Info.plist */,
@@ -166,6 +177,8 @@
 		032F892F1E82EF8B00AD3818 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				03D3FEF21E8A8DA500ACFF50 /* SDWebImage.framework */,
+				03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */,
 				03D3FEE61E89589B00ACFF50 /* HandyJSON.framework */,
 				03EE235D1E83039A009AFBFC /* MapKit.framework */,
 				032F89331E82F14A00AD3818 /* SwiftyJSON.framework */,
@@ -174,21 +187,31 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		032F89351E82F1F300AD3818 /* Restful */ = {
+		032F89351E82F1F300AD3818 /* Api */ = {
 			isa = PBXGroup;
 			children = (
-				032F89371E82F21B00AD3818 /* RestfulClient.swift */,
+				03D3FF061E8ABF3100ACFF50 /* RestfulClient.swift */,
 			);
-			name = Restful;
+			name = Api;
 			sourceTree = "<group>";
 		};
 		032F89361E82F1FB00AD3818 /* Struct */ = {
 			isa = PBXGroup;
 			children = (
-				032F89391E82F22600AD3818 /* Egress.swift */,
-				03D3FEE91E895A3B00ACFF50 /* Ingress.swift */,
+				03D3FF021E8ABF2400ACFF50 /* Egress.swift */,
+				03D3FF031E8ABF2400ACFF50 /* Ingress.swift */,
 			);
 			name = Struct;
+			sourceTree = "<group>";
+		};
+		03D3FEF91E8ABDF500ACFF50 /* Place */ = {
+			isa = PBXGroup;
+			children = (
+				03D3FEFC1E8ABEE300ACFF50 /* Place.storyboard */,
+				03D3FEFD1E8ABEE300ACFF50 /* PlaceController.swift */,
+				03D3FEFE1E8ABEE300ACFF50 /* PlacePage.xib */,
+			);
+			name = Place;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -299,8 +322,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				03D3FF011E8ABEE300ACFF50 /* PlacePage.xib in Resources */,
 				032F89061E82DFA300AD3818 /* LaunchScreen.storyboard in Resources */,
 				032F89031E82DFA300AD3818 /* Assets.xcassets in Resources */,
+				03D3FEFF1E8ABEE300ACFF50 /* Place.storyboard in Resources */,
 				032F892A1E82E79000AD3818 /* Cartfile in Resources */,
 				032F892E1E82EF3D00AD3818 /* Carthage in Resources */,
 				032F89011E82DFA300AD3818 /* Main.storyboard in Resources */,
@@ -332,6 +357,8 @@
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftyJSON.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SwiftLocation.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SDWebImage.framework",
 			);
 			outputPaths = (
 			);
@@ -347,11 +374,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				03EE23601E83342F009AFBFC /* DiscoverController.swift in Sources */,
-				03D3FEEA1E895A3B00ACFF50 /* Ingress.swift in Sources */,
-				032F88FE1E82DFA300AD3818 /* ViewController.swift in Sources */,
-				032F89381E82F21B00AD3818 /* RestfulClient.swift in Sources */,
+				03D3FF001E8ABEE300ACFF50 /* PlaceController.swift in Sources */,
+				03D3FF051E8ABF2400ACFF50 /* Ingress.swift in Sources */,
+				03D3FF071E8ABF3100ACFF50 /* RestfulClient.swift in Sources */,
+				03D3FF041E8ABF2400ACFF50 /* Egress.swift in Sources */,
 				032F88FC1E82DFA300AD3818 /* AppDelegate.swift in Sources */,
-				032F893A1E82F22600AD3818 /* Egress.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,10 +387,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				03D3FEE21E8947D200ACFF50 /* MunchClientTests.swift in Sources */,
-				03D3FEEB1E895A3B00ACFF50 /* Ingress.swift in Sources */,
-				03D3FEDF1E893CC300ACFF50 /* RestfulClient.swift in Sources */,
 				032F89111E82DFA300AD3818 /* MunchTests.swift in Sources */,
-				03D3FEE31E89487500ACFF50 /* Egress.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -504,6 +528,7 @@
 		032F89211E82DFA300AD3818 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -520,6 +545,7 @@
 		032F89221E82DFA300AD3818 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
