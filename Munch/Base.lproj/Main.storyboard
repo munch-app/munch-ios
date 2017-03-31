@@ -34,10 +34,16 @@
             <objects>
                 <navigationController id="7xl-cH-uk6" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Discover" id="00C-rL-MTA"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="hnR-yl-wa6">
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="hnR-yl-wa6">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </navigationBar>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="5Q1-t2-Ba8">
+                        <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="rvU-t8-YyO" kind="relationship" relationship="rootViewController" id="cMp-IH-iGg"/>
                     </connections>
@@ -55,11 +61,11 @@
                         <viewControllerLayoutGuide type="bottom" id="lAp-Tg-10d"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Ep2-5H-sqS">
-                        <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="120" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="L23-l9-tMR">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="554"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="DiscoverViewCell" rowHeight="120" id="1cL-he-tsq" customClass="DiscoverViewCell" customModule="Munch" customModuleProvider="target">
@@ -114,13 +120,15 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="L23-l9-tMR" firstAttribute="top" secondItem="OVL-pU-1r3" secondAttribute="bottom" id="J5G-f8-SPW"/>
+                            <constraint firstItem="L23-l9-tMR" firstAttribute="top" secondItem="Ep2-5H-sqS" secondAttribute="top" id="1lf-AN-3nW"/>
                             <constraint firstAttribute="trailing" secondItem="L23-l9-tMR" secondAttribute="trailing" id="J6L-li-oue"/>
                             <constraint firstItem="L23-l9-tMR" firstAttribute="leading" secondItem="Ep2-5H-sqS" secondAttribute="leading" id="XeF-Od-8MP"/>
                             <constraint firstItem="lAp-Tg-10d" firstAttribute="top" secondItem="L23-l9-tMR" secondAttribute="bottom" id="dnH-MM-wWb"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Munch" id="WQX-yK-bnH"/>
+                    <navigationItem key="navigationItem" title="Munch" id="WQX-yK-bnH">
+                        <barButtonItem key="backBarButtonItem" title=" " id="Y4f-7y-dDa"/>
+                    </navigationItem>
                     <connections>
                         <outlet property="discoverTableView" destination="L23-l9-tMR" id="cpt-dO-lXo"/>
                         <segue destination="YzG-WR-xHj" kind="show" identifier="segueToPlaceStoryboard" id="m6G-UP-8LY"/>
@@ -133,7 +141,9 @@
         <!--Place-->
         <scene sceneID="kTF-Lh-Hn4">
             <objects>
-                <viewControllerPlaceholder storyboardName="Place" id="YzG-WR-xHj" sceneMemberID="viewController"/>
+                <viewControllerPlaceholder storyboardName="Place" id="YzG-WR-xHj" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="mym-c9-KE2"/>
+                </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GPM-ww-aK9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1594" y="-1318"/>

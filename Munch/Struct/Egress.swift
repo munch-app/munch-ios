@@ -42,6 +42,13 @@ struct Place {
         self.images = json["images"].map({Image(json: $0.1)})
     }
     
+    func imageURL() -> URL? {
+        if let imageUrl = self.images?.first?.url {
+            return URL(string: imageUrl)
+        } else {
+            return nil
+        }
+    }
 }
 
 

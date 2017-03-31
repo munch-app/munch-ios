@@ -69,8 +69,8 @@ class DiscoverViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.performSegue(withIdentifier: "segueToPlaceStoryboard", sender: self)
         self.selectedIndex = indexPath
+        self.performSegue(withIdentifier: "segueToPlaceStoryboard", sender: self)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -89,11 +89,8 @@ class DiscoverViewCell: UITableViewCell {
 
     func render(place: Place) {
         self.placeName.text = place.name!
-        if let imageUrl = place.images?.first?.url {
-            self.discoverImageView.sd_setImage(with: URL(string: imageUrl))
-        } else {
-            self.discoverImageView.sd_setImage(with: nil)
+        if let imageURL = place.imageURL() {
+            self.discoverImageView.sd_setImage(with: imageURL)
         }
-        
     }
 }

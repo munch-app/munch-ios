@@ -17,19 +17,25 @@
 		032F892E1E82EF3D00AD3818 /* Carthage in Resources */ = {isa = PBXBuildFile; fileRef = 032F892D1E82EF3D00AD3818 /* Carthage */; };
 		032F89311E82EF8B00AD3818 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89301E82EF8B00AD3818 /* Alamofire.framework */; };
 		032F89341E82F14A00AD3818 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89331E82F14A00AD3818 /* SwiftyJSON.framework */; };
+		037884991E8E4E3F006025B5 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 037884981E8E4E3F006025B5 /* SnapKit.framework */; };
+		0378849B1E8E563E006025B5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0378849A1E8E563E006025B5 /* Extensions.swift */; };
+		0378849D1E8E5E39006025B5 /* SwiftLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */; };
+		039C393F1E8D47F500A28533 /* MXSegmentedPager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C393E1E8D47F500A28533 /* MXSegmentedPager.framework */; };
+		039C39401E8D484A00A28533 /* HMSegmentedControl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C393C1E8D47E300A28533 /* HMSegmentedControl.framework */; };
+		039C39421E8D485400A28533 /* MXPagerView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C39411E8D485400A28533 /* MXPagerView.framework */; };
+		039C39441E8D485800A28533 /* MXParallaxHeader.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C39431E8D485800A28533 /* MXParallaxHeader.framework */; };
 		03D3FEE21E8947D200ACFF50 /* MunchClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FEE01E8947D200ACFF50 /* MunchClientTests.swift */; };
 		03D3FEE41E89494300ACFF50 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89301E82EF8B00AD3818 /* Alamofire.framework */; };
 		03D3FEE51E89494600ACFF50 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89331E82F14A00AD3818 /* SwiftyJSON.framework */; };
 		03D3FEF01E8A647E00ACFF50 /* SwiftLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */; };
-		03D3FEF11E8A648700ACFF50 /* SwiftLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */; };
 		03D3FEF31E8A8DA500ACFF50 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEF21E8A8DA500ACFF50 /* SDWebImage.framework */; };
 		03D3FEF41E8A8DB500ACFF50 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEF21E8A8DA500ACFF50 /* SDWebImage.framework */; };
 		03D3FEFF1E8ABEE300ACFF50 /* Place.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 03D3FEFC1E8ABEE300ACFF50 /* Place.storyboard */; };
 		03D3FF001E8ABEE300ACFF50 /* PlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FEFD1E8ABEE300ACFF50 /* PlaceController.swift */; };
-		03D3FF011E8ABEE300ACFF50 /* PlacePage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 03D3FEFE1E8ABEE300ACFF50 /* PlacePage.xib */; };
 		03D3FF041E8ABF2400ACFF50 /* Egress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FF021E8ABF2400ACFF50 /* Egress.swift */; };
 		03D3FF051E8ABF2400ACFF50 /* Ingress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FF031E8ABF2400ACFF50 /* Ingress.swift */; };
-		03D3FF071E8ABF3100ACFF50 /* RestfulClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FF061E8ABF3100ACFF50 /* RestfulClient.swift */; };
+		03D3FF071E8ABF3100ACFF50 /* MunchApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FF061E8ABF3100ACFF50 /* MunchApiClient.swift */; };
+		03D3FF0B1E8D035100ACFF50 /* KMNavigationBarTransition.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FF0A1E8D035100ACFF50 /* KMNavigationBarTransition.framework */; };
 		03EE235E1E83039A009AFBFC /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03EE235D1E83039A009AFBFC /* MapKit.framework */; };
 		03EE23601E83342F009AFBFC /* DiscoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EE235F1E83342F009AFBFC /* DiscoverController.swift */; };
 /* End PBXBuildFile section */
@@ -68,16 +74,22 @@
 		032F892D1E82EF3D00AD3818 /* Carthage */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Carthage; sourceTree = "<group>"; };
 		032F89301E82EF8B00AD3818 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		032F89331E82F14A00AD3818 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
+		037884981E8E4E3F006025B5 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Carthage/Build/iOS/SnapKit.framework; sourceTree = "<group>"; };
+		0378849A1E8E563E006025B5 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		039C393C1E8D47E300A28533 /* HMSegmentedControl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HMSegmentedControl.framework; path = Carthage/Build/iOS/HMSegmentedControl.framework; sourceTree = "<group>"; };
+		039C393E1E8D47F500A28533 /* MXSegmentedPager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXSegmentedPager.framework; path = Carthage/Build/iOS/MXSegmentedPager.framework; sourceTree = "<group>"; };
+		039C39411E8D485400A28533 /* MXPagerView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXPagerView.framework; path = Carthage/Build/iOS/MXPagerView.framework; sourceTree = "<group>"; };
+		039C39431E8D485800A28533 /* MXParallaxHeader.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXParallaxHeader.framework; path = Carthage/Build/iOS/MXParallaxHeader.framework; sourceTree = "<group>"; };
 		03D3FEE01E8947D200ACFF50 /* MunchClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchClientTests.swift; sourceTree = "<group>"; };
 		03D3FEE61E89589B00ACFF50 /* HandyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HandyJSON.framework; path = Carthage/Build/iOS/HandyJSON.framework; sourceTree = "<group>"; };
 		03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftLocation.framework; path = Carthage/Build/iOS/SwiftLocation.framework; sourceTree = "<group>"; };
 		03D3FEF21E8A8DA500ACFF50 /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = Carthage/Build/iOS/SDWebImage.framework; sourceTree = "<group>"; };
 		03D3FEFC1E8ABEE300ACFF50 /* Place.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Place.storyboard; path = Place/Place.storyboard; sourceTree = "<group>"; };
 		03D3FEFD1E8ABEE300ACFF50 /* PlaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceController.swift; path = Place/PlaceController.swift; sourceTree = "<group>"; };
-		03D3FEFE1E8ABEE300ACFF50 /* PlacePage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PlacePage.xib; path = Place/PlacePage.xib; sourceTree = "<group>"; };
 		03D3FF021E8ABF2400ACFF50 /* Egress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Egress.swift; path = Struct/Egress.swift; sourceTree = "<group>"; };
 		03D3FF031E8ABF2400ACFF50 /* Ingress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Ingress.swift; path = Struct/Ingress.swift; sourceTree = "<group>"; };
-		03D3FF061E8ABF3100ACFF50 /* RestfulClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RestfulClient.swift; path = Restful/RestfulClient.swift; sourceTree = "<group>"; };
+		03D3FF061E8ABF3100ACFF50 /* MunchApiClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MunchApiClient.swift; path = Restful/MunchApiClient.swift; sourceTree = "<group>"; };
+		03D3FF0A1E8D035100ACFF50 /* KMNavigationBarTransition.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KMNavigationBarTransition.framework; path = Carthage/Build/iOS/KMNavigationBarTransition.framework; sourceTree = "<group>"; };
 		03EE235D1E83039A009AFBFC /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		03EE235F1E83342F009AFBFC /* DiscoverController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -87,10 +99,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				039C39401E8D484A00A28533 /* HMSegmentedControl.framework in Frameworks */,
+				039C39441E8D485800A28533 /* MXParallaxHeader.framework in Frameworks */,
+				0378849D1E8E5E39006025B5 /* SwiftLocation.framework in Frameworks */,
+				039C39421E8D485400A28533 /* MXPagerView.framework in Frameworks */,
+				039C393F1E8D47F500A28533 /* MXSegmentedPager.framework in Frameworks */,
 				03EE235E1E83039A009AFBFC /* MapKit.framework in Frameworks */,
+				03D3FF0B1E8D035100ACFF50 /* KMNavigationBarTransition.framework in Frameworks */,
 				032F89311E82EF8B00AD3818 /* Alamofire.framework in Frameworks */,
 				032F89341E82F14A00AD3818 /* SwiftyJSON.framework in Frameworks */,
-				03D3FEF11E8A648700ACFF50 /* SwiftLocation.framework in Frameworks */,
+				037884991E8E4E3F006025B5 /* SnapKit.framework in Frameworks */,
 				03D3FEF31E8A8DA500ACFF50 /* SDWebImage.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -151,6 +169,7 @@
 				032F89021E82DFA300AD3818 /* Assets.xcassets */,
 				032F89041E82DFA300AD3818 /* LaunchScreen.storyboard */,
 				032F89071E82DFA300AD3818 /* Info.plist */,
+				0378849A1E8E563E006025B5 /* Extensions.swift */,
 			);
 			path = Munch;
 			sourceTree = "<group>";
@@ -177,6 +196,12 @@
 		032F892F1E82EF8B00AD3818 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				037884981E8E4E3F006025B5 /* SnapKit.framework */,
+				039C39431E8D485800A28533 /* MXParallaxHeader.framework */,
+				039C39411E8D485400A28533 /* MXPagerView.framework */,
+				039C393E1E8D47F500A28533 /* MXSegmentedPager.framework */,
+				039C393C1E8D47E300A28533 /* HMSegmentedControl.framework */,
+				03D3FF0A1E8D035100ACFF50 /* KMNavigationBarTransition.framework */,
 				03D3FEF21E8A8DA500ACFF50 /* SDWebImage.framework */,
 				03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */,
 				03D3FEE61E89589B00ACFF50 /* HandyJSON.framework */,
@@ -190,7 +215,7 @@
 		032F89351E82F1F300AD3818 /* Api */ = {
 			isa = PBXGroup;
 			children = (
-				03D3FF061E8ABF3100ACFF50 /* RestfulClient.swift */,
+				03D3FF061E8ABF3100ACFF50 /* MunchApiClient.swift */,
 			);
 			name = Api;
 			sourceTree = "<group>";
@@ -209,7 +234,6 @@
 			children = (
 				03D3FEFC1E8ABEE300ACFF50 /* Place.storyboard */,
 				03D3FEFD1E8ABEE300ACFF50 /* PlaceController.swift */,
-				03D3FEFE1E8ABEE300ACFF50 /* PlacePage.xib */,
 			);
 			name = Place;
 			sourceTree = "<group>";
@@ -283,6 +307,7 @@
 				TargetAttributes = {
 					032F88F71E82DFA200AD3818 = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = 4C275KQZEH;
 						ProvisioningStyle = Automatic;
 					};
 					032F890B1E82DFA300AD3818 = {
@@ -322,7 +347,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				03D3FF011E8ABEE300ACFF50 /* PlacePage.xib in Resources */,
 				032F89061E82DFA300AD3818 /* LaunchScreen.storyboard in Resources */,
 				032F89031E82DFA300AD3818 /* Assets.xcassets in Resources */,
 				03D3FEFF1E8ABEE300ACFF50 /* Place.storyboard in Resources */,
@@ -357,8 +381,14 @@
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftyJSON.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/SwiftLocation.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SDWebImage.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/KMNavigationBarTransition.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/MXSegmentedPager.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/MXPagerView.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/MXParallaxHeader.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/HMSegmentedControl.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SnapKit.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SwiftLocation.framework",
 			);
 			outputPaths = (
 			);
@@ -376,9 +406,10 @@
 				03EE23601E83342F009AFBFC /* DiscoverController.swift in Sources */,
 				03D3FF001E8ABEE300ACFF50 /* PlaceController.swift in Sources */,
 				03D3FF051E8ABF2400ACFF50 /* Ingress.swift in Sources */,
-				03D3FF071E8ABF3100ACFF50 /* RestfulClient.swift in Sources */,
+				03D3FF071E8ABF3100ACFF50 /* MunchApiClient.swift in Sources */,
 				03D3FF041E8ABF2400ACFF50 /* Egress.swift in Sources */,
 				032F88FC1E82DFA300AD3818 /* AppDelegate.swift in Sources */,
+				0378849B1E8E563E006025B5 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -530,13 +561,15 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 4C275KQZEH;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = Munch/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = co.munch.Munch;
+				PRODUCT_BUNDLE_IDENTIFIER = co.munch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -547,13 +580,15 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 4C275KQZEH;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = Munch/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = co.munch.Munch;
+				PRODUCT_BUNDLE_IDENTIFIER = co.munch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};

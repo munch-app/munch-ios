@@ -2,3 +2,6 @@ github "Alamofire/Alamofire" ~> 4.4
 github "SwiftyJSON/SwiftyJSON" ~> 3.1
 github "malcommac/SwiftLocation" ~> 2.0
 github "rs/SDWebImage" ~> 4.0
+github "MoZhouqi/KMNavigationBarTransition" ~> 1.0.0
+github "maxep/MXSegmentedPager" ~> 3.2.0
+github "SnapKit/SnapKit" ~> 3.2.0
