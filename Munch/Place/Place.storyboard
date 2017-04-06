@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="RES-qc-Abz">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="RES-qc-Abz">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12086"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -18,7 +18,7 @@
                         <viewControllerLayoutGuide type="bottom" id="UaO-Lh-Cin"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="gya-Nn-NV6">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -34,6 +34,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics" translucent="NO"/>
                     <connections>
                         <outlet property="placeHeaderView" destination="Fh3-dg-ERu" id="jV5-Op-Gtv"/>
                         <outlet property="placeImageGradientView" destination="4h3-I2-pct" id="Q2p-NK-KJV"/>
@@ -121,10 +122,10 @@
             </objects>
             <point key="canvasLocation" x="-2378" y="-1480"/>
         </scene>
-        <!--View Controller-->
+        <!--Place Gallery Controller-->
         <scene sceneID="VvM-Rc-Fhc">
             <objects>
-                <viewController id="Ju9-nX-Rp0" sceneMemberID="viewController">
+                <viewController id="Ju9-nX-Rp0" customClass="PlaceGalleryController" customModule="Munch" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Xcp-vU-jKL"/>
                         <viewControllerLayoutGuide type="bottom" id="oSP-0e-8wa"/>
@@ -137,25 +138,25 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Dgj-iV-MWO">
-                                    <size key="itemSize" width="50" height="50"/>
+                                    <size key="itemSize" width="85" height="85"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="12" minY="0.0" maxX="12" maxY="0.0"/>
+                                    <inset key="sectionInset" minX="12" minY="10" maxX="12" maxY="10"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="bUI-jM-PIu">
-                                        <rect key="frame" x="12" y="0.0" width="351" height="40"/>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PlaceGalleryHeaderCell" id="bUI-jM-PIu" customClass="PlaceGalleryHeaderCell" customModule="Munch" customModuleProvider="target">
+                                        <rect key="frame" x="12" y="10" width="351" height="40"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="351" height="40"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Lga-71-Lfi">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Instagram-22" translatesAutoresizingMaskIntoConstraints="NO" id="Lga-71-Lfi">
                                                     <rect key="frame" x="12" y="9" width="22" height="22"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jMW-3i-aNb">
-                                                    <rect key="frame" x="50" y="10" width="293" height="21"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="User-Generated Content" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jMW-3i-aNb">
+                                                    <rect key="frame" x="49" y="10" width="293" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" weight="light" pointSize="16"/>
                                                     <nil key="textColor"/>
@@ -164,15 +165,18 @@
                                             </subviews>
                                         </view>
                                         <size key="customSize" width="351" height="40"/>
+                                        <connections>
+                                            <outlet property="headerLabel" destination="jMW-3i-aNb" id="Nj5-da-rD6"/>
+                                        </connections>
                                     </collectionViewCell>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="BsW-tY-PCm">
-                                        <rect key="frame" x="113" y="50" width="150" height="150"/>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PlaceGalleryContentCell" id="BsW-tY-PCm" customClass="PlaceGalleryContentCell" customModule="Munch" customModuleProvider="target">
+                                        <rect key="frame" x="112.5" y="60" width="150" height="150"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Vf3-KW-67j">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Vf3-KW-67j">
                                                     <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                                 </imageView>
                                             </subviews>
@@ -184,6 +188,9 @@
                                             <constraint firstItem="Vf3-KW-67j" firstAttribute="leading" secondItem="BsW-tY-PCm" secondAttribute="leading" id="aLJ-nr-MJs"/>
                                         </constraints>
                                         <size key="customSize" width="150" height="150"/>
+                                        <connections>
+                                            <outlet property="galleryImageView" destination="Vf3-KW-67j" id="Sha-hV-ha0"/>
+                                        </connections>
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
@@ -196,6 +203,11 @@
                             <constraint firstItem="VOn-wk-rY3" firstAttribute="leading" secondItem="taL-td-5jV" secondAttribute="leading" id="ozM-HC-xUY"/>
                         </constraints>
                     </view>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="galleryCollection" destination="VOn-wk-rY3" id="wYJ-X4-Eyt"/>
+                        <outlet property="galleryFlowLayout" destination="Dgj-iV-MWO" id="LBU-SD-IEo"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XVC-O4-Ffv" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -264,10 +276,10 @@
             </objects>
             <point key="canvasLocation" x="-1111" y="-573"/>
         </scene>
-        <!--View Controller-->
+        <!--Place General Controller-->
         <scene sceneID="su6-Lc-cFh">
             <objects>
-                <viewController id="VCJ-oc-5Jp" sceneMemberID="viewController">
+                <viewController id="VCJ-oc-5Jp" customClass="PlaceGeneralController" customModule="Munch" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="f0Y-n3-53k"/>
                         <viewControllerLayoutGuide type="bottom" id="vTX-Hv-TAn"/>
@@ -309,6 +321,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="Instagram-22" width="22" height="22"/>
         <image name="Marker-22" width="22" height="22"/>
     </resources>
 </document>

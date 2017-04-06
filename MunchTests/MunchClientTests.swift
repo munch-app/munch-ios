@@ -34,7 +34,7 @@ class MunchClientTests: XCTestCase {
     
     func testDiscover() {
         asyncTest { (expect) in
-            client.discover(){ meta, places in
+            client.places.discover(Spatial(lat:1, lng: 1)){ meta, places in
                 if (meta.isOk()){
                     for place in places {
                         print(place.name!)

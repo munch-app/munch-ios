@@ -24,6 +24,8 @@
 		039C39401E8D484A00A28533 /* HMSegmentedControl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C393C1E8D47E300A28533 /* HMSegmentedControl.framework */; };
 		039C39421E8D485400A28533 /* MXPagerView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C39411E8D485400A28533 /* MXPagerView.framework */; };
 		039C39441E8D485800A28533 /* MXParallaxHeader.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C39431E8D485800A28533 /* MXParallaxHeader.framework */; };
+		03CF0A9C1E96A7B100A3FD1F /* ESTabBarController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03CF0A9B1E96A7B100A3FD1F /* ESTabBarController.framework */; };
+		03CF0A9E1E96ABC600A3FD1F /* TabViewControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CF0A9D1E96ABC600A3FD1F /* TabViewControllers.swift */; };
 		03D3FEE21E8947D200ACFF50 /* MunchClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FEE01E8947D200ACFF50 /* MunchClientTests.swift */; };
 		03D3FEE41E89494300ACFF50 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89301E82EF8B00AD3818 /* Alamofire.framework */; };
 		03D3FEE51E89494600ACFF50 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89331E82F14A00AD3818 /* SwiftyJSON.framework */; };
@@ -80,6 +82,8 @@
 		039C393E1E8D47F500A28533 /* MXSegmentedPager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXSegmentedPager.framework; path = Carthage/Build/iOS/MXSegmentedPager.framework; sourceTree = "<group>"; };
 		039C39411E8D485400A28533 /* MXPagerView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXPagerView.framework; path = Carthage/Build/iOS/MXPagerView.framework; sourceTree = "<group>"; };
 		039C39431E8D485800A28533 /* MXParallaxHeader.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXParallaxHeader.framework; path = Carthage/Build/iOS/MXParallaxHeader.framework; sourceTree = "<group>"; };
+		03CF0A9B1E96A7B100A3FD1F /* ESTabBarController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ESTabBarController.framework; path = Carthage/Build/iOS/ESTabBarController.framework; sourceTree = "<group>"; };
+		03CF0A9D1E96ABC600A3FD1F /* TabViewControllers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewControllers.swift; sourceTree = "<group>"; };
 		03D3FEE01E8947D200ACFF50 /* MunchClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchClientTests.swift; sourceTree = "<group>"; };
 		03D3FEE61E89589B00ACFF50 /* HandyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HandyJSON.framework; path = Carthage/Build/iOS/HandyJSON.framework; sourceTree = "<group>"; };
 		03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftLocation.framework; path = Carthage/Build/iOS/SwiftLocation.framework; sourceTree = "<group>"; };
@@ -103,6 +107,7 @@
 				039C39441E8D485800A28533 /* MXParallaxHeader.framework in Frameworks */,
 				0378849D1E8E5E39006025B5 /* SwiftLocation.framework in Frameworks */,
 				039C39421E8D485400A28533 /* MXPagerView.framework in Frameworks */,
+				03CF0A9C1E96A7B100A3FD1F /* ESTabBarController.framework in Frameworks */,
 				039C393F1E8D47F500A28533 /* MXSegmentedPager.framework in Frameworks */,
 				03EE235E1E83039A009AFBFC /* MapKit.framework in Frameworks */,
 				03D3FF0B1E8D035100ACFF50 /* KMNavigationBarTransition.framework in Frameworks */,
@@ -164,6 +169,7 @@
 				032F89351E82F1F300AD3818 /* Api */,
 				032F88FB1E82DFA300AD3818 /* AppDelegate.swift */,
 				032F88FF1E82DFA300AD3818 /* Main.storyboard */,
+				03CF0A9D1E96ABC600A3FD1F /* TabViewControllers.swift */,
 				03EE235F1E83342F009AFBFC /* DiscoverController.swift */,
 				03D3FEF91E8ABDF500ACFF50 /* Place */,
 				032F89021E82DFA300AD3818 /* Assets.xcassets */,
@@ -196,6 +202,7 @@
 		032F892F1E82EF8B00AD3818 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				03CF0A9B1E96A7B100A3FD1F /* ESTabBarController.framework */,
 				037884981E8E4E3F006025B5 /* SnapKit.framework */,
 				039C39431E8D485800A28533 /* MXParallaxHeader.framework */,
 				039C39411E8D485400A28533 /* MXPagerView.framework */,
@@ -389,6 +396,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/HMSegmentedControl.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SnapKit.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftLocation.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/ESTabBarController.framework",
 			);
 			outputPaths = (
 			);
@@ -407,6 +415,7 @@
 				03D3FF001E8ABEE300ACFF50 /* PlaceController.swift in Sources */,
 				03D3FF051E8ABF2400ACFF50 /* Ingress.swift in Sources */,
 				03D3FF071E8ABF3100ACFF50 /* MunchApiClient.swift in Sources */,
+				03CF0A9E1E96ABC600A3FD1F /* TabViewControllers.swift in Sources */,
 				03D3FF041E8ABF2400ACFF50 /* Egress.swift in Sources */,
 				032F88FC1E82DFA300AD3818 /* AppDelegate.swift in Sources */,
 				0378849B1E8E563E006025B5 /* Extensions.swift in Sources */,

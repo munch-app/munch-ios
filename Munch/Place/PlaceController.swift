@@ -117,8 +117,10 @@ class PlaceViewController: MXSegmentedPagerController {
      Progress 0 means image hidden
      */
     override func segmentedPager(_ segmentedPager: MXSegmentedPager, didScrollWith parallaxHeader: MXParallaxHeader) {
-        let colorProgress = 1.0 - parallaxHeader.progress/0.8
+        let colorProgress = 1.0 - parallaxHeader.progress/0.7
         if (colorProgress < 0.5){
+            // Transiting to white
+            placeImageGradientView.backgroundColor = UIColor.white.withAlphaComponent(colorProgress*2)
             navigationController?.navigationBar.barStyle = .blackTranslucent
             navigationController?.navigationBar.tintColor = UIColor.white
             imageGradientBorder.isHidden = true
@@ -127,6 +129,8 @@ class PlaceViewController: MXSegmentedPagerController {
             self.navigationItem.title = nil
             self.placeNavBar.placeNameLabel.textColor = UIColor.black
         } else {
+            // Fullly white bar
+            placeImageGradientView.backgroundColor = UIColor.white
             navigationController?.navigationBar.barStyle = .default
             navigationController?.navigationBar.tintColor = UIColor.black
             imageGradientBorder.isHidden = false
@@ -136,7 +140,13 @@ class PlaceViewController: MXSegmentedPagerController {
             self.navigationItem.title = place.name
             self.placeNavBar.placeNameLabel.textColor = UIColor.black.withAlphaComponent(nameProgress)
         }
-        placeImageGradientView.backgroundColor = UIColor.white.withAlphaComponent(colorProgress)
+        
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let controller = segue.destination as? PlaceControllers {
+            controller.place = place
+        }
     }
     
     /**
@@ -159,6 +169,9 @@ class PlaceViewController: MXSegmentedPagerController {
     
 }
 
+/**
+ Place nav bar that appear under the parallex image
+ */
 class PlaceNavBar: UIView {
     
     @IBOutlet weak var placeMainButton: UIButton!
@@ -174,18 +187,117 @@ class PlaceNavBar: UIView {
     }
 }
 
-class PlaceGeneralView: UIView {
+/**
+ Abstract controllers for place segues
+ */
+class PlaceControllers: UIViewController {
+    var place: Place!
+}
+
+/**
+ Place controller for general place data
+ in General Tab
+ */
+class PlaceGeneralController: PlaceControllers {
     
 }
 
-class PlaceGalleryView: UICollectionView {
+/**
+ Place controller for gallery instagram data
+ in Gallery Tab
+ */
+class PlaceGalleryController: PlaceControllers, UICollectionViewDataSource, UICollectionViewDelegate {
+    let client = MunchClient()
+    
+    @IBOutlet weak var galleryCollection: UICollectionView!
+    @IBOutlet weak var galleryFlowLayout: UICollectionViewFlowLayout!
+    
+    var graphics = [Graphic]()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.galleryFlowLayout.estimatedItemSize = CGSize(width: 100, height: 100)
+        self.galleryCollection.dataSource = self
+        self.galleryCollection.delegate = self
+        
+        client.places.gallery(id: place.id!){ meta, graphics in
+            if (meta.isOk()){
+                self.graphics += graphics
+                self.galleryCollection.reloadData()
+            }else{
+                self.present(meta.createAlert(), animated: true, completion: nil)
+            }
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.galleryCollection.reloadData()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return graphics.count + 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if (indexPath.row == 0){
+            return collectionView.dequeueReusableCell(withReuseIdentifier: "PlaceGalleryHeaderCell", for: indexPath) as! PlaceGalleryHeaderCell
+        }
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PlaceGalleryContentCell", for: indexPath) as! PlaceGalleryContentCell
+        cell.render(graphic: graphics[indexPath.row - 1])
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+    }
     
 }
 
-class PlaceArticleView: UICollectionView {
-    
+/**
+ Gallery header cell for title
+ */
+class PlaceGalleryHeaderCell: UICollectionViewCell {
+    @IBOutlet weak var headerLabel: UILabel!
+    var isHeightCalculated: Bool = false
+
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+        if !isHeightCalculated {
+            layoutAttributes.frame.size.width = UIScreen.width - 24
+            layoutAttributes.frame.size.height = 40
+            isHeightCalculated = true
+        }
+        return layoutAttributes
+    }
 }
 
-class PlaceReviewView: UITableView {
+/**
+ Gallery content cell for instagram images
+ */
+class PlaceGalleryContentCell: UICollectionViewCell {
+    @IBOutlet weak var galleryImageView: UIImageView!
+    var isHeightCalculated: Bool = false
     
+    func render(graphic: Graphic) {
+        galleryImageView.sd_setImage(with: graphic.imageURL())
+    }
+    
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+        if !isHeightCalculated {
+            let workingWidth = UIScreen.width - 34
+            let halfWidth = CGFloat(floorf(Float(workingWidth/2.0)))
+            layoutAttributes.frame.size.width = halfWidth
+            layoutAttributes.frame.size.height = halfWidth
+            isHeightCalculated = true
+        }
+        return layoutAttributes
+    }
 }
+
+
+
+
+
+
+

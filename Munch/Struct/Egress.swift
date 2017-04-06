@@ -87,6 +87,46 @@ struct Location {
     
 }
 
+struct Graphic {
+    var id: String?
+    
+    var mediaId: String?
+    var imageUrl: String?
+    
+    init(json: JSON) {
+        self.id = json["id"].string
+        
+        self.mediaId = json["mediaId"].string
+        self.imageUrl = json["imageUrl"].string
+    }
+    
+    func imageURL() -> URL? {
+        if let imageUrl = self.imageUrl {
+            return URL(string: imageUrl)
+        } else {
+            return nil
+        }
+    }
+}
+
+struct Article {
+    var id: String?
+    
+    var author: String?
+    var summary: String?
+    var imageUrl: String?
+    var url: String?
+    
+    init(json: JSON) {
+        self.id = json["id"].string
+        
+        self.author = json["author"].string
+        self.summary = json["summary"].string
+        self.imageUrl = json["imageUrl"].string
+        self.url = json["url"].string
+    }
+}
+
 struct Image {
     var url: String?
     

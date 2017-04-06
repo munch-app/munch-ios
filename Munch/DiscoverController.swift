@@ -47,7 +47,7 @@ class DiscoverViewController: UIViewController, UITableViewDataSource, UITableVi
      Discover a defined latitude and longitude
      */
     func discover(lat: Double, lng: Double){
-        client.discover(spatial: Spatial(lat: lat, lng: lng)){ meta, places in
+        client.places.discover(spatial: Spatial(lat: lat, lng: lng)){ meta, places in
             if (meta.isOk()){
                 self.discoverPlaces.removeAll()
                 self.discoverPlaces += places

@@ -96,21 +96,16 @@ class MunchClient: RestfulClient {
     init() {
         super.init(MunchClient.baseUrl)
     }
-    
-    func discover(spatial: Spatial, callback: @escaping (_ meta: MetaJSON, _ places: [Place]) -> Void) {
-        super.post("/discover", ["spatial": spatial.parameters()]) { meta, json in
-            var places = [Place]()
-            for(_, subJson) in json["data"] {
-                places.append(Place(json: subJson))
-            }
-            callback(meta, places)
-        }
-    }
-    
 }
 
 
 class PlaceClient: RestfulClient {
+    
+    func discover(spatial: Spatial, callback: @escaping (_ meta: MetaJSON, _ places: [Place]) -> Void) {
+        super.post("/places/discover", ["spatial": spatial.parameters()]) { meta, json in
+            callback(meta, json["data"].arrayValue.map({Place(json: $0)}))
+        }
+    }
     
     func get(id: String, callback: @escaping (_ meta: MetaJSON, _ place: Place) -> Void) {
         super.get("/places/\(id)") { meta, json in
@@ -118,4 +113,15 @@ class PlaceClient: RestfulClient {
         }
     }
     
+    func gallery(id: String, callback: @escaping (_ meta: MetaJSON, _ graphics: [Graphic]) -> Void) {
+        super.get("/places/\(id)/gallery") { meta, json in
+            callback(meta, json["data"].arrayValue.map({Graphic(json: $0)}))
+        }
+    }
+    
+    func articles(id: String, callback: @escaping (_ meta: MetaJSON, _ articles: [Article]) -> Void) {
+        super.get("/places/\(id)/articles") { meta, json in
+            callback(meta, json["data"].arrayValue.map({Article(json: $0)}))
+        }
+    }
 }
