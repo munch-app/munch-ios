@@ -14,9 +14,29 @@ class MunchTabViewController: ESTabBarController {
     
 }
 
+class MunchTabBar: ESTabBar {
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    override var isTranslucent: Bool {
+        set {
+            
+        }
+        
+        get {
+            return true
+        }
+    }
+    
+}
+
 class SearchNavigationController: UINavigationController {
     
     /**
+     View did load will set the selected index to first tab
+     This is required due to a bug in ESTabBarItem not allowing NSCoder
      */
     override func viewDidLoad() {
         super.viewDidLoad()

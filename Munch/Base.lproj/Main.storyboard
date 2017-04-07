@@ -23,7 +23,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Account" id="0nP-CF-4Un" customClass="AccountTabBarItem" customModule="Munch" customModuleProvider="target"/>
+                    <tabBarItem key="tabBarItem" title="Account" image="User-30" id="0nP-CF-4Un" customClass="AccountTabBarItem" customModule="Munch" customModuleProvider="target"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YmV-ch-mJK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -152,7 +152,7 @@
         <scene sceneID="RpH-wx-3QP">
             <objects>
                 <tabBarController id="OLD-wM-h5z" customClass="MunchTabViewController" customModule="Munch" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBar key="tabBar" contentMode="scaleToFill" translucent="NO" id="e0R-8Y-CBa">
+                    <tabBar key="tabBar" contentMode="scaleToFill" translucent="NO" id="e0R-8Y-CBa" customClass="MunchTabBar" customModule="Munch" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -172,5 +172,6 @@
     </scenes>
     <resources>
         <image name="Search-30" width="30" height="30"/>
+        <image name="User-30" width="30" height="30"/>
     </resources>
 </document>

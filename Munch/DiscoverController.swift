@@ -84,7 +84,6 @@ class DiscoverViewController: UIViewController, UITableViewDataSource, UITableVi
 class DiscoverViewCell: UITableViewCell {
     
     @IBOutlet weak var discoverImageView: UIImageView!
-    
     @IBOutlet weak var placeName: UILabel!
 
     func render(place: Place) {

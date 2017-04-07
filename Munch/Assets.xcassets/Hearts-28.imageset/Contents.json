@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "Instagram-22.png",
+      "filename" : "Hearts-28.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "Instagram-44.png",
+      "filename" : "Hearts-56.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "Instagram-66.png",
+      "filename" : "Hearts-84.png",
       "scale" : "3x"
     }
   ],

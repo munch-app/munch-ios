@@ -21,13 +21,12 @@ class PlaceViewController: MXSegmentedPagerController {
     @IBOutlet weak var placeImageView: UIImageView!
     
     @IBOutlet weak var placeRatingLabel: UILabel!
-    @IBOutlet weak var placeRatingBottom: NSLayoutConstraint!
     @IBOutlet weak var placeNavBar: PlaceNavBar!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.segmentedPager.backgroundColor = UIColor.white
-        self.segmentedPager.pager.isScrollEnabled = false
+        self.segmentedPager.pager.isScrollEnabled = true // Scrolling of page from side to side
         
         // Parallax Header
         self.segmentedPager.parallaxHeader.view = placeHeaderView
@@ -58,11 +57,12 @@ class PlaceViewController: MXSegmentedPagerController {
         control.segmentWidthStyle = .fixed
         control.backgroundColor = UIColor.white
         control.titleTextAttributes = [
-            NSForegroundColorAttributeName: UIColor.black,
+            NSForegroundColorAttributeName: UIColor.black.withAlphaComponent(0.85),
             NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightLight)
         ]
         control.selectedTitleTextAttributes = [
-            NSForegroundColorAttributeName: UIColor(hex: "458eff")
+            NSForegroundColorAttributeName: UIColor.black,
+            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightMedium)
         ]
         
         // Create border for segmented control top and bottom
@@ -117,13 +117,13 @@ class PlaceViewController: MXSegmentedPagerController {
      Progress 0 means image hidden
      */
     override func segmentedPager(_ segmentedPager: MXSegmentedPager, didScrollWith parallaxHeader: MXParallaxHeader) {
-        let colorProgress = 1.0 - parallaxHeader.progress/0.7
+        let colorProgress = 1.0 - parallaxHeader.progress/0.8
         if (colorProgress < 0.5){
             // Transiting to white
             placeImageGradientView.backgroundColor = UIColor.white.withAlphaComponent(colorProgress*2)
             navigationController?.navigationBar.barStyle = .blackTranslucent
             navigationController?.navigationBar.tintColor = UIColor.white
-            imageGradientBorder.isHidden = true
+            imageGradientBorder.isHidden = true // 1px Shadow
             
             // Name label progress
             self.navigationItem.title = nil
@@ -133,11 +133,11 @@ class PlaceViewController: MXSegmentedPagerController {
             placeImageGradientView.backgroundColor = UIColor.white
             navigationController?.navigationBar.barStyle = .default
             navigationController?.navigationBar.tintColor = UIColor.black
-            imageGradientBorder.isHidden = false
+            imageGradientBorder.isHidden = false // 1px Shadow
             
             // Name label progress for secondary nav bar
-            let nameProgress = 0.65/colorProgress - 0.65
             self.navigationItem.title = place.name
+            let nameProgress = 0.65/colorProgress - 0.65
             self.placeNavBar.placeNameLabel.textColor = UIColor.black.withAlphaComponent(nameProgress)
         }
         
@@ -198,28 +198,243 @@ class PlaceControllers: UIViewController {
  Place controller for general place data
  in General Tab
  */
-class PlaceGeneralController: PlaceControllers {
+class PlaceGeneralController: PlaceControllers, UITableViewDataSource, UITableViewDelegate {
+    @IBOutlet weak var tableView: UITableView!
+    var items = [PlaceGeneralCellItem]()
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.tableView.dataSource = self
+        self.tableView.delegate = self
+        
+        self.tableView.rowHeight = UITableViewAutomaticDimension
+        self.tableView.estimatedRowHeight = 44
+
+        prepareCellItems(place: self.place)
+    }
+    
+    func prepareCellItems(place: Place) {
+        // Menu Cell
+        if let menus = place.menus {
+            if (!menus.isEmpty) {
+                items.append(PlaceGeneralCellItem(type: "Menu"))
+            }
+        }
+        
+        // Establishment Icon Label Cell
+        if let list = place.establishments {
+            if (!list.isEmpty) {
+                var item = PlaceGeneralCellItem(type: "Establishment")
+                item.text = list.first
+                item.icon = UIImage(named: "Restaurant-26")
+                items.append(item)
+            }
+        }
+        
+        // Price Range Icon Label Cell
+        if let price = place.price {
+            var item = PlaceGeneralCellItem(type: "PriceRange")
+            let low = Int(ceil(price.lowest!))
+            let high = Int(ceil(price.highest!))
+            item.text = "$\(low) - $\(high)"
+            item.icon = UIImage(named: "Coins-26")
+            items.append(item)
+        }
+        
+        // Opening Hours Cell
+        if let hours = place.hours {
+            var item = PlaceGeneralCellItem(type: "Hour")
+            item.text = hours.map({"\($0.dayText()): \($0.rangeText())"}).joined(separator: "\n")
+            item.icon = UIImage(named: "Clock-26")
+            items.append(item)
+        }
+        
+        // Phone Icon Label Cell
+        if let phone = place.phone {
+            var item = PlaceGeneralCellItem(type: "Phone")
+            item.text = phone
+            item.icon = UIImage(named: "Phone-26")
+            items.append(item)
+        }
+        
+        // Address Label Cell
+        if let address = place.location?.address {
+            var item = PlaceGeneralCellItem(type: "Address")
+            item.text = address
+            item.icon = UIImage(named: "Map Marker-26")
+            items.append(item)
+        }
+        
+        // Deascription Cell
+        if let description = place.description {
+            var item = PlaceGeneralCellItem(type: "Description")
+            item.text = description
+            item.icon = UIImage(named: "Info-26")
+            items.append(item)
+        }
+        
+        // Finally, reload table view the render the cells
+        tableView.reloadData()
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return items.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        switch items[indexPath.row].type {
+        case "Menu":
+            let cell = tableView.dequeueReusableCell(withIdentifier: "PlaceGeneralMenuCell", for: indexPath) as! PlaceGeneralMenuCell
+            cell.render(menus: place.menus)
+            return cell
+        default: // All general text cell, render here
+            let cell = tableView.dequeueReusableCell(withIdentifier: "PlaceGeneralTextCell", for: indexPath) as! PlaceGeneralTextCell
+            cell.render(item: items[indexPath.row])
+            return cell
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+
+    }
+}
+
+struct PlaceGeneralCellItem {
+    let type: String
+    
+    // Helper parameters for certain items
+    var icon: UIImage?
+    var text: String?
+    
+    init(type: String) {
+        self.type = type
+    }
+}
+
+/**
+ Abstract general text only table view cell
+ */
+class PlaceGeneralTextCell: UITableViewCell {
+    @IBOutlet weak var iconImageView: UIImageView!
+    @IBOutlet weak var textLabelView: UILabel!
+
+    func render(image: UIImage?, text: String?) {
+        iconImageView.image = image
+        textLabelView.text = text
+    }
+    
+    func render(item: PlaceGeneralCellItem) {
+        render(image: item.icon, text: item.text)
+    }
+}
+
+/**
+ Hour cell is multi line label view
+ Dynamaic height
+ */
+class PlaceGeneralHourCell: UITableViewCell {
+    // TODO future
+}
+
+/**
+ Menu is a special cell with image gallery in 4 of hornzontail view
+ Static height
+ */
+class PlaceGeneralMenuCell: UITableViewCell, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    @IBOutlet weak var iconImageView: UIImageView!
+    @IBOutlet weak var menuCollectionView: UICollectionView!
+    @IBOutlet weak var menuFlowLayout: UICollectionViewFlowLayout!
+
+    var needPrepare: Bool = true
+    var contentSize: CGSize!
+    var menus = [Menu]()
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        if (needPrepare) {
+            self.iconImageView.image = UIImage(named: "Magical Scroll-26")
+            self.menuCollectionView.dataSource = self
+            self.menuCollectionView.delegate = self
+            
+            // Calculating content size
+            let minSpacing: CGFloat = self.menuFlowLayout.minimumInteritemSpacing
+            let width: CGFloat = self.menuCollectionView.frame.width
+            let contentWidth = Float(width - minSpacing * 3)/4.0
+            self.contentSize = CGSize(width: CGFloat(floorf(contentWidth)), height: 68.0)
+            needPrepare = false
+        }
+    }
+    
+    func render(menus: [Menu]?) {
+        if let menus = menus {
+            self.menus = menus
+        } else {
+            self.menus.removeAll()
+        }
+        menuCollectionView.reloadData()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return menus.count > 4 ? 4 : menus.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = menuCollectionView.dequeueReusableCell(withReuseIdentifier: "MenuContentCell", for: indexPath) as! MenuContentCell
+        cell.render(menu: menus[indexPath.row])
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return contentSize
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // TODO on click
+    }
+}
+
+/**
+ Gallery content cell for instagram images
+ */
+class MenuContentCell: UICollectionViewCell {
+    @IBOutlet weak var thumbImageView: UIImageView!
+    
+    func render(menu: Menu) {
+        thumbImageView.sd_setImage(with: menu.thumbImageURL())
+    }
 }
 
 /**
  Place controller for gallery instagram data
  in Gallery Tab
  */
-class PlaceGalleryController: PlaceControllers, UICollectionViewDataSource, UICollectionViewDelegate {
+class PlaceGalleryController: PlaceControllers, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     let client = MunchClient()
     
     @IBOutlet weak var galleryCollection: UICollectionView!
     @IBOutlet weak var galleryFlowLayout: UICollectionViewFlowLayout!
+    let minSpacing: CGFloat = 20
+    var contentSize: CGSize!
     
     var graphics = [Graphic]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.galleryFlowLayout.estimatedItemSize = CGSize(width: 100, height: 100)
         self.galleryCollection.dataSource = self
         self.galleryCollection.delegate = self
+        
+        // Calculating insets, content size and spacing size for flow layout
+        let width = galleryCollection.frame.width
+        let halfWidth = Float(width - minSpacing * 3)/2.0
+        self.contentSize = CGSize(width: CGFloat(floorf(halfWidth)), height: CGFloat(floorf(halfWidth)))
+        
+        // Apply sizes to flow layout
+        self.galleryFlowLayout.sectionInset = UIEdgeInsets(top: 16, left: minSpacing, bottom: 16, right: minSpacing)
+        self.galleryFlowLayout.minimumLineSpacing = minSpacing
+        self.galleryFlowLayout.minimumInteritemSpacing = floorf(halfWidth) == halfWidth ? minSpacing : minSpacing + 1
         
         client.places.gallery(id: place.id!){ meta, graphics in
             if (meta.isOk()){
@@ -249,6 +464,13 @@ class PlaceGalleryController: PlaceControllers, UICollectionViewDataSource, UICo
         return cell
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if (indexPath.row == 0) {
+            return CGSize(width: UIScreen.width - minSpacing * 2, height: 24)
+        }
+        return contentSize
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
     }
@@ -260,16 +482,6 @@ class PlaceGalleryController: PlaceControllers, UICollectionViewDataSource, UICo
  */
 class PlaceGalleryHeaderCell: UICollectionViewCell {
     @IBOutlet weak var headerLabel: UILabel!
-    var isHeightCalculated: Bool = false
-
-    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
-        if !isHeightCalculated {
-            layoutAttributes.frame.size.width = UIScreen.width - 24
-            layoutAttributes.frame.size.height = 40
-            isHeightCalculated = true
-        }
-        return layoutAttributes
-    }
 }
 
 /**
@@ -277,25 +489,85 @@ class PlaceGalleryHeaderCell: UICollectionViewCell {
  */
 class PlaceGalleryContentCell: UICollectionViewCell {
     @IBOutlet weak var galleryImageView: UIImageView!
-    var isHeightCalculated: Bool = false
     
     func render(graphic: Graphic) {
         galleryImageView.sd_setImage(with: graphic.imageURL())
     }
+}
+
+/**
+ Place controller for articles from blogger
+ in Articles Tab
+ */
+class PlaceArticleController: PlaceControllers, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    let client = MunchClient()
     
-    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
-        if !isHeightCalculated {
-            let workingWidth = UIScreen.width - 34
-            let halfWidth = CGFloat(floorf(Float(workingWidth/2.0)))
-            layoutAttributes.frame.size.width = halfWidth
-            layoutAttributes.frame.size.height = halfWidth
-            isHeightCalculated = true
+    @IBOutlet weak var articleCollection: UICollectionView!
+    @IBOutlet weak var articleFlowLayout: UICollectionViewFlowLayout!
+    
+    var articles = [Article]()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.articleCollection.dataSource = self
+        self.articleCollection.delegate = self
+        
+        // Calculating insets, content size and spacing size for flow layout
+        let minSpacing: CGFloat = 20
+        let width = articleCollection.frame.width
+        let halfWidth = Float(width - minSpacing * 3)/2.0
+        
+        // Apply sizes to flow layout
+        self.articleFlowLayout.itemSize = CGSize(width: CGFloat(floorf(halfWidth)), height: CGFloat(floorf(halfWidth)) * 1.8)
+        self.articleFlowLayout.sectionInset = UIEdgeInsets(top: 16, left: minSpacing, bottom: 32, right: minSpacing)
+        self.articleFlowLayout.minimumLineSpacing = minSpacing
+        self.articleFlowLayout.minimumInteritemSpacing = floorf(halfWidth) == halfWidth ? minSpacing : minSpacing + 1
+        
+        client.places.articles(id: place.id!){ meta, articles in
+            if (meta.isOk()){
+                self.articles += articles
+                self.articleCollection.reloadData()
+            }else{
+                self.present(meta.createAlert(), animated: true, completion: nil)
+            }
         }
-        return layoutAttributes
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.articleCollection.reloadData()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return articles.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PlaceArticleCell", for: indexPath) as! PlaceArticleCell
+        cell.render(article: articles[indexPath.row])
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
     }
 }
 
-
+/**
+ Article content cell for blogger content
+ */
+class PlaceArticleCell: UICollectionViewCell {
+    @IBOutlet weak var authorLabel: UILabel!
+    @IBOutlet weak var articleImageView: UIImageView!
+    @IBOutlet weak var sumaryLabel: UILabel!
+    
+    func render(article: Article) {
+        authorLabel.text = "@" + article.author!
+        articleImageView.sd_setImage(with: article.imageURL())
+        sumaryLabel.text = article.summary
+    }
+}
 
 
 

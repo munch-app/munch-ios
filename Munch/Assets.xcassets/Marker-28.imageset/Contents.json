@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "Marker-22.png",
+      "filename" : "Marker-28.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "Marker-44.png",
+      "filename" : "Marker-56.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "Marker-66.png",
+      "filename" : "Marker-84.png",
       "scale" : "3x"
     }
   ],
