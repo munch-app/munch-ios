@@ -21,13 +21,8 @@ class MunchTabBar: ESTabBar {
     }
     
     override var isTranslucent: Bool {
-        set {
-            
-        }
-        
-        get {
-            return true
-        }
+        set { }
+        get { return true }
     }
     
 }

@@ -95,14 +95,20 @@ struct Location {
     
 }
 
+enum MenuType: Int {
+    case Website = 10
+    case Image = 20
+    case Pdf = 30
+}
+
 struct Menu {
-    var type: Int?
+    var type: MenuType?
     
     var thumbUrl: String?
     var url: String?
     
     init(json: JSON) {
-        self.type = json["type"].int
+        self.type = MenuType(rawValue: json["type"].int!)
         
         self.thumbUrl = json["thumbUrl"].string
         self.url = json["url"].string
@@ -138,7 +144,9 @@ class HourFormatter {
         inFormatter.dateFormat = "HH:mm"
         
         outFormatter.locale = Locale(identifier: "en_US_POSIX")
-        outFormatter.dateFormat = "h:mm a"
+        outFormatter.dateFormat = "h:mma"
+        outFormatter.amSymbol = "am"
+        outFormatter.pmSymbol = "pm"
     }
     
     func format(string: String) -> String {
@@ -150,6 +158,35 @@ class HourFormatter {
         let open = instance.format(string: hour.open!)
         let close = instance.format(string: hour.close!)
         return "\(open) - \(close)"
+    }
+    
+    class func format(hours: [Hour]) -> String {
+        let sorted = hours.sorted(by: {$0.0.day! < $0.1.day!})
+        var lines = [String]()
+        var tuple: (String, Int, Int)! = nil
+        
+        func make() -> String {
+            if (tuple.1 == tuple.2) {
+                return "\(days[tuple.1]!): \(tuple.0)"
+            } else {
+                return "\(days[tuple.1]!) - \(days[tuple.2]!): \(tuple.0)"
+            }
+        }
+        
+        for hour in sorted {
+            if (tuple == nil) {
+                tuple = (hour.rangeText(), hour.day!, hour.day!)
+            } else {
+                if (tuple.0 == hour.rangeText() && (tuple.2 + 1) == hour.day) {
+                    tuple.2 = hour.day!
+                }else{
+                    lines.append(make())
+                    tuple = (hour.rangeText(), hour.day!, hour.day!)
+                }
+            }
+        }
+        lines.append(make())
+        return lines.joined(separator: "\n")
     }
 }
 

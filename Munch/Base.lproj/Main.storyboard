@@ -34,11 +34,10 @@
             <objects>
                 <navigationController id="7xl-cH-uk6" customClass="SearchNavigationController" customModule="Munch" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Search" image="Search-30" id="00C-rL-MTA" customClass="SearchTabBarItem" customModule="Munch" customModuleProvider="target"/>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="hnR-yl-wa6">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" barStyle="black" id="hnR-yl-wa6">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="barTintColor" red="1" green="0.70196078431372544" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     </navigationBar>
                     <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="5Q1-t2-Ba8">
                         <rect key="frame" x="0.0" y="623" width="375" height="44"/>

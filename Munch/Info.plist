@@ -43,5 +43,10 @@
 	</array>
 	<key>View controller-based status bar appearance equal</key>
 	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>comgooglemaps</string>
+		<string>instagram</string>
+	</array>
 </dict>
 </plist>
