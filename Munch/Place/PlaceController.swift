@@ -25,8 +25,7 @@ class PlaceViewController: MXSegmentedPagerController {
     
     @IBOutlet weak var placeRatingLabel: UILabel!
     @IBOutlet weak var placeNavBar: PlaceNavBar!
-    
-//    var edgeGesture: UIScreenEdgePanGestureRecognizer!
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,7 +37,6 @@ class PlaceViewController: MXSegmentedPagerController {
         // Setup 2 header UI, pages are auto setup using datasource and segues
         setupParallaxHeader()
         setupSegmentControl()
-//        setupEdgeGesture()
         
         // Finally render the place data
         render(place: place)
@@ -112,35 +110,6 @@ class PlaceViewController: MXSegmentedPagerController {
             self.segmentedPager(self.segmentedPager, didSelectViewWith: index)
         }
     }
-    
-//    func setupEdgeGesture() {
-//        edgeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handleEdgePan))
-//        edgeGesture.edges = .left
-//        view.addGestureRecognizer(edgeGesture)
-//    }
-//    
-//    /**
-//     Handle edge pan gesture
-//     */
-//    func handleEdgePan() {
-//        // Calculate the progress based on how far the user moved
-//        let translation = edgeGesture.translation(in: nil)
-//        let progress = translation.x / 1.5 / view.bounds.width
-//        switch edgeGesture.state {
-//        case .began:
-//            // begin the transition as normal
-//            Hero.shared.setDefaultAnimationForNextTransition(.pull(direction: .right))
-//            dismiss(animated: true, completion: nil)
-//        case .changed:
-//            Hero.shared.update(progress: Double(progress))
-//        default: // End the transition when user ended their touch
-//            if progress + edgeGesture.velocity(in: nil).x / view.bounds.width > 0.3 {
-//                Hero.shared.end()
-//            } else {
-//                Hero.shared.cancel()
-//            }
-//        }
-//    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

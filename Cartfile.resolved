@@ -1,5 +1,5 @@
 github "Alamofire/Alamofire" "4.4.0"
-github "Fuxingloh/KMNavigationBarTransition" "72b626d7cea77c758fc5c47cdc4c8e72585a9b23"
+github "Fuxingloh/KMNavigationBarTransition" "db22060d6aaffd1f883b88eba62b0c38accd3c60"
 github "Fuxingloh/MXSegmentedPager" "77b78f4e12cf595792bcb7427db6c6e0f4af9d45"
 github "SnapKit/SnapKit" "3.2.0"
 github "SwiftyJSON/SwiftyJSON" "3.1.4"

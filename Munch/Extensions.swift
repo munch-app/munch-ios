@@ -44,7 +44,7 @@ extension UIColor {
     // MARK: Color Palette of Munch App
     class var primary: UIColor {
         get {
-            return UIColor(hex: "FF9500")
+            return UIColor(hex: "FF5339")
         }
     }
 }
