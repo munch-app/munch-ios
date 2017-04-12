@@ -36,8 +36,7 @@ class SearchNavigationController: UINavigationController {
     
 }
 
-@IBDesignable
-class MunchSearchField: UITextField {
+@IBDesignable class MunchSearchField: UITextField {
     
     // Provides left padding for images
     override func leftViewRect(forBounds bounds: CGRect) -> CGRect {
@@ -360,10 +359,18 @@ class SearchBarController: UIViewController, UITextFieldDelegate {
     }
 }
 
-class SearchLocationController: SearchBarController {
+class SearchLocationController: SearchBarController, UITableViewDataSource, UITableViewDelegate {
+    
+    @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
+        
+        self.tableView.rowHeight = UITableViewAutomaticDimension
+        self.tableView.estimatedRowHeight = 44
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -373,6 +380,69 @@ class SearchLocationController: SearchBarController {
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         return textFieldShouldBeginEditing(textField, altTextField: searchBar.filterSearchField, segue: "segueToFilterSearch")
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if (section == 0) { // Detect my location section
+            return 1
+        } else {
+            return 2
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if (section == 0) { // Detect my location section
+            return nil
+        } else {
+            return "Recent Locations"
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        let header = view as! UITableViewHeaderFooterView
+        header.textLabel!.font = UIFont.boldSystemFont(ofSize: 13)
+        header.textLabel!.textColor = UIColor.black.withAlphaComponent(0.7)
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if (indexPath.section == 0) {
+            return tableView.dequeueReusableCell(withIdentifier: "DetectMyLocationCell") as! DetectMyLocationCell
+        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: "SearchLocationTextCell") as! SearchLocationTextCell
+        cell.render(title: "Bishan")
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // TODO something
+    }
+}
+
+class DetectMyLocationCell: UITableViewCell {
+    var needPrepare = true
+    
+    @IBOutlet weak var detectLocationButton: UIButton!
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        if (needPrepare){
+            detectLocationButton.layer.cornerRadius = 4.0
+            detectLocationButton.layer.borderWidth = 1.0
+            detectLocationButton.layer.borderColor = UIColor(hex: "007AFF").cgColor
+            needPrepare = false
+        }
+    }
+}
+
+class SearchLocationTextCell: UITableViewCell {
+    @IBOutlet weak var locationLabel: UILabel!
+    
+    func render(title: String) {
+        self.locationLabel.text = title
     }
 }
 
