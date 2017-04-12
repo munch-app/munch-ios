@@ -37,7 +37,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" barStyle="black" id="hnR-yl-wa6">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="1" green="0.70196078431372544" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="barTintColor" red="1" green="0.58431372549019611" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     </navigationBar>
                     <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="5Q1-t2-Ba8">
                         <rect key="frame" x="0.0" y="623" width="375" height="44"/>
@@ -54,7 +54,7 @@
         <!--Munch-->
         <scene sceneID="at4-yp-z4F">
             <objects>
-                <viewController id="rvU-t8-YyO" customClass="DiscoverViewController" customModule="Munch" sceneMemberID="viewController">
+                <viewController id="rvU-t8-YyO" customClass="SearchViewController" customModule="Munch" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="OVL-pU-1r3"/>
                         <viewControllerLayoutGuide type="bottom" id="lAp-Tg-10d"/>
@@ -76,7 +76,6 @@
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Isk-yZ-XwB">
                                                     <rect key="frame" x="8" y="10" width="140" height="100"/>
-                                                    <color key="backgroundColor" red="1" green="0.70196078431372544" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="140" id="DfN-aD-egd"/>
                                                         <constraint firstAttribute="height" constant="100" id="aLB-0T-J9k"/>
@@ -130,22 +129,93 @@
                     </navigationItem>
                     <connections>
                         <outlet property="discoverTableView" destination="L23-l9-tMR" id="cpt-dO-lXo"/>
-                        <segue destination="YzG-WR-xHj" kind="show" identifier="segueToPlaceStoryboard" id="m6G-UP-8LY"/>
+                        <outlet property="searchBar" destination="lKG-Hw-psy" id="uXF-Ke-KMO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="I5A-Ey-XOU" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <view contentMode="scaleToFill" id="lKG-Hw-psy">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="154"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <subviews>
+                        <textField clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Search for cuisines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="OGM-aW-fAp" customClass="MunchSearchField" customModule="Munch" customModuleProvider="target">
+                            <rect key="frame" x="13" y="110" width="349" height="32"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="32" id="vxQ-uj-LEQ"/>
+                            </constraints>
+                            <nil key="textColor"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <textInputTraits key="textInputTraits"/>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="image" keyPath="leftImage" value="SC-Search-18"/>
+                                <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                    <color key="value" white="0.17999999999999999" alpha="1" colorSpace="calibratedWhite"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="number" keyPath="leftImagePadding">
+                                    <real key="value" value="1"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                    <integer key="value" value="4"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="number" keyPath="leftImageWidth">
+                                    <real key="value" value="32"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="number" keyPath="leftImageSize">
+                                    <real key="value" value="18"/>
+                                </userDefinedRuntimeAttribute>
+                            </userDefinedRuntimeAttributes>
+                        </textField>
+                        <textField clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Search for location" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="foN-BY-S8S" customClass="MunchSearchField" customModule="Munch" customModuleProvider="target">
+                            <rect key="frame" x="13" y="68" width="349" height="32"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="32" id="h7N-0k-ocS"/>
+                            </constraints>
+                            <nil key="textColor"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <textInputTraits key="textInputTraits"/>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="image" keyPath="leftImage" value="SC-Marker-20"/>
+                                <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                    <color key="value" white="0.17999999999999999" alpha="1" colorSpace="calibratedWhite"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="number" keyPath="leftImagePadding">
+                                    <real key="value" value="1"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                    <integer key="value" value="4"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="number" keyPath="leftImageWidth">
+                                    <real key="value" value="32"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="number" keyPath="leftImageSize">
+                                    <real key="value" value="20"/>
+                                </userDefinedRuntimeAttribute>
+                            </userDefinedRuntimeAttributes>
+                        </textField>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B7a-VY-o2r">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="64"/>
+                            <color key="backgroundColor" red="1" green="0.58431372549019611" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="64" id="qKP-TK-btQ"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" red="1" green="0.58431372549019611" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstItem="B7a-VY-o2r" firstAttribute="top" secondItem="lKG-Hw-psy" secondAttribute="top" id="36K-Se-Mz5"/>
+                        <constraint firstAttribute="trailing" secondItem="foN-BY-S8S" secondAttribute="trailing" constant="13" id="5QK-7N-rHV"/>
+                        <constraint firstAttribute="trailing" secondItem="B7a-VY-o2r" secondAttribute="trailing" id="KDB-lT-6Vb"/>
+                        <constraint firstItem="B7a-VY-o2r" firstAttribute="leading" secondItem="lKG-Hw-psy" secondAttribute="leading" id="Qhx-Xx-x0r"/>
+                        <constraint firstAttribute="bottom" secondItem="OGM-aW-fAp" secondAttribute="bottom" constant="12" id="SqY-4a-G5b"/>
+                        <constraint firstAttribute="trailing" secondItem="OGM-aW-fAp" secondAttribute="trailing" constant="13" id="Zhn-ZT-eAt"/>
+                        <constraint firstItem="OGM-aW-fAp" firstAttribute="top" secondItem="foN-BY-S8S" secondAttribute="bottom" constant="10" id="iGd-R0-ahf"/>
+                        <constraint firstItem="OGM-aW-fAp" firstAttribute="leading" secondItem="lKG-Hw-psy" secondAttribute="leading" constant="13" id="q22-2u-sCh"/>
+                        <constraint firstItem="foN-BY-S8S" firstAttribute="leading" secondItem="lKG-Hw-psy" secondAttribute="leading" constant="13" id="yF0-c1-5bk"/>
+                    </constraints>
+                </view>
             </objects>
             <point key="canvasLocation" x="885.60000000000002" y="-1317.3913043478262"/>
-        </scene>
-        <!--Place-->
-        <scene sceneID="kTF-Lh-Hn4">
-            <objects>
-                <viewControllerPlaceholder storyboardName="Place" id="YzG-WR-xHj" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" id="mym-c9-KE2"/>
-                </viewControllerPlaceholder>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="GPM-ww-aK9" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1594" y="-1318"/>
         </scene>
         <!--Munch Tab View Controller-->
         <scene sceneID="RpH-wx-3QP">
@@ -170,6 +240,8 @@
         </scene>
     </scenes>
     <resources>
+        <image name="SC-Marker-20" width="15" height="15"/>
+        <image name="SC-Search-18" width="14" height="14"/>
         <image name="Search-30" width="30" height="30"/>
         <image name="User-30" width="30" height="30"/>
     </resources>

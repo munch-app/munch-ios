@@ -6,14 +6,17 @@
 //  Copyright © 2017 Munch Technologies. All rights reserved.
 //
 
-import Foundation
+import Kingfisher
+
 import UIKit
-import SDWebImage
 import SnapKit
+import Hero
+
 import MXSegmentedPager
 
 class PlaceViewController: MXSegmentedPagerController {
     var place: Place!
+    var appLink: AppLink!
     
     let imageGradientBorder = UIView()
     @IBOutlet weak var placeHeaderView: UIView!
@@ -23,11 +26,25 @@ class PlaceViewController: MXSegmentedPagerController {
     @IBOutlet weak var placeRatingLabel: UILabel!
     @IBOutlet weak var placeNavBar: PlaceNavBar!
     
+//    var edgeGesture: UIScreenEdgePanGestureRecognizer!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.appLink = AppLink(controller: self)
+        
         self.segmentedPager.backgroundColor = UIColor.white
         self.segmentedPager.pager.isScrollEnabled = true // Scrolling of page from side to side
         
+        // Setup 2 header UI, pages are auto setup using datasource and segues
+        setupParallaxHeader()
+        setupSegmentControl()
+//        setupEdgeGesture()
+        
+        // Finally render the place data
+        render(place: place)
+    }
+    
+    func setupParallaxHeader() {
         // Parallax Header
         self.segmentedPager.parallaxHeader.view = placeHeaderView
         self.segmentedPager.parallaxHeader.mode = .fill
@@ -50,8 +67,12 @@ class PlaceViewController: MXSegmentedPagerController {
             make.right.equalTo(placeImageGradientView)
             make.bottom.equalTo(placeImageGradientView)
         }
-        
-        // Segmented Control customization
+    }
+    
+    /**
+     Segmented Control customization
+     */
+    func setupSegmentControl() {
         let control = self.segmentedPager.segmentedControl
         control.selectionIndicatorLocation = .none
         control.segmentWidthStyle = .fixed
@@ -90,10 +111,36 @@ class PlaceViewController: MXSegmentedPagerController {
         segmentedPager.segmentedControl.indexChangeBlock = { index in
             self.segmentedPager(self.segmentedPager, didSelectViewWith: index)
         }
-        
-        // Finally render the place data
-        render(place: place)
     }
+    
+//    func setupEdgeGesture() {
+//        edgeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handleEdgePan))
+//        edgeGesture.edges = .left
+//        view.addGestureRecognizer(edgeGesture)
+//    }
+//    
+//    /**
+//     Handle edge pan gesture
+//     */
+//    func handleEdgePan() {
+//        // Calculate the progress based on how far the user moved
+//        let translation = edgeGesture.translation(in: nil)
+//        let progress = translation.x / 1.5 / view.bounds.width
+//        switch edgeGesture.state {
+//        case .began:
+//            // begin the transition as normal
+//            Hero.shared.setDefaultAnimationForNextTransition(.pull(direction: .right))
+//            dismiss(animated: true, completion: nil)
+//        case .changed:
+//            Hero.shared.update(progress: Double(progress))
+//        default: // End the transition when user ended their touch
+//            if progress + edgeGesture.velocity(in: nil).x / view.bounds.width > 0.3 {
+//                Hero.shared.end()
+//            } else {
+//                Hero.shared.cancel()
+//            }
+//        }
+//    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -156,16 +203,19 @@ class PlaceViewController: MXSegmentedPagerController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let controller = segue.destination as? PlaceControllers {
             controller.place = place
+            controller.appLink = appLink
         }
     }
-    
+}
+
+extension PlaceViewController {
     /**
      Render place struct to place controller
      */
     func render(place: Place) {
         // Render image view
         if let imageURL = place.imageURL() {
-            self.placeImageView.sd_setImage(with: imageURL)
+            self.placeImageView.kf.setImage(with: imageURL)
         }
         // Render rating label
         let ratingColor = UIColor(hex: "5CB85C")
@@ -177,6 +227,87 @@ class PlaceViewController: MXSegmentedPagerController {
         self.placeNavBar.render(place: place)
     }
     
+    /**
+     All action button clicks is handled here
+     */
+    @IBAction func clickActionButton(_ sender: UIButton) {
+        if let title = sender.currentTitle {
+            switch(title){
+            case "Call":
+                if let phone = place.phone {
+                    appLink.openApp(phone: phone)
+                }
+            case "Map" :
+                if let address = place.location?.address {
+                    appLink.openApp(address: address)
+                }
+            default: break
+            }
+        }
+    }
+}
+
+/**
+ App link to open other iOS application
+ */
+class AppLink {
+    let controller: UIViewController
+    
+    init(controller: UIViewController) {
+        self.controller = controller
+    }
+    
+    /**
+     Open the address app
+     */
+    func openApp(address: String) {
+        let address = address.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
+        
+        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        if (UIApplication.shared.canOpenURL(URL(string:"http://maps.apple.com/")!)){
+            let appleMapAction = UIAlertAction(title: "Apple Maps", style: .default) { alert in
+                UIApplication.shared.open(URL(string:"http://maps.apple.com/?daddr=\(address)")!)
+            }
+            actionSheet.addAction(appleMapAction)
+        }
+        
+        if (UIApplication.shared.canOpenURL(URL(string:"comgooglemaps://")!)) {
+            let googleMapAction = UIAlertAction(title: "Google Maps", style: .default) { alert in
+                UIApplication.shared.open(URL(string:"comgooglemaps://?daddr=\(address)")!)
+            }
+            actionSheet.addAction(googleMapAction)
+        }
+        
+        //        if (UIApplication.shared.canOpenURL(URL(string:"waze://")!)) {
+        //            let wazeMapAction = UIAlertAction(title: "Waze", style: .default) { alert in
+        //                  UIApplication.shared.open(URL(string:"waze://?daddr=" + address)!)
+        //            }
+        //            actionSheet.addAction(wazeMapAction)
+        //        }
+        
+        // Present action sheet for user to choose map provider
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        controller.present(actionSheet, animated: true, completion:nil)
+    }
+    
+    /**
+     Open the phone app
+     */
+    func openApp(phone: String) {
+        let alert = UIAlertController(title: nil, message: "Call: \(phone)?", preferredStyle: .alert)
+        
+        if (UIApplication.shared.canOpenURL(URL(string:"http://maps.apple.com/")!)){
+            let callAction = UIAlertAction(title: "Call", style: .default) { alert in
+                if let url = URL(string: "telprompt:\(phone)") {
+                    UIApplication.shared.open(url)
+                }
+            }
+            alert.addAction(callAction)
+        }
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        controller.present(alert, animated: true, completion: nil)
+    }
 }
 
 /**
@@ -202,4 +333,5 @@ class PlaceNavBar: UIView {
  */
 class PlaceControllers: UIViewController {
     var place: Place!
+    var appLink: AppLink!
 }

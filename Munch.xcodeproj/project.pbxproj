@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		031C2F461E9CAE170022F0AF /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 031C2F451E9CAE170022F0AF /* Kingfisher.framework */; };
 		032F88FC1E82DFA300AD3818 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F88FB1E82DFA300AD3818 /* AppDelegate.swift */; };
 		032F89011E82DFA300AD3818 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 032F88FF1E82DFA300AD3818 /* Main.storyboard */; };
 		032F89031E82DFA300AD3818 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 032F89021E82DFA300AD3818 /* Assets.xcassets */; };
@@ -17,6 +18,7 @@
 		032F892E1E82EF3D00AD3818 /* Carthage in Resources */ = {isa = PBXBuildFile; fileRef = 032F892D1E82EF3D00AD3818 /* Carthage */; };
 		032F89311E82EF8B00AD3818 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89301E82EF8B00AD3818 /* Alamofire.framework */; };
 		032F89341E82F14A00AD3818 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89331E82F14A00AD3818 /* SwiftyJSON.framework */; };
+		034820581E9CB92A00B0076A /* SKPhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 034820571E9CB92A00B0076A /* SKPhotoBrowser.framework */; };
 		0375D39D1E9A120E000CB74E /* GalleryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0375D39C1E9A120E000CB74E /* GalleryController.swift */; };
 		0375D39F1E9A1244000CB74E /* GeneralController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0375D39E1E9A1244000CB74E /* GeneralController.swift */; };
 		037884991E8E4E3F006025B5 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 037884981E8E4E3F006025B5 /* SnapKit.framework */; };
@@ -27,7 +29,7 @@
 		039C39421E8D485400A28533 /* MXPagerView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C39411E8D485400A28533 /* MXPagerView.framework */; };
 		039C39441E8D485800A28533 /* MXParallaxHeader.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C39431E8D485800A28533 /* MXParallaxHeader.framework */; };
 		03CF0A9C1E96A7B100A3FD1F /* ESTabBarController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03CF0A9B1E96A7B100A3FD1F /* ESTabBarController.framework */; };
-		03CF0A9E1E96ABC600A3FD1F /* TabViewControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CF0A9D1E96ABC600A3FD1F /* TabViewControllers.swift */; };
+		03CF0A9E1E96ABC600A3FD1F /* TabControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CF0A9D1E96ABC600A3FD1F /* TabControllers.swift */; };
 		03CF0AA21E97AA3C00A3FD1F /* Egress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CF0A9F1E97AA3C00A3FD1F /* Egress.swift */; };
 		03CF0AA31E97AA3C00A3FD1F /* Ingress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CF0AA01E97AA3C00A3FD1F /* Ingress.swift */; };
 		03CF0AA41E97AA3C00A3FD1F /* MunchApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CF0AA11E97AA3C00A3FD1F /* MunchApi.swift */; };
@@ -36,11 +38,12 @@
 		03D3FEE41E89494300ACFF50 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89301E82EF8B00AD3818 /* Alamofire.framework */; };
 		03D3FEE51E89494600ACFF50 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89331E82F14A00AD3818 /* SwiftyJSON.framework */; };
 		03D3FEF01E8A647E00ACFF50 /* SwiftLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */; };
-		03D3FEF31E8A8DA500ACFF50 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEF21E8A8DA500ACFF50 /* SDWebImage.framework */; };
 		03D3FEF41E8A8DB500ACFF50 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEF21E8A8DA500ACFF50 /* SDWebImage.framework */; };
 		03D3FEFF1E8ABEE300ACFF50 /* Place.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 03D3FEFC1E8ABEE300ACFF50 /* Place.storyboard */; };
 		03D3FF001E8ABEE300ACFF50 /* PlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FEFD1E8ABEE300ACFF50 /* PlaceController.swift */; };
 		03D3FF0B1E8D035100ACFF50 /* KMNavigationBarTransition.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FF0A1E8D035100ACFF50 /* KMNavigationBarTransition.framework */; };
+		03D529611E9D03C0003D5350 /* FlexibleHeightBar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D529601E9D03C0003D5350 /* FlexibleHeightBar.framework */; };
+		03D88C151E9DF412005F825B /* Hero.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D88C141E9DF412005F825B /* Hero.framework */; };
 		03EE235E1E83039A009AFBFC /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03EE235D1E83039A009AFBFC /* MapKit.framework */; };
 		03EE23601E83342F009AFBFC /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EE235F1E83342F009AFBFC /* SearchController.swift */; };
 /* End PBXBuildFile section */
@@ -63,6 +66,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		031C2F3F1E9AADD60022F0AF /* NYTPhotoViewer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NYTPhotoViewer.framework; path = Carthage/Build/iOS/NYTPhotoViewer.framework; sourceTree = "<group>"; };
+		031C2F411E9AADDB0022F0AF /* NYTPhotoViewerCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NYTPhotoViewerCore.framework; path = Carthage/Build/iOS/NYTPhotoViewerCore.framework; sourceTree = "<group>"; };
+		031C2F431E9AEFC10022F0AF /* FLAnimatedImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLAnimatedImage.framework; path = Carthage/Build/iOS/FLAnimatedImage.framework; sourceTree = "<group>"; };
+		031C2F451E9CAE170022F0AF /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
 		032F88F81E82DFA300AD3818 /* Munch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Munch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		032F88FB1E82DFA300AD3818 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		032F89001E82DFA300AD3818 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -79,6 +86,8 @@
 		032F892D1E82EF3D00AD3818 /* Carthage */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Carthage; sourceTree = "<group>"; };
 		032F89301E82EF8B00AD3818 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		032F89331E82F14A00AD3818 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
+		034820551E9CB3C400B0076A /* ImageViewer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageViewer.framework; path = Carthage/Build/iOS/ImageViewer.framework; sourceTree = "<group>"; };
+		034820571E9CB92A00B0076A /* SKPhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SKPhotoBrowser.framework; path = Carthage/Build/iOS/SKPhotoBrowser.framework; sourceTree = "<group>"; };
 		0375D39C1E9A120E000CB74E /* GalleryController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryController.swift; sourceTree = "<group>"; };
 		0375D39E1E9A1244000CB74E /* GeneralController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralController.swift; sourceTree = "<group>"; };
 		037884981E8E4E3F006025B5 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Carthage/Build/iOS/SnapKit.framework; sourceTree = "<group>"; };
@@ -88,7 +97,7 @@
 		039C39411E8D485400A28533 /* MXPagerView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXPagerView.framework; path = Carthage/Build/iOS/MXPagerView.framework; sourceTree = "<group>"; };
 		039C39431E8D485800A28533 /* MXParallaxHeader.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXParallaxHeader.framework; path = Carthage/Build/iOS/MXParallaxHeader.framework; sourceTree = "<group>"; };
 		03CF0A9B1E96A7B100A3FD1F /* ESTabBarController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ESTabBarController.framework; path = Carthage/Build/iOS/ESTabBarController.framework; sourceTree = "<group>"; };
-		03CF0A9D1E96ABC600A3FD1F /* TabViewControllers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewControllers.swift; sourceTree = "<group>"; };
+		03CF0A9D1E96ABC600A3FD1F /* TabControllers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabControllers.swift; sourceTree = "<group>"; };
 		03CF0A9F1E97AA3C00A3FD1F /* Egress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Egress.swift; path = Api/Egress.swift; sourceTree = "<group>"; };
 		03CF0AA01E97AA3C00A3FD1F /* Ingress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Ingress.swift; path = Api/Ingress.swift; sourceTree = "<group>"; };
 		03CF0AA11E97AA3C00A3FD1F /* MunchApi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MunchApi.swift; path = Api/MunchApi.swift; sourceTree = "<group>"; };
@@ -100,6 +109,10 @@
 		03D3FEFC1E8ABEE300ACFF50 /* Place.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Place.storyboard; path = Place/Place.storyboard; sourceTree = "<group>"; };
 		03D3FEFD1E8ABEE300ACFF50 /* PlaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceController.swift; path = Place/PlaceController.swift; sourceTree = "<group>"; };
 		03D3FF0A1E8D035100ACFF50 /* KMNavigationBarTransition.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KMNavigationBarTransition.framework; path = Carthage/Build/iOS/KMNavigationBarTransition.framework; sourceTree = "<group>"; };
+		03D5295B1E9CFB0C003D5350 /* TransitionTreasury.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TransitionTreasury.framework; path = Carthage/Build/iOS/TransitionTreasury.framework; sourceTree = "<group>"; };
+		03D5295D1E9CFB17003D5350 /* TransitionAnimation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TransitionAnimation.framework; path = Carthage/Build/iOS/TransitionAnimation.framework; sourceTree = "<group>"; };
+		03D529601E9D03C0003D5350 /* FlexibleHeightBar.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlexibleHeightBar.framework; path = Carthage/Build/iOS/FlexibleHeightBar.framework; sourceTree = "<group>"; };
+		03D88C141E9DF412005F825B /* Hero.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Hero.framework; path = Carthage/Build/iOS/Hero.framework; sourceTree = "<group>"; };
 		03EE235D1E83039A009AFBFC /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		03EE235F1E83342F009AFBFC /* SearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -109,18 +122,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				039C39401E8D484A00A28533 /* HMSegmentedControl.framework in Frameworks */,
-				039C39441E8D485800A28533 /* MXParallaxHeader.framework in Frameworks */,
-				0378849D1E8E5E39006025B5 /* SwiftLocation.framework in Frameworks */,
-				039C39421E8D485400A28533 /* MXPagerView.framework in Frameworks */,
-				03CF0A9C1E96A7B100A3FD1F /* ESTabBarController.framework in Frameworks */,
-				039C393F1E8D47F500A28533 /* MXSegmentedPager.framework in Frameworks */,
+				03D88C151E9DF412005F825B /* Hero.framework in Frameworks */,
 				03EE235E1E83039A009AFBFC /* MapKit.framework in Frameworks */,
-				03D3FF0B1E8D035100ACFF50 /* KMNavigationBarTransition.framework in Frameworks */,
+				0378849D1E8E5E39006025B5 /* SwiftLocation.framework in Frameworks */,
 				032F89311E82EF8B00AD3818 /* Alamofire.framework in Frameworks */,
 				032F89341E82F14A00AD3818 /* SwiftyJSON.framework in Frameworks */,
+				031C2F461E9CAE170022F0AF /* Kingfisher.framework in Frameworks */,
 				037884991E8E4E3F006025B5 /* SnapKit.framework in Frameworks */,
-				03D3FEF31E8A8DA500ACFF50 /* SDWebImage.framework in Frameworks */,
+				039C39401E8D484A00A28533 /* HMSegmentedControl.framework in Frameworks */,
+				039C393F1E8D47F500A28533 /* MXSegmentedPager.framework in Frameworks */,
+				039C39421E8D485400A28533 /* MXPagerView.framework in Frameworks */,
+				039C39441E8D485800A28533 /* MXParallaxHeader.framework in Frameworks */,
+				03D3FF0B1E8D035100ACFF50 /* KMNavigationBarTransition.framework in Frameworks */,
+				03CF0A9C1E96A7B100A3FD1F /* ESTabBarController.framework in Frameworks */,
+				034820581E9CB92A00B0076A /* SKPhotoBrowser.framework in Frameworks */,
+				03D529611E9D03C0003D5350 /* FlexibleHeightBar.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -174,7 +190,7 @@
 				032F89351E82F1F300AD3818 /* Api */,
 				032F88FB1E82DFA300AD3818 /* AppDelegate.swift */,
 				032F88FF1E82DFA300AD3818 /* Main.storyboard */,
-				03CF0A9D1E96ABC600A3FD1F /* TabViewControllers.swift */,
+				03CF0A9D1E96ABC600A3FD1F /* TabControllers.swift */,
 				03EE235F1E83342F009AFBFC /* SearchController.swift */,
 				03D3FEF91E8ABDF500ACFF50 /* Place */,
 				032F89021E82DFA300AD3818 /* Assets.xcassets */,
@@ -207,6 +223,16 @@
 		032F892F1E82EF8B00AD3818 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				03D88C141E9DF412005F825B /* Hero.framework */,
+				03D529601E9D03C0003D5350 /* FlexibleHeightBar.framework */,
+				03D5295D1E9CFB17003D5350 /* TransitionAnimation.framework */,
+				03D5295B1E9CFB0C003D5350 /* TransitionTreasury.framework */,
+				034820571E9CB92A00B0076A /* SKPhotoBrowser.framework */,
+				034820551E9CB3C400B0076A /* ImageViewer.framework */,
+				031C2F451E9CAE170022F0AF /* Kingfisher.framework */,
+				031C2F431E9AEFC10022F0AF /* FLAnimatedImage.framework */,
+				031C2F411E9AADDB0022F0AF /* NYTPhotoViewerCore.framework */,
+				031C2F3F1E9AADD60022F0AF /* NYTPhotoViewer.framework */,
 				03CF0A9B1E96A7B100A3FD1F /* ESTabBarController.framework */,
 				037884981E8E4E3F006025B5 /* SnapKit.framework */,
 				039C39431E8D485800A28533 /* MXParallaxHeader.framework */,
@@ -389,7 +415,7 @@
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftyJSON.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/SDWebImage.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Kingfisher.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/KMNavigationBarTransition.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/MXSegmentedPager.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/MXPagerView.framework",
@@ -398,6 +424,9 @@
 				"$(SRCROOT)/Carthage/Build/iOS/SnapKit.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftLocation.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ESTabBarController.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SKPhotoBrowser.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/FlexibleHeightBar.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Hero.framework",
 			);
 			outputPaths = (
 			);
@@ -418,7 +447,7 @@
 				03CF0AA31E97AA3C00A3FD1F /* Ingress.swift in Sources */,
 				03EE23601E83342F009AFBFC /* SearchController.swift in Sources */,
 				03D3FF001E8ABEE300ACFF50 /* PlaceController.swift in Sources */,
-				03CF0A9E1E96ABC600A3FD1F /* TabViewControllers.swift in Sources */,
+				03CF0A9E1E96ABC600A3FD1F /* TabControllers.swift in Sources */,
 				032F88FC1E82DFA300AD3818 /* AppDelegate.swift in Sources */,
 				03CF0AA61E9A037800A3FD1F /* ArticleController.swift in Sources */,
 				0378849B1E8E563E006025B5 /* Extensions.swift in Sources */,

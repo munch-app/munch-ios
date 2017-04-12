@@ -190,6 +190,8 @@ class HourFormatter {
     }
 }
 
+// TOOD enum HourDay
+
 struct Hour {
     var day: Int?
     var open: String?

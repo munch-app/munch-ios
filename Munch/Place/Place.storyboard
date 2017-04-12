@@ -19,10 +19,11 @@
                         <viewControllerLayoutGuide type="top" id="7ys-Iy-Ejf"/>
                         <viewControllerLayoutGuide type="bottom" id="UaO-Lh-Cin"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="gya-Nn-NV6">
+                    <view key="view" contentMode="scaleToFill" misplaced="YES" id="gya-Nn-NV6">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
                     </view>
                     <navigationItem key="navigationItem" id="WXA-mV-uXK">
                         <barButtonItem key="rightBarButtonItem" style="plain" id="GoH-6E-43T">
@@ -60,19 +61,17 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wDR-sc-TVy" customClass="PlaceNavBar" customModule="Munch" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="230" width="375" height="90"/>
                             <subviews>
-                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tpO-5b-bEw">
-                                    <rect key="frame" x="339" y="48" width="28" height="28"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <state key="normal" image="Marker-28"/>
-                                </button>
                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xcG-nZ-m7g">
-                                    <rect key="frame" x="8" y="45" width="275" height="36"/>
+                                    <rect key="frame" x="8" y="45" width="309" height="36"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="10" maxY="0.0"/>
                                     <state key="normal" title="Call" image="Phone Filled-458eff-20">
                                         <color key="titleColor" red="0.27058823529411763" green="0.55686274509803924" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                     </state>
+                                    <connections>
+                                        <action selector="clickActionButton:" destination="RES-qc-Abz" eventType="touchUpInside" id="gsw-pp-a0T"/>
+                                    </connections>
                                 </button>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Restaurant Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r0s-0U-684">
                                     <rect key="frame" x="8" y="15" width="359" height="26"/>
@@ -98,10 +97,13 @@
                                         <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                     </userDefinedRuntimeAttributes>
                                 </label>
-                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7Cs-BC-km0">
-                                    <rect key="frame" x="301" y="48" width="28" height="28"/>
+                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tpO-5b-bEw">
+                                    <rect key="frame" x="331" y="48" width="30" height="30"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <state key="normal" image="Hearts-28"/>
+                                    <state key="normal" title="Map" image="Map Marker-30"/>
+                                    <connections>
+                                        <action selector="clickActionButton:" destination="RES-qc-Abz" eventType="touchUpInside" id="s87-Vc-U4N"/>
+                                    </connections>
                                 </button>
                             </subviews>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -156,18 +158,18 @@
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PlaceGalleryHeaderCell" id="bUI-jM-PIu" customClass="PlaceGalleryHeaderCell" customModule="Munch" customModuleProvider="target">
-                                        <rect key="frame" x="12" y="10" width="351" height="24"/>
+                                        <rect key="frame" x="12" y="10" width="351" height="26"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="351" height="24"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="351" height="26"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Instagram-24" translatesAutoresizingMaskIntoConstraints="NO" id="Lga-71-Lfi">
-                                                    <rect key="frame" x="0.0" y="0.0" width="24" height="24"/>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Instagram-26" translatesAutoresizingMaskIntoConstraints="NO" id="Lga-71-Lfi">
+                                                    <rect key="frame" x="0.0" y="0.0" width="26" height="26"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="User Generated Content" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jMW-3i-aNb">
-                                                    <rect key="frame" x="29" y="0.0" width="322" height="24"/>
+                                                    <rect key="frame" x="29" y="1" width="322" height="24"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
                                                     <nil key="textColor"/>
@@ -175,13 +177,13 @@
                                                 </label>
                                             </subviews>
                                         </view>
-                                        <size key="customSize" width="351" height="24"/>
+                                        <size key="customSize" width="351" height="26"/>
                                         <connections>
                                             <outlet property="headerLabel" destination="jMW-3i-aNb" id="Nj5-da-rD6"/>
                                         </connections>
                                     </collectionViewCell>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PlaceGalleryContentCell" id="BsW-tY-PCm" customClass="PlaceGalleryContentCell" customModule="Munch" customModuleProvider="target">
-                                        <rect key="frame" x="112.5" y="44" width="150" height="150"/>
+                                        <rect key="frame" x="112.5" y="46" width="150" height="150"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
@@ -509,9 +511,8 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Hearts-28" width="28" height="28"/>
-        <image name="Instagram-24" width="24" height="24"/>
-        <image name="Marker-28" width="28" height="28"/>
+        <image name="Instagram-26" width="26" height="26"/>
+        <image name="Map Marker-30" width="30" height="30"/>
         <image name="Phone Filled-458eff-20" width="20" height="20"/>
     </resources>
 </document>

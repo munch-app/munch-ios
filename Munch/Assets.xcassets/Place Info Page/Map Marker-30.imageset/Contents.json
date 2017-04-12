@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "Hearts-28.png",
+      "filename" : "Map Marker-30.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "Hearts-56.png",
+      "filename" : "Map Marker-60.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "Hearts-84.png",
+      "filename" : "Map Marker-90.png",
       "scale" : "3x"
     }
   ],

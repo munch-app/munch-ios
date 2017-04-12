@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Kingfisher
 import UIKit
 
 /**
@@ -35,7 +36,7 @@ class PlaceGalleryController: PlaceControllers, UICollectionViewDataSource, UICo
         self.contentSize = CGSize(width: CGFloat(floorf(halfWidth)), height: CGFloat(floorf(halfWidth)))
         
         // Apply sizes to flow layout
-        self.galleryFlowLayout.sectionInset = UIEdgeInsets(top: 16, left: minSpacing, bottom: 16, right: minSpacing)
+        self.galleryFlowLayout.sectionInset = UIEdgeInsets(top: 18, left: minSpacing, bottom: 16, right: minSpacing)
         self.galleryFlowLayout.minimumLineSpacing = minSpacing
         self.galleryFlowLayout.minimumInteritemSpacing = floorf(halfWidth) == halfWidth ? minSpacing : minSpacing + 1
         
@@ -69,7 +70,7 @@ class PlaceGalleryController: PlaceControllers, UICollectionViewDataSource, UICo
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if (indexPath.row == 0) {
-            return CGSize(width: UIScreen.width - minSpacing * 2, height: 24)
+            return CGSize(width: UIScreen.width - minSpacing * 2, height: 26)
         }
         return contentSize
     }
@@ -100,7 +101,7 @@ class PlaceGalleryContentCell: UICollectionViewCell {
     @IBOutlet weak var galleryImageView: UIImageView!
     
     func render(graphic: Graphic) {
-        galleryImageView.sd_setImage(with: graphic.imageURL())
+        galleryImageView.kf.setImage(with: graphic.imageURL())
     }
 }
 

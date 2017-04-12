@@ -40,16 +40,23 @@ extension UIColor {
         
         self.init(red: r, green: g, blue: b, alpha: a)
     }
+    
+    // MARK: Color Palette of Munch App
+    class var primary: UIColor {
+        get {
+            return UIColor(hex: "FF9500")
+        }
+    }
 }
 
 class UIBorder {
-    open class var onePixel: CGFloat {
+    class var onePixel: CGFloat {
         get {
             return 1/UIScreen.main.scale
         }
     }
 
-    open class var color: UIColor {
+    class var color: UIColor {
         get {
             return UIColor(hex: "C8C7CC")
         }
@@ -57,7 +64,7 @@ class UIBorder {
 }
 
 extension UIScreen {
-    open class var width: CGFloat {
+    class var width: CGFloat {
         get {
             return main.bounds.width
         }

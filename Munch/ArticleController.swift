@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Kingfisher
 import SafariServices
 
 /**
@@ -73,15 +74,6 @@ class PlaceArticleController: PlaceControllers, UICollectionViewDataSource, UICo
         safari.delegate = self
         present(safari, animated: true, completion: nil)
     }
-    
-    // MARK: Safari view done
-    
-    /**
-     Safari view done
-     */
-    func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
-        dismiss(animated: true, completion: nil)
-    }
 }
 
 /**
@@ -94,7 +86,7 @@ class PlaceArticleCell: UICollectionViewCell {
     
     func render(article: Article) {
         authorLabel.text = "@" + article.author!
-        articleImageView.sd_setImage(with: article.imageURL())
+        articleImageView.kf.setImage(with: article.imageURL())
         sumaryLabel.text = article.summary
     }
 }

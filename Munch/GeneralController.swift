@@ -8,7 +8,8 @@
 
 import Foundation
 import UIKit
-//import NYTPhotoViewer
+import Kingfisher
+import SKPhotoBrowser
 
 /**
  Place controller for general place data
@@ -102,7 +103,7 @@ class PlaceGeneralController: PlaceControllers, UITableViewDataSource, UITableVi
         switch items[indexPath.row].type {
         case "Menu":
             let cell = tableView.dequeueReusableCell(withIdentifier: "PlaceGeneralMenuCell", for: indexPath) as! PlaceGeneralMenuCell
-            cell.render(menus: place.menus)
+            cell.render(menus: place.menus, controller: self)
             return cell
         default: // All general text cell, render here
             let cell = tableView.dequeueReusableCell(withIdentifier: "PlaceGeneralTextCell", for: indexPath) as! PlaceGeneralTextCell
@@ -118,42 +119,49 @@ class PlaceGeneralController: PlaceControllers, UITableViewDataSource, UITableVi
         switch items[indexPath.row].type {
         case "Address":
             if let address = place.location?.address {
-                openMaps(address: address)
+                appLink.openApp(address: address)
+            }
+        case "Phone":
+            if let phone = place.phone {
+                appLink.openApp(phone: phone)
+            }
+        case "Menu":
+            if let menus = place.menus {
+                show(menus: menus.filter({$0.type == .Image}))
             }
         default:
             break
         }
     }
     
-    func openMaps(address: String) {
-        let address = address.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
-        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        
-        if (UIApplication.shared.canOpenURL(URL(string:"http://maps.apple.com/")!)){
-            let appleMapAction = UIAlertAction(title: "Apple Maps", style: .default) { alert in
-                UIApplication.shared.open(URL(string:"http://maps.apple.com/?daddr=" + address)!)
-            }
-            actionSheet.addAction(appleMapAction)
+    func show(menus: [Menu], startIndex: Int = 0) {
+        var images = [SKPhoto]()
+        for menu in menus {
+            let photo = SKPhoto.photoWithImageURL(menu.url!)
+            photo.shouldCachePhotoURLImage = false // you can use image cache by true(NSCache)
+            images.append(photo)
         }
         
-        if (UIApplication.shared.canOpenURL(URL(string:"comgooglemaps://")!)) {
-            let googleMapAction = UIAlertAction(title: "Google Maps", style: .default) { alert in
-                UIApplication.shared.open(URL(string:"comgooglemaps://?daddr=" + address)!)
-            }
-            actionSheet.addAction(googleMapAction)
-        }
-        
-        //        if (UIApplication.shared.canOpenURL(URL(string:"waze://")!)) {
-        //            let wazeMapAction = UIAlertAction(title: "Waze", style: .default) { alert in
-        //
-        //            }
-        //            actionSheet.addAction(wazeMapAction)
-        //        }
-        
-        // Present action sheet for user to choose map provider
-        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        present(actionSheet, animated: true, completion:nil)
+        SKPhotoBrowserOptions.displayStatusbar = true
+        SKPhotoBrowserOptions.displayAction = false
+        SKPhotoBrowserOptions.displayCloseButton = false
+        SKPhotoBrowserOptions.displayDeleteButton = false
+        let browser = MenuPhotoBrowser(photos: images)
+        browser.initializePageIndex(startIndex)
+        present(browser, animated: true, completion: nil)
     }
+}
+
+/**
+ Override SK Photo Browser
+ for Custom menu image browser
+ */
+class MenuPhotoBrowser: SKPhotoBrowser {
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
 }
 
 struct PlaceGeneralCellItem {
@@ -200,6 +208,7 @@ class PlaceGeneralMenuCell: UITableViewCell, UICollectionViewDataSource, UIColle
     var needPrepare: Bool = true
     var contentSize: CGSize!
     var menus = [Menu]()
+    var controller: PlaceGeneralController!
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -220,11 +229,14 @@ class PlaceGeneralMenuCell: UITableViewCell, UICollectionViewDataSource, UIColle
     /**
      Render, only filter images to render
      */
-    func render(menus: [Menu]?) {
-        if let menus = menus {
-            self.menus = menus.filter({$0.type == .Image})
+    func render(menus: [Menu]?, controller: PlaceGeneralController) {
+        if (self.controller == nil) {
+            self.controller = controller
+            if let menus = menus {
+                self.menus = menus.filter({$0.type == .Image})
+            }
+            menuCollectionView.reloadData()
         }
-        menuCollectionView.reloadData()
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -241,10 +253,11 @@ class PlaceGeneralMenuCell: UITableViewCell, UICollectionViewDataSource, UIColle
         return contentSize
     }
     
+    /**
+     Click and show to current menu
+     */
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        //        let photosViewController = NYTPhotosViewController(photos: self.photos)
-        //        photosViewController.delegate = self
-        //        presentViewController(photosViewController, animated: true, completion: nil)
+        self.controller.show(menus: menus, startIndex: indexPath.row)
     }
 }
 
@@ -255,6 +268,6 @@ class MenuContentCell: UICollectionViewCell {
     @IBOutlet weak var thumbImageView: UIImageView!
     
     func render(menu: Menu) {
-        thumbImageView.sd_setImage(with: menu.thumbImageURL())
+        thumbImageView.kf.setImage(with: menu.thumbImageURL())
     }
 }

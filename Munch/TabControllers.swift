@@ -10,6 +10,8 @@ import Foundation
 import UIKit
 import ESTabBarController
 
+// MARK: Tab Bars
+
 class MunchTabViewController: ESTabBarController {
     
 }
@@ -24,20 +26,6 @@ class MunchTabBar: ESTabBar {
         set { }
         get { return true }
     }
-    
-}
-
-class SearchNavigationController: UINavigationController {
-    
-    /**
-     View did load will set the selected index to first tab
-     This is required due to a bug in ESTabBarItem not allowing NSCoder
-     */
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.tabBarController?.selectedIndex = 0
-    }
-    
 }
 
 /**

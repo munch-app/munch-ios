@@ -88,8 +88,8 @@ public struct MetaJSON {
 }
 
 class MunchClient: RestfulClient {
-//    static let baseUrl = "http://192.168.1.197:8088/v1"
-    static let baseUrl = "http://10.0.1.8:8088/v1"
+    static let baseUrl = "http://192.168.1.197:8088/v1"
+//    static let baseUrl = "http://10.0.1.8:8088/v1"
     
     let places = PlaceClient(baseUrl)
     
