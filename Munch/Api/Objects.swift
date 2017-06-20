@@ -32,17 +32,14 @@ struct Place {
     init(json: JSON){
         self.id = json["id"].string
         
-        // Basic
         self.name = json["name"].string
         self.phone = json["phone"].string
         self.website = json["website"].string
         self.description = json["description"].string
         
-        // One
         self.price = Price(json: json["price"])
         self.location = Location(json: json["location"])
         
-        // Many
         self.tags = json["tags"].map({$0.1.stringValue})
         self.hours = json["hours"].map({Hour(json: $0.1)})
     }
@@ -86,13 +83,15 @@ struct Place {
  This is a input and output data
  */
 struct SearchQuery {
+    static let d2r = Double.pi / 180.0
+    static let r2d = 180 / Double.pi
+    static let earthRadius = 6371.0
+    
     var from: Int?
     var size: Int?
     
     var query: String?
-    var distance: Distance?
     var polygon: Polygon?
-    var filters: Filters?
 
     init() {
         
@@ -101,17 +100,29 @@ struct SearchQuery {
     init(json: JSON) {
     }
     
-    struct Distance {
-        var distance: String
-        var latLng: String
-    }
-    
     struct Polygon {
         var points: [String]
+        
+        init(lat: Double, lng: Double, radius: Double, size: Int) {
+            let rlat = radius / earthRadius * r2d
+            let rlng = rlat / cos(lat * d2r)
+            
+            // Create Points in latLng String array
+            points = [String]()
+            
+            // Create all points for polygon circle with n size
+            for i in 0...size-1 {
+                let theta = Double.pi * (Double(i) / (Double(size)/2))
+                let ex = lng + (rlng * cos(theta))
+                let ey = lat + (rlat * sin(theta))
+                points.append("\(ey),\(ex)")
+            }
+
+        }
     }
     
     struct Filters {
-        // TODO
+        // TODO in the Future once finalized
     }
 }
 
