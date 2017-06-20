@@ -22,7 +22,7 @@ class PlaceGalleryController: PlaceControllers, UICollectionViewDataSource, UICo
     let minSpacing: CGFloat = 20
     var contentSize: CGSize!
     
-    var graphics = [Graphic]()
+    var medias = [Media]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,9 +40,9 @@ class PlaceGalleryController: PlaceControllers, UICollectionViewDataSource, UICo
         self.galleryFlowLayout.minimumLineSpacing = minSpacing
         self.galleryFlowLayout.minimumInteritemSpacing = floorf(halfWidth) == halfWidth ? minSpacing : minSpacing + 1
         
-        client.places.gallery(id: place.id!){ meta, graphics in
+        client.places.gallery(id: place.id!){ meta, medias in
             if (meta.isOk()){
-                self.graphics += graphics
+                self.medias += medias
                 self.galleryCollection.reloadData()
             }else{
                 self.present(meta.createAlert(), animated: true, completion: nil)
@@ -56,7 +56,7 @@ class PlaceGalleryController: PlaceControllers, UICollectionViewDataSource, UICo
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return graphics.count + 1
+        return medias.count + 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -64,7 +64,7 @@ class PlaceGalleryController: PlaceControllers, UICollectionViewDataSource, UICo
             return collectionView.dequeueReusableCell(withReuseIdentifier: "PlaceGalleryHeaderCell", for: indexPath) as! PlaceGalleryHeaderCell
         }
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PlaceGalleryContentCell", for: indexPath) as! PlaceGalleryContentCell
-        cell.render(graphic: graphics[indexPath.row - 1])
+        cell.render(media: medias[indexPath.row - 1])
         return cell
     }
     
@@ -100,8 +100,8 @@ class PlaceGalleryHeaderCell: UICollectionViewCell {
 class PlaceGalleryContentCell: UICollectionViewCell {
     @IBOutlet weak var galleryImageView: UIImageView!
     
-    func render(graphic: Graphic) {
-        galleryImageView.kf.setImage(with: graphic.imageURL())
+    func render(media: Media) {
+        galleryImageView.kf.setImage(with: media.imageURL())
     }
 }
 

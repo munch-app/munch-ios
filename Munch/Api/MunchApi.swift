@@ -58,13 +58,25 @@ public class RestfulClient {
  */
 public struct MetaJSON {
     public let code: Int!
-    public let errorType: String?
-    public let errorMessage: String?
+    public let error: Error?
+    
+    public struct Error {
+        public let type: String?
+        public let message: String?
+        
+        public init(errorJson: JSON){
+            self.type = errorJson["type"].string
+            self.message = errorJson["message"].string
+        }
+    }
     
     public init(metaJson: JSON){
         self.code = metaJson["code"].intValue
-        self.errorType = metaJson["errorType"].string
-        self.errorMessage = metaJson["errorMessage"].string
+        if metaJson["error"].exists() {
+            self.error = Error(errorJson: metaJson["error"])
+        }else{
+            self.error = nil
+        }
     }
     
     /**
@@ -79,8 +91,8 @@ public struct MetaJSON {
      easily print error message as alert dialog
      */
     public func createAlert() -> UIAlertController {
-        let type = errorType ?? "Unknown Error"
-        let message = errorMessage ?? "An unknown error has occured."
+        let type = error?.type ?? "Unknown Error"
+        let message = error?.message ?? "An unknown error has occured."
         let alert = UIAlertController(title: type, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
         return alert
@@ -90,8 +102,8 @@ public struct MetaJSON {
 class MunchClient: RestfulClient {
     static let instance = MunchClient()
     
-    static let baseUrl = "http://192.168.1.197:8088/v1"
-//    static let baseUrl = "http://10.0.1.8:8088/v1"
+    static let baseUrl = "http://192.168.1.197:8800/v1"
+//    static let baseUrl = "http://10.0.1.8:8800/v1"
     
     let places = PlaceClient(baseUrl)
     
@@ -103,26 +115,20 @@ class MunchClient: RestfulClient {
 
 class PlaceClient: RestfulClient {
     
-    func discover(spatial: Spatial, callback: @escaping (_ meta: MetaJSON, _ places: [Place]) -> Void) {
-        super.post("/places/discover", ["spatial": spatial.parameters()]) { meta, json in
-            callback(meta, json["data"].arrayValue.map({Place(json: $0)}))
-        }
-    }
-    
     func get(id: String, callback: @escaping (_ meta: MetaJSON, _ place: Place) -> Void) {
         super.get("/places/\(id)") { meta, json in
             callback(meta, Place(json: json["data"]))
         }
     }
     
-    func gallery(id: String, callback: @escaping (_ meta: MetaJSON, _ graphics: [Graphic]) -> Void) {
-        super.get("/places/\(id)/gallery") { meta, json in
-            callback(meta, json["data"].arrayValue.map({Graphic(json: $0)}))
+    func gallery(id: String, callback: @escaping (_ meta: MetaJSON, _ medias: [Media]) -> Void) {
+        super.get("/places/\(id)/gallery/list") { meta, json in
+            callback(meta, json["data"].arrayValue.map({Media(json: $0)}))
         }
     }
     
     func articles(id: String, callback: @escaping (_ meta: MetaJSON, _ articles: [Article]) -> Void) {
-        super.get("/places/\(id)/articles") { meta, json in
+        super.get("/places/\(id)/articles/list") { meta, json in
             callback(meta, json["data"].arrayValue.map({Article(json: $0)}))
         }
     }
