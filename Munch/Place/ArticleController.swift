@@ -85,9 +85,9 @@ class PlaceArticleCell: UICollectionViewCell {
     @IBOutlet weak var sumaryLabel: UILabel!
     
     func render(article: Article) {
-        authorLabel.text = "@" + article.author!
-        articleImageView.kf.setImage(with: article.imageURL())
-        sumaryLabel.text = article.summary
+        authorLabel.text = "@" + article.brand!
+//        articleImageView.kf.setImage(with: article.imageURL())
+        sumaryLabel.text = article.title
     }
 }
 

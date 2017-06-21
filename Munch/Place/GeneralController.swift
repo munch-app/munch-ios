@@ -32,18 +32,18 @@ class PlaceGeneralController: PlaceControllers, UITableViewDataSource, UITableVi
     }
     
     func prepareCellItems(place: Place) {
-        // Menu Cell
-        if let menus = place.menus {
-            if (!menus.isEmpty) {
-                items.append(PlaceGeneralCellItem(type: "Menu"))
-            }
-        }
+//        // Menu Cell
+//        if let menus = place.menus {
+//            if (!menus.isEmpty) {
+//                items.append(PlaceGeneralCellItem(type: "Menu"))
+//            }
+//        }
         
         // Establishment Icon Label Cell
-        if let list = place.establishments {
-            if (!list.isEmpty) {
-                var item = PlaceGeneralCellItem(type: "Establishment")
-                item.text = list.first
+        if let tags = place.tags {
+            if (!tags.isEmpty) {
+                var item = PlaceGeneralCellItem(type: "Label")
+                item.text = tags.first
                 item.icon = UIImage(named: "Restaurant-26")
                 items.append(item)
             }
@@ -101,10 +101,10 @@ class PlaceGeneralController: PlaceControllers, UITableViewDataSource, UITableVi
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch items[indexPath.row].type {
-        case "Menu":
-            let cell = tableView.dequeueReusableCell(withIdentifier: "PlaceGeneralMenuCell", for: indexPath) as! PlaceGeneralMenuCell
-            cell.render(menus: place.menus, controller: self)
-            return cell
+//        case "Menu":
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "PlaceGeneralMenuCell", for: indexPath) as! PlaceGeneralMenuCell
+//            cell.render(menus: place.menus, controller: self)
+//            return cell
         default: // All general text cell, render here
             let cell = tableView.dequeueReusableCell(withIdentifier: "PlaceGeneralTextCell", for: indexPath) as! PlaceGeneralTextCell
             cell.render(item: items[indexPath.row])
@@ -125,31 +125,31 @@ class PlaceGeneralController: PlaceControllers, UITableViewDataSource, UITableVi
             if let phone = place.phone {
                 appLink.openApp(phone: phone)
             }
-        case "Menu":
-            if let menus = place.menus {
-                show(menus: menus.filter({$0.type == .Image}))
-            }
+//        case "Menu":
+//            if let menus = place.menus {
+//                show(menus: menus.filter({$0.type == .Image}))
+//            }
         default:
             break
         }
     }
     
-    func show(menus: [Menu], startIndex: Int = 0) {
-        var images = [SKPhoto]()
-        for menu in menus {
-            let photo = SKPhoto.photoWithImageURL(menu.url!)
-            photo.shouldCachePhotoURLImage = false // you can use image cache by true(NSCache)
-            images.append(photo)
-        }
-        
-        SKPhotoBrowserOptions.displayStatusbar = true
-        SKPhotoBrowserOptions.displayAction = false
-        SKPhotoBrowserOptions.displayCloseButton = false
-        SKPhotoBrowserOptions.displayDeleteButton = false
-        let browser = MenuPhotoBrowser(photos: images)
-        browser.initializePageIndex(startIndex)
-        present(browser, animated: true, completion: nil)
-    }
+//    func show(menus: [Menu], startIndex: Int = 0) {
+//        var images = [SKPhoto]()
+//        for menu in menus {
+//            let photo = SKPhoto.photoWithImageURL(menu.url!)
+//            photo.shouldCachePhotoURLImage = false // you can use image cache by true(NSCache)
+//            images.append(photo)
+//        }
+//        
+//        SKPhotoBrowserOptions.displayStatusbar = true
+//        SKPhotoBrowserOptions.displayAction = false
+//        SKPhotoBrowserOptions.displayCloseButton = false
+//        SKPhotoBrowserOptions.displayDeleteButton = false
+//        let browser = MenuPhotoBrowser(photos: images)
+//        browser.initializePageIndex(startIndex)
+//        present(browser, animated: true, completion: nil)
+//    }
 }
 
 /**
@@ -232,9 +232,9 @@ class PlaceGeneralMenuCell: UITableViewCell, UICollectionViewDataSource, UIColle
     func render(menus: [Menu]?, controller: PlaceGeneralController) {
         if (self.controller == nil) {
             self.controller = controller
-            if let menus = menus {
-                self.menus = menus.filter({$0.type == .Image})
-            }
+//            if let menus = menus {
+//                self.menus = menus.filter({$0.type == .Image})
+//            }
             menuCollectionView.reloadData()
         }
     }
@@ -257,7 +257,7 @@ class PlaceGeneralMenuCell: UITableViewCell, UICollectionViewDataSource, UIColle
      Click and show to current menu
      */
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self.controller.show(menus: menus, startIndex: indexPath.row)
+//        self.controller.show(menus: menus, startIndex: indexPath.row)
     }
 }
 
@@ -268,6 +268,6 @@ class MenuContentCell: UICollectionViewCell {
     @IBOutlet weak var thumbImageView: UIImageView!
     
     func render(menu: Menu) {
-        thumbImageView.kf.setImage(with: menu.thumbImageURL())
+//        thumbImageView.kf.setImage(with: menu.thumbImageURL())
     }
 }

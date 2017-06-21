@@ -183,9 +183,9 @@ extension PlaceViewController {
      */
     func render(place: Place) {
         // Render image view
-        if let imageURL = place.imageURL() {
-            self.placeImageView.kf.setImage(with: imageURL)
-        }
+//        if let imageURL = place.imageURL() {
+//            self.placeImageView.kf.setImage(with: imageURL)
+//        }
         // Render rating label
         let ratingColor = UIColor(hex: "5CB85C")
         placeRatingLabel.text = "4.9"

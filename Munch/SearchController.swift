@@ -14,77 +14,7 @@ import SnapKit
 import Hero
 
 import FlexibleHeightBar
-
-/**
- Search navigation view controller
- */
-class SearchNavigationController: UINavigationController {
-    
-    /**
-     View did load will set the selected index to first tab
-     This is required due to a bug in ESTabBarItem not allowing NSCoder
-     */
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Make navigation bar transparent
-        navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationBar.shadowImage = UIImage()
-        
-        // See view did load description
-        self.tabBarController?.selectedIndex = 0
-    }
-    
-}
-
-@IBDesignable class MunchSearchField: UITextField {
-    
-    // Provides left padding for images
-    override func leftViewRect(forBounds bounds: CGRect) -> CGRect {
-        var textRect = super.leftViewRect(forBounds: bounds)
-        textRect.origin.x += leftImagePadding
-        textRect.size.width = leftImageWidth
-        return textRect
-    }
-    
-    @IBInspectable var leftImagePadding: CGFloat = 0
-    @IBInspectable var leftImageWidth: CGFloat = 20
-    @IBInspectable var leftImageSize: CGFloat = 18 {
-        didSet {
-            updateView()
-        }
-    }
-    
-    
-    @IBInspectable var leftImage: UIImage? {
-        didSet {
-            updateView()
-        }
-    }
-    
-    @IBInspectable var color: UIColor = UIColor.lightGray {
-        didSet {
-            updateView()
-        }
-    }
-    
-    func updateView() {
-        if let image = leftImage {
-            leftViewMode = UITextFieldViewMode.always
-            let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: leftImageSize, height: leftImageSize))
-            imageView.contentMode = .scaleAspectFit
-
-            imageView.image = image
-            imageView.tintColor = color
-            leftView = imageView
-        } else {
-            leftViewMode = UITextFieldViewMode.never
-            leftView = nil
-        }
-        
-        // Placeholder text color
-        attributedPlaceholder = NSAttributedString(string: placeholder != nil ?  placeholder! : "", attributes:[NSForegroundColorAttributeName: color])
-    }
-}
+import ESTabBarController
 
 /**
  Munch search bar is a duo search bar
@@ -93,8 +23,8 @@ class SearchNavigationController: UINavigationController {
  and field search controller
  */
 class MunchSearchBar: UIView {
-    @IBOutlet weak var locationSearchField: MunchSearchField!
-    @IBOutlet weak var filterSearchField: MunchSearchField!
+    @IBOutlet weak var locationSearchField: DiscoverSearchField!
+    @IBOutlet weak var filterSearchField: DiscoverSearchField!
     
     /**
      Update search bar without another previous search bar
@@ -231,19 +161,7 @@ extension SearchViewController {
         }
     }
     
-    /**
-     Discover a defined latitude and longitude
-     */
-    func discover(lat: Double, lng: Double){
-        client.places.discover(spatial: Spatial(lat: lat, lng: lng)){ meta, places in
-            if (meta.isOk()){
-                self.discoverPlaces.removeAll()
-                self.discoverPlaces += places
-                self.discoverTableView.reloadData()
-            }else{
-                self.present(meta.createAlert(), animated: true, completion: nil)
-            }
-        }
+    func discover(lat: Double, lng: Double) {
     }
 }
 
@@ -286,9 +204,6 @@ class DiscoverViewCell: UITableViewCell {
 
     func render(place: Place) {
         self.placeName.text = place.name!
-        if let imageURL = place.imageURL() {
-            self.discoverImageView.kf.setImage(with: imageURL)
-        }
     }
 }
 

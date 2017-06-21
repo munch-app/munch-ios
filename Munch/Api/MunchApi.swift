@@ -199,7 +199,8 @@ class LocationClient: RestfulClient {
 /**
  MetaClient from MetaService in munch-core/munch-api
  Used for facilitating alpha/beta testing
- *
+ */
 class MetaClient: RestfulClient {
     
 }
+

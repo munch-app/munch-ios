@@ -75,8 +75,45 @@ struct Place {
             self.postal = json["postal"].string
             self.latLng = json["latLng"].string
         }
-        
     }
+    
+    /**
+     Hour data type from munch-core/service-places
+     Day can be either of these: mon, tue, wed, thu, fri, sat, sun, ph, evePh
+     open, close time is in HH:mm format
+     
+     TODO improve with enum type for day
+     */
+    struct Hour {
+        var day: String?
+        var open: String?
+        var close: String?
+        
+        init(json: JSON) {
+            self.day = json["day"].string
+            self.open = json["open"].string
+            self.close = json["close"].string
+        }
+        
+        func rangeText() -> String {
+            return HourFormatter.format(hour: self)
+        }
+        
+        func dayText() -> String {
+            if (day == "evePh"){
+                return "Eve of Ph"
+            }
+            return day!.capitalized
+        }
+    }
+}
+
+/**
+ Menu data type from munch-core/service-menus
+ */
+struct Menu {
+    let placeId: String
+    let menuId: String
 }
 
 /**
@@ -257,7 +294,7 @@ class HourFormatter {
      Accepts: Hour
      Format hour open to String: 10:00am - 3:00pm
     */
-    class func format(hour: Hour) -> String {
+    class func format(hour: Place.Hour) -> String {
         let open = instance.format(string: hour.open!)
         let close = instance.format(string: hour.close!)
         return "\(open) - \(close)"
@@ -267,7 +304,7 @@ class HourFormatter {
      Accepts: Array of Hour
      Format hours to packed: "Mon - Fri: 10:00am - 3:00pm" joined by \n
     */
-    class func format(hours: [Hour]) -> String {
+    class func format(hours: [Place.Hour]) -> String {
         let sorted = hours.sorted(by: {daysOrder[$0.0.day!]! < daysOrder[$0.1.day!]!})
         var lines = [String]()
         var tuple: (String, String, String)! = nil
@@ -294,36 +331,6 @@ class HourFormatter {
         }
         lines.append(make())
         return lines.joined(separator: "\n")
-    }
-}
-
-/**
- Hour data type from munch-core/service-places
- Day can be either of these: mon, tue, wed, thu, fri, sat, sun, ph, evePh
- open, close time is in HH:mm format
- 
- TODO improve with enum type for day
- */
-struct Hour {
-    var day: String?
-    var open: String?
-    var close: String?
-    
-    init(json: JSON) {
-        self.day = json["day"].string
-        self.open = json["open"].string
-        self.close = json["close"].string
-    }
-    
-    func rangeText() -> String {
-        return HourFormatter.format(hour: self)
-    }
-    
-    func dayText() -> String {
-        if (day == "evePh"){
-            return "Eve of Ph"
-        }
-        return day!.capitalized
     }
 }
 

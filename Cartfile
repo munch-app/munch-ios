@@ -12,7 +12,7 @@ github "lkzhao/Hero" ~> 0.3
 github "SnapKit/SnapKit" ~> 3.2.0
 
 # UI Components Library
-github "eggswift/ESTabBarController" ~> 2.3
+github "eggswift/ESTabBarController" ~> 2.4
 github "Fuxingloh/MXSegmentedPager" "master"
 github "vicentesuarez/Swift-FlexibleHeightBar" ~> 1.0
 github "suzuki-0000/SKPhotoBrowser" ~> 4.0

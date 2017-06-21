@@ -1,4 +1,3 @@
-
 //
 //  AppDelegate.swift
 //  Munch
@@ -8,6 +7,7 @@
 //
 
 import UIKit
+import ESTabBarController
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,7 +16,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        // Select initial view provider to use
+        self.window?.rootViewController = InitialViewProvider.main()
+        self.window?.makeKeyAndVisible()
+        
         return true
     }
 
@@ -44,3 +48,45 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+
+/**
+ Initial view provider
+ */
+enum InitialViewProvider {
+    
+    /**
+     Main tab controllers for Munch App
+     */
+    static func main() -> ESTabBarController {
+        let tabController = ESTabBarController()
+        tabController.tabBar.isTranslucent = false
+        
+        // Discover
+        let discoverStoryboard = UIStoryboard(name: "Discover", bundle: nil)
+        let discoverController = discoverStoryboard.instantiateInitialViewController()!
+        discoverController.tabBarItem = ESTabBarItem.init(MunchTabBarContentView(), title: nil, image: UIImage(named: "icons8-Paper-30"), selectedImage: UIImage(named: "icons8-Paper Filled-30"))
+        
+        // Profile
+        let profileController = UIViewController()
+        profileController.tabBarItem = ESTabBarItem.init(MunchTabBarContentView(), title: nil, image: UIImage(named: "User-30"), selectedImage: UIImage(named: "User Filled-30"))
+        
+        tabController.viewControllers = [discoverController, profileController]
+        return tabController
+    }
+}
+
+/**
+ Main tab bar content styling
+ */
+class MunchTabBarContentView: ESTabBarItemContentView {
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        iconColor = UIColor.black
+        highlightIconColor = UIColor.black
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
