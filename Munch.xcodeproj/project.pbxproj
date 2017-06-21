@@ -19,8 +19,6 @@
 		032F89311E82EF8B00AD3818 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89301E82EF8B00AD3818 /* Alamofire.framework */; };
 		032F89341E82F14A00AD3818 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89331E82F14A00AD3818 /* SwiftyJSON.framework */; };
 		034820581E9CB92A00B0076A /* SKPhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 034820571E9CB92A00B0076A /* SKPhotoBrowser.framework */; };
-		0375D39D1E9A120E000CB74E /* GalleryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0375D39C1E9A120E000CB74E /* GalleryController.swift */; };
-		0375D39F1E9A1244000CB74E /* GeneralController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0375D39E1E9A1244000CB74E /* GeneralController.swift */; };
 		037884991E8E4E3F006025B5 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 037884981E8E4E3F006025B5 /* SnapKit.framework */; };
 		0378849B1E8E563E006025B5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0378849A1E8E563E006025B5 /* Extensions.swift */; };
 		0378849D1E8E5E39006025B5 /* SwiftLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */; };
@@ -32,7 +30,6 @@
 		03CF0A9E1E96ABC600A3FD1F /* TabControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CF0A9D1E96ABC600A3FD1F /* TabControllers.swift */; };
 		03CF0AA21E97AA3C00A3FD1F /* Objects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CF0A9F1E97AA3C00A3FD1F /* Objects.swift */; };
 		03CF0AA41E97AA3C00A3FD1F /* MunchApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CF0AA11E97AA3C00A3FD1F /* MunchApi.swift */; };
-		03CF0AA61E9A037800A3FD1F /* ArticleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CF0AA51E9A037800A3FD1F /* ArticleController.swift */; };
 		03D3FEE21E8947D200ACFF50 /* MunchClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FEE01E8947D200ACFF50 /* MunchClientTests.swift */; };
 		03D3FEE41E89494300ACFF50 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89301E82EF8B00AD3818 /* Alamofire.framework */; };
 		03D3FEE51E89494600ACFF50 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89331E82F14A00AD3818 /* SwiftyJSON.framework */; };
@@ -43,6 +40,11 @@
 		03D3FF0B1E8D035100ACFF50 /* KMNavigationBarTransition.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FF0A1E8D035100ACFF50 /* KMNavigationBarTransition.framework */; };
 		03D529611E9D03C0003D5350 /* FlexibleHeightBar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D529601E9D03C0003D5350 /* FlexibleHeightBar.framework */; };
 		03D88C151E9DF412005F825B /* Hero.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D88C141E9DF412005F825B /* Hero.framework */; };
+		03E216A51EFA005300465BE3 /* Discover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 03E216A41EFA005300465BE3 /* Discover.storyboard */; };
+		03E216A71EFA006900465BE3 /* DiscoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E216A61EFA006900465BE3 /* DiscoverController.swift */; };
+		03E216AB1EFA011600465BE3 /* ArticleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E216A81EFA011600465BE3 /* ArticleController.swift */; };
+		03E216AC1EFA011600465BE3 /* GalleryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E216A91EFA011600465BE3 /* GalleryController.swift */; };
+		03E216AD1EFA011600465BE3 /* GeneralController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E216AA1EFA011600465BE3 /* GeneralController.swift */; };
 		03EE235E1E83039A009AFBFC /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03EE235D1E83039A009AFBFC /* MapKit.framework */; };
 		03EE23601E83342F009AFBFC /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EE235F1E83342F009AFBFC /* SearchController.swift */; };
 /* End PBXBuildFile section */
@@ -87,8 +89,6 @@
 		032F89331E82F14A00AD3818 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 		034820551E9CB3C400B0076A /* ImageViewer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageViewer.framework; path = Carthage/Build/iOS/ImageViewer.framework; sourceTree = "<group>"; };
 		034820571E9CB92A00B0076A /* SKPhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SKPhotoBrowser.framework; path = Carthage/Build/iOS/SKPhotoBrowser.framework; sourceTree = "<group>"; };
-		0375D39C1E9A120E000CB74E /* GalleryController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryController.swift; sourceTree = "<group>"; };
-		0375D39E1E9A1244000CB74E /* GeneralController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralController.swift; sourceTree = "<group>"; };
 		037884981E8E4E3F006025B5 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Carthage/Build/iOS/SnapKit.framework; sourceTree = "<group>"; };
 		0378849A1E8E563E006025B5 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		039C393C1E8D47E300A28533 /* HMSegmentedControl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HMSegmentedControl.framework; path = Carthage/Build/iOS/HMSegmentedControl.framework; sourceTree = "<group>"; };
@@ -99,7 +99,6 @@
 		03CF0A9D1E96ABC600A3FD1F /* TabControllers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabControllers.swift; sourceTree = "<group>"; };
 		03CF0A9F1E97AA3C00A3FD1F /* Objects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Objects.swift; path = Api/Objects.swift; sourceTree = "<group>"; };
 		03CF0AA11E97AA3C00A3FD1F /* MunchApi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MunchApi.swift; path = Api/MunchApi.swift; sourceTree = "<group>"; };
-		03CF0AA51E9A037800A3FD1F /* ArticleController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleController.swift; sourceTree = "<group>"; };
 		03D3FEE01E8947D200ACFF50 /* MunchClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchClientTests.swift; sourceTree = "<group>"; };
 		03D3FEE61E89589B00ACFF50 /* HandyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HandyJSON.framework; path = Carthage/Build/iOS/HandyJSON.framework; sourceTree = "<group>"; };
 		03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftLocation.framework; path = Carthage/Build/iOS/SwiftLocation.framework; sourceTree = "<group>"; };
@@ -111,6 +110,11 @@
 		03D5295D1E9CFB17003D5350 /* TransitionAnimation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TransitionAnimation.framework; path = Carthage/Build/iOS/TransitionAnimation.framework; sourceTree = "<group>"; };
 		03D529601E9D03C0003D5350 /* FlexibleHeightBar.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlexibleHeightBar.framework; path = Carthage/Build/iOS/FlexibleHeightBar.framework; sourceTree = "<group>"; };
 		03D88C141E9DF412005F825B /* Hero.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Hero.framework; path = Carthage/Build/iOS/Hero.framework; sourceTree = "<group>"; };
+		03E216A41EFA005300465BE3 /* Discover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Discover.storyboard; path = Discover/Discover.storyboard; sourceTree = "<group>"; };
+		03E216A61EFA006900465BE3 /* DiscoverController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiscoverController.swift; path = Discover/DiscoverController.swift; sourceTree = "<group>"; };
+		03E216A81EFA011600465BE3 /* ArticleController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ArticleController.swift; path = Place/ArticleController.swift; sourceTree = "<group>"; };
+		03E216A91EFA011600465BE3 /* GalleryController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GalleryController.swift; path = Place/GalleryController.swift; sourceTree = "<group>"; };
+		03E216AA1EFA011600465BE3 /* GeneralController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GeneralController.swift; path = Place/GeneralController.swift; sourceTree = "<group>"; };
 		03EE235D1E83039A009AFBFC /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		03EE235F1E83342F009AFBFC /* SearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -190,6 +194,7 @@
 				03CF0A9D1E96ABC600A3FD1F /* TabControllers.swift */,
 				032F88FF1E82DFA300AD3818 /* Main.storyboard */,
 				03EE235F1E83342F009AFBFC /* SearchController.swift */,
+				03E216A11EFA000000465BE3 /* Discover */,
 				03D3FEF91E8ABDF500ACFF50 /* Place */,
 				032F89021E82DFA300AD3818 /* Assets.xcassets */,
 				032F89041E82DFA300AD3818 /* LaunchScreen.storyboard */,
@@ -260,13 +265,22 @@
 		03D3FEF91E8ABDF500ACFF50 /* Place */ = {
 			isa = PBXGroup;
 			children = (
+				03E216A81EFA011600465BE3 /* ArticleController.swift */,
+				03E216A91EFA011600465BE3 /* GalleryController.swift */,
+				03E216AA1EFA011600465BE3 /* GeneralController.swift */,
 				03D3FEFC1E8ABEE300ACFF50 /* Place.storyboard */,
 				03D3FEFD1E8ABEE300ACFF50 /* PlaceController.swift */,
-				0375D39E1E9A1244000CB74E /* GeneralController.swift */,
-				0375D39C1E9A120E000CB74E /* GalleryController.swift */,
-				03CF0AA51E9A037800A3FD1F /* ArticleController.swift */,
 			);
 			name = Place;
+			sourceTree = "<group>";
+		};
+		03E216A11EFA000000465BE3 /* Discover */ = {
+			isa = PBXGroup;
+			children = (
+				03E216A41EFA005300465BE3 /* Discover.storyboard */,
+				03E216A61EFA006900465BE3 /* DiscoverController.swift */,
+			);
+			name = Discover;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -383,6 +397,7 @@
 				03D3FEFF1E8ABEE300ACFF50 /* Place.storyboard in Resources */,
 				032F892A1E82E79000AD3818 /* Cartfile in Resources */,
 				032F892E1E82EF3D00AD3818 /* Carthage in Resources */,
+				03E216A51EFA005300465BE3 /* Discover.storyboard in Resources */,
 				032F89011E82DFA300AD3818 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -438,15 +453,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0375D39D1E9A120E000CB74E /* GalleryController.swift in Sources */,
+				03E216AD1EFA011600465BE3 /* GeneralController.swift in Sources */,
 				03CF0AA21E97AA3C00A3FD1F /* Objects.swift in Sources */,
-				0375D39F1E9A1244000CB74E /* GeneralController.swift in Sources */,
+				03E216AC1EFA011600465BE3 /* GalleryController.swift in Sources */,
 				03EE23601E83342F009AFBFC /* SearchController.swift in Sources */,
 				03D3FF001E8ABEE300ACFF50 /* PlaceController.swift in Sources */,
 				03CF0A9E1E96ABC600A3FD1F /* TabControllers.swift in Sources */,
+				03E216AB1EFA011600465BE3 /* ArticleController.swift in Sources */,
 				032F88FC1E82DFA300AD3818 /* AppDelegate.swift in Sources */,
-				03CF0AA61E9A037800A3FD1F /* ArticleController.swift in Sources */,
 				0378849B1E8E563E006025B5 /* Extensions.swift in Sources */,
+				03E216A71EFA006900465BE3 /* DiscoverController.swift in Sources */,
 				03CF0AA41E97AA3C00A3FD1F /* MunchApi.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

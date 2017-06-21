@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftyJSON
+import Alamofire
 
 /**
  Place data type from munch-core/service-places
@@ -81,6 +82,13 @@ struct Place {
 /**
  SearchQuery object from munch-core/service-places
  This is a input and output data
+ 
+ - from: pagination from
+ - size: pagination size
+ - query: search query string
+ - polygon: { points: [String] }
+ 
+ - filters: to be implemented in the future
  */
 struct SearchQuery {
     static let d2r = Double.pi / 180.0
@@ -98,10 +106,22 @@ struct SearchQuery {
     }
     
     init(json: JSON) {
+        self.from = json["from"].int
+        self.size = json["size"].int
+        
+        self.query = json["query"].string
+        
+        if (json["polygon"].exists()){
+            self.polygon = Polygon(json: json["polygon"])
+        }
     }
     
     struct Polygon {
         var points: [String]
+        
+        init(json: JSON) {
+            self.points = json["points"].map({$0.1.stringValue})
+        }
         
         init(lat: Double, lng: Double, radius: Double, size: Int) {
             let rlat = radius / earthRadius * r2d
@@ -124,6 +144,23 @@ struct SearchQuery {
     struct Filters {
         // TODO in the Future once finalized
     }
+    
+    /**
+     Map to Alamofire supported parameters encoding
+     */
+    func toParams() -> Parameters {
+        var params = Parameters()
+        params["from"] = from
+        params["size"] = size
+        params["query"] = query
+        
+        if let polygon = polygon {
+            var poly = Parameters()
+            poly["points"] = polygon.points
+            params["query"] = poly
+        }
+        return params
+    }
 }
 
 /**
@@ -133,7 +170,7 @@ struct SearchQuery {
 struct Location {
     let name: String
     let center: String
-    let points: [String]
+    let points: [String] // points is ["lat, lng"] String Array
     
     init(json: JSON) {
         self.name = json["name"].stringValue
