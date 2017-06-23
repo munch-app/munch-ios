@@ -26,11 +26,6 @@ class MunchSearchBar: UIView {
     @IBOutlet weak var locationSearchField: DiscoverSearchField!
     @IBOutlet weak var filterSearchField: DiscoverSearchField!
     
-    /**
-     Update search bar without another previous search bar
-     Return true is text has changed
-     false if stays the same
-     */
     func update(previous: MunchSearchBar) -> Bool {
         // Check for changes
         let changes = locationSearchField.text != previous.locationSearchField.text ||

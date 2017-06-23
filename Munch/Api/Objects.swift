@@ -30,6 +30,10 @@ struct Place {
     var tags: [String]?
     var hours: [Hour]?
     
+    init() {
+        
+    }
+    
     init(json: JSON){
         self.id = json["id"].string
         
@@ -168,7 +172,7 @@ struct SearchQuery {
             points = [String]()
             
             // Create all points for polygon circle with n size
-            for i in 0...size-1 {
+            for i in 0..<size {
                 let theta = Double.pi * (Double(i) / (Double(size)/2))
                 let ex = lng + (rlng * cos(theta))
                 let ey = lat + (rlat * sin(theta))
@@ -245,6 +249,12 @@ struct PlaceCollection {
         self.name = json["name"].stringValue
         self.query = SearchQuery(json: json["query"])
         self.places = json["places"].map({Place(json: $0.1)})
+    }
+    
+    init(name: String, query: SearchQuery, places: [Place]){
+        self.name = name
+        self.query = query
+        self.places = places
     }
 }
 

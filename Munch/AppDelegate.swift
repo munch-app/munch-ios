@@ -60,6 +60,7 @@ enum InitialViewProvider {
     static func main() -> ESTabBarController {
         let tabController = ESTabBarController()
         tabController.tabBar.isTranslucent = false
+        tabController.tabBar.backgroundColor = UIColor.white
         
         // Discover
         let discoverStoryboard = UIStoryboard(name: "Discover", bundle: nil)
