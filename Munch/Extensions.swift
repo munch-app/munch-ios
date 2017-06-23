@@ -56,7 +56,6 @@ extension UIColor {
 class HairlineConstraint: NSLayoutConstraint {
     override func awakeFromNib() {
         super.awakeFromNib()
-        
         self.constant = 1.0 / UIScreen.main.scale
     }
 }
@@ -102,5 +101,20 @@ extension UILabel {
         let rect = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         let labelSize = myText.boundingRect(with: rect, options: .usesLineFragmentOrigin, attributes: [NSFontAttributeName: font], context: nil)
         return ceil(labelSize.width)
+    }
+}
+
+extension UIView {
+    func hairlineShadow() {
+        self.layer.masksToBounds = false
+        self.layer.shadowColor = UIColor.black.withAlphaComponent(0.25).cgColor
+        self.layer.shadowOpacity = 0.5
+        self.layer.shadowOffset = CGSize(width: -1, height: 1)
+        self.layer.shadowRadius = 1
+        
+        self.layer.shadowPath = UIBezierPath(rect: self.bounds).cgPath
+        self.layer.shouldRasterize = true
+        
+        self.layer.rasterizationScale = UIScreen.main.scale
     }
 }

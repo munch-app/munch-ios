@@ -14,12 +14,17 @@ import UIKit
  */
 class DiscoverPlaceCardView: DiscoverCardView {
     @IBOutlet weak var imageView: UIImageView!
- 
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+    }
+    
     func render(place: Place) {
         
     }
 }
 
 class DiscoverCardView: UICollectionViewCell {
+
     
 }
