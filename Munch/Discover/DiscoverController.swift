@@ -38,7 +38,7 @@ class DiscoverViewController: UIViewController, MXPagerViewDelegate, MXPagerView
         // Temporary render for testing
         let controller = pageControllers[0] as! DiscoverLinearCollectionController
         controller.render(collections: [
-            PlaceCollection(name: "NEARBY", query: SearchQuery(), places: [Place(), Place()]),
+            PlaceCollection(name: "NEARBY", query: SearchQuery(), places: [Place(), Place(), Place()]),
             PlaceCollection(name: "HEALTHY OPTIONS", query: SearchQuery(), places: [Place(), Place()]),
             PlaceCollection(name: "CAFES", query: SearchQuery(), places: [Place(), Place()]),
             PlaceCollection(name: "PUBS & BARS", query: SearchQuery(), places: [Place(), Place()])
@@ -75,6 +75,14 @@ class DiscoverViewController: UIViewController, MXPagerViewDelegate, MXPagerView
     }
    
     /**
+     Main content view scrolling
+     */
+    func contentViewDidScroll(scrollView: UIScrollView) {
+        let position = scrollView.contentOffset.y
+        print(position)
+    }
+    
+    /**
      Unwind to main Discover View Controller
      */
     @IBAction func unwindToDiscover(segue: UIStoryboardSegue) {
@@ -84,14 +92,22 @@ class DiscoverViewController: UIViewController, MXPagerViewDelegate, MXPagerView
     /**
      Wind to place discover view controller
      */
-    func goToPlace(place: Place) {
+    func present(place: Place) {
 //        let storyboard = UIStoryboard(name: "Place", bundle: nil)
 //        let controller = storyboard.instantiateInitialViewController()!
     }
 }
 
 protocol DiscoverViewDelegate {
-    func goToPlace(place: Place)
+    /**
+     Present place controller with place data
+     */
+    func present(place: Place)
+    
+    /**
+     Did scroll content view
+     */
+    func contentViewDidScroll(scrollView: UIScrollView)
 }
 
 
@@ -192,7 +208,10 @@ class DiscoverCollectionView: UICollectionView, UICollectionViewDataSource, UICo
     let width = UIScreen.main.bounds.width
     
     convenience init() {
-        self.init(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout())
+        let layout = UICollectionViewFlowLayout()
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 0
+        self.init(frame: CGRect.zero, collectionViewLayout: layout)
         
         // Setup view, delegate and data source
         self.showsVerticalScrollIndicator = false
@@ -221,24 +240,23 @@ class DiscoverCollectionView: UICollectionView, UICollectionViewDataSource, UICo
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
-    }
-    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = self.width
         return CGSize(width: width, height: width * 0.9)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        rootDelegate.goToPlace(place: places[indexPath.row])
+        rootDelegate.present(place: places[indexPath.row])
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        rootDelegate.contentViewDidScroll(scrollView: scrollView)
     }
 }
 
+/**
+ Title cell for Discovery Page
+ */
 class DiscoverCollectionTitleCell: UICollectionViewCell {
     @IBOutlet weak var label: UILabel!
     
@@ -251,6 +269,9 @@ class DiscoverCollectionTitleCell: UICollectionViewCell {
     }
 }
 
+/**
+ Designable search field for Discovery page
+ */
 @IBDesignable class DiscoverSearchField: UITextField {
     
     // Provides left padding for images
