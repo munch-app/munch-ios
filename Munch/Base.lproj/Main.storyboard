@@ -113,7 +113,6 @@
                         <outlet property="discoverTableView" destination="L23-l9-tMR" id="cpt-dO-lXo"/>
                         <outlet property="searchBar" destination="lKG-Hw-psy" id="uXF-Ke-KMO"/>
                         <segue destination="7CT-rb-N8u" kind="show" identifier="segueToFilterSearch" id="wwf-Fk-bq9"/>
-                        <segue destination="202-l4-hP2" kind="presentation" identifier="segueToFilterList" id="rBY-mI-Gy0"/>
                         <segue destination="RrW-G4-X2A" kind="show" identifier="segueToLocationSearch" id="LXV-Gn-qcF"/>
                     </connections>
                 </viewController>
@@ -317,24 +316,12 @@
                                     <outlet property="locationSearchField" destination="Uhd-Hb-IO0" id="9a2-ey-GeR"/>
                                 </connections>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Planned Release: 1.0-Beta" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4xS-AV-aZq">
-                                <rect key="frame" x="0.0" y="169" width="375" height="40"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="Wjk-bt-gPg"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="Zp8-ow-8MG" firstAttribute="leading" secondItem="jDH-Jr-BUe" secondAttribute="leading" id="Qfk-MH-Hw0"/>
-                            <constraint firstItem="4xS-AV-aZq" firstAttribute="leading" secondItem="jDH-Jr-BUe" secondAttribute="leading" id="YVz-9I-Sac"/>
-                            <constraint firstItem="4xS-AV-aZq" firstAttribute="top" secondItem="Zp8-ow-8MG" secondAttribute="bottom" constant="15" id="atd-ud-QT6"/>
                             <constraint firstItem="Zp8-ow-8MG" firstAttribute="top" secondItem="jDH-Jr-BUe" secondAttribute="top" id="hIM-Bj-Jef"/>
                             <constraint firstAttribute="trailing" secondItem="Zp8-ow-8MG" secondAttribute="trailing" id="pft-X3-r6o"/>
-                            <constraint firstAttribute="trailing" secondItem="4xS-AV-aZq" secondAttribute="trailing" id="vsh-5f-ubD"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Search" id="PWe-cJ-Coe"/>
@@ -347,24 +334,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ak9-0A-uFC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1671" y="-926"/>
-        </scene>
-        <!--Search Filter Popover Controller-->
-        <scene sceneID="NhP-Zg-k1x">
-            <objects>
-                <viewController id="202-l4-hP2" customClass="SearchFilterPopoverController" customModule="Munch" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="fR6-I9-tTv"/>
-                        <viewControllerLayoutGuide type="bottom" id="ceI-wz-xRF"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="PKh-GV-kM9">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="hI9-5e-yN5" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="886" y="-560"/>
         </scene>
         <!--Search-->
         <scene sceneID="m5v-iV-bDZ">
@@ -474,92 +443,17 @@
                                     <outlet property="locationSearchField" destination="zyy-NR-1LO" id="ZVY-cq-QoL"/>
                                 </connections>
                             </view>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="0si-kB-MLC">
-                                <rect key="frame" x="0.0" y="154" width="375" height="513"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <inset key="separatorInset" minX="13" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                <color key="sectionIndexColor" red="0.93055665493011475" green="0.94564646482467651" blue="0.95811277627944946" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="DetectMyLocationCell" rowHeight="67" id="d7T-tq-2X6" customClass="DetectMyLocationCell" customModule="Munch" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="67"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="d7T-tq-2X6" id="AKa-7W-Lhk">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="66.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WUK-4P-4PY">
-                                                    <rect key="frame" x="13" y="15" width="349" height="36"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="36" id="EI2-dD-N4g"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                    <inset key="titleEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                    <inset key="imageEdgeInsets" minX="10" minY="0.0" maxX="10" maxY="0.0"/>
-                                                    <state key="normal" title="Detect my current location" image="SC-Define Location-30">
-                                                        <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    </state>
-                                                </button>
-                                            </subviews>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                            <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="WUK-4P-4PY" secondAttribute="trailing" constant="13" id="2rh-ib-TDI"/>
-                                                <constraint firstItem="WUK-4P-4PY" firstAttribute="top" secondItem="AKa-7W-Lhk" secondAttribute="topMargin" constant="7" id="Rz8-H5-aMf"/>
-                                                <constraint firstAttribute="bottomMargin" secondItem="WUK-4P-4PY" secondAttribute="bottom" constant="7.5" id="wiC-mB-ECJ"/>
-                                                <constraint firstItem="WUK-4P-4PY" firstAttribute="leading" secondItem="AKa-7W-Lhk" secondAttribute="leading" constant="13" id="xp9-Pp-i4N"/>
-                                                <constraint firstItem="WUK-4P-4PY" firstAttribute="centerY" secondItem="AKa-7W-Lhk" secondAttribute="centerY" id="yUA-3f-g6u"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        <connections>
-                                            <outlet property="detectLocationButton" destination="WUK-4P-4PY" id="fIg-WY-s3j"/>
-                                        </connections>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SearchLocationTextCell" id="esG-xq-X7J" customClass="SearchLocationTextCell" customModule="Munch" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="95" width="375" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="esG-xq-X7J" id="pta-aQ-EOt">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rgl-bx-dFS">
-                                                    <rect key="frame" x="13" y="11" width="349" height="21"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="21" id="ggb-UE-Wru"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstAttribute="bottomMargin" secondItem="Rgl-bx-dFS" secondAttribute="bottom" constant="3.5" id="93p-f2-0Pw"/>
-                                                <constraint firstItem="Rgl-bx-dFS" firstAttribute="top" secondItem="pta-aQ-EOt" secondAttribute="topMargin" constant="3" id="JCl-BH-ZLl"/>
-                                                <constraint firstItem="Rgl-bx-dFS" firstAttribute="leading" secondItem="pta-aQ-EOt" secondAttribute="leadingMargin" constant="5" id="Nbe-gt-VxZ"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="Rgl-bx-dFS" secondAttribute="trailing" constant="5" id="dht-0r-lsn"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <outlet property="locationLabel" destination="Rgl-bx-dFS" id="bZg-iU-OR3"/>
-                                        </connections>
-                                    </tableViewCell>
-                                </prototypes>
-                            </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="5h9-9R-saD" firstAttribute="leading" secondItem="WfB-FH-C3M" secondAttribute="leading" id="DvU-yd-kCo"/>
-                            <constraint firstItem="0si-kB-MLC" firstAttribute="top" secondItem="5h9-9R-saD" secondAttribute="bottom" id="PVG-Bi-Lmk"/>
-                            <constraint firstItem="kMI-EF-SPA" firstAttribute="top" secondItem="0si-kB-MLC" secondAttribute="bottom" id="X25-hb-zWk"/>
                             <constraint firstItem="5h9-9R-saD" firstAttribute="top" secondItem="WfB-FH-C3M" secondAttribute="top" id="ZHN-qH-taq"/>
                             <constraint firstAttribute="trailing" secondItem="5h9-9R-saD" secondAttribute="trailing" id="nd1-sk-Gep"/>
-                            <constraint firstAttribute="trailing" secondItem="0si-kB-MLC" secondAttribute="trailing" id="ne2-Po-uXe"/>
-                            <constraint firstItem="0si-kB-MLC" firstAttribute="leading" secondItem="WfB-FH-C3M" secondAttribute="leading" id="vyi-X4-ag1"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Search" id="OXE-YV-hov"/>
                     <connections>
                         <outlet property="searchBar" destination="5h9-9R-saD" id="KRp-ns-RST"/>
-                        <outlet property="tableView" destination="0si-kB-MLC" id="fbd-lX-Thi"/>
                         <segue destination="7CT-rb-N8u" kind="show" identifier="segueToFilterSearch" id="Uhx-Np-f83"/>
                         <segue destination="I5m-Ot-Mj4" kind="unwind" identifier="unwindSearchWithSegue" unwindAction="unwindSearchWithSegue:" id="Jtf-Sw-vee"/>
                     </connections>
@@ -587,12 +481,11 @@
         </scene>
     </scenes>
     <resources>
-        <image name="SC-Define Location-30" width="23" height="23"/>
         <image name="SC-Marker-20" width="15" height="15"/>
         <image name="SC-Search-18" width="14" height="14"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="LXV-Gn-qcF"/>
         <segue reference="Uhx-Np-f83"/>
+        <segue reference="bZX-me-RWS"/>
     </inferredMetricsTieBreakers>
 </document>

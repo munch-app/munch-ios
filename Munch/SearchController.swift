@@ -67,8 +67,6 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
         self.navigationController?.navigationBar.barStyle = .black
         self.setupFlexibleSearchBar()
         self.searchBar.setDelegate(delegate: self)
-        
-        self.discover(lat: 1.298788, lng: 103.786759)
     }
     
     func setupFlexibleSearchBar() {
@@ -135,32 +133,6 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
 }
 
 /**
- Search controller actual search logic
- */
-extension SearchViewController {
-    var client: MunchClient { return MunchClient.instance }
-    
-    /**
-     Discover local area
-     */
-    func discover(){
-        SwiftLocation.Location.getLocation(accuracy: .block, frequency: .oneShot, success: {
-            (_, location)  in
-            let lat = location.coordinate.latitude
-            let lng = location.coordinate.longitude
-            self.discover(lat: lat, lng: lng)
-        }) { (_, location, error) in
-            let alert = UIAlertController(title: "Location Error", message: error.localizedDescription, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-        }
-    }
-    
-    func discover(lat: Double, lng: Double) {
-    }
-}
-
-/**
  Custom delegate because scroll view delegate ned to be shared with
  Flexible height bar
  */
@@ -176,9 +148,7 @@ class SearchTableDelegate: TableViewDelegateHandler, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "DiscoverViewCell", for: indexPath) as! DiscoverViewCell
-        cell.render(place: controller.discoverPlaces[indexPath.row])
-        return cell
+        return UITableViewCell()
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -189,16 +159,6 @@ class SearchTableDelegate: TableViewDelegateHandler, UITableViewDataSource {
         placeController.place = self.controller.discoverPlaces[indexPath.row]
         self.controller.navigationController!.isHeroEnabled = false
         self.controller.navigationController!.pushViewController(placeController, animated: true)
-    }
-}
-
-class DiscoverViewCell: UITableViewCell {
-    
-    @IBOutlet weak var discoverImageView: UIImageView!
-    @IBOutlet weak var placeName: UILabel!
-
-    func render(place: Place) {
-        self.placeName.text = place.name!
     }
 }
 
@@ -292,24 +252,8 @@ class SearchLocationController: SearchBarController, UITableViewDataSource, UITa
         return textFieldShouldBeginEditing(textField, altTextField: searchBar.filterSearchField, segue: "segueToFilterSearch")
     }
     
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
-    }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if (section == 0) { // Detect my location section
-            return 1
-        } else {
-            return 2
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if (section == 0) { // Detect my location section
-            return nil
-        } else {
-            return "Recent Locations"
-        }
+        return 1
     }
     
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
@@ -319,40 +263,7 @@ class SearchLocationController: SearchBarController, UITableViewDataSource, UITa
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if (indexPath.section == 0) {
-            return tableView.dequeueReusableCell(withIdentifier: "DetectMyLocationCell") as! DetectMyLocationCell
-        }
-        let cell = tableView.dequeueReusableCell(withIdentifier: "SearchLocationTextCell") as! SearchLocationTextCell
-        cell.render(title: "Bishan")
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // TODO something
-    }
-}
-
-class DetectMyLocationCell: UITableViewCell {
-    var needPrepare = true
-    
-    @IBOutlet weak var detectLocationButton: UIButton!
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        if (needPrepare){
-            detectLocationButton.layer.cornerRadius = 4.0
-            detectLocationButton.layer.borderWidth = 1.0
-            detectLocationButton.layer.borderColor = UIColor(hex: "007AFF").cgColor
-            needPrepare = false
-        }
-    }
-}
-
-class SearchLocationTextCell: UITableViewCell {
-    @IBOutlet weak var locationLabel: UILabel!
-    
-    func render(title: String) {
-        self.locationLabel.text = title
+        return UITableViewCell()
     }
 }
 
@@ -370,8 +281,4 @@ class SearchFilterController: SearchBarController {
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         return textFieldShouldBeginEditing(textField, altTextField: searchBar.locationSearchField, segue: "segueToLocationSearch")
     }
-}
-
-class SearchFilterPopoverController: UIViewController {
-    
 }
