@@ -283,8 +283,8 @@
 				03E216A41EFA005300465BE3 /* Discover.storyboard */,
 				03E216A61EFA006900465BE3 /* DiscoverController.swift */,
 				03E216AE1EFAD80A00465BE3 /* DiscoverPopover.swift */,
-				03B34FDB1EFBD52B00EAB6DB /* DiscoverCards.xib */,
 				03B34FDD1EFBD53E00EAB6DB /* DiscoverCards.swift */,
+				03B34FDB1EFBD52B00EAB6DB /* DiscoverCards.xib */,
 			);
 			name = Discover;
 			sourceTree = "<group>";

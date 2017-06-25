@@ -11,16 +11,16 @@ import UIKit
 import MXPagerView
 import SafariServices
 
-class DiscoverViewController: UIViewController, MXPagerViewDelegate, MXPagerViewDataSource, MXPageSegueSource, DiscoverViewDelegate {
+class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewDataSource, MXPageSegueSource, DiscoverDelegate {
    
     var pageIndex: Int = 0
     // 0 = LinearCollection, 1 = Filter
     var pageControllers = [Int: UIViewController]()
+    @IBOutlet weak var searchBar: SearchNavigationBar!
     @IBOutlet weak var pagerView: MXPagerView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         
         pagerView.delegate = self
         pagerView.dataSource = self
@@ -36,7 +36,7 @@ class DiscoverViewController: UIViewController, MXPagerViewDelegate, MXPagerView
         super.viewDidAppear(animated)
         
         // Temporary render for testing
-        let controller = pageControllers[0] as! DiscoverLinearCollectionController
+        let controller = pageControllers[0] as! DiscoverTabController
         controller.render(collections: [
             PlaceCollection(name: "NEARBY", query: SearchQuery(), places: [Place(), Place(), Place()]),
             PlaceCollection(name: "HEALTHY OPTIONS", query: SearchQuery(), places: [Place(), Place()]),
@@ -53,7 +53,7 @@ class DiscoverViewController: UIViewController, MXPagerViewDelegate, MXPagerView
     func setPageViewController(_ pageViewController: UIViewController, at index: Int) {
         pageControllers[index] = pageViewController
         if (index == 0) {
-            (pageControllers[0] as! DiscoverLinearCollectionController).rootDelegate = self
+            (pageControllers[0] as! DiscoverTabController).discoverDelegate = self
         }
     }
     
@@ -73,14 +73,6 @@ class DiscoverViewController: UIViewController, MXPagerViewDelegate, MXPagerView
         self.performSegue(withIdentifier: identifier, sender: nil)
         return pageControllers[index]?.view
     }
-   
-    /**
-     Main content view scrolling
-     */
-    func contentViewDidScroll(scrollView: UIScrollView) {
-        let position = scrollView.contentOffset.y
-        print(position)
-    }
     
     /**
      Unwind to main Discover View Controller
@@ -98,31 +90,85 @@ class DiscoverViewController: UIViewController, MXPagerViewDelegate, MXPagerView
     }
 }
 
-protocol DiscoverViewDelegate {
+class SearchNavigationBar: UIView {
+    enum State {
+        case Open
+        case Close
+    }
+    
+    let maxHeight: CGFloat = 103.0
+    let minHeight: CGFloat = 20.0
+    let diffHeight: CGFloat = 83.0
+    
+    @IBOutlet weak var heightConstraint: NSLayoutConstraint!
+    var endScrollY: CGFloat = 0.0
+    var state = State.Open
+    
+    /**
+     Check that navigation bar is open
+     */
+    func isOpen() -> Bool {
+        return state == .Open
+    }
+    
+    /**
+     return height that the bar should be
+     */
+    func calculateHeight(relativeY: CGFloat) -> CGFloat {
+        if (relativeY > diffHeight) {
+            return minHeight
+        } else if (relativeY < 0) {
+            return maxHeight
+        } else {
+            return minHeight + diffHeight - relativeY
+        }
+    }
+    
+    /**
+     Update height progress of naivgation bar live
+     Update with current y progress
+     */
+    func updateHeight(relativeY: CGFloat) {
+        // Calculate progress for navigation bar
+        let currentHeight = heightConstraint.constant
+        let shouldHeight = calculateHeight(relativeY: relativeY)
+        // Progress, 100% bar fully extended
+//        let progress: shouldHeight/diffHeight
+        
+        // Update height constant if not the same
+        if (currentHeight != shouldHeight) {
+            heightConstraint.constant = shouldHeight
+        }
+    }
+
+    /**
+     UI animate height of navigation bar
+     */
+    func animateHeight(to state: State) {
+        
+    }
+}
+
+protocol DiscoverDelegate {
     /**
      Present place controller with place data
      */
     func present(place: Place)
     
-    /**
-     Did scroll content view
-     */
-    func contentViewDidScroll(scrollView: UIScrollView)
+    var searchBar: SearchNavigationBar! { get }
 }
 
 
-class DiscoverLinearCollectionController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, MXPagerViewDelegate, MXPagerViewDataSource {
+class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    var rootDelegate: DiscoverViewDelegate!
-    let titleFont = UIFont.systemFont(ofSize: 12.0, weight: UIFontWeightSemibold)
-    @IBOutlet weak var titleView: UIView!
-    @IBOutlet weak var titleCollection: UICollectionView!
-    @IBOutlet weak var pagerView: MXPagerView!
+    var discoverDelegate: DiscoverDelegate!
+    @IBOutlet weak var tabView: UIView!
+    @IBOutlet weak var tabCollection: UICollectionView!
+    @IBOutlet weak var contentCollection: UICollectionView!
     
-    
-    var collectionViews = [DiscoverCollectionView]()
+    var selectedTab = 0
     var collections = [PlaceCollection]()
-    var selectedPage = 0
+    var lastEndScrollY: CGFloat = 0 // Updated once end dragging
     
     /**
      Setup hairline for title view
@@ -130,14 +176,12 @@ class DiscoverLinearCollectionController: UIViewController, UICollectionViewData
      */
     override func viewDidLoad() {
         super.viewDidLoad()
-        titleView.hairlineShadow()
-        titleCollection.delegate = self
-        titleCollection.dataSource = self
-        titleCollection.showsHorizontalScrollIndicator = false
+        self.tabView.hairlineShadow()
+        self.tabCollection.delegate = self
+        self.tabCollection.dataSource = self
         
-        pagerView.delegate = self
-        pagerView.dataSource = self
-        pagerView.transitionStyle = .tab
+        self.contentCollection.delegate = self
+        self.contentCollection.dataSource = self
     }
     
     /**
@@ -145,127 +189,67 @@ class DiscoverLinearCollectionController: UIViewController, UICollectionViewData
      */
     func render(collections: [PlaceCollection]) {
         self.collections = collections
-        
-        // Check if have enough collection views, if not add more
-        let need = collections.count - collectionViews.count
-        if (need != 0) {
-            for _ in 1...need {
-                let collectonView = DiscoverCollectionView()
-                collectonView.rootDelegate = rootDelegate
-                collectionViews.append(collectonView)
-            }
-        }
-        
-        // Reload title and pager
-        self.titleCollection.reloadData()
-        self.pagerView.reloadData()
-        
-        // Render theses collections
-        for i in 0..<collections.count {
-            self.collectionViews[i].render(places: collections[i].places)
-        }
+        // Reload title and selected tabs
+        self.tabCollection.reloadData()
+        // Must select tab before reload
+        self.selectedTab = 0
+        self.contentCollection.reloadData()
     }
     
-    // MARK: - Linear title Collection
+    // MARK: - Collections
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return collections.count
+        if (collectionView == tabCollection) {
+            return collections.count
+        }
+        return collections[selectedTab].places.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DiscoverCollectionTitleCell", for: indexPath) as! DiscoverCollectionTitleCell
-        cell.label.text = collections[indexPath.row].name
-        cell.selected(select: selectedPage == indexPath.row)
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let text = collections[indexPath.row].name
-        let width = UILabel.textWidth(font: titleFont, text: text)
-        return CGSize(width: width + 20, height: 40)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self.selectedPage = indexPath.row
-        pagerView.showPage(at: indexPath.row, animated: true)
-        titleCollection.reloadData()
-        collectionViews[indexPath.row].reloadData()
-    }
-    
-    // MARK: - Linear Pager View
-    func numberOfPages(in pagerView: MXPagerView) -> Int {
-        return collections.count
-    }
-    
-    func pagerView(_ pagerView: MXPagerView, viewForPageAt index: Int) -> UIView? {
-        return collectionViews[index]
-    }
-}
-
-class DiscoverCollectionView: UICollectionView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    
-    var places = [Place]()
-    var rootDelegate: DiscoverViewDelegate!
-    let width = UIScreen.main.bounds.width
-    
-    convenience init() {
-        let layout = UICollectionViewFlowLayout()
-        layout.minimumLineSpacing = 0
-        layout.minimumInteritemSpacing = 0
-        self.init(frame: CGRect.zero, collectionViewLayout: layout)
+        if (collectionView == tabCollection) {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DiscoverTabTitleCell", for: indexPath) as! DiscoverTabTitleCell
+            cell.render(title: collections[indexPath.row].name, selected: selectedTab == indexPath.row)
+            return cell
+        }
         
-        // Setup view, delegate and data source
-        self.showsVerticalScrollIndicator = false
-        self.backgroundColor = UIColor.white
-        dataSource = self
-        delegate = self
-        
-        // Register theses card for reuse
-        let nib = UINib(nibName: "DiscoverCards", bundle: nil)
-        self.register(nib, forCellWithReuseIdentifier: "DiscoverPlaceCardView")
-    }
-    
-    func render(places: [Place]) {
-        self.places = places
-        self.reloadData()
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return places.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DiscoverPlaceCardView", for: indexPath) as! DiscoverPlaceCardView
-        cell.render(place: places[indexPath.row])
+        cell.render(place: collections[selectedTab].places[indexPath.row])
         cell.imageView.kf.setImage(with: URL(string: "https://migrationology.smugmug.com/Singapore-2016/i-fDSC6zr/0/X3/singapore-food-guide-3-X3.jpg"))
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = self.width
+        if (collectionView == tabCollection) {
+            return DiscoverTabTitleCell.width(title: collections[indexPath.row].name)
+        }
+        
+        let width = UIScreen.main.bounds.width
         return CGSize(width: width, height: width * 0.9)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        rootDelegate.present(place: places[indexPath.row])
-    }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        rootDelegate.contentViewDidScroll(scrollView: scrollView)
-    }
-}
-
-/**
- Title cell for Discovery Page
- */
-class DiscoverCollectionTitleCell: UICollectionViewCell {
-    @IBOutlet weak var label: UILabel!
-    
-    func selected(select: Bool) {
-        if (select) {
-            label.textColor = UIColor.black.withAlphaComponent(0.8)
+        if (collectionView == tabCollection) {
+            self.selectedTab = indexPath.row
+            self.tabCollection.reloadData()
+            self.contentCollection.reloadData()
         } else {
-            label.textColor = UIColor.black.withAlphaComponent(0.35)
+            discoverDelegate.present(place: collections[selectedTab].places[indexPath.row])
         }
+    }
+    
+    // MARK: Scroll control
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let actualY = scrollView.contentOffset.y
+        // Is open now
+        if (discoverDelegate.searchBar.isOpen()) {
+            discoverDelegate.searchBar.updateHeight(relativeY: actualY - lastEndScrollY)
+        } else {
+            // Is closed now
+            discoverDelegate.searchBar.updateHeight(relativeY: actualY)
+        }
+    }
+    
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        
     }
 }
 
