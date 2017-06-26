@@ -47,7 +47,6 @@
 		03E216AD1EFA011600465BE3 /* GeneralController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E216AA1EFA011600465BE3 /* GeneralController.swift */; };
 		03E216AF1EFAD80A00465BE3 /* DiscoverPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E216AE1EFAD80A00465BE3 /* DiscoverPopover.swift */; };
 		03EE235E1E83039A009AFBFC /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03EE235D1E83039A009AFBFC /* MapKit.framework */; };
-		03EE23601E83342F009AFBFC /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EE235F1E83342F009AFBFC /* SearchController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -118,7 +117,6 @@
 		03E216AA1EFA011600465BE3 /* GeneralController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GeneralController.swift; path = Place/GeneralController.swift; sourceTree = "<group>"; };
 		03E216AE1EFAD80A00465BE3 /* DiscoverPopover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiscoverPopover.swift; path = Discover/DiscoverPopover.swift; sourceTree = "<group>"; };
 		03EE235D1E83039A009AFBFC /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
-		03EE235F1E83342F009AFBFC /* SearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,7 +192,6 @@
 				032F89351E82F1F300AD3818 /* Api */,
 				032F88FB1E82DFA300AD3818 /* AppDelegate.swift */,
 				032F88FF1E82DFA300AD3818 /* Main.storyboard */,
-				03EE235F1E83342F009AFBFC /* SearchController.swift */,
 				03E216A11EFA000000465BE3 /* Discover */,
 				03D3FEF91E8ABDF500ACFF50 /* Place */,
 				032F89021E82DFA300AD3818 /* Assets.xcassets */,
@@ -459,7 +456,6 @@
 				03E216AD1EFA011600465BE3 /* GeneralController.swift in Sources */,
 				03CF0AA21E97AA3C00A3FD1F /* Objects.swift in Sources */,
 				03E216AC1EFA011600465BE3 /* GalleryController.swift in Sources */,
-				03EE23601E83342F009AFBFC /* SearchController.swift in Sources */,
 				03E216AF1EFAD80A00465BE3 /* DiscoverPopover.swift in Sources */,
 				03D3FF001E8ABEE300ACFF50 /* PlaceController.swift in Sources */,
 				03E216AB1EFA011600465BE3 /* ArticleController.swift in Sources */,

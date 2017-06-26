@@ -152,7 +152,6 @@ class SearchNavigationBar: UIView {
             filterButton.alpha = progress
         }
     }
-
     
     func open(constraint: NSLayoutConstraint?) {
         let currentHeight = heightConstraint.constant

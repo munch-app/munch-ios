@@ -105,11 +105,11 @@ extension UILabel {
 }
 
 extension UIView {
-    func hairlineShadow() {
+    func hairlineShadow(height: CGFloat = 1.0) {
         self.layer.masksToBounds = false
-        self.layer.shadowColor = UIColor.black.withAlphaComponent(0.25).cgColor
-        self.layer.shadowOpacity = 0.5
-        self.layer.shadowOffset = CGSize(width: -1, height: 1)
+        self.layer.shadowColor = UIColor.black.withAlphaComponent(0.26).cgColor
+        self.layer.shadowOpacity = 0.52
+        self.layer.shadowOffset = CGSize(width: -1, height: height)
         self.layer.shadowRadius = 1
         
         self.layer.shadowPath = UIBezierPath(rect: self.bounds).cgPath

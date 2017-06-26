@@ -61,15 +61,18 @@ enum InitialViewProvider {
         let tabController = ESTabBarController()
         tabController.tabBar.isTranslucent = false
         tabController.tabBar.backgroundColor = UIColor.white
+        tabController.tabBar.shadowImage = UIImage()
+        tabController.tabBar.backgroundImage = UIImage()
+        tabController.tabBar.hairlineShadow(height: -1.0)
         
         // Discover
         let discoverStoryboard = UIStoryboard(name: "Discover", bundle: nil)
         let discoverController = discoverStoryboard.instantiateInitialViewController()!
-        discoverController.tabBarItem = ESTabBarItem.init(MunchTabBarContentView(), title: nil, image: UIImage(named: "icons8-Paper-30"), selectedImage: UIImage(named: "icons8-Paper Filled-30"))
+        discoverController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "DISCOVER", image: UIImage(named: "icons8-Search-35"))
         
         // Profile
         let profileController = UIViewController()
-        profileController.tabBarItem = ESTabBarItem.init(MunchTabBarContentView(), title: nil, image: UIImage(named: "User-30"), selectedImage: UIImage(named: "User Filled-30"))
+        profileController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "PROFILE", image: UIImage(named: "icons8-customer-35"))
         
         tabController.viewControllers = [discoverController, profileController]
         return tabController
@@ -83,8 +86,15 @@ class MunchTabBarContentView: ESTabBarItemContentView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        iconColor = UIColor.black
-        highlightIconColor = UIColor.black
+        titleLabel.font = UIFont.systemFont(ofSize: 9, weight: UIFontWeightSemibold)
+        insets.bottom = 3
+        insets.top = 3
+        
+        iconColor = UIColor.black.withAlphaComponent(0.75)
+        textColor = UIColor.black.withAlphaComponent(0.75)
+        
+        highlightIconColor = UIColor(hex: "FF5339")
+        highlightTextColor = UIColor(hex: "FF5339")
     }
     
     required init?(coder aDecoder: NSCoder) {
