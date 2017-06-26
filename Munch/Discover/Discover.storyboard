@@ -88,12 +88,14 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mmi-6E-ccH">
-                                        <rect key="frame" x="24" y="28" width="327" height="33"/>
+                                        <rect key="frame" x="24" y="20" width="327" height="45"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="33" id="20c-h7-VDa"/>
+                                            <constraint firstAttribute="height" constant="45" id="20c-h7-VDa"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                        <inset key="contentEdgeInsets" minX="0.0" minY="2" maxX="0.0" maxY="0.0"/>
                                         <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <state key="normal" title="Current Location" image="icons8-Expand Arrow-20">
                                             <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -104,31 +106,34 @@
                                             </segue>
                                         </connections>
                                     </button>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wxg-Oz-rqD">
-                                        <rect key="frame" x="0.0" y="103" width="375" height="0.0"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.25" colorSpace="calibratedWhite"/>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="C33-z9-5gd">
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="20"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" id="n0a-Ti-wQ1"/>
+                                            <constraint firstAttribute="height" constant="20" id="lGB-QR-iF5"/>
                                         </constraints>
                                     </view>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="wxg-Oz-rqD" secondAttribute="trailing" id="1w1-xG-v7J"/>
                                     <constraint firstItem="Hs0-4P-Yo8" firstAttribute="leading" secondItem="06x-B7-TO6" secondAttribute="leading" constant="24" id="9ew-U1-6lo"/>
                                     <constraint firstItem="5xR-ye-wN3" firstAttribute="leading" secondItem="Hs0-4P-Yo8" secondAttribute="trailing" constant="5" id="B8L-mO-0AE"/>
                                     <constraint firstAttribute="bottom" secondItem="Hs0-4P-Yo8" secondAttribute="bottom" constant="3" id="IG2-wU-FbP"/>
+                                    <constraint firstItem="Mmi-6E-ccH" firstAttribute="top" secondItem="C33-z9-5gd" secondAttribute="bottom" id="KpB-vD-AiT"/>
                                     <constraint firstAttribute="height" constant="103" id="UPg-0q-clo"/>
+                                    <constraint firstAttribute="trailing" secondItem="C33-z9-5gd" secondAttribute="trailing" id="V8J-IC-Xbg"/>
+                                    <constraint firstItem="C33-z9-5gd" firstAttribute="leading" secondItem="06x-B7-TO6" secondAttribute="leading" id="Xcv-L3-fJP"/>
                                     <constraint firstAttribute="trailing" secondItem="Mmi-6E-ccH" secondAttribute="trailing" constant="24" id="ddo-dH-52a"/>
                                     <constraint firstAttribute="trailing" secondItem="5xR-ye-wN3" secondAttribute="trailing" constant="24" id="hJR-5a-jDa"/>
                                     <constraint firstItem="Mmi-6E-ccH" firstAttribute="leading" secondItem="06x-B7-TO6" secondAttribute="leading" constant="24" id="q5F-Jf-xNd"/>
                                     <constraint firstAttribute="bottom" secondItem="5xR-ye-wN3" secondAttribute="bottom" constant="3" id="qhb-tN-gap"/>
-                                    <constraint firstItem="5xR-ye-wN3" firstAttribute="top" secondItem="Mmi-6E-ccH" secondAttribute="bottom" constant="7" id="qs2-dZ-hqA"/>
-                                    <constraint firstItem="wxg-Oz-rqD" firstAttribute="leading" secondItem="06x-B7-TO6" secondAttribute="leading" id="vU9-I4-dxJ"/>
-                                    <constraint firstAttribute="bottom" secondItem="wxg-Oz-rqD" secondAttribute="bottom" id="zWF-wa-XRT"/>
+                                    <constraint firstItem="C33-z9-5gd" firstAttribute="top" secondItem="06x-B7-TO6" secondAttribute="top" id="zMa-vs-N0Z"/>
                                 </constraints>
                                 <connections>
+                                    <outlet property="filterButton" destination="5xR-ye-wN3" id="wKl-RB-hHI"/>
                                     <outlet property="heightConstraint" destination="UPg-0q-clo" id="I6g-uq-Lm7"/>
+                                    <outlet property="locationButton" destination="Mmi-6E-ccH" id="ES3-mi-Whg"/>
+                                    <outlet property="searchBar" destination="Hs0-4P-Yo8" id="DEa-aS-oV0"/>
                                 </connections>
                             </view>
                         </subviews>

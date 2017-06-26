@@ -19,6 +19,7 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
     @IBOutlet weak var searchBar: SearchNavigationBar!
     @IBOutlet weak var pagerView: MXPagerView!
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -38,7 +39,7 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
         // Temporary render for testing
         let controller = pageControllers[0] as! DiscoverTabController
         controller.render(collections: [
-            PlaceCollection(name: "NEARBY", query: SearchQuery(), places: [Place(), Place(), Place()]),
+            PlaceCollection(name: "NEARBY", query: SearchQuery(), places: [Place(), Place(), Place(), Place(), Place(), Place()]),
             PlaceCollection(name: "HEALTHY OPTIONS", query: SearchQuery(), places: [Place(), Place()]),
             PlaceCollection(name: "CAFES", query: SearchQuery(), places: [Place(), Place()]),
             PlaceCollection(name: "PUBS & BARS", query: SearchQuery(), places: [Place(), Place()])
@@ -96,9 +97,14 @@ class SearchNavigationBar: UIView {
         case Close
     }
     
+    @IBOutlet weak var locationButton: UIButton!
+    @IBOutlet weak var searchBar: DiscoverSearchField!
+    @IBOutlet weak var filterButton: UIButton!
+    
     let maxHeight: CGFloat = 103.0
     let minHeight: CGFloat = 20.0
     let diffHeight: CGFloat = 83.0
+    let fieldHeight: CGFloat = 35.0
     
     @IBOutlet weak var heightConstraint: NSLayoutConstraint!
     var state = State.Open
@@ -107,7 +113,8 @@ class SearchNavigationBar: UIView {
      Check that navigation bar is open
      */
     func isOpen() -> Bool {
-        return state == .Open
+        let currentHeight = heightConstraint.constant
+        return currentHeight >= maxHeight
     }
     
     /**
@@ -127,25 +134,48 @@ class SearchNavigationBar: UIView {
      Update height progress of naivgation bar live
      Update with current y progress
      */
-    func updateHeight(relativeY: CGFloat, constraint: NSLayoutConstraint? = nil) {
+    func updateHeight(relativeY: CGFloat, constraint: NSLayoutConstraint?) {
         // Calculate progress for navigation bar
         let currentHeight = heightConstraint.constant
         let shouldHeight = calculateHeight(relativeY: relativeY)
-        // Progress, 100% bar fully extended
-//        let progress: shouldHeight/diffHeight
         
-        // Update constant if not the same, height and top constrait
+        // Update constant if not the same, height and top constraint
         if (currentHeight != shouldHeight) {
             heightConstraint.constant = shouldHeight
             constraint?.constant = shouldHeight - minHeight
+            
+            // Progress, 100% bar fully extended
+            var progress = (shouldHeight - minHeight)/diffHeight
+            progress = progress < 0.2 ? 0 : (progress - 0.3) * 2
+            locationButton.alpha = progress
+            searchBar.alpha = progress
+            filterButton.alpha = progress
         }
     }
 
-    /**
-     UI animate height of navigation bar
-     */
-    func animateHeight(to state: State) {
+    
+    func open(constraint: NSLayoutConstraint?) {
+        let currentHeight = heightConstraint.constant
         
+        // Update constant if not the same, height and top constraint
+        if (currentHeight != maxHeight) {
+            heightConstraint.constant = maxHeight
+            constraint?.constant = diffHeight
+            
+            // Progress, 100% bar fully extended
+            locationButton.alpha = 1.0
+            searchBar.alpha = 1.0
+            filterButton.alpha = 1.0
+        }
+    }
+    
+    func offsetYFromClosest() -> CGFloat {
+        let currentHeight = heightConstraint.constant
+        if (currentHeight < (diffHeight / 2) + minHeight) {
+            return currentHeight - self.minHeight
+        } else {
+            return currentHeight - self.maxHeight
+        }
     }
 }
 
@@ -156,6 +186,8 @@ protocol DiscoverDelegate {
     func present(place: Place)
     
     var searchBar: SearchNavigationBar! { get }
+    
+    var view: UIView! { get }
 }
 
 
@@ -243,21 +275,57 @@ class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICol
     }
     
     // MARK: Scroll control
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+         self.lastEndScrollY = scrollView.contentOffset.y
+    }
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if (scrollView == tabCollection) { return }
         let actualY = scrollView.contentOffset.y
         if (discoverDelegate.searchBar.isOpen()) {
             // Is open now
             discoverDelegate.searchBar.updateHeight(relativeY: actualY - lastEndScrollY, constraint: topConstraint)
-            
         } else {
             // Is closed now
             discoverDelegate.searchBar.updateHeight(relativeY: actualY, constraint: topConstraint)
         }
     }
     
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+//    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+//        if (scrollView == tabCollection) { return }
+//        if (!discoverDelegate.searchBar.isOpen()) {
+//            let current = scrollView.contentOffset
+//            let end = targetContentOffset.move()
+//            // Too close to endpoint
+//            if (end.y < 500) { return }
+//            let movedY = end.y - current.y
+//            
+//            // Check is scrolling up and acceleration
+//            if (movedY < -350) {
+//                self.lastEndScrollY = scrollView.contentOffset.y
+//                UIView.animate(withDuration: 0.1) {
+//                    self.discoverDelegate.searchBar.open(constraint: self.topConstraint)
+//                    self.discoverDelegate.view.layoutIfNeeded()
+//                }
+//            }
+//        }
+//    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if (scrollView == tabCollection) { return }
+        // For decelerated scrolling, scrollViewDidEndDecelerating will be called instead
+        if (!decelerate) {
+            let y = discoverDelegate.searchBar.offsetYFromClosest()
+            // If not change, end
+            if (!y.isZero) {
+                UIView.animate(withDuration: 0.1) {
+                    var offset = scrollView.contentOffset
+                    offset.y = offset.y + y
+                    scrollView.contentOffset = offset
+                    self.discoverDelegate.view.layoutIfNeeded()
+                }
+            }
+        }
     }
 }
 
