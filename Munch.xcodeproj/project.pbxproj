@@ -26,7 +26,6 @@
 		039C39401E8D484A00A28533 /* HMSegmentedControl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C393C1E8D47E300A28533 /* HMSegmentedControl.framework */; };
 		039C39421E8D485400A28533 /* MXPagerView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C39411E8D485400A28533 /* MXPagerView.framework */; };
 		039C39441E8D485800A28533 /* MXParallaxHeader.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C39431E8D485800A28533 /* MXParallaxHeader.framework */; };
-		03B34FDC1EFBD52B00EAB6DB /* DiscoverCards.xib in Resources */ = {isa = PBXBuildFile; fileRef = 03B34FDB1EFBD52B00EAB6DB /* DiscoverCards.xib */; };
 		03B34FDE1EFBD53E00EAB6DB /* DiscoverCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B34FDD1EFBD53E00EAB6DB /* DiscoverCards.swift */; };
 		03CF0A9C1E96A7B100A3FD1F /* ESTabBarController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03CF0A9B1E96A7B100A3FD1F /* ESTabBarController.framework */; };
 		03CF0AA21E97AA3C00A3FD1F /* Objects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CF0A9F1E97AA3C00A3FD1F /* Objects.swift */; };
@@ -97,7 +96,6 @@
 		039C393E1E8D47F500A28533 /* MXSegmentedPager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXSegmentedPager.framework; path = Carthage/Build/iOS/MXSegmentedPager.framework; sourceTree = "<group>"; };
 		039C39411E8D485400A28533 /* MXPagerView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXPagerView.framework; path = Carthage/Build/iOS/MXPagerView.framework; sourceTree = "<group>"; };
 		039C39431E8D485800A28533 /* MXParallaxHeader.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXParallaxHeader.framework; path = Carthage/Build/iOS/MXParallaxHeader.framework; sourceTree = "<group>"; };
-		03B34FDB1EFBD52B00EAB6DB /* DiscoverCards.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DiscoverCards.xib; path = Discover/DiscoverCards.xib; sourceTree = "<group>"; };
 		03B34FDD1EFBD53E00EAB6DB /* DiscoverCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverCards.swift; sourceTree = "<group>"; };
 		03CF0A9B1E96A7B100A3FD1F /* ESTabBarController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ESTabBarController.framework; path = Carthage/Build/iOS/ESTabBarController.framework; sourceTree = "<group>"; };
 		03CF0A9F1E97AA3C00A3FD1F /* Objects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Objects.swift; path = Api/Objects.swift; sourceTree = "<group>"; };
@@ -284,7 +282,6 @@
 				03E216A61EFA006900465BE3 /* DiscoverController.swift */,
 				03E216AE1EFAD80A00465BE3 /* DiscoverPopover.swift */,
 				03B34FDD1EFBD53E00EAB6DB /* DiscoverCards.swift */,
-				03B34FDB1EFBD52B00EAB6DB /* DiscoverCards.xib */,
 			);
 			name = Discover;
 			sourceTree = "<group>";
@@ -404,7 +401,6 @@
 				032F892A1E82E79000AD3818 /* Cartfile in Resources */,
 				032F892E1E82EF3D00AD3818 /* Carthage in Resources */,
 				03E216A51EFA005300465BE3 /* Discover.storyboard in Resources */,
-				03B34FDC1EFBD52B00EAB6DB /* DiscoverCards.xib in Resources */,
 				032F89011E82DFA300AD3818 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

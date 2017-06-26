@@ -101,7 +101,6 @@ class SearchNavigationBar: UIView {
     let diffHeight: CGFloat = 83.0
     
     @IBOutlet weak var heightConstraint: NSLayoutConstraint!
-    var endScrollY: CGFloat = 0.0
     var state = State.Open
     
     /**
@@ -128,16 +127,17 @@ class SearchNavigationBar: UIView {
      Update height progress of naivgation bar live
      Update with current y progress
      */
-    func updateHeight(relativeY: CGFloat) {
+    func updateHeight(relativeY: CGFloat, constraint: NSLayoutConstraint? = nil) {
         // Calculate progress for navigation bar
         let currentHeight = heightConstraint.constant
         let shouldHeight = calculateHeight(relativeY: relativeY)
         // Progress, 100% bar fully extended
 //        let progress: shouldHeight/diffHeight
         
-        // Update height constant if not the same
+        // Update constant if not the same, height and top constrait
         if (currentHeight != shouldHeight) {
             heightConstraint.constant = shouldHeight
+            constraint?.constant = shouldHeight - minHeight
         }
     }
 
@@ -162,6 +162,7 @@ protocol DiscoverDelegate {
 class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     var discoverDelegate: DiscoverDelegate!
+    @IBOutlet weak var topConstraint: NSLayoutConstraint!
     @IBOutlet weak var tabView: UIView!
     @IBOutlet weak var tabCollection: UICollectionView!
     @IBOutlet weak var contentCollection: UICollectionView!
@@ -197,11 +198,25 @@ class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICol
     }
     
     // MARK: - Collections
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        // Return 0 if there is nothing to render
+        return collections.isEmpty ? 0 : 1
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if (collectionView == tabCollection) {
             return collections.count
         }
         return collections[selectedTab].places.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if (collectionView == tabCollection) {
+            return DiscoverTabTitleCell.width(title: collections[indexPath.row].name)
+        }
+        
+        let width = UIScreen.main.bounds.width
+        return CGSize(width: width, height: width * 0.9)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -217,15 +232,6 @@ class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICol
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if (collectionView == tabCollection) {
-            return DiscoverTabTitleCell.width(title: collections[indexPath.row].name)
-        }
-        
-        let width = UIScreen.main.bounds.width
-        return CGSize(width: width, height: width * 0.9)
-    }
-    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if (collectionView == tabCollection) {
             self.selectedTab = indexPath.row
@@ -238,18 +244,20 @@ class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICol
     
     // MARK: Scroll control
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if (scrollView == tabCollection) { return }
         let actualY = scrollView.contentOffset.y
-        // Is open now
         if (discoverDelegate.searchBar.isOpen()) {
-            discoverDelegate.searchBar.updateHeight(relativeY: actualY - lastEndScrollY)
+            // Is open now
+            discoverDelegate.searchBar.updateHeight(relativeY: actualY - lastEndScrollY, constraint: topConstraint)
+            
         } else {
             // Is closed now
-            discoverDelegate.searchBar.updateHeight(relativeY: actualY)
+            discoverDelegate.searchBar.updateHeight(relativeY: actualY, constraint: topConstraint)
         }
     }
     
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        
+        if (scrollView == tabCollection) { return }
     }
 }
 
