@@ -81,11 +81,6 @@
                                         </constraints>
                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                         <state key="normal" image="icons8-Horizontal Settings Mixer-30"/>
-                                        <connections>
-                                            <segue destination="xme-f9-6Uz" kind="popoverPresentation" popoverAnchorView="5xR-ye-wN3" id="yOq-jv-S0h">
-                                                <popoverArrowDirection key="popoverArrowDirection" up="YES"/>
-                                            </segue>
-                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mmi-6E-ccH">
                                         <rect key="frame" x="24" y="20" width="327" height="45"/>
