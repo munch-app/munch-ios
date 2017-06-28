@@ -38,12 +38,7 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
         
         // Temporary render for testing
         let controller = pageControllers[0] as! DiscoverTabController
-        controller.render(collections: [
-            PlaceCollection(name: "NEARBY", query: SearchQuery(), places: [Place(), Place(), Place(), Place(), Place(), Place()]),
-            PlaceCollection(name: "HEALTHY OPTIONS", query: SearchQuery(), places: [Place(), Place()]),
-            PlaceCollection(name: "CAFES", query: SearchQuery(), places: [Place(), Place()]),
-            PlaceCollection(name: "PUBS & BARS", query: SearchQuery(), places: [Place(), Place()])
-        ])
+        controller.render(collections: PlaceClient.randomCollection())
     }
     
     // MARK: - Pager view delegate
@@ -69,9 +64,8 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
         }
         
         // If don't exist, perform it first
-        let identifier = "mx_page_\(index)"
         self.pageIndex = index
-        self.performSegue(withIdentifier: identifier, sender: nil)
+        self.performSegue(withIdentifier: "mx_page_\(index)", sender: nil)
         return pageControllers[index]?.view
     }
     
@@ -115,6 +109,10 @@ class SearchNavigationBar: UIView {
     func isOpen() -> Bool {
         let currentHeight = heightConstraint.constant
         return currentHeight >= maxHeight
+    }
+    
+    func shouldOffset() -> CGFloat {
+        return maxHeight - heightConstraint.constant
     }
     
     /**
@@ -200,7 +198,7 @@ class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICol
     
     var selectedTab = 0
     var collections = [PlaceCollection]()
-    var lastEndScrollY: CGFloat = 0 // Updated once end dragging
+    var offsetMemory = [CGPoint]()
     
     /**
      Setup hairline for title view
@@ -221,6 +219,7 @@ class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICol
      */
     func render(collections: [PlaceCollection]) {
         self.collections = collections
+        self.offsetMemory = collections.map{_ in return CGPoint(x: 0, y: 0)}
         // Reload title and selected tabs
         self.tabCollection.reloadData()
         // Must select tab before reload
@@ -247,7 +246,7 @@ class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICol
         }
         
         let width = UIScreen.main.bounds.width
-        return CGSize(width: width, height: width * 0.9)
+        return CGSize(width: width, height: width * 0.888)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -259,56 +258,37 @@ class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICol
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DiscoverPlaceCardView", for: indexPath) as! DiscoverPlaceCardView
         cell.render(place: collections[selectedTab].places[indexPath.row])
-        cell.imageView.kf.setImage(with: URL(string: "https://migrationology.smugmug.com/Singapore-2016/i-fDSC6zr/0/X3/singapore-food-guide-3-X3.jpg"))
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if (collectionView == tabCollection) {
-            self.selectedTab = indexPath.row
-            self.tabCollection.reloadData()
-            self.contentCollection.reloadData()
+            if (self.selectedTab != indexPath.row) {
+                // Save old offset
+                var oldOffset = contentCollection.contentOffset
+                oldOffset.y = oldOffset.y - discoverDelegate.searchBar.shouldOffset()
+                offsetMemory[selectedTab] = oldOffset
+                
+                self.selectedTab = indexPath.row
+                self.tabCollection.reloadData()
+                
+                // Apply offset memory
+                var offset = offsetMemory[self.selectedTab]
+                offset.y = offset.y + discoverDelegate.searchBar.shouldOffset()
+                self.contentCollection.setContentOffset(offset, animated: false)
+                self.contentCollection.reloadData()
+            }
         } else {
             discoverDelegate.present(place: collections[selectedTab].places[indexPath.row])
         }
     }
     
     // MARK: Scroll control
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-         self.lastEndScrollY = scrollView.contentOffset.y
-    }
-    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if (scrollView == tabCollection) { return }
         let actualY = scrollView.contentOffset.y
-        if (discoverDelegate.searchBar.isOpen()) {
-            // Is open now
-            discoverDelegate.searchBar.updateHeight(relativeY: actualY - lastEndScrollY, constraint: topConstraint)
-        } else {
-            // Is closed now
-            discoverDelegate.searchBar.updateHeight(relativeY: actualY, constraint: topConstraint)
-        }
+        discoverDelegate.searchBar.updateHeight(relativeY: actualY, constraint: topConstraint)
     }
-    
-//    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-//        if (scrollView == tabCollection) { return }
-//        if (!discoverDelegate.searchBar.isOpen()) {
-//            let current = scrollView.contentOffset
-//            let end = targetContentOffset.move()
-//            // Too close to endpoint
-//            if (end.y < 500) { return }
-//            let movedY = end.y - current.y
-//            
-//            // Check is scrolling up and acceleration
-//            if (movedY < -350) {
-//                self.lastEndScrollY = scrollView.contentOffset.y
-//                UIView.animate(withDuration: 0.1) {
-//                    self.discoverDelegate.searchBar.open(constraint: self.topConstraint)
-//                    self.discoverDelegate.view.layoutIfNeeded()
-//                }
-//            }
-//        }
-//    }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if (scrollView == tabCollection) { return }
@@ -317,7 +297,7 @@ class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICol
             let y = discoverDelegate.searchBar.offsetYFromClosest()
             // If not change, end
             if (!y.isZero) {
-                UIView.animate(withDuration: 0.1) {
+                UIView.animate(withDuration: 0.2) {
                     var offset = scrollView.contentOffset
                     offset.y = offset.y + y
                     scrollView.contentOffset = offset

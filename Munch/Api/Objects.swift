@@ -29,6 +29,7 @@ struct Place {
     // Many
     var tags: [String]?
     var hours: [Hour]?
+    var images: [ImageMeta]?
     
     init() {
         
@@ -47,11 +48,16 @@ struct Place {
         
         self.tags = json["tags"].map({$0.1.stringValue})
         self.hours = json["hours"].map({Hour(json: $0.1)})
+        self.images = json["images"].map({ImageMeta(json: $0.1)})
     }
     
     struct Price {
         var lowest: Double?
         var highest: Double?
+        
+        init() {
+            
+        }
         
         init(json: JSON){
             self.lowest = json["lowest"].double
@@ -68,6 +74,10 @@ struct Place {
         
         var postal: String?
         var latLng: String?
+        
+        init() {
+            
+        }
         
         init(json: JSON) {
             self.address = json["address"].string
@@ -92,6 +102,10 @@ struct Place {
         var day: String?
         var open: String?
         var close: String?
+        
+        init() {
+            
+        }
         
         init(json: JSON) {
             self.day = json["day"].string
@@ -354,7 +368,7 @@ struct Media {
     
     var profile: Profile?
     var caption: String?
-    var images: [String: Image]?
+    var image: ImageMeta?
     
     init(json: JSON) {
         self.placeId = json["placeId"].string
@@ -362,11 +376,7 @@ struct Media {
         
         self.profile = Profile(json: json["profile"])
         self.caption = json["caption"].string
-        self.images = json["images"].reduce([String:Image]()) { (result, json) -> [String: Image] in
-            var result = result
-            result[json.0] = Image(json: json.1)
-            return result
-        }
+        self.image = ImageMeta(json: json["image"])
     }
     
     struct Profile {
@@ -378,18 +388,6 @@ struct Media {
             self.userId = json["userId"].string
             self.username = json["username"].string
             self.pictureUrl = json["pictureUrl"].string
-        }
-    }
-    
-    struct Image {
-        var url: String?
-        var width: Int?
-        var height: Int?
-        
-        init(json: JSON) {
-            self.url = json["url"].string
-            self.width = json["width"].int
-            self.height = json["height"].int
         }
     }
 }
@@ -406,7 +404,7 @@ struct Article {
     
     var title: String?
     var description: String?
-    var images: [Image]?
+    var thumbnail: ImageMeta?
 
     
     init(json: JSON) {
@@ -418,27 +416,7 @@ struct Article {
         
         self.title = json["title"].string
         self.description = json["description"].string
-        self.images = json["images"].map({Image(json: $0.1)})
-    }
-    
-    /**
-     Image structure unique to Article image type only
-    */
-    struct Image {
-        var url: String?
-        var key: String?
-        var images: [String: String]
-        
-        init(json: JSON) {
-            self.url = json["url"].string
-            self.key = json["key"].string
-            self.images = json["images"].reduce([String:String]()) { (result, json) -> [String: String] in
-                var result = result
-                result[json.0] = json.1["url"].string
-                return result
-            }
-
-        }
+        self.thumbnail = ImageMeta(json: json["thumbnail"])
     }
 }
 
@@ -454,6 +432,10 @@ struct Article {
 struct ImageMeta {
     var key: String?
     var images: [String: String]
+    
+    init(images: [String: String]) {
+        self.images = images
+    }
     
     init(json: JSON) {
         self.key = json["key"].string

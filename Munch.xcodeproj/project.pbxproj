@@ -22,6 +22,7 @@
 		037884991E8E4E3F006025B5 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 037884981E8E4E3F006025B5 /* SnapKit.framework */; };
 		0378849B1E8E563E006025B5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0378849A1E8E563E006025B5 /* Extensions.swift */; };
 		0378849D1E8E5E39006025B5 /* SwiftLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */; };
+		038275781F03B7A700C5954A /* Munch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038275771F03B7A700C5954A /* Munch.swift */; };
 		039C393F1E8D47F500A28533 /* MXSegmentedPager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C393E1E8D47F500A28533 /* MXSegmentedPager.framework */; };
 		039C39401E8D484A00A28533 /* HMSegmentedControl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C393C1E8D47E300A28533 /* HMSegmentedControl.framework */; };
 		039C39421E8D485400A28533 /* MXPagerView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C39411E8D485400A28533 /* MXPagerView.framework */; };
@@ -91,6 +92,7 @@
 		034820571E9CB92A00B0076A /* SKPhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SKPhotoBrowser.framework; path = Carthage/Build/iOS/SKPhotoBrowser.framework; sourceTree = "<group>"; };
 		037884981E8E4E3F006025B5 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Carthage/Build/iOS/SnapKit.framework; sourceTree = "<group>"; };
 		0378849A1E8E563E006025B5 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		038275771F03B7A700C5954A /* Munch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Munch.swift; sourceTree = "<group>"; };
 		039C393C1E8D47E300A28533 /* HMSegmentedControl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HMSegmentedControl.framework; path = Carthage/Build/iOS/HMSegmentedControl.framework; sourceTree = "<group>"; };
 		039C393E1E8D47F500A28533 /* MXSegmentedPager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXSegmentedPager.framework; path = Carthage/Build/iOS/MXSegmentedPager.framework; sourceTree = "<group>"; };
 		039C39411E8D485400A28533 /* MXPagerView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXPagerView.framework; path = Carthage/Build/iOS/MXPagerView.framework; sourceTree = "<group>"; };
@@ -198,6 +200,7 @@
 				032F89041E82DFA300AD3818 /* LaunchScreen.storyboard */,
 				032F89071E82DFA300AD3818 /* Info.plist */,
 				0378849A1E8E563E006025B5 /* Extensions.swift */,
+				038275771F03B7A700C5954A /* Munch.swift */,
 			);
 			path = Munch;
 			sourceTree = "<group>";
@@ -454,6 +457,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				03E216AD1EFA011600465BE3 /* GeneralController.swift in Sources */,
+				038275781F03B7A700C5954A /* Munch.swift in Sources */,
 				03CF0AA21E97AA3C00A3FD1F /* Objects.swift in Sources */,
 				03E216AC1EFA011600465BE3 /* GalleryController.swift in Sources */,
 				03E216AF1EFAD80A00465BE3 /* DiscoverPopover.swift in Sources */,
