@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import MXPagerView
 import SafariServices
+import SwiftLocation
 
 class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewDataSource, MXPageSegueSource, DiscoverDelegate {
    
@@ -35,6 +36,7 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
         
         // Temporary render for testing
         let controller = pageControllers[0] as! DiscoverTabController

@@ -23,6 +23,8 @@
 		0378849B1E8E563E006025B5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0378849A1E8E563E006025B5 /* Extensions.swift */; };
 		0378849D1E8E5E39006025B5 /* SwiftLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */; };
 		038275781F03B7A700C5954A /* Munch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038275771F03B7A700C5954A /* Munch.swift */; };
+		0382757A1F05109300C5954A /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 038275791F05109300C5954A /* Realm.framework */; };
+		0382757C1F05109600C5954A /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0382757B1F05109600C5954A /* RealmSwift.framework */; };
 		039C393F1E8D47F500A28533 /* MXSegmentedPager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C393E1E8D47F500A28533 /* MXSegmentedPager.framework */; };
 		039C39401E8D484A00A28533 /* HMSegmentedControl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C393C1E8D47E300A28533 /* HMSegmentedControl.framework */; };
 		039C39421E8D485400A28533 /* MXPagerView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C39411E8D485400A28533 /* MXPagerView.framework */; };
@@ -93,6 +95,8 @@
 		037884981E8E4E3F006025B5 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Carthage/Build/iOS/SnapKit.framework; sourceTree = "<group>"; };
 		0378849A1E8E563E006025B5 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		038275771F03B7A700C5954A /* Munch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Munch.swift; sourceTree = "<group>"; };
+		038275791F05109300C5954A /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
+		0382757B1F05109600C5954A /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
 		039C393C1E8D47E300A28533 /* HMSegmentedControl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HMSegmentedControl.framework; path = Carthage/Build/iOS/HMSegmentedControl.framework; sourceTree = "<group>"; };
 		039C393E1E8D47F500A28533 /* MXSegmentedPager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXSegmentedPager.framework; path = Carthage/Build/iOS/MXSegmentedPager.framework; sourceTree = "<group>"; };
 		039C39411E8D485400A28533 /* MXPagerView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXPagerView.framework; path = Carthage/Build/iOS/MXPagerView.framework; sourceTree = "<group>"; };
@@ -127,6 +131,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				03D88C151E9DF412005F825B /* Hero.framework in Frameworks */,
+				0382757A1F05109300C5954A /* Realm.framework in Frameworks */,
+				0382757C1F05109600C5954A /* RealmSwift.framework in Frameworks */,
 				03EE235E1E83039A009AFBFC /* MapKit.framework in Frameworks */,
 				0378849D1E8E5E39006025B5 /* SwiftLocation.framework in Frameworks */,
 				032F89311E82EF8B00AD3818 /* Alamofire.framework in Frameworks */,
@@ -227,6 +233,8 @@
 		032F892F1E82EF8B00AD3818 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0382757B1F05109600C5954A /* RealmSwift.framework */,
+				038275791F05109300C5954A /* Realm.framework */,
 				03D88C141E9DF412005F825B /* Hero.framework */,
 				03D529601E9D03C0003D5350 /* FlexibleHeightBar.framework */,
 				03D5295D1E9CFB17003D5350 /* TransitionAnimation.framework */,
@@ -442,6 +450,8 @@
 				"$(SRCROOT)/Carthage/Build/iOS/SKPhotoBrowser.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/FlexibleHeightBar.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Hero.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Realm.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RealmSwift.framework",
 			);
 			outputPaths = (
 			);

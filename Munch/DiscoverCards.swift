@@ -24,7 +24,7 @@ class DiscoverTabTitleCell: UICollectionViewCell {
     func render(title: String, selected: Bool) {
         self.label.text = title.uppercased()
         if (selected) {
-            label.textColor = UIColor.black.withAlphaComponent(0.8)
+            label.textColor = UIColor.black.withAlphaComponent(0.85)
             indicator.backgroundColor = .primary300
         } else {
             label.textColor = UIColor.black.withAlphaComponent(0.35)
