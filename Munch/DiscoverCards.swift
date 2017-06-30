@@ -148,6 +148,31 @@ class DiscoverPlaceCardView: DiscoverCardView {
     }
 }
 
+/**
+ Static No Result card view
+ */
+class DiscoverNoResultCardView: DiscoverCardView, CardItem {
+    override class func height() -> CGFloat {
+        return 50
+    }
+}
+
+/**
+ Static No Location card view
+ */
+class DiscoverNoLocationCardView: DiscoverCardView, CardItem {
+    override class func height() -> CGFloat {
+        return 100
+    }
+    
+    @IBAction func actionEnable(_ sender: Any) {
+        MunchLocation.startMonitoring()
+    }
+}
+
+/**
+ Static Endless loading card view for infinity scrolling
+ */
 class DiscoverLoadingCardView: DiscoverCardView, CardItem {
     
     @IBOutlet weak var indicatorView: NVActivityIndicatorView!
