@@ -102,3 +102,17 @@ extension Sequence {
     }
 }
 
+extension UIViewController {
+    
+    func alert(error: Error) {
+        let alert = UIAlertController(title: "Unhandled Error", message: error.localizedDescription, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
+        present(alert, animated: true)
+    }
+    
+    func alert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
+        present(alert, animated: true)
+    }
+}

@@ -46,6 +46,10 @@ extension UIColor {
         return .primary500
     }
     
+    class var primary050: UIColor {
+        return UIColor(hex: "FFA193")
+    }
+    
     class var primary100: UIColor {
         return UIColor(hex: "FF9181")
     }
@@ -72,6 +76,18 @@ extension UIColor {
     
     class var primary700: UIColor {
         return UIColor(hex: "D1442F")
+    }
+    
+    class var primary800: UIColor {
+        return UIColor(hex: "BA3D2A")
+    }
+    
+    class var primary900: UIColor {
+        return UIColor(hex: "A33525")
+    }
+    
+    class var primary950: UIColor {
+        return UIColor(hex: "8C2E20")
     }
     
     class var secondary: UIColor {

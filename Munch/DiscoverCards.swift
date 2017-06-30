@@ -9,32 +9,66 @@
 
 import Foundation
 import UIKit
+import NVActivityIndicatorView
 
 let establishmentList: [String] = ["restaurant"]
 
+struct CardCollection {
+    let name: String
+    let query: SearchQuery
+    let items: [CardItem]
+    
+    init(name: String, query: SearchQuery, items: [CardItem]) {
+        self.name = name
+        self.query = query
+        self.items = items
+    }
+}
+
 /**
- Title cell for Discovery Page
+ Extension for seperation of card collection delegate and datasource
  */
-class DiscoverTabTitleCell: UICollectionViewCell {
-    static let titleFont = UIFont.systemFont(ofSize: 12.0, weight: UIFontWeightSemibold)
+extension DiscoverTabController {
     
-    @IBOutlet weak var label: UILabel!
-    @IBOutlet weak var indicator: UIView!
-    
-    func render(title: String, selected: Bool) {
-        self.label.text = title.uppercased()
-        if (selected) {
-            label.textColor = UIColor.black.withAlphaComponent(0.85)
-            indicator.backgroundColor = .primary300
-        } else {
-            label.textColor = UIColor.black.withAlphaComponent(0.35)
-            indicator.backgroundColor = .white
-        }
+    func cardView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return collections[selectedTab].items.count
     }
     
-    class func width(title: String) -> CGSize {
-        let width = UILabel.textWidth(font: titleFont, text: title)
-        return CGSize(width: width + 20, height: 50)
+    func cardView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let cardItem: CardItem = collections[selectedTab].items[indexPath.row]
+        
+        if cardItem is Place {
+            return DiscoverPlaceCardView.size()
+        } else if cardItem is DiscoverLoadingCardView {
+            return DiscoverLoadingCardView.size()
+        }
+        
+        // Should never happen
+        return CGSize()
+    }
+    
+    func cardView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> DiscoverCardView {
+        let cardItem: CardItem = collections[selectedTab].items[indexPath.row]
+        
+        if let place = cardItem as? Place {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DiscoverPlaceCardView", for: indexPath) as! DiscoverPlaceCardView
+            cell.render(place: place)
+            return cell
+        } else if cardItem is DiscoverLoadingCardView {
+            return collectionView.dequeueReusableCell(withReuseIdentifier: "DiscoverLoadingCardView", for: indexPath) as! DiscoverCardView
+        }
+        
+        // Should never happen
+        return DiscoverCardView()
+        
+    }
+    
+    func cardView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cardItem: CardItem = collections[selectedTab].items[indexPath.row]
+        
+        if let place = cardItem as? Place {
+            discoverDelegate.present(place: place)
+        }
     }
 }
 
@@ -47,8 +81,8 @@ class DiscoverPlaceCardView: DiscoverCardView {
     @IBOutlet weak var secondLabel: UILabel!
     @IBOutlet weak var thirdLabel: UILabel!
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    override class func height() -> CGFloat {
+        return width * 0.888
     }
     
     func render(place: Place) {
@@ -72,6 +106,31 @@ class DiscoverPlaceCardView: DiscoverCardView {
     private func renderSecondLine(place: Place) {
         let line = NSMutableAttributedString()
         
+        // Establishment
+        if let establishments = place.tags?.filter({establishmentList.contains($0.lowercased())}) {
+            if (!establishments.isEmpty){
+                let format = [NSFontAttributeName: UIFont.systemFont(ofSize: 15, weight: UIFontWeightSemibold)]
+                let estab = NSMutableAttributedString(string: "\(establishments[0])", attributes: format)
+                line.append(estab)
+                line.append(NSMutableAttributedString(string: " • ", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 15, weight: UIFontWeightUltraLight)]))
+            }
+        }
+        
+        // Tags
+        if let tags = place.tags?.filter({!establishmentList.contains($0.lowercased())}) {
+            if (!tags.isEmpty) {
+                let format = [NSFontAttributeName: UIFont.systemFont(ofSize: 15, weight: UIFontWeightRegular)]
+                let text = tags[0..<(tags.count < 2 ? tags.count : 2)].joined(separator: ", ")
+                line.append(NSMutableAttributedString(string: text, attributes: format))
+            }
+        }
+        
+        self.secondLabel.attributedText = line
+    }
+    
+    private func renderThirdLine(place: Place) {
+        let line = NSMutableAttributedString()
+        
         // Address
         let address = NSMutableAttributedString(string: "73 Ayer Rajah Crescent")
         line.append(address)
@@ -80,38 +139,27 @@ class DiscoverPlaceCardView: DiscoverCardView {
         let distance = NSMutableAttributedString(string: " - 400m")
         line.append(distance)
         
-        self.secondLabel.attributedText = line
-    }
-    
-    private func renderThirdLine(place: Place) {
-        let line = NSMutableAttributedString()
-        let seperatorFormat = [NSFontAttributeName: UIFont.systemFont(ofSize: 13, weight: UIFontWeightUltraLight)]
-        
-        // Establishment
-        if let establishments = place.tags?.filter({establishmentList.contains($0.lowercased())}) {
-            if (!establishments.isEmpty){
-                let format = [NSFontAttributeName: UIFont.systemFont(ofSize: 13, weight: UIFontWeightSemibold)]
-                let estab = NSMutableAttributedString(string: "\(establishments[0])", attributes: format)
-                line.append(estab)
-                line.append(NSMutableAttributedString(string: " • ", attributes: seperatorFormat))
-            }
-        }
-        
-        // Tags
-        if let tags = place.tags?.filter({!establishmentList.contains($0.lowercased())}) {
-            if (!tags.isEmpty) {
-                let format = [NSFontAttributeName: UIFont.systemFont(ofSize: 13, weight: UIFontWeightRegular)]
-                let text = tags[0..<(tags.count < 2 ? tags.count : 2)].joined(separator: ", ")
-                line.append(NSMutableAttributedString(string: text, attributes: format))
-                line.append(NSMutableAttributedString(string: " • ", attributes: seperatorFormat))
-            }
-        }
-        
         // Open Now
         let onFormat = [NSForegroundColorAttributeName: UIColor.secondary]
+        line.append(NSMutableAttributedString(string: " • ", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 15, weight: UIFontWeightUltraLight)]))
         line.append(NSMutableAttributedString(string: "Open Now", attributes: onFormat))
         
         self.thirdLabel.attributedText = line
+    }
+}
+
+class DiscoverLoadingCardView: DiscoverCardView, CardItem {
+    
+    @IBOutlet weak var indicatorView: NVActivityIndicatorView!
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.indicatorView.color = .primary700
+        self.indicatorView.startAnimating()
+    }
+    
+    override class func height() -> CGFloat {
+        return 50
     }
 }
 
@@ -119,6 +167,26 @@ class DiscoverPlaceCardView: DiscoverCardView {
  Abstract discover card cell
  */
 class DiscoverCardView: UICollectionViewCell {
+    static let width = UIScreen.main.bounds.width
+    
+    /**
+     Override this for custom card view size
+     Because width should always be screen bounds width
+     Override height for custom height implementation
+     Else it will be a square
+     */
+    class func size() -> CGSize {
+        return CGSize(width: width, height: height())
+    }
+    
+    class func height() -> CGFloat {
+        return width
+    }
+}
 
+/**
+ Protocol to tell that a struct is a card viewable data
+ */
+protocol CardItem {
     
 }

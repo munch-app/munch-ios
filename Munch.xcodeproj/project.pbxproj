@@ -25,6 +25,8 @@
 		038275781F03B7A700C5954A /* Munch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038275771F03B7A700C5954A /* Munch.swift */; };
 		0382757A1F05109300C5954A /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 038275791F05109300C5954A /* Realm.framework */; };
 		0382757C1F05109600C5954A /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0382757B1F05109600C5954A /* RealmSwift.framework */; };
+		0382757F1F0647EB00C5954A /* NVActivityIndicatorView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0382757D1F06427300C5954A /* NVActivityIndicatorView.framework */; };
+		038275811F06DB8D00C5954A /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038275801F06DB8D00C5954A /* Location.swift */; };
 		039C393F1E8D47F500A28533 /* MXSegmentedPager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C393E1E8D47F500A28533 /* MXSegmentedPager.framework */; };
 		039C39401E8D484A00A28533 /* HMSegmentedControl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C393C1E8D47E300A28533 /* HMSegmentedControl.framework */; };
 		039C39421E8D485400A28533 /* MXPagerView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C39411E8D485400A28533 /* MXPagerView.framework */; };
@@ -97,6 +99,8 @@
 		038275771F03B7A700C5954A /* Munch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Munch.swift; sourceTree = "<group>"; };
 		038275791F05109300C5954A /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
 		0382757B1F05109600C5954A /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
+		0382757D1F06427300C5954A /* NVActivityIndicatorView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NVActivityIndicatorView.framework; path = Carthage/Build/iOS/NVActivityIndicatorView.framework; sourceTree = "<group>"; };
+		038275801F06DB8D00C5954A /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		039C393C1E8D47E300A28533 /* HMSegmentedControl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HMSegmentedControl.framework; path = Carthage/Build/iOS/HMSegmentedControl.framework; sourceTree = "<group>"; };
 		039C393E1E8D47F500A28533 /* MXSegmentedPager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXSegmentedPager.framework; path = Carthage/Build/iOS/MXSegmentedPager.framework; sourceTree = "<group>"; };
 		039C39411E8D485400A28533 /* MXPagerView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXPagerView.framework; path = Carthage/Build/iOS/MXPagerView.framework; sourceTree = "<group>"; };
@@ -147,6 +151,7 @@
 				03CF0A9C1E96A7B100A3FD1F /* ESTabBarController.framework in Frameworks */,
 				034820581E9CB92A00B0076A /* SKPhotoBrowser.framework in Frameworks */,
 				03D529611E9D03C0003D5350 /* FlexibleHeightBar.framework in Frameworks */,
+				0382757F1F0647EB00C5954A /* NVActivityIndicatorView.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,6 +211,7 @@
 				032F89041E82DFA300AD3818 /* LaunchScreen.storyboard */,
 				032F89071E82DFA300AD3818 /* Info.plist */,
 				0378849A1E8E563E006025B5 /* Extensions.swift */,
+				038275801F06DB8D00C5954A /* Location.swift */,
 				038275771F03B7A700C5954A /* Munch.swift */,
 			);
 			path = Munch;
@@ -233,6 +239,7 @@
 		032F892F1E82EF8B00AD3818 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0382757D1F06427300C5954A /* NVActivityIndicatorView.framework */,
 				0382757B1F05109600C5954A /* RealmSwift.framework */,
 				038275791F05109300C5954A /* Realm.framework */,
 				03D88C141E9DF412005F825B /* Hero.framework */,
@@ -288,8 +295,8 @@
 			children = (
 				03E216A41EFA005300465BE3 /* Discover.storyboard */,
 				03E216A61EFA006900465BE3 /* DiscoverController.swift */,
-				03E216AE1EFAD80A00465BE3 /* DiscoverPopover.swift */,
 				03B34FDD1EFBD53E00EAB6DB /* DiscoverCards.swift */,
+				03E216AE1EFAD80A00465BE3 /* DiscoverPopover.swift */,
 			);
 			name = Discover;
 			sourceTree = "<group>";
@@ -452,6 +459,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/Hero.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Realm.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/RealmSwift.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/NVActivityIndicatorView.framework",
 			);
 			outputPaths = (
 			);
@@ -472,6 +480,7 @@
 				03E216AC1EFA011600465BE3 /* GalleryController.swift in Sources */,
 				03E216AF1EFAD80A00465BE3 /* DiscoverPopover.swift in Sources */,
 				03D3FF001E8ABEE300ACFF50 /* PlaceController.swift in Sources */,
+				038275811F06DB8D00C5954A /* Location.swift in Sources */,
 				03E216AB1EFA011600465BE3 /* ArticleController.swift in Sources */,
 				032F88FC1E82DFA300AD3818 /* AppDelegate.swift in Sources */,
 				0378849B1E8E563E006025B5 /* Extensions.swift in Sources */,

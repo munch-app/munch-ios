@@ -92,7 +92,7 @@
                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                         <inset key="contentEdgeInsets" minX="0.0" minY="2" maxX="0.0" maxY="0.0"/>
                                         <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                        <state key="normal" title="Current Location" image="icons8-Expand Arrow-20">
+                                        <state key="normal" title="Singapore" image="icons8-Expand Arrow-20">
                                             <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
@@ -148,8 +148,9 @@
                     <connections>
                         <outlet property="pagerView" destination="MeZ-vg-V7o" id="Qiz-Te-ebz"/>
                         <outlet property="searchBar" destination="06x-B7-TO6" id="6Yu-UU-I5i"/>
-                        <segue destination="7rT-dk-fUQ" kind="custom" identifier="mx_page_1" customClass="MXPageSegue" id="xyt-pi-3u8"/>
-                        <segue destination="jVJ-mT-mkE" kind="custom" identifier="mx_page_0" customClass="MXPageSegue" id="7PZ-yb-h2A"/>
+                        <segue destination="7rT-dk-fUQ" kind="custom" identifier="discover_segue_search" customClass="MXPageSegue" id="xyt-pi-3u8"/>
+                        <segue destination="jVJ-mT-mkE" kind="custom" identifier="discover_segue_tabs" customClass="MXPageSegue" id="7PZ-yb-h2A"/>
+                        <segue destination="FCM-m7-OLa" kind="custom" identifier="discover_segue_loading" customClass="MXPageSegue" id="7Nf-9s-AAf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VuX-yq-SLp" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -411,7 +412,7 @@
                                                                     <color key="textColor" white="0.20000000000000001" alpha="1" colorSpace="calibratedWhite"/>
                                                                     <nil key="highlightedColor"/>
                                                                 </label>
-                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Est in Location - Distance" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7cg-yU-NMx">
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cuisines • Open Now" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7cg-yU-NMx">
                                                                     <rect key="frame" x="0.0" y="35" width="327" height="19"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" constant="19" id="vPF-CC-YAS"/>
@@ -420,7 +421,7 @@
                                                                     <color key="textColor" white="0.25033482140000002" alpha="1" colorSpace="calibratedWhite"/>
                                                                     <nil key="highlightedColor"/>
                                                                 </label>
-                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cuisines • Open Now" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="why-8K-j1R">
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Est in Location - Distance" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="why-8K-j1R">
                                                                     <rect key="frame" x="0.0" y="54" width="327" height="19"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" constant="19" id="oko-6c-fi0"/>
@@ -475,6 +476,44 @@
                                             <outlet property="imageView" destination="BWh-3J-wmg" id="C8N-wl-TYX"/>
                                             <outlet property="secondLabel" destination="7cg-yU-NMx" id="ZR5-f2-KIN"/>
                                             <outlet property="thirdLabel" destination="why-8K-j1R" id="ylS-xu-Z2V"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="DiscoverLoadingCardView" id="dEG-4i-VgR" customClass="DiscoverLoadingCardView" customModule="Munch" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="473" width="375" height="50"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bcR-C9-qsb" customClass="NVActivityIndicatorView" customModule="NVActivityIndicatorView">
+                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                                            <color key="value" red="1" green="0.32549019610000002" blue="0.22352941179999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        </userDefinedRuntimeAttribute>
+                                                        <userDefinedRuntimeAttribute type="string" keyPath="typeName" value="ballBeat"/>
+                                                        <userDefinedRuntimeAttribute type="number" keyPath="padding">
+                                                            <real key="value" value="10"/>
+                                                        </userDefinedRuntimeAttribute>
+                                                    </userDefinedRuntimeAttributes>
+                                                </view>
+                                            </subviews>
+                                        </view>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="bcR-C9-qsb" secondAttribute="trailing" id="Kbs-mt-XDN"/>
+                                            <constraint firstItem="bcR-C9-qsb" firstAttribute="top" secondItem="dEG-4i-VgR" secondAttribute="top" id="cRY-9Z-wND"/>
+                                            <constraint firstAttribute="bottom" secondItem="bcR-C9-qsb" secondAttribute="bottom" id="gHv-T1-V2R"/>
+                                            <constraint firstItem="bcR-C9-qsb" firstAttribute="leading" secondItem="dEG-4i-VgR" secondAttribute="leading" id="kEg-49-SFw"/>
+                                        </constraints>
+                                        <size key="customSize" width="375" height="50"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                <real key="value" value="0.0"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <outlet property="indicatorView" destination="bcR-C9-qsb" id="gjC-Zy-IEg"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -569,7 +608,61 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wev-au-bfo" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="357.60000000000002" y="689.5052473763119"/>
+            <point key="canvasLocation" x="1143" y="690"/>
+        </scene>
+        <!--Discover Loading Controller-->
+        <scene sceneID="Ynw-g0-yux">
+            <objects>
+                <viewController id="FCM-m7-OLa" customClass="DiscoverLoadingController" customModule="Munch" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="SN4-Uw-ShU"/>
+                        <viewControllerLayoutGuide type="bottom" id="rDM-O2-7Ci"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="AHZ-Km-Y1m" customClass="StaticDiscoverPageView" customModule="Munch" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ITM-o7-g3q">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="12"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="12" id="Pzn-na-UF9"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cXE-QI-cbF" customClass="NVActivityIndicatorView" customModule="NVActivityIndicatorView">
+                                <rect key="frame" x="0.0" y="22" width="375" height="50"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="nPu-Ty-Zlc"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="typeName" value="ballBeat"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="padding">
+                                        <real key="value" value="10"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="ITM-o7-g3q" secondAttribute="trailing" id="OMT-Sb-fJd"/>
+                            <constraint firstItem="ITM-o7-g3q" firstAttribute="top" secondItem="SN4-Uw-ShU" secondAttribute="bottom" id="lAk-dC-7jv"/>
+                            <constraint firstAttribute="trailing" secondItem="cXE-QI-cbF" secondAttribute="trailing" id="mBc-cS-EOH"/>
+                            <constraint firstItem="ITM-o7-g3q" firstAttribute="leading" secondItem="AHZ-Km-Y1m" secondAttribute="leading" id="uYP-QO-3Xe"/>
+                            <constraint firstItem="cXE-QI-cbF" firstAttribute="leading" secondItem="AHZ-Km-Y1m" secondAttribute="leading" id="yDj-wi-DCa"/>
+                            <constraint firstItem="cXE-QI-cbF" firstAttribute="top" secondItem="ITM-o7-g3q" secondAttribute="bottom" constant="10" id="ywr-sS-AO2"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <connections>
+                        <outlet property="extensionBar" destination="ITM-o7-g3q" id="bc2-en-rJp"/>
+                        <outlet property="indicatorView" destination="cXE-QI-cbF" id="DxT-3O-CLf"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="YII-0W-8IO" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="325.60000000000002" y="689.5052473763119"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Ehn-cQ-NDd">
@@ -596,12 +689,12 @@
                         <viewControllerLayoutGuide type="top" id="1i0-94-6Hn"/>
                         <viewControllerLayoutGuide type="bottom" id="w1y-3w-yXL"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="HdE-r2-T4q">
+                    <view key="view" contentMode="scaleToFill" id="HdE-r2-T4q" customClass="StaticDiscoverPageView" customModule="Munch" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Search Page" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c2W-J2-j19">
-                                <rect key="frame" x="139" y="75" width="97" height="21"/>
+                                <rect key="frame" x="139" y="152" width="97" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>

@@ -5,12 +5,13 @@ github "SwiftyJSON/SwiftyJSON" ~> 3.1
 github "malcommac/SwiftLocation" ~> 2.0
 github "onevcat/Kingfisher" ~> 3.6
 
+# UI Utils
+github "SnapKit/SnapKit" ~> 3.2.0
+github "ninjaprox/NVActivityIndicatorView" ~> 3.6
+
 # Transition Library
 github "Fuxingloh/KMNavigationBarTransition" "master"
 github "lkzhao/Hero" ~> 0.3
-
-# UI Utils
-github "SnapKit/SnapKit" ~> 3.2.0
 
 # UI Components Library
 github "eggswift/ESTabBarController" ~> 2.4

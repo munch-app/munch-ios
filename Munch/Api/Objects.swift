@@ -13,7 +13,7 @@ import Alamofire
 /**
  Place data type from munch-core/service-places
  */
-struct Place {
+struct Place: CardItem {
     var id: String?
     
     // Basic
@@ -145,16 +145,13 @@ struct Menu {
  
  - filters: to be implemented in the future
  */
-struct SearchQuery {
-    static let d2r = Double.pi / 180.0
-    static let r2d = 180 / Double.pi
-    static let earthRadius = 6371.0
-    
+public struct SearchQuery {
     var from: Int?
     var size: Int?
     
     var query: String?
     var polygon: Polygon?
+    var filters: Filters?
 
     init() {
         
@@ -171,16 +168,23 @@ struct SearchQuery {
         }
     }
     
-    struct Polygon {
+    public struct Polygon {
+        private static let d2r = Double.pi / 180.0
+        private static let r2d = 180 / Double.pi
+        private static let earthRadius = 6371.0
+        
         var points: [String]
         
         init(json: JSON) {
             self.points = json["points"].map({$0.1.stringValue})
         }
         
+        /**
+         radius is in KM
+         */
         init(lat: Double, lng: Double, radius: Double, size: Int) {
-            let rlat = radius / earthRadius * r2d
-            let rlng = rlat / cos(lat * d2r)
+            let rlat = radius / Polygon.earthRadius * Polygon.r2d
+            let rlng = rlat / cos(lat * Polygon.d2r)
             
             // Create Points in latLng String array
             points = [String]()
@@ -196,7 +200,7 @@ struct SearchQuery {
         }
     }
     
-    struct Filters {
+    public struct Filters {
         // TODO in the Future once finalized
     }
     
@@ -212,7 +216,7 @@ struct SearchQuery {
         if let polygon = polygon {
             var poly = Parameters()
             poly["points"] = polygon.points
-            params["query"] = poly
+            params["polygon"] = poly
         }
         return params
     }

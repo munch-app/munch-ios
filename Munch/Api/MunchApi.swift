@@ -12,6 +12,7 @@ import Alamofire
 import SwiftyJSON
 
 public class RestfulClient {
+    public static var lastLatLng: String?
     
     private let url: String
     
@@ -41,7 +42,14 @@ public class RestfulClient {
      callback: Meta and Json
      */
     private func request(method: HTTPMethod, path: String, parameters: Parameters = [:], encoding: ParameterEncoding, callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
-        Alamofire.request(url + path, method: method, parameters: parameters, encoding: encoding)
+        var headers = [String: String]()
+        
+        // Set latLng if available
+        if let latLng = MunchLocation.lastLatLng {
+            headers["Location-LatLng"] = latLng
+        }
+        
+        Alamofire.request(url + path, method: method, parameters: parameters, encoding: encoding, headers: headers)
             .responseJSON { response in
                 switch response.result {
                 case .success(let value):
@@ -104,10 +112,10 @@ public struct MetaJSON {
     }
 }
 
-class MunchClient: RestfulClient {
+public class MunchClient: RestfulClient {
     static let instance = MunchClient()
     
-    static let baseUrl = "http://192.168.1.197:8800/v1"
+    private static let baseUrl = "http://192.168.1.197:8800/v1"
 //    static let baseUrl = "http://10.0.1.8:8800/v1"
     
     let places = PlaceClient(baseUrl)
@@ -122,10 +130,13 @@ class MunchClient: RestfulClient {
  */
 class PlaceClient: RestfulClient {
     
-    func categorize(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ collections: [PlaceCollection]) -> Void) {
-        super.post("/places/categorize", parameters: query.toParams()) { meta, json in
-            callback(meta, json["data"].map({PlaceCollection(json: $0.1)}))
-        }
+    func search(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ collections: [PlaceCollection]) -> Void) {
+        callback(MetaJSON(metaJson: JSON(parseJSON: "{\"code\": 200}")), PlaceClient.randomCollection())
+        
+        // TODO remove testing callback
+//        super.post("/places/search", parameters: query.toParams()) { meta, json in
+//            callback(meta, json["data"].map({PlaceCollection(json: $0.1)}))
+//        }
     }
     
     func suggest(text: String, size: Int, latLng: String?, callback: @escaping (_ meta: MetaJSON, _ places: [Place]) -> Void) {
@@ -139,15 +150,15 @@ class PlaceClient: RestfulClient {
         }
     }
     
-    func search(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ places: [Place]) -> Void) {
-        super.post("/places/search", parameters: query.toParams()) { meta, json in
+    func searchScroll(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ places: [Place]) -> Void) {
+        super.post("/places/search/scroll", parameters: query.toParams()) { meta, json in
             callback(meta, json["data"].map({Place(json: $0.1)}))
         }
     }
     
-    func get(id: String, callback: @escaping (_ meta: MetaJSON, _ place: Place) -> Void) {
+    func get(id: String, callback: @escaping (_ meta: MetaJSON, _ place: PlaceDetail) -> Void) {
         super.get("/places/\(id)") { meta, json in
-            callback(meta, Place(json: json["data"]))
+            callback(meta, PlaceDetail(json: json["data"]))
         }
     }
     
@@ -163,7 +174,7 @@ class PlaceClient: RestfulClient {
         }
     }
     
-    class func randomCollection() -> [PlaceCollection] {
+    private class func randomCollection() -> [PlaceCollection] {
         return [
             PlaceCollection(name: "NEARBY", query: SearchQuery(), places: randomPlaces()),
             PlaceCollection(name: "HEALTHY OPTIONS", query: SearchQuery(), places: randomPlaces()),
@@ -172,7 +183,7 @@ class PlaceClient: RestfulClient {
         ]
     }
     
-    class func randomPlaces() -> [Place] {
+    private class func randomPlaces() -> [Place] {
         var place1 = Place()
         place1.name = "Char-Grill Bar"
         place1.tags = ["Western", "Bar", "Restaurant"]
