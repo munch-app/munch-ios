@@ -94,7 +94,47 @@ extension UIColor {
         return .secondary500
     }
     
+    class var secondary050: UIColor {
+        return UIColor(hex: "76D5A9")
+    }
+    
+    class var secondary100: UIColor {
+        return UIColor(hex: "5FCE9B")
+    }
+    
+    class var secondary200: UIColor {
+        return UIColor(hex: "48C78C")
+    }
+    
+    class var secondary300: UIColor {
+        return UIColor(hex: "31C07E")
+    }
+    
+    class var secondary400: UIColor {
+        return UIColor(hex: "1AB970")
+    }
+    
     class var secondary500: UIColor {
         return UIColor(hex: "04B262")
+    }
+    
+    class var secondary600: UIColor {
+        return UIColor(hex: "04A25A")
+    }
+    
+    class var secondary700: UIColor {
+        return UIColor(hex: "049251")
+    }
+    
+    class var secondary800: UIColor {
+        return UIColor(hex: "038248")
+    }
+    
+    class var secondary900: UIColor {
+        return UIColor(hex: "03723F")
+    }
+    
+    class var secondary950: UIColor {
+        return UIColor(hex: "036236")
     }
 }

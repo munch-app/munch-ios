@@ -95,8 +95,16 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
         queryExpiryDate = Date().addingTimeInterval(60 * 60)
         pagerView.showPage(at: tabIndex, animated: false)
         
-        let cardCollections = collections.map {CardCollection(name: $0.name, query: $0.query, items: $0.places)}
-        // TODO add no location service card if have to
+        var cardCollections = collections.map {CardCollection(name: $0.name, query: $0.query, items: $0.places)}
+        // Add no results card
+        if (collections.isEmpty) {
+            cardCollections = [CardCollection(name: "Result", query: nil, items: [DiscoverNoResultCardView.card])]
+        }
+        
+        // Add no location card to first collection first item
+        if (!MunchLocation.enabled) {
+            cardCollections[0].items.insert(DiscoverNoLocationCardView.card, at: 0)
+        }
         (pageControllers[tabIndex]! as! DiscoverTabController).render(collections: cardCollections)
     }
     

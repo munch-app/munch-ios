@@ -15,10 +15,15 @@ let establishmentList: [String] = ["restaurant"]
 
 struct CardCollection {
     let name: String
-    let query: SearchQuery
+    let query: SearchQuery?
     let items: [CardItem]
     
-    init(name: String, query: SearchQuery, items: [CardItem]) {
+    /**
+     Name is manadatory
+     Query is optional, if nil; endless scrolling is disabled
+     items is mandatory
+     */
+    init(name: String, query: SearchQuery?, items: [CardItem]) {
         self.name = name
         self.query = query
         self.items = items
@@ -151,16 +156,22 @@ class DiscoverPlaceCardView: DiscoverCardView {
 /**
  Static No Result card view
  */
-class DiscoverNoResultCardView: DiscoverCardView, CardItem {
+class DiscoverNoResultCardView: DiscoverCardView {
+    static let card = NoResultCardItem()
+    
     override class func height() -> CGFloat {
         return 50
     }
+    
+    class NoResultCardItem: CardItem {}
 }
 
 /**
  Static No Location card view
  */
-class DiscoverNoLocationCardView: DiscoverCardView, CardItem {
+class DiscoverNoLocationCardView: DiscoverCardView {
+    static let card = NoLocationCardItem()
+    
     override class func height() -> CGFloat {
         return 100
     }
@@ -168,6 +179,8 @@ class DiscoverNoLocationCardView: DiscoverCardView, CardItem {
     @IBAction func actionEnable(_ sender: Any) {
         MunchLocation.startMonitoring()
     }
+    
+    class NoLocationCardItem: CardItem {}
 }
 
 /**
