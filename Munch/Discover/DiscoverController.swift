@@ -103,7 +103,10 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
         
         // Add no location card to first collection first item
         if (!MunchLocation.enabled) {
-            cardCollections[0].items.insert(DiscoverNoLocationCardView.card, at: 0)
+            let first = cardCollections[0]
+            var items = first.items
+            items.insert(DiscoverNoLocationCardView.card, at: 0)
+            cardCollections[0] = CardCollection(name: first.name, query: first.query, items: items)
         }
         (pageControllers[tabIndex]! as! DiscoverTabController).render(collections: cardCollections)
     }

@@ -394,7 +394,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="100"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Location" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="stq-ZH-D6e">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Location Service" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="stq-ZH-D6e">
                                                     <rect key="frame" x="8" y="8" width="359" height="40"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="40" id="uks-NN-b6s"/>
@@ -408,7 +408,7 @@
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="40" id="NdY-rD-m1J"/>
                                                     </constraints>
-                                                    <state key="normal" title="Enable Location Service"/>
+                                                    <state key="normal" title="Enable Location"/>
                                                     <connections>
                                                         <action selector="actionEnable:" destination="4cY-rF-xL0" eventType="touchUpInside" id="p8Y-6H-L5K"/>
                                                     </connections>

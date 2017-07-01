@@ -44,11 +44,12 @@ extension DiscoverTabController {
         
         if cardItem is Place {
             return DiscoverPlaceCardView.size()
-        } else if cardItem is DiscoverLoadingCardView {
-            return DiscoverLoadingCardView.size()
+        } else if cardItem is StaticCardItem {
+            return (cardItem as! StaticCardItem).size()
         }
         
         // Should never happen
+        print("cardView CardItem not implemented yet")
         return CGSize()
     }
     
@@ -59,11 +60,13 @@ extension DiscoverTabController {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DiscoverPlaceCardView", for: indexPath) as! DiscoverPlaceCardView
             cell.render(place: place)
             return cell
-        } else if cardItem is DiscoverLoadingCardView {
-            return collectionView.dequeueReusableCell(withReuseIdentifier: "DiscoverLoadingCardView", for: indexPath) as! DiscoverCardView
+        } else if cardItem is StaticCardItem {
+            let identifier = (cardItem as! StaticCardItem).identifier()
+            return collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! DiscoverCardView
         }
         
         // Should never happen
+        print("cardView CardView not implemented yet")
         return DiscoverCardView()
         
     }
@@ -86,8 +89,16 @@ class DiscoverPlaceCardView: DiscoverCardView {
     @IBOutlet weak var secondLabel: UILabel!
     @IBOutlet weak var thirdLabel: UILabel!
     
-    override class func height() -> CGFloat {
-        return width * 0.888
+    static let width = UIScreen.main.bounds.width
+    
+    /**
+     Override this for custom card view size
+     Because width should always be screen bounds width
+     Override height for custom height implementation
+     Else it will be a square
+     */
+    class func size() -> CGSize {
+        return CGSize(width: width, height: width * 0.888)
     }
     
     func render(place: Place) {
@@ -157,36 +168,46 @@ class DiscoverPlaceCardView: DiscoverCardView {
  Static No Result card view
  */
 class DiscoverNoResultCardView: DiscoverCardView {
-    static let card = NoResultCardItem()
+    static let card = Card()
     
-    override class func height() -> CGFloat {
-        return 50
+    class Card: StaticCardItem {
+        
+        override func identifier() -> String {
+            return "DiscoverNoResultCardView"
+        }
+        
+        override func height() -> CGFloat {
+            return 50
+        }
     }
-    
-    class NoResultCardItem: CardItem {}
 }
 
 /**
  Static No Location card view
  */
 class DiscoverNoLocationCardView: DiscoverCardView {
-    static let card = NoLocationCardItem()
-    
-    override class func height() -> CGFloat {
-        return 100
-    }
+    static let card = Card()
     
     @IBAction func actionEnable(_ sender: Any) {
         MunchLocation.startMonitoring()
     }
     
-    class NoLocationCardItem: CardItem {}
+    class Card: StaticCardItem {
+        
+        override func identifier() -> String {
+            return "DiscoverNoLocationCardView"
+        }
+        
+        override func height() -> CGFloat {
+            return 100
+        }
+    }
 }
 
 /**
  Static Endless loading card view for infinity scrolling
  */
-class DiscoverLoadingCardView: DiscoverCardView, CardItem {
+class DiscoverLoadingCardView: DiscoverCardView {
     
     @IBOutlet weak var indicatorView: NVActivityIndicatorView!
     
@@ -196,8 +217,15 @@ class DiscoverLoadingCardView: DiscoverCardView, CardItem {
         self.indicatorView.startAnimating()
     }
     
-    override class func height() -> CGFloat {
-        return 50
+    class Card: StaticCardItem {
+        
+        override func identifier() -> String {
+            return "DiscoverLoadingCardView"
+        }
+        
+        override func height() -> CGFloat {
+            return 50
+        }
     }
 }
 
@@ -205,19 +233,32 @@ class DiscoverLoadingCardView: DiscoverCardView, CardItem {
  Abstract discover card cell
  */
 class DiscoverCardView: UICollectionViewCell {
-    static let width = UIScreen.main.bounds.width
+    
+}
+
+/**
+ Protocol to tell that a struct is a static card item with no dynamic data
+ */
+class StaticCardItem: CardItem {
+    let width = UIScreen.main.bounds.width
+    
+    func identifier() -> String {
+        return ""
+    }
     
     /**
      Override this for custom card view size
      Because width should always be screen bounds width
-     Override height for custom height implementation
-     Else it will be a square
      */
-    class func size() -> CGSize {
+    func size() -> CGSize {
         return CGSize(width: width, height: height())
     }
     
-    class func height() -> CGFloat {
+    /**
+     Override height for custom height implementation
+     Else it will be a square
+     */
+    func height() -> CGFloat {
         return width
     }
 }
