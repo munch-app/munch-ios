@@ -13,7 +13,7 @@ import Alamofire
 /**
  Place data type from munch-core/service-places
  */
-struct Place: CardItem {
+struct Place: CardItem, Equatable {
     var id: String?
     
     // Basic
@@ -123,6 +123,13 @@ struct Place: CardItem {
             }
             return day!.capitalized
         }
+    }
+    
+    static func == (lhs: Place, rhs: Place) -> Bool {
+        if (lhs.id == nil || rhs.id == nil) {
+            return false
+        }
+        return lhs.id == rhs.id
     }
 }
 

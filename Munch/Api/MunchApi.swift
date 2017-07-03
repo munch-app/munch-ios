@@ -134,7 +134,7 @@ class PlaceClient: RestfulClient {
         callback(MetaJSON(metaJson: JSON(parseJSON: "{\"code\": 200}")), PlaceClient.randomCollection())
         
         // TODO remove testing callback
-//        super.post("/places/search", parameters: query.toParams()) { meta, json in
+//        super.post("/places/collection/search", parameters: query.toParams()) { meta, json in
 //            callback(meta, json["data"].map({PlaceCollection(json: $0.1)}))
 //        }
     }
@@ -150,10 +150,12 @@ class PlaceClient: RestfulClient {
         }
     }
     
-    func searchScroll(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ places: [Place]) -> Void) {
-        super.post("/places/search/scroll", parameters: query.toParams()) { meta, json in
-            callback(meta, json["data"].map({Place(json: $0.1)}))
-        }
+    func searchNext(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ places: [Place]) -> Void) {
+        callback(MetaJSON(metaJson: JSON(parseJSON: "{\"code\": 200}")), query.from == 0 ? PlaceClient.randomPlaces() : [])
+        
+//        super.post("/places/collection/search/next", parameters: query.toParams()) { meta, json in
+//            callback(meta, json["data"].map({Place(json: $0.1)}))
+//        }
     }
     
     func get(id: String, callback: @escaping (_ meta: MetaJSON, _ place: PlaceDetail) -> Void) {
@@ -179,7 +181,7 @@ class PlaceClient: RestfulClient {
             PlaceCollection(name: "NEARBY", query: SearchQuery(), places: randomPlaces()),
             PlaceCollection(name: "HEALTHY OPTIONS", query: SearchQuery(), places: randomPlaces()),
             PlaceCollection(name: "CAFES", query: SearchQuery(), places: randomPlaces()),
-            PlaceCollection(name: "PUBS & BARS", query: SearchQuery(), places: randomPlaces())
+            PlaceCollection(name: "PUBS & BARS", query: SearchQuery(), places: [])
         ]
     }
     

@@ -95,19 +95,7 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
         queryExpiryDate = Date().addingTimeInterval(60 * 60)
         pagerView.showPage(at: tabIndex, animated: false)
         
-        var cardCollections = collections.map {CardCollection(name: $0.name, query: $0.query, items: $0.places)}
-        // Add no results card
-        if (collections.isEmpty) {
-            cardCollections = [CardCollection(name: "Result", query: nil, items: [DiscoverNoResultCardView.card])]
-        }
-        
-        // Add no location card to first collection first item
-        if (!MunchLocation.enabled) {
-            let first = cardCollections[0]
-            var items = first.items
-            items.insert(DiscoverNoLocationCardView.card, at: 0)
-            cardCollections[0] = CardCollection(name: first.name, query: first.query, items: items)
-        }
+        let cardCollections = collections.map {CardCollection(name: $0.name, query: $0.query, items: $0.places)}
         (pageControllers[tabIndex]! as! DiscoverTabController).render(collections: cardCollections)
     }
     
@@ -298,6 +286,8 @@ class SearchNavigationBar: UIView {
 class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     var discoverDelegate: DiscoverDelegate!
+    let placeClient = MunchClient.instance.places
+    
     @IBOutlet weak var topConstraint: NSLayoutConstraint!
     @IBOutlet weak var tabView: UIView!
     @IBOutlet weak var tabCollection: UICollectionView!
@@ -319,19 +309,6 @@ class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICol
         
         self.contentCollection.delegate = self
         self.contentCollection.dataSource = self
-    }
-    
-    /**
-     Dynamically load new collection view if need to
-     */
-    func render(collections: [CardCollection]) {
-        self.collections = collections
-        self.offsetMemory = collections.map{_ in return CGPoint(x: 0, y: 0)}
-        
-        // Reload title and selected tabs
-        self.selectedTab = 0
-        self.tabCollection.reloadData()
-        self.contentCollection.reloadData()
     }
     
     // MARK: - Collections
@@ -362,6 +339,12 @@ class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICol
         }
         
         return cardView(collectionView, cellForItemAt: indexPath)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if (collectionView == contentCollection) {
+            cardView(collectionView, cellIsVisibleAt: indexPath)
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
