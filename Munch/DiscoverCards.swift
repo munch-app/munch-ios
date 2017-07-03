@@ -158,9 +158,7 @@ extension DiscoverTabController {
     }
     
     func cardView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let count = collections[selectedTab].allItems.count
-        print(count)
-        return count
+        return collections[selectedTab].allItems.count
     }
     
     func cardView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

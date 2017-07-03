@@ -78,6 +78,18 @@ extension UIView {
     }
 }
 
+@IBDesignable class HairlineShadowView: UIView {
+    
+    @IBInspectable var hairlineShadowHeight: CGFloat = 0 {
+        didSet {
+            if (hairlineShadowHeight != 0) {
+                hairlineShadow(height: hairlineShadowHeight)
+            }
+        }
+    }
+    
+}
+
 extension MutableCollection where Indices.Iterator.Element == Index {
     /// Shuffles the contents of this collection.
     mutating func shuffle() {

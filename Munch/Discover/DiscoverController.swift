@@ -11,10 +11,9 @@ import UIKit
 import MXPagerView
 import NVActivityIndicatorView
 
-class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewDataSource, MXPageSegueSource, DiscoverDelegate {
-   
+class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewDataSource, MXPageSegueSource, DiscoverDelegate, SearchNavigationBarDelegate {
+    
     var pageIndex: Int = 0
-    let tabIndex = 1
     var pageControllers = [Int: UIViewController]()
     let segues = [
         0: "discover_segue_loading",
@@ -34,6 +33,8 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
         pagerView.delegate = self
         pagerView.dataSource = self
         pagerView.transitionStyle = .tab
+        
+        searchBar.setDelegate(delegate: self)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -68,35 +69,40 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
     }
     
     /**
+     Search bar did begin, keyboard appears
+     */
+    func searchBarDidBegin() {
+        pagerView.showPage(at: 2, animated: false)
+    }
+    
+    /**
+     Search bar did end, keyboard will dispear now
+     Parameter search: true = user clicked on the search button of the keyboard
+     */
+    func searchBarDidEnd(withSearch search: Bool) {
+        pagerView.showPage(at: 1, animated: false)
+    }
+    
+    /**
      Query with SearchQuery
      When querying is in progress, it cannot be queried again
      */
     func query(searchQuery: SearchQuery) {
         pagerView.showPage(at: 0, animated: false)
-        placeClient.search(query: searchQuery) { (meta, placeCollections) in
+        placeClient.search(query: searchQuery) { (meta, collections) in
             if (meta.isOk()) {
-                self.render(collections: placeCollections)
+                // Set query to expiry in 1 hour
+                self.queryExpiryDate = Date().addingTimeInterval(60 * 60)
+                self.pagerView.showPage(at: 1, animated: false)
+                
+                let cardCollections = collections.map {CardCollection(name: $0.name, query: $0.query, items: $0.places)}
+                (self.pageControllers[1]! as! DiscoverTabController).render(collections: cardCollections)
             } else {
                 self.present(meta.createAlert(), animated: true)
             }
         }
         
         // TODO: Update search bar with query also to keep Concurrency, incase of double update
-    }
-    
-    /**
-     PlaceCollection is consumed and parsed into CardCollection
-     In addition:
-     1. Check if location service is enabled, if not NoLocationServiceCard will be added
-     2. No results card
-     */
-    func render(collections: [PlaceCollection]) {
-        // Set query to expiry in 1 hour
-        queryExpiryDate = Date().addingTimeInterval(60 * 60)
-        pagerView.showPage(at: tabIndex, animated: false)
-        
-        let cardCollections = collections.map {CardCollection(name: $0.name, query: $0.query, items: $0.places)}
-        (pageControllers[tabIndex]! as! DiscoverTabController).render(collections: cardCollections)
     }
     
     // MARK: - View Pager
@@ -169,22 +175,18 @@ class StaticDiscoverPageView: UIView {
 }
 
 class DiscoverLoadingController: UIViewController {
-    
-    @IBOutlet weak var extensionBar: UIView!
     @IBOutlet weak var indicatorView: NVActivityIndicatorView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.extensionBar.hairlineShadow()
-        
-        // Add Loading indicator view
+        // Init Loading indicator view
         self.indicatorView.color = .primary700
         self.indicatorView.startAnimating()
     }
 }
 
-class SearchNavigationBar: UIView {
+class SearchNavigationBar: UIView, UITextFieldDelegate {
     enum State {
         case Open
         case Close
@@ -192,7 +194,9 @@ class SearchNavigationBar: UIView {
     
     @IBOutlet weak var locationButton: UIButton!
     @IBOutlet weak var searchBar: DiscoverSearchField!
-    @IBOutlet weak var filterButton: UIButton!
+    
+    @IBOutlet weak var actionBtnWidth: NSLayoutConstraint!
+    @IBOutlet weak var actionButton: UIButton!
     
     static let maxHeight: CGFloat = 103.0
     static let minHeight: CGFloat = 20.0
@@ -201,6 +205,12 @@ class SearchNavigationBar: UIView {
     
     @IBOutlet weak var heightConstraint: NSLayoutConstraint!
     var state = State.Open
+    private var delegate: SearchNavigationBarDelegate?
+    
+    func setDelegate(delegate: SearchNavigationBarDelegate) {
+        self.delegate = delegate
+        searchBar.delegate = self
+    }
     
     /**
      Reset search bar inputs
@@ -209,6 +219,41 @@ class SearchNavigationBar: UIView {
         searchBar.text = nil
         locationButton.setTitle("Singapore", for: .normal)
     }
+    
+    @IBAction func actionTouchUp(_ sender: Any) {
+        if (self.actionButton.currentTitle == "Cancel") {
+            searchBarWillEnd(withSearch: false)
+        }
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        UIView.animate(withDuration: 0.3) {
+            self.actionButton.setTitle("Cancel", for: .normal)
+            self.actionBtnWidth.constant = 65
+            self.actionButton.setImage(nil, for: .normal)
+            self.layoutIfNeeded()
+        }
+        
+        delegate?.searchBarDidBegin()
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        searchBarWillEnd(withSearch: true)
+        return true
+    }
+    
+    func searchBarWillEnd(withSearch: Bool) {
+        UIView.animate(withDuration: 0.3) {
+            self.actionButton.setTitle(nil, for: .normal)
+            self.actionBtnWidth.constant = 45
+            self.actionButton.setImage(UIImage(named: "icons8-Horizontal Settings Mixer-30"), for: .normal)
+            self.layoutIfNeeded()
+        }
+        
+        searchBar.resignFirstResponder()
+        delegate?.searchBarDidEnd(withSearch: withSearch)
+    }
+    
     
     /**
      Check that navigation bar is open
@@ -254,7 +299,7 @@ class SearchNavigationBar: UIView {
             progress = progress < 0.2 ? 0 : (progress - 0.3) * 2
             locationButton.alpha = progress
             searchBar.alpha = progress
-            filterButton.alpha = progress
+            actionButton.alpha = progress
         }
     }
     
@@ -269,7 +314,7 @@ class SearchNavigationBar: UIView {
             // Progress, 100% bar fully extended
             locationButton.alpha = 1.0
             searchBar.alpha = 1.0
-            filterButton.alpha = 1.0
+            actionButton.alpha = 1.0
         }
     }
     
@@ -283,13 +328,21 @@ class SearchNavigationBar: UIView {
     }
 }
 
+protocol SearchNavigationBarDelegate {
+    func searchBarDidBegin()
+    
+    /**
+     Paramaters: search = true if search bar did end with search
+     */
+    func searchBarDidEnd(withSearch search: Bool)
+}
+
 class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     var discoverDelegate: DiscoverDelegate!
     let placeClient = MunchClient.instance.places
     
     @IBOutlet weak var topConstraint: NSLayoutConstraint!
-    @IBOutlet weak var tabView: UIView!
     @IBOutlet weak var tabCollection: UICollectionView!
     @IBOutlet weak var contentCollection: UICollectionView!
     
@@ -303,7 +356,6 @@ class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICol
      */
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tabView.hairlineShadow()
         self.tabCollection.delegate = self
         self.tabCollection.dataSource = self
         
