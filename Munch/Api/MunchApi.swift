@@ -24,14 +24,14 @@ public class RestfulClient {
      Params Encoding is query string
      */
     func get(_ path: String, parameters: Parameters = [:], callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
-        request(method: .get, path: path, encoding: URLEncoding.default, callback: callback)
+        request(method: .get, path: path, parameters: parameters, encoding: URLEncoding.default, callback: callback)
     }
     
     /**
      Params Encoding is json
      */
     func post(_ path: String, parameters: Parameters = [:], callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
-        request(method: .post, path: path, encoding: JSONEncoding.default, callback: callback)
+        request(method: .post, path: path, parameters: parameters, encoding: JSONEncoding.default, callback: callback)
     }
     
     /**
@@ -41,7 +41,7 @@ public class RestfulClient {
      encoding: encoding of paramters
      callback: Meta and Json
      */
-    private func request(method: HTTPMethod, path: String, parameters: Parameters = [:], encoding: ParameterEncoding, callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
+    private func request(method: HTTPMethod, path: String, parameters: Parameters, encoding: ParameterEncoding, callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
         var headers = [String: String]()
         
         // Set latLng if available
@@ -115,8 +115,7 @@ public struct MetaJSON {
 public class MunchClient: RestfulClient {
     static let instance = MunchClient()
     
-    private static let baseUrl = "http://192.168.1.197:8800/v1"
-//    static let baseUrl = "http://10.0.1.8:8800/v1"
+    private static let baseUrl = MunchPlist.get(asString: "MunchApiBaseUrl")!
     
     let places = PlaceClient(baseUrl)
     
@@ -131,12 +130,10 @@ public class MunchClient: RestfulClient {
 class PlaceClient: RestfulClient {
     
     func search(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ collections: [PlaceCollection]) -> Void) {
-        callback(MetaJSON(metaJson: JSON(parseJSON: "{\"code\": 200}")), PlaceClient.randomCollection())
-        
-        // TODO remove testing callback
-//        super.post("/places/collection/search", parameters: query.toParams()) { meta, json in
-//            callback(meta, json["data"].map({PlaceCollection(json: $0.1)}))
-//        }
+        // callback(MetaJSON(metaJson: JSON(parseJSON: "{\"code\": 200}")), PlaceClient.randomCollection())
+        super.post("/places/collections/search", parameters: query.toParams()) { meta, json in
+            callback(meta, json["data"].map({PlaceCollection(json: $0.1)}))
+        }
     }
     
     func suggest(text: String, size: Int, latLng: String?, callback: @escaping (_ meta: MetaJSON, _ places: [Place]) -> Void) {
@@ -151,11 +148,10 @@ class PlaceClient: RestfulClient {
     }
     
     func searchNext(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ places: [Place]) -> Void) {
-        callback(MetaJSON(metaJson: JSON(parseJSON: "{\"code\": 200}")), query.from == 0 ? PlaceClient.randomPlaces() : [])
-        
-//        super.post("/places/collection/search/next", parameters: query.toParams()) { meta, json in
-//            callback(meta, json["data"].map({Place(json: $0.1)}))
-//        }
+        // callback(MetaJSON(metaJson: JSON(parseJSON: "{\"code\": 200}")), query.from == 0 ? PlaceClient.randomPlaces() : [])
+        super.post("/places/collections/search/next", parameters: query.toParams()) { meta, json in
+            callback(meta, json["data"].map({Place(json: $0.1)}))
+        }
     }
     
     func get(id: String, callback: @escaping (_ meta: MetaJSON, _ place: PlaceDetail) -> Void) {
@@ -175,7 +171,12 @@ class PlaceClient: RestfulClient {
             callback(meta, json["data"].map({Article(json: $0.1)}))
         }
     }
-    
+}
+
+/**
+ Offline place testing tools
+ */
+extension PlaceClient {
     private class func randomCollection() -> [PlaceCollection] {
         return [
             PlaceCollection(name: "NEARBY", query: SearchQuery(), places: randomPlaces()),

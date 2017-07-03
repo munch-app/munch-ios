@@ -102,7 +102,7 @@ class CardCollection: Equatable {
                 let contains = { (i: CardItem) -> Bool in (i as? Place) == place }
                 
                 // Add Item if don't already exist
-                if (!items.contains(where: contains)) {
+                if (!self.items.contains(where: contains)) {
                     self.items.append(item)
                 }
             } else {

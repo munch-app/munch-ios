@@ -477,7 +477,7 @@ class DiscoverTabTitleCell: UICollectionViewCell {
     }
     
     class func width(title: String) -> CGSize {
-        let width = UILabel.textWidth(font: titleFont, text: title)
+        let width = UILabel.textWidth(font: titleFont, text: title.uppercased())
         return CGSize(width: width + 20, height: 50)
     }
 }

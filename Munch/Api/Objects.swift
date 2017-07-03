@@ -159,7 +159,7 @@ public struct SearchQuery {
     var query: String?
     var polygon: Polygon?
     var filters: Filters?
-
+    
     init() {
         
     }
@@ -170,8 +170,12 @@ public struct SearchQuery {
         
         self.query = json["query"].string
         
-        if (json["polygon"].exists()){
+        if (json["polygon"].exists()) {
             self.polygon = Polygon(json: json["polygon"])
+        }
+        
+        if (json["filters"].exists()) {
+            self.filters = Filters(json: json["filters"])
         }
     }
     
@@ -208,7 +212,24 @@ public struct SearchQuery {
     }
     
     public struct Filters {
-        // TODO in the Future once finalized
+        // TODO priceRange & hours
+        var tags: [Tag]?
+        var ratingsAbove: Double?
+        
+        init(json: JSON) {
+            self.tags = json["tags"].map {Tag(json: $0.1)}
+            self.ratingsAbove = json["ratingsAbove"].double
+        }
+        
+        public struct Tag {
+            var text: String?
+            var positive: Bool?
+            
+            init(json: JSON) {
+                self.text = json["text"].string
+                self.positive = json["positive"].bool
+            }
+        }
     }
     
     /**
@@ -224,6 +245,21 @@ public struct SearchQuery {
             var poly = Parameters()
             poly["points"] = polygon.points
             params["polygon"] = poly
+        }
+        
+        if let filters = filters {
+            var filt = Parameters()
+            filt["ratingsAbove"] = filters.ratingsAbove
+            if let tags = filters.tags {
+                let tagArray: [Parameters] = tags.map { data -> Parameters in
+                    var tag = Parameters()
+                    tag["text"] = data.text
+                    tag["positive"] = data.positive
+                    return tag
+                }
+                filt["tags"] = tagArray
+            }
+            params["filters"] = filt
         }
         return params
     }

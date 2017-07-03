@@ -138,3 +138,22 @@ extension UIColor {
         return UIColor(hex: "036236")
     }
 }
+
+public class MunchPlist {
+    private static let instance = MunchPlist()
+    
+    let dictionary: [String: Any]
+    
+    init() {
+        let path = Bundle.main.path(forResource: "Munch", ofType: "plist")!
+        self.dictionary = NSDictionary(contentsOfFile: path) as! [String: Any]
+    }
+    
+    class func get(key: String) -> Any? {
+        return instance.dictionary[key]
+    }
+    
+    class func get(asString key: String) -> String? {
+        return instance.dictionary[key] as? String
+    }
+}

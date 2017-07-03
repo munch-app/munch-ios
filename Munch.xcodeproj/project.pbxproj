@@ -27,6 +27,7 @@
 		0382757C1F05109600C5954A /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0382757B1F05109600C5954A /* RealmSwift.framework */; };
 		0382757F1F0647EB00C5954A /* NVActivityIndicatorView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0382757D1F06427300C5954A /* NVActivityIndicatorView.framework */; };
 		038275811F06DB8D00C5954A /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038275801F06DB8D00C5954A /* Location.swift */; };
+		038275831F0A8DE400C5954A /* Munch.plist in Resources */ = {isa = PBXBuildFile; fileRef = 038275821F0A8DE400C5954A /* Munch.plist */; };
 		039C393F1E8D47F500A28533 /* MXSegmentedPager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C393E1E8D47F500A28533 /* MXSegmentedPager.framework */; };
 		039C39401E8D484A00A28533 /* HMSegmentedControl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C393C1E8D47E300A28533 /* HMSegmentedControl.framework */; };
 		039C39421E8D485400A28533 /* MXPagerView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 039C39411E8D485400A28533 /* MXPagerView.framework */; };
@@ -101,6 +102,7 @@
 		0382757B1F05109600C5954A /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
 		0382757D1F06427300C5954A /* NVActivityIndicatorView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NVActivityIndicatorView.framework; path = Carthage/Build/iOS/NVActivityIndicatorView.framework; sourceTree = "<group>"; };
 		038275801F06DB8D00C5954A /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
+		038275821F0A8DE400C5954A /* Munch.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Munch.plist; sourceTree = "<group>"; };
 		039C393C1E8D47E300A28533 /* HMSegmentedControl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HMSegmentedControl.framework; path = Carthage/Build/iOS/HMSegmentedControl.framework; sourceTree = "<group>"; };
 		039C393E1E8D47F500A28533 /* MXSegmentedPager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXSegmentedPager.framework; path = Carthage/Build/iOS/MXSegmentedPager.framework; sourceTree = "<group>"; };
 		039C39411E8D485400A28533 /* MXPagerView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXPagerView.framework; path = Carthage/Build/iOS/MXPagerView.framework; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 				0378849A1E8E563E006025B5 /* Extensions.swift */,
 				038275801F06DB8D00C5954A /* Location.swift */,
 				038275771F03B7A700C5954A /* Munch.swift */,
+				038275821F0A8DE400C5954A /* Munch.plist */,
 			);
 			path = Munch;
 			sourceTree = "<group>";
@@ -410,6 +413,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				038275831F0A8DE400C5954A /* Munch.plist in Resources */,
 				032F89061E82DFA300AD3818 /* LaunchScreen.storyboard in Resources */,
 				032F89031E82DFA300AD3818 /* Assets.xcassets in Resources */,
 				03D3FEFF1E8ABEE300ACFF50 /* Place.storyboard in Resources */,
