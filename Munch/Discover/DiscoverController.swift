@@ -144,8 +144,11 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
      Wind to place discover view controller
      */
     func present(place: Place) {
-//        let storyboard = UIStoryboard(name: "Place", bundle: nil)
-//        let controller = storyboard.instantiateInitialViewController()!
+        let storyboard = UIStoryboard(name: "Place", bundle: nil)
+        let controller = storyboard.instantiateInitialViewController() as! PlaceViewController
+        controller.place = place
+        
+        self.navigationController?.pushViewController(controller, animated: true)
     }
 }
 

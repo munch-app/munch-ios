@@ -264,8 +264,7 @@ class DiscoverPlaceCardView: DiscoverCardView {
         // Render images
         if let images = place.images {
             if (!images.isEmpty) {
-               let types = images[0].images
-                imageView.kf.setImage(with: URL(string: types.first!.value))
+                imageView.render(imageMeta: images[0])
             }
         }
     }
@@ -291,7 +290,7 @@ class DiscoverPlaceCardView: DiscoverCardView {
         if let tags = place.tags?.filter({!establishmentList.contains($0.lowercased())}) {
             if (!tags.isEmpty) {
                 let format = [NSFontAttributeName: UIFont.systemFont(ofSize: 15, weight: UIFontWeightRegular)]
-                let text = tags[0..<(tags.count < 2 ? tags.count : 2)].joined(separator: ", ")
+                let text = tags[0..<(tags.count < 2 ? tags.count : 2)].map{ $0.capitalized }.joined(separator: ", ")
                 line.append(NSMutableAttributedString(string: text, attributes: format))
             }
         }
@@ -303,17 +302,30 @@ class DiscoverPlaceCardView: DiscoverCardView {
         let line = NSMutableAttributedString()
         
         // Address
-        let address = NSMutableAttributedString(string: "73 Ayer Rajah Crescent")
-        line.append(address)
+        if let _ = place.location?.address {
+            // TODO: actual street
+            let address = NSMutableAttributedString(string: "Singapore")
+            line.append(address)
+        }
         
         // Distance
-        let distance = NSMutableAttributedString(string: " - 400m")
-        line.append(distance)
+        if let latLng = place.location?.latLng, MunchLocation.enabled {
+            if let distance = MunchLocation.distance(asMetric: latLng) {
+                line.append(NSMutableAttributedString(string: " - \(distance)"))
+            }
+        }
         
         // Open Now
-        let onFormat = [NSForegroundColorAttributeName: UIColor.secondary]
-        line.append(NSMutableAttributedString(string: " • ", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 15, weight: UIFontWeightUltraLight)]))
-        line.append(NSMutableAttributedString(string: "Open Now", attributes: onFormat))
+        if let open = place.isOpen() {
+            line.append(NSMutableAttributedString(string: " • ", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 15, weight: UIFontWeightUltraLight)]))
+            if (open) {
+                let onFormat = [NSForegroundColorAttributeName: UIColor.secondary]
+                line.append(NSMutableAttributedString(string: "Open Now", attributes: onFormat))
+            } else {
+                let onFormat = [NSForegroundColorAttributeName: UIColor.primary]
+                line.append(NSMutableAttributedString(string: "Closed Now", attributes: onFormat))
+            }
+        }
         
         self.thirdLabel.attributedText = line
     }
@@ -344,7 +356,7 @@ class DiscoverNoLocationCardView: DiscoverCardView {
     static let card = Card()
     
     @IBAction func actionEnable(_ sender: Any) {
-        MunchLocation.startMonitoring()
+        MunchLocation.scheduleOnce()
     }
     
     class Card: StaticCardItem {

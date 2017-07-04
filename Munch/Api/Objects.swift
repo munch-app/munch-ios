@@ -125,6 +125,21 @@ struct Place: CardItem, Equatable {
         }
     }
     
+    func isOpen() -> Bool? {
+        if let hours = hours {
+            let date = Date()
+            let day = HourFormatter.instance.dayNow().lowercased()
+            let todays = hours.filter { $0.day == day }
+            for today in todays {
+                if let open = HourFormatter.instance.isBetween(hour: today, date: date) {
+                    if (open) { return true }
+                }
+            }
+            return false
+        }
+        return nil
+    }
+    
     static func == (lhs: Place, rhs: Place) -> Bool {
         if (lhs.id == nil || rhs.id == nil) {
             return false
@@ -341,6 +356,7 @@ class HourFormatter {
     
     let inFormatter = DateFormatter()
     let outFormatter = DateFormatter()
+    let dayFormatter = DateFormatter()
     
     init() {
         inFormatter.locale = Locale(identifier: "en_US_POSIX")
@@ -350,6 +366,8 @@ class HourFormatter {
         outFormatter.dateFormat = "h:mma"
         outFormatter.amSymbol = "am"
         outFormatter.pmSymbol = "pm"
+        
+        dayFormatter.dateFormat = "EEE"
     }
     
     /**
@@ -359,6 +377,21 @@ class HourFormatter {
     func format(string: String) -> String {
         let date = inFormatter.date(from: string)
         return outFormatter.string(from: date!)
+    }
+    
+    func dayNow() -> String {
+        return dayFormatter.string(from: Date())
+    }
+    
+    func isBetween(hour: Place.Hour, date: Date) -> Bool? {
+        let now = inFormatter.string(from: date).replacingOccurrences(of: ":", with: "")
+        if let open = hour.open?.replacingOccurrences(of: ":", with: ""),
+            let close = hour.close?.replacingOccurrences(of: ":", with: "") {
+            if let openI = Int(open), let closeI = Int(close), let nowI = Int(now) {
+                return openI < nowI && nowI < closeI
+            }
+        }
+        return nil
     }
     
     /**
@@ -492,4 +525,18 @@ struct ImageMeta {
             return result
         }
     }
+    
+    func imageList() -> [(Int, Int, String)] {
+        return images.map { key, value -> (Int, Int, String) in
+            let widthHeight = key.lowercased().components(separatedBy: "x")
+            if (widthHeight.count == 2) {
+                if let width = Int(widthHeight[0]), let height = Int(widthHeight[1]) {
+                    return (width, height, value)
+                }
+            }
+            return (0, 0, value)
+        }
+    }
 }
+
+

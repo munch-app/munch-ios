@@ -139,6 +139,47 @@ extension UIColor {
     }
 }
 
+/**
+ Image view extension for rendering image meta data
+ */
+extension UIImageView {
+    
+    /**
+     Render ImageMeta to UIImageView
+     Choose the smallest fitting image if available
+     Else if the largest images if none fit
+     */
+    func render(imageMeta: ImageMeta) {
+        let size = frameSize()
+        let images = imageMeta.imageList()
+        
+        let fitting = images.filter { $0.0 >= size.0 && $0.1 >= size.1}
+            .sorted{ $0.0 * $0.1 < $1.0 * $1.1}
+        
+        if let fit = fitting.get(0) {
+            // Found the smallest fitting image
+            kf.setImage(with: URL(string: fit.2))
+        } else {
+            // No fitting image found, take largest image
+            let images = images.sorted { $0.0 * $0.1 > $1.0 * $1.1 }
+            if let image = images.get(0) {
+                kf.setImage(with: URL(string: image.2))
+            }
+        }
+    }
+    
+    /**
+     Return width and height in pixel
+     */
+    private func frameSize() -> (Int, Int) {
+        let scale = UIScreen.main.scale
+        let width = frame.size.width
+        let height = frame.size.height
+        
+        return (Int(width * scale), Int(height * scale))
+    }
+}
+
 public class MunchPlist {
     private static let instance = MunchPlist()
     

@@ -45,7 +45,7 @@ public class RestfulClient {
         var headers = [String: String]()
         
         // Set latLng if available
-        if let latLng = MunchLocation.lastLatLng {
+        if let latLng = MunchLocation.getLatLng() {
             headers["Location-LatLng"] = latLng
         }
         
@@ -115,7 +115,7 @@ public struct MetaJSON {
 public class MunchClient: RestfulClient {
     static let instance = MunchClient()
     
-    private static let baseUrl = MunchPlist.get(asString: "MunchApiBaseUrl")!
+    private static let baseUrl = MunchPlist.get(asString: "MunchApiBaseUrl2")!
     
     let places = PlaceClient(baseUrl)
     

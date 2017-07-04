@@ -114,6 +114,19 @@ extension Sequence {
     }
 }
 
+extension Array {
+    
+    // Safely lookup an index that might be out of bounds,
+    // returning nil if it does not exist
+    func get(_ index: Int) -> Element? {
+        if 0 <= index && index < count {
+            return self[index]
+        } else {
+            return nil
+        }
+    }
+}
+
 extension UIViewController {
     
     func alert(error: Error) {
@@ -126,5 +139,13 @@ extension UIViewController {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
         present(alert, animated: true)
+    }
+}
+
+extension Double {
+    /// Rounds the double to decimal places value
+    func roundTo(places:Int) -> Double {
+        let divisor = pow(10.0, Double(places))
+        return (self * divisor).rounded() / divisor
     }
 }

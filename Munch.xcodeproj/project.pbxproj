@@ -373,7 +373,7 @@
 				TargetAttributes = {
 					032F88F71E82DFA200AD3818 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 4C275KQZEH;
+						DevelopmentTeam = 7G635T5DK8;
 						ProvisioningStyle = Automatic;
 					};
 					032F890B1E82DFA300AD3818 = {
@@ -643,14 +643,14 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = 4C275KQZEH;
+				DEVELOPMENT_TEAM = 7G635T5DK8;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = Munch/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = co.munch;
+				PRODUCT_BUNDLE_IDENTIFIER = co.munch.MunchApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -662,14 +662,14 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = 4C275KQZEH;
+				DEVELOPMENT_TEAM = 7G635T5DK8;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = Munch/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = co.munch;
+				PRODUCT_BUNDLE_IDENTIFIER = co.munch.MunchApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};

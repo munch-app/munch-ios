@@ -182,10 +182,13 @@ extension PlaceViewController {
      Render place struct to place controller
      */
     func render(place: Place) {
-        // Render image view
-//        if let imageURL = place.imageURL() {
-//            self.placeImageView.kf.setImage(with: imageURL)
-//        }
+        // Render image
+        if let images = place.images {
+            if (!images.isEmpty) {
+                placeImageView.render(imageMeta: images[0])
+            }
+        }
+        
         // Render rating label
         let ratingColor = UIColor(hex: "5CB85C")
         placeRatingLabel.text = "4.9"
@@ -240,19 +243,13 @@ class AppLink {
             actionSheet.addAction(appleMapAction)
         }
         
-        if (UIApplication.shared.canOpenURL(URL(string:"comgooglemaps://")!)) {
+        // Monster Jobs uses comgooglemap url scheme, those fuckers
+        if (UIApplication.shared.canOpenURL(URL(string:"https://www.google.com/maps/")!)) {
             let googleMapAction = UIAlertAction(title: "Google Maps", style: .default) { alert in
-                UIApplication.shared.open(URL(string:"comgooglemaps://?daddr=\(address)")!)
+                UIApplication.shared.open(URL(string:"https://www.google.com/maps/?daddr=\(address)")!)
             }
             actionSheet.addAction(googleMapAction)
         }
-        
-        //        if (UIApplication.shared.canOpenURL(URL(string:"waze://")!)) {
-        //            let wazeMapAction = UIAlertAction(title: "Waze", style: .default) { alert in
-        //                  UIApplication.shared.open(URL(string:"waze://?daddr=" + address)!)
-        //            }
-        //            actionSheet.addAction(wazeMapAction)
-        //        }
         
         // Present action sheet for user to choose map provider
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
