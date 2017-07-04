@@ -39,7 +39,10 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.setNavigationBarHidden(true, animated: animated)
+        // Make navigation bar transparent
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.shadowImage = UIImage()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -148,7 +151,7 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
         let controller = storyboard.instantiateInitialViewController() as! PlaceViewController
         controller.place = place
         
-        self.navigationController?.pushViewController(controller, animated: true)
+        self.navigationController!.pushViewController(controller, animated: true)
     }
 }
 

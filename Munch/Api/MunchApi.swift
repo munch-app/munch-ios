@@ -115,7 +115,7 @@ public struct MetaJSON {
 public class MunchClient: RestfulClient {
     static let instance = MunchClient()
     
-    private static let baseUrl = MunchPlist.get(asString: "MunchApiBaseUrl2")!
+    private static let baseUrl = MunchPlist.get(asString: "MunchApiBaseUrl")!
     
     let places = PlaceClient(baseUrl)
     
@@ -160,14 +160,14 @@ class PlaceClient: RestfulClient {
         }
     }
     
-    func gallery(id: String, callback: @escaping (_ meta: MetaJSON, _ medias: [Media]) -> Void) {
-        super.get("/places/\(id)/gallery/list") { meta, json in
+    func medias(id: String, from: Int, size: Int, callback: @escaping (_ meta: MetaJSON, _ medias: [Media]) -> Void) {
+        super.get("/places/\(id)/medias/list", parameters: ["from": from, "size": size]) { meta, json in
             callback(meta, json["data"].map({Media(json: $0.1)}))
         }
     }
     
-    func articles(id: String, callback: @escaping (_ meta: MetaJSON, _ articles: [Article]) -> Void) {
-        super.get("/places/\(id)/articles/list") { meta, json in
+    func articles(id: String, from: Int, size: Int, callback: @escaping (_ meta: MetaJSON, _ articles: [Article]) -> Void) {
+        super.get("/places/\(id)/articles/list", parameters: ["from": from, "size": size]) { meta, json in
             callback(meta, json["data"].map({Article(json: $0.1)}))
         }
     }

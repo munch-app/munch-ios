@@ -40,7 +40,7 @@ class PlaceArticleController: PlaceControllers, UICollectionViewDataSource, UICo
         self.articleFlowLayout.minimumLineSpacing = minSpacing
         self.articleFlowLayout.minimumInteritemSpacing = floorf(halfWidth) == halfWidth ? minSpacing : minSpacing + 1
         
-        client.places.articles(id: place.id!){ meta, articles in
+        client.places.articles(id: place.id!, from: 0, size: 10){ meta, articles in
             if (meta.isOk()){
                 self.articles += articles
                 self.articleCollection.reloadData()
@@ -86,7 +86,9 @@ class PlaceArticleCell: UICollectionViewCell {
     
     func render(article: Article) {
         authorLabel.text = "@" + article.brand!
-//        articleImageView.kf.setImage(with: article.imageURL())
+        if let image = article.thumbnail {
+            articleImageView.render(imageMeta: image)
+        }
         sumaryLabel.text = article.title
     }
 }

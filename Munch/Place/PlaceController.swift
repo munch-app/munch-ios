@@ -113,7 +113,8 @@ class PlaceViewController: MXSegmentedPagerController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        // Make navigation bar transparent
+        // Make navigation bar transparent, bar must be hidden
+        navigationController?.setNavigationBarHidden(false, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
     }

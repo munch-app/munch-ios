@@ -40,7 +40,7 @@ class PlaceGalleryController: PlaceControllers, UICollectionViewDataSource, UICo
         self.galleryFlowLayout.minimumLineSpacing = minSpacing
         self.galleryFlowLayout.minimumInteritemSpacing = floorf(halfWidth) == halfWidth ? minSpacing : minSpacing + 1
         
-        client.places.gallery(id: place.id!){ meta, medias in
+        client.places.medias(id: place.id!, from: 0, size: 10){ meta, medias in
             if (meta.isOk()){
                 self.medias += medias
                 self.galleryCollection.reloadData()

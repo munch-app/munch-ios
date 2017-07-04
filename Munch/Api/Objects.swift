@@ -408,16 +408,17 @@ class HourFormatter {
      Accepts: Array of Hour
      Format hours to packed: "Mon - Fri: 10:00am - 3:00pm" joined by \n
     */
-    class func format(hours: [Place.Hour]) -> String {
+    class func format(hours: [Place.Hour]) -> String? {
+        if (hours.isEmpty) { return nil }
         let sorted = hours.sorted(by: {daysOrder[$0.0.day!]! < daysOrder[$0.1.day!]!})
         var lines = [String]()
         var tuple: (String, String, String)! = nil
         
         func make() -> String {
             if (tuple.1 == tuple.2) {
-                return "\(tuple.1): \(tuple.0)"
+                return "\(tuple.1.capitalized): \(tuple.0)"
             } else {
-                return "\(tuple.1) - \(tuple.2): \(tuple.0)"
+                return "\(tuple.1.capitalized) - \(tuple.2.capitalized): \(tuple.0)"
             }
         }
         

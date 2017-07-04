@@ -43,28 +43,32 @@ class PlaceGeneralController: PlaceControllers, UITableViewDataSource, UITableVi
         if let tags = place.tags {
             if (!tags.isEmpty) {
                 var item = PlaceGeneralCellItem(type: "Label")
-                item.text = tags.first
+                item.text = tags[0..<(tags.count < 3 ? tags.count : 3)].map{ $0.capitalized }.joined(separator: ", ")
                 item.icon = UIImage(named: "Restaurant-26")
                 items.append(item)
+            }
+            if (!tags.isEmpty) {
+                
+                
             }
         }
         
         // Price Range Icon Label Cell
-        if let price = place.price {
+        if let low = place.price?.lowest, let high = place.price?.highest {
             var item = PlaceGeneralCellItem(type: "PriceRange")
-            let low = Int(ceil(price.lowest!))
-            let high = Int(ceil(price.highest!))
-            item.text = "$\(low) - $\(high)"
+            item.text = "$\(Int(ceil(low))) - $\(Int(ceil(high)))"
             item.icon = UIImage(named: "Coins-26")
             items.append(item)
         }
         
         // Opening Hours Cell
         if let hours = place.hours {
-            var item = PlaceGeneralCellItem(type: "Hour")
-            item.text = HourFormatter.format(hours: hours)
-            item.icon = UIImage(named: "Clock-26")
-            items.append(item)
+            if let text = HourFormatter.format(hours: hours) {
+                var item = PlaceGeneralCellItem(type: "Hour")
+                item.text = text
+                item.icon = UIImage(named: "Clock-26")
+                items.append(item)
+            }
         }
         
         // Phone Icon Label Cell

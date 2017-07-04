@@ -204,7 +204,7 @@ extension DiscoverTabController {
     }
     
     func cardView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let cardItem: CardItem = collections[selectedTab].items[indexPath.row]
+        let cardItem: CardItem = collections[selectedTab].allItems[indexPath.row]
         
         if let place = cardItem as? Place {
             discoverDelegate.present(place: place)
