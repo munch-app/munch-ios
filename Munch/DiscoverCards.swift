@@ -13,32 +13,32 @@ import NVActivityIndicatorView
 
 let establishmentList: [String] = ["restaurant"]
 
-class CardCollection: Equatable {
-    static let placeClient = MunchClient.instance.places
+public class CardCollection: Equatable {
+    private static let discoveryClient = MunchClient.instance.discovery
+    public static let Empty = CardCollection(name: nil, query: nil, botItems: [DiscoverNoResultCardView.card])
     
-    let name: String
+    let name: String?
     var query: SearchQuery?
     
     var topItems: [CardItem]
     var items: [CardItem]
     var botItems: [CardItem]
-    
-    // Combination of all items
-    var allItems: [CardItem] {
-        return topItems + items + botItems
-    }
+    var allItems: [CardItem] { return topItems + items + botItems }
     
     var loading = false
-    
-    // Unique id of card collection for reference comparing
-    private let uuid = UUID()
+    private let uuid = UUID() // For reference comparing
     
     /**
      Name is manadatory
      Query is optional, if nil; endless scrolling is disabled
      items is mandatory
      */
-    init(name: String, query: SearchQuery?, topItems: [CardItem] = [], items: [CardItem] = [], botItems: [CardItem] = []) {
+    convenience init(collection: SearchCollection) {
+        let items = collection.results.filter { $0 is CardItem }.flatMap { $0 as? CardItem }
+        self.init(name: collection.name, query: collection.query, items: items)
+    }
+    
+    private init(name: String?, query: SearchQuery?, topItems: [CardItem] = [], items: [CardItem] = [], botItems: [CardItem] = []) {
         self.name = name
         self.query = query
         
@@ -58,35 +58,36 @@ class CardCollection: Equatable {
     
     func loadNext(completion: @escaping (_ meta: MetaJSON) -> Void) {
         if (self.loading) { return }
-        
-        
         // Only query if query else, safety reason
-        if (query != nil) {
-            // Set loading flag to true
-            self.loading = true
-            
-            CardCollection.placeClient.searchNext(query: query!) { meta, places in
-                if (meta.isOk()) {
-                    // Append the new loaded places
-                    self.append(places)
-                    // Increment query from to from + size
-                    self.query!.from = self.query!.from! + self.query!.size!
-                    
-                    // If places is return empty results, remove all bottom items
-                    if (places.isEmpty) {
-                        self.botItems.removeAll()
-                        // If after loading, still empty, add a no result card
-                        if (self.items.isEmpty) {
-                            self.botItems.append(DiscoverNoResultCardView.card)
-                        }
+        if (query == nil) { return }
+        // Set loading flag to true
+        self.loading = true
+        
+        CardCollection.discoveryClient.searchNext(query: query!) { meta, results in
+            if (meta.isOk()) {
+                let items = results.filter { $0 is CardItem }.flatMap { $0 as? CardItem }
+                
+                // Append the new loaded places
+                self.append(items)
+                // Increment query from to from + size
+                self.query!.from = self.query!.from! + self.query!.size!
+                
+                // If items return empty results, remove all bottom items
+                if (items.isEmpty) {
+                    self.botItems.removeAll()
+                    // If after loading, still empty, add a no result card
+                    if (self.items.isEmpty) {
+                        self.botItems.append(DiscoverNoResultCardView.card)
                     }
-                    
-                    // Flag is never set to false if meta is not ok
-                    self.loading = false
                 }
-                completion(meta)
+                
+                // Flag is never set to false if meta is not ok
+                self.loading = false
             }
+            
+            completion(meta)
         }
+
     }
     
     /**
@@ -112,7 +113,7 @@ class CardCollection: Equatable {
         }
     }
     
-    static func == (lhs: CardCollection, rhs: CardCollection) -> Bool {
+    public static func == (lhs: CardCollection, rhs: CardCollection) -> Bool {
         return lhs.uuid == rhs.uuid
     }
 }
@@ -142,7 +143,7 @@ extension DiscoverTabController {
         
         // Add no results card if no collections at all
         if (collections.isEmpty) {
-            self.collections.append(CardCollection(name: "Result", query: nil, botItems: [DiscoverNoResultCardView.card]))
+            self.collections.append(CardCollection.Empty)
         }
         
         // Add no location card to first collection first item
@@ -261,12 +262,8 @@ class DiscoverPlaceCardView: DiscoverCardView {
         renderSecondLine(place: place)
         renderThirdLine(place: place)
         
-        // Render images
-        if let images = place.images {
-            if (!images.isEmpty) {
-                imageView.render(imageMeta: images[0])
-            }
-        }
+        // Render first images if exist
+        imageView.render(imageMeta: place.images?.get(0))
     }
     
     private func renderFirstLine(place: Place) {
@@ -281,6 +278,12 @@ class DiscoverPlaceCardView: DiscoverCardView {
             if (!establishments.isEmpty){
                 let format = [NSFontAttributeName: UIFont.systemFont(ofSize: 15, weight: UIFontWeightSemibold)]
                 let estab = NSMutableAttributedString(string: "\(establishments[0])", attributes: format)
+                line.append(estab)
+                line.append(NSMutableAttributedString(string: " • ", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 15, weight: UIFontWeightUltraLight)]))
+            } else {
+                // Temporary code: To be removed for testing only
+                let format = [NSFontAttributeName: UIFont.systemFont(ofSize: 15, weight: UIFontWeightSemibold)]
+                let estab = NSMutableAttributedString(string: "Restaurant", attributes: format)
                 line.append(estab)
                 line.append(NSMutableAttributedString(string: " • ", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 15, weight: UIFontWeightUltraLight)]))
             }
@@ -429,11 +432,4 @@ class StaticCardItem: CardItem {
     func height() -> CGFloat {
         return width
     }
-}
-
-/**
- Protocol to tell that a struct is a card viewable data
- */
-protocol CardItem {
-    
 }

@@ -101,7 +101,7 @@ class PlaceGalleryContentCell: UICollectionViewCell {
     @IBOutlet weak var galleryImageView: UIImageView!
     
     func render(media: Media) {
-//        galleryImageView.kf.setImage(with: media.imageURL())
+        galleryImageView.render(imageMeta: media.image)
     }
 }
 

@@ -46,9 +46,9 @@ struct Place: CardItem, Equatable {
         self.price = Price(json: json["price"])
         self.location = Location(json: json["location"])
         
-        self.tags = json["tags"].map({$0.1.stringValue})
-        self.hours = json["hours"].map({Hour(json: $0.1)})
-        self.images = json["images"].map({ImageMeta(json: $0.1)})
+        self.tags = json["tags"].map { $0.1.stringValue }
+        self.hours = json["hours"].map { Hour(json: $0.1) }
+        self.images = json["images"].map { ImageMeta(json: $0.1) }
     }
     
     struct Price {
@@ -66,8 +66,10 @@ struct Place: CardItem, Equatable {
     }
     
     struct Location {
+        var street: String?
         var address: String?
         var unitNumber: String?
+        var building: String?
         
         var city: String?
         var country: String?
@@ -80,8 +82,10 @@ struct Place: CardItem, Equatable {
         }
         
         init(json: JSON) {
+            self.street = json["street"].string
             self.address = json["address"].string
             self.unitNumber = json["unitNumber"].string
+            self.building = json["building"].string
             
             self.city = json["city"].string
             self.country = json["country"].string
@@ -149,150 +153,37 @@ struct Place: CardItem, Equatable {
 }
 
 /**
- Menu data type from munch-core/service-menus
- */
-struct Menu {
-    let placeId: String
-    let menuId: String
-}
-
-/**
- SearchQuery object from munch-core/service-places
- This is a input and output data
- 
- - from: pagination from
- - size: pagination size
- - query: search query string
- - polygon: { points: [String] }
- 
- - filters: to be implemented in the future
- */
-public struct SearchQuery {
-    var from: Int?
-    var size: Int?
-    
-    var query: String?
-    var polygon: Polygon?
-    var filters: Filters?
-    
-    init() {
-        
-    }
-    
-    init(json: JSON) {
-        self.from = json["from"].int
-        self.size = json["size"].int
-        
-        self.query = json["query"].string
-        
-        if (json["polygon"].exists()) {
-            self.polygon = Polygon(json: json["polygon"])
-        }
-        
-        if (json["filters"].exists()) {
-            self.filters = Filters(json: json["filters"])
-        }
-    }
-    
-    public struct Polygon {
-        private static let d2r = Double.pi / 180.0
-        private static let r2d = 180 / Double.pi
-        private static let earthRadius = 6371.0
-        
-        var points: [String]
-        
-        init(json: JSON) {
-            self.points = json["points"].map({$0.1.stringValue})
-        }
-        
-        /**
-         radius is in KM
-         */
-        init(lat: Double, lng: Double, radius: Double, size: Int) {
-            let rlat = radius / Polygon.earthRadius * Polygon.r2d
-            let rlng = rlat / cos(lat * Polygon.d2r)
-            
-            // Create Points in latLng String array
-            points = [String]()
-            
-            // Create all points for polygon circle with n size
-            for i in 0..<size {
-                let theta = Double.pi * (Double(i) / (Double(size)/2))
-                let ex = lng + (rlng * cos(theta))
-                let ey = lat + (rlat * sin(theta))
-                points.append("\(ey),\(ex)")
-            }
-
-        }
-    }
-    
-    public struct Filters {
-        // TODO priceRange & hours
-        var tags: [Tag]?
-        var ratingsAbove: Double?
-        
-        init(json: JSON) {
-            self.tags = json["tags"].map {Tag(json: $0.1)}
-            self.ratingsAbove = json["ratingsAbove"].double
-        }
-        
-        public struct Tag {
-            var text: String?
-            var positive: Bool?
-            
-            init(json: JSON) {
-                self.text = json["text"].string
-                self.positive = json["positive"].bool
-            }
-        }
-    }
-    
-    /**
-     Map to Alamofire supported parameters encoding
-     */
-    func toParams() -> Parameters {
-        var params = Parameters()
-        params["from"] = from
-        params["size"] = size
-        params["query"] = query
-        
-        if let polygon = polygon {
-            var poly = Parameters()
-            poly["points"] = polygon.points
-            params["polygon"] = poly
-        }
-        
-        if let filters = filters {
-            var filt = Parameters()
-            filt["ratingsAbove"] = filters.ratingsAbove
-            if let tags = filters.tags {
-                let tagArray: [Parameters] = tags.map { data -> Parameters in
-                    var tag = Parameters()
-                    tag["text"] = data.text
-                    tag["positive"] = data.positive
-                    return tag
-                }
-                filt["tags"] = tagArray
-            }
-            params["filters"] = filt
-        }
-        return params
-    }
-}
-
-/**
  Location object form munch-core/service-location
  Used in search for munch-core/service-places
  */
-struct Location {
-    let name: String
-    let center: String
-    let points: [String] // points is ["lat, lng"] String Array
+struct Location: SearchResult {
+    var name: String?
+    var city: String?
+    var country: String?
     
-    init(json: JSON) {
-        self.name = json["name"].stringValue
-        self.center = json["center"].stringValue
+    var center: String?
+    var points: [String]? // points is ["lat, lng"] String Array
+    
+    init?(json: JSON) {
+        if (!json.exists()) { return nil }
+    
+        self.name = json["name"].string
+        self.city = json["city"].string
+        self.country = json["country"].string
+        
+        self.center = json["center"].string
         self.points = json["points"].map({$0.1.stringValue})
+    }
+    
+    func toParams() -> Parameters {
+        var params = Parameters()
+        params["name"] = name
+        params["city"] = city
+        params["country"] = country
+        
+        params["center"] = center
+        params["points"] = points
+        return params
     }
 }
 
@@ -313,25 +204,203 @@ struct PlaceDetail {
 }
 
 /**
- PlaceCollection object from munch-core/service-places
+ Menu data type from munch-core/service-menus
+ */
+struct Menu {
+    let placeId: String
+    let menuId: String
+}
+
+/**
+ SearchQuery object from munch-core/service-places
+ This is a input and output data
+ 
+ - from: pagination from
+ - size: pagination size
+ - query: search query string
+ */
+public struct SearchQuery {
+    var from: Int?
+    var size: Int?
+    
+    var query: String?
+    var location: Location?
+    
+    // These types should never be nil
+    var filter: Filter
+    var sort: Sort
+    
+    init() {
+        filter = Filter()
+        sort = Sort()
+    }
+    
+    init(json: JSON) {
+        self.from = json["from"].int
+        self.size = json["size"].int
+        
+        self.query = json["query"].string
+        self.location = Location(json: json["location"])
+        
+        self.filter = Filter(json: json["filter"])
+        self.sort = Sort(json: json["sort"])
+    }
+    
+    public struct Filter {
+        var price = Price()
+        var tag = Tag()
+        var rating = Rating()
+        var hour = Hour()
+        var distance = Distance()
+        
+        init() {
+            
+        }
+        
+        init(json: JSON) {
+            price.min = json["price"]["min"].double
+            price.max = json["price"]["max"].double
+            
+            tag.positives = json["tag"]["positives"].arrayValue.map { $0.stringValue }
+            tag.negatives = json["tag"]["negatives"].arrayValue.map { $0.stringValue }
+            
+            rating.min = json["rating"]["min"].double
+            
+            distance.latLng = json["distance"]["latLng"].string
+            distance.min = json["distance"]["min"].int
+            distance.max = json["distance"]["max"].int
+        }
+        
+        public struct Price {
+            var min: Double?
+            var max: Double?
+            
+        }
+        
+        public struct Tag {
+            var positives: [String]?
+            var negatives: [String]?
+        }
+        
+        public struct Rating {
+            var min: Double?
+        }
+        
+        public struct Hour {
+            
+        }
+        
+        public struct Distance {
+            var latLng: String?
+            // min, max are in metres
+            var min: Int?
+            var max: Int?
+        }
+        
+        public func toParams() -> Parameters {
+            var params = Parameters()
+            params["price"] = ["min": price.min, "max": price.max]
+            params["tag"] = ["positives": tag.positives, "negatives": tag.negatives]
+            params["rating"] = ["min": rating.min]
+            
+            var distanceParams = Parameters()
+            distanceParams["latLng"] = distance.latLng
+            distanceParams["min"] = distance.min
+            distanceParams["max"] = distance.max
+            params["distance"] = distanceParams
+            return params
+        }
+    }
+    
+    public struct Sort {
+        init() {
+            
+        }
+        
+        init(json: JSON) {
+        }
+        
+        public func toParams() -> Parameters {
+            return Parameters()
+        }
+    }
+    
+    /**
+     Map to Alamofire supported parameters encoding
+     */
+    func toParams() -> Parameters {
+        var params = Parameters()
+        params["from"] = from
+        params["size"] = size
+        
+        params["query"] = query
+        params["location"] = location?.toParams()
+        
+        params["filter"] = filter.toParams()
+        // params["sort"] = sort.toParams()
+        return params
+    }
+}
+
+/**
+ SearchCollection object from munch-core/munch-api
  used for containing a collection
  */
-struct PlaceCollection {
+struct SearchCollection {
     let name: String
     let query: SearchQuery
-    let places: [Place]
+    let results: [SearchResult]
     
     init(json: JSON) {
         self.name = json["name"].stringValue
         self.query = SearchQuery(json: json["query"])
-        self.places = json["places"].map({Place(json: $0.1)})
+        self.results = SearchCollection.parseList(searchResult: json["results"])
     }
     
-    init(name: String, query: SearchQuery, places: [Place]){
+    init(name: String, query: SearchQuery, results: [CardItem]){
         self.name = name
         self.query = query
-        self.places = places
+        self.results = results
     }
+    
+    /**
+     Method to parse search result type
+     */
+    public static func parse(searchResult json: JSON) -> SearchResult? {
+        switch json["_type"].stringValue {
+        case "Place": return Place(json: json)
+        case "Location": return Location(json: json)
+        default: return nil
+        }
+    }
+    
+    /**
+     Parse only search item
+     */
+    public static func parseList(searchResult json: JSON) -> [SearchResult] {
+        var results = [SearchResult]()
+        for each in json {
+            if let item = parse(searchResult: each.1) {
+                results.append(item)
+            }
+        }
+        return results
+    }
+}
+
+/**
+ Possible types are:
+ - Place
+ - Location
+ */
+protocol SearchResult {
+}
+
+/**
+ Possible types are:
+ - Place
+ */
+protocol CardItem: SearchResult {
 }
 
 /**

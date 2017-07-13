@@ -86,10 +86,13 @@ class PlaceArticleCell: UICollectionViewCell {
     
     func render(article: Article) {
         authorLabel.text = "@" + article.brand!
-        if let image = article.thumbnail {
-            articleImageView.render(imageMeta: image)
+        articleImageView.render(imageMeta: article.thumbnail)
+        
+        if let title = article.title {
+            sumaryLabel.text = title + "\n\n"
+        } else {
+            sumaryLabel.text = nil
         }
-        sumaryLabel.text = article.title
     }
 }
 

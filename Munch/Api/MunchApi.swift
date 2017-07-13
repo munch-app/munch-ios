@@ -117,7 +117,9 @@ public class MunchClient: RestfulClient {
     
     private static let baseUrl = MunchPlist.get(asString: "MunchApiBaseUrl")!
     
+    let discovery = DiscoveryClient(baseUrl)
     let places = PlaceClient(baseUrl)
+    let locations = LocationClient(baseUrl)
     
     init() {
         super.init(MunchClient.baseUrl)
@@ -125,35 +127,37 @@ public class MunchClient: RestfulClient {
 }
 
 /**
- PlaceClient from PlaceService in munch-core/munch-api
+ DiscoveryClient from DiscoveryService in munch-core/munch-api
  */
-class PlaceClient: RestfulClient {
-    
-    func search(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ collections: [PlaceCollection]) -> Void) {
-        // callback(MetaJSON(metaJson: JSON(parseJSON: "{\"code\": 200}")), PlaceClient.randomCollection())
-        super.post("/places/collections/search", parameters: query.toParams()) { meta, json in
-            callback(meta, json["data"].map({PlaceCollection(json: $0.1)}))
-        }
-    }
-    
-    func suggest(text: String, size: Int, latLng: String?, callback: @escaping (_ meta: MetaJSON, _ places: [Place]) -> Void) {
+class DiscoveryClient: RestfulClient {
+    func suggest(text: String, size: Int, latLng: String?, callback: @escaping (_ meta: MetaJSON, _ places: [SearchResult]) -> Void) {
         var params = Parameters()
         params["text"] = text
         params["size"] = size
-        if let latLng = latLng { params["latLng"] = latLng }
+        params["latLng"] = latLng
         
-        super.post("/places/suggest", parameters: params) { meta, json in
-            callback(meta, json["data"].map({Place(json: $0.1)}))
+        super.post("/discovery/suggest", parameters: params) { meta, json in
+            callback(meta, SearchCollection.parseList(searchResult: json["data"]))
         }
     }
     
-    func searchNext(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ places: [Place]) -> Void) {
-        // callback(MetaJSON(metaJson: JSON(parseJSON: "{\"code\": 200}")), query.from == 0 ? PlaceClient.randomPlaces() : [])
-        super.post("/places/collections/search/next", parameters: query.toParams()) { meta, json in
-            callback(meta, json["data"].map({Place(json: $0.1)}))
+    func search(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ collections: [SearchCollection]) -> Void) {
+        super.post("/discovery/search", parameters: query.toParams()) { meta, json in
+            callback(meta, json["data"].map({SearchCollection(json: $0.1)}))
         }
     }
     
+    func searchNext(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ results: [SearchResult]) -> Void) {
+        super.post("/discovery/search/next", parameters: query.toParams()) { meta, json in
+            callback(meta, SearchCollection.parseList(searchResult: json["data"]))
+        }
+    }
+}
+
+/**
+ PlaceClient from PlaceService in munch-core/munch-api
+ */
+class PlaceClient: RestfulClient {
     func get(id: String, callback: @escaping (_ meta: MetaJSON, _ place: PlaceDetail) -> Void) {
         super.get("/places/\(id)") { meta, json in
             callback(meta, PlaceDetail(json: json["data"]))
@@ -161,7 +165,7 @@ class PlaceClient: RestfulClient {
     }
     
     func medias(id: String, from: Int, size: Int, callback: @escaping (_ meta: MetaJSON, _ medias: [Media]) -> Void) {
-        super.get("/places/\(id)/medias/list", parameters: ["from": from, "size": size]) { meta, json in
+        super.get("/places/\(id)/instagram/medias/list", parameters: ["from": from, "size": size]) { meta, json in
             callback(meta, json["data"].map({Media(json: $0.1)}))
         }
     }
@@ -177,12 +181,12 @@ class PlaceClient: RestfulClient {
  Offline place testing tools
  */
 extension PlaceClient {
-    private class func randomCollection() -> [PlaceCollection] {
+    private class func randomCollection() -> [SearchCollection] {
         return [
-            PlaceCollection(name: "NEARBY", query: SearchQuery(), places: randomPlaces()),
-            PlaceCollection(name: "HEALTHY OPTIONS", query: SearchQuery(), places: randomPlaces()),
-            PlaceCollection(name: "CAFES", query: SearchQuery(), places: randomPlaces()),
-            PlaceCollection(name: "PUBS & BARS", query: SearchQuery(), places: [])
+            SearchCollection(name: "NEARBY", query: SearchQuery(), results: randomPlaces()),
+            SearchCollection(name: "HEALTHY OPTIONS", query: SearchQuery(), results: randomPlaces()),
+            SearchCollection(name: "CAFES", query: SearchQuery(), results: randomPlaces()),
+            SearchCollection(name: "PUBS & BARS", query: SearchQuery(), results: [])
         ]
     }
     
@@ -222,28 +226,17 @@ extension PlaceClient {
  */
 class LocationClient: RestfulClient {
     
-    func reverse(lat: Double, lng: Double, callback: @escaping (_ meta: MetaJSON, _ location: Location?) -> Void) {
-        var params = Parameters()
-        params["lat"] = lat
-        params["lng"] = lng
-        super.get("/location/reverse", parameters: params) { meta, json in
-            callback(meta, json["data"].exists() ? Location(json: json["data"]) : nil)
+    func streetReverse(lat: Double, lng: Double, callback: @escaping (_ meta: MetaJSON, _ location: String?) -> Void) {
+        super.get("/locations/streets/reverse", parameters: ["latLng": "\(lat),\(lng)"]) { meta, json in
+            callback(meta, json["data"].string)
         }
     }
     
     func search(text: String, callback: @escaping (_ meta: MetaJSON, _ locations: [Location]) -> Void) {
         var params = Parameters()
         params["text"] = text
-        super.get("/location/search", parameters: params) { meta, json in
-            callback(meta, json["data"].map({Location(json: $0.1)}))
-        }
-    }
-    
-    func geocode(text: String, callback: @escaping (_ meta: MetaJSON, _ location: Location?) -> Void) {
-        var params = Parameters()
-        params["text"] = text
-        super.get("/location/geocode", parameters: params) { meta, json in
-            callback(meta, json["data"].exists() ? Location(json: json["data"]) : nil)
+        super.get("/locations/suggest", parameters: params) { meta, json in
+            callback(meta, json["data"].map { Location(json: $0.1)! })
         }
     }
 }

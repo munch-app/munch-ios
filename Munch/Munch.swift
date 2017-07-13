@@ -148,23 +148,28 @@ extension UIImageView {
      Render ImageMeta to UIImageView
      Choose the smallest fitting image if available
      Else if the largest images if none fit
+     If imageMeta is nil, image will be set to nil too
      */
-    func render(imageMeta: ImageMeta) {
-        let size = frameSize()
-        let images = imageMeta.imageList()
-        
-        let fitting = images.filter { $0.0 >= size.0 && $0.1 >= size.1}
-            .sorted{ $0.0 * $0.1 < $1.0 * $1.1}
-        
-        if let fit = fitting.get(0) {
-            // Found the smallest fitting image
-            kf.setImage(with: URL(string: fit.2))
-        } else {
-            // No fitting image found, take largest image
-            let images = images.sorted { $0.0 * $0.1 > $1.0 * $1.1 }
-            if let image = images.get(0) {
-                kf.setImage(with: URL(string: image.2))
+    func render(imageMeta: ImageMeta?) {
+        if let imageMeta = imageMeta {
+            let size = frameSize()
+            let images = imageMeta.imageList()
+            
+            let fitting = images.filter { $0.0 >= size.0 && $0.1 >= size.1}
+                .sorted{ $0.0 * $0.1 < $1.0 * $1.1}
+            
+            if let fit = fitting.get(0) {
+                // Found the smallest fitting image
+                kf.setImage(with: URL(string: fit.2))
+            } else {
+                // No fitting image found, take largest image
+                let images = images.sorted { $0.0 * $0.1 > $1.0 * $1.1 }
+                if let image = images.get(0) {
+                    kf.setImage(with: URL(string: image.2))
+                }
             }
+        } else {
+            image = nil
         }
     }
     

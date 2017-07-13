@@ -21,7 +21,7 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
         2: "discover_segue_search"
     ]
     
-    let placeClient = MunchClient.instance.places
+    let discoveryClient = MunchClient.instance.discovery
     @IBOutlet weak var searchBar: SearchNavigationBar!
     @IBOutlet weak var pagerView: MXPagerView!
     
@@ -92,13 +92,13 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
      */
     func query(searchQuery: SearchQuery) {
         pagerView.showPage(at: 0, animated: false)
-        placeClient.search(query: searchQuery) { (meta, collections) in
+        discoveryClient.search(query: searchQuery) { (meta, collections) in
             if (meta.isOk()) {
                 // Set query to expiry in 1 hour
                 self.queryExpiryDate = Date().addingTimeInterval(60 * 60)
                 self.pagerView.showPage(at: 1, animated: false)
                 
-                let cardCollections = collections.map {CardCollection(name: $0.name, query: $0.query, items: $0.places)}
+                let cardCollections = collections.map { CardCollection(collection: $0) }
                 (self.pageControllers[1]! as! DiscoverTabController).render(collections: cardCollections)
             } else {
                 self.present(meta.createAlert(), animated: true)
@@ -471,8 +471,8 @@ class DiscoverTabTitleCell: UICollectionViewCell {
     @IBOutlet weak var label: UILabel!
     @IBOutlet weak var indicator: UIView!
     
-    func render(title: String, selected: Bool) {
-        self.label.text = title.uppercased()
+    func render(title: String?, selected: Bool) {
+        self.label.text = title == nil ? "" : title!.uppercased()
         if (selected) {
             label.textColor = UIColor.black.withAlphaComponent(0.85)
             indicator.backgroundColor = .primary300
@@ -482,8 +482,9 @@ class DiscoverTabTitleCell: UICollectionViewCell {
         }
     }
     
-    class func width(title: String) -> CGSize {
-        let width = UILabel.textWidth(font: titleFont, text: title.uppercased())
+    class func width(title: String?) -> CGSize {
+        let label = title == nil ? "" : title!.uppercased()
+        let width = UILabel.textWidth(font: titleFont, text: label)
         return CGSize(width: width + 20, height: 50)
     }
 }
