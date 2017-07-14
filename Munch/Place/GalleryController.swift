@@ -15,7 +15,7 @@ import UIKit
  in Gallery Tab
  */
 class PlaceGalleryController: PlaceControllers, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    let client = MunchClient()
+    let client = MunchClient.instance
     
     @IBOutlet weak var galleryCollection: UICollectionView!
     @IBOutlet weak var galleryFlowLayout: UICollectionViewFlowLayout!

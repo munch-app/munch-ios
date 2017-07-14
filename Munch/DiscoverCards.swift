@@ -304,11 +304,11 @@ class DiscoverPlaceCardView: DiscoverCardView {
     private func renderThirdLine(place: Place) {
         let line = NSMutableAttributedString()
         
-        // Address
-        if let _ = place.location?.address {
-            // TODO: actual street
-            let address = NSMutableAttributedString(string: "Singapore")
-            line.append(address)
+        // Street
+        if let street = place.location?.street {
+            line.append(NSMutableAttributedString(string: street))
+        } else {
+            line.append(NSMutableAttributedString(string: "Singapore"))
         }
         
         // Distance

@@ -23,14 +23,14 @@ public class RestfulClient {
     /**
      Params Encoding is query string
      */
-    func get(_ path: String, parameters: Parameters = [:], callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
+    fileprivate func get(_ path: String, parameters: Parameters = [:], callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
         request(method: .get, path: path, parameters: parameters, encoding: URLEncoding.default, callback: callback)
     }
     
     /**
      Params Encoding is json
      */
-    func post(_ path: String, parameters: Parameters = [:], callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
+    fileprivate func post(_ path: String, parameters: Parameters = [:], callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
         request(method: .post, path: path, parameters: parameters, encoding: JSONEncoding.default, callback: callback)
     }
     
@@ -41,7 +41,7 @@ public class RestfulClient {
      encoding: encoding of paramters
      callback: Meta and Json
      */
-    private func request(method: HTTPMethod, path: String, parameters: Parameters, encoding: ParameterEncoding, callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
+    fileprivate func request(method: HTTPMethod, path: String, parameters: Parameters, encoding: ParameterEncoding, callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
         var headers = [String: String]()
         
         // Set latLng if available
@@ -112,16 +112,18 @@ public struct MetaJSON {
     }
 }
 
+let MunchApi = MunchClient.instance
+
 public class MunchClient: RestfulClient {
-    static let instance = MunchClient()
+    public static let instance = MunchClient()
     
-    private static let baseUrl = MunchPlist.get(asString: "MunchApiBaseUrl")!
+    private static let baseUrl = MunchPlist.get(asString: "MunchApiBaseUrl-Office")!
     
     let discovery = DiscoveryClient(baseUrl)
     let places = PlaceClient(baseUrl)
     let locations = LocationClient(baseUrl)
     
-    init() {
+    private init() {
         super.init(MunchClient.baseUrl)
     }
 }
@@ -141,9 +143,9 @@ class DiscoveryClient: RestfulClient {
         }
     }
     
-    func search(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ collections: [SearchCollection]) -> Void) {
+    func search(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ collections: [SearchCollection], _ streetName: String?) -> Void) {
         super.post("/discovery/search", parameters: query.toParams()) { meta, json in
-            callback(meta, json["data"].map({SearchCollection(json: $0.1)}))
+            callback(meta, json["data"].map { SearchCollection(json: $0.1) }, json["street"]["name"].string)
         }
     }
     
@@ -232,7 +234,7 @@ class LocationClient: RestfulClient {
         }
     }
     
-    func search(text: String, callback: @escaping (_ meta: MetaJSON, _ locations: [Location]) -> Void) {
+    func suggest(text: String, callback: @escaping (_ meta: MetaJSON, _ locations: [Location]) -> Void) {
         var params = Parameters()
         params["text"] = text
         super.get("/locations/suggest", parameters: params) { meta, json in

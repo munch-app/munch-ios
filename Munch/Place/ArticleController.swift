@@ -16,7 +16,7 @@ import SafariServices
  in Articles Tab
  */
 class PlaceArticleController: PlaceControllers, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, SFSafariViewControllerDelegate {
-    let client = MunchClient()
+    let client = MunchClient.instance
     
     @IBOutlet weak var articleCollection: UICollectionView!
     @IBOutlet weak var articleFlowLayout: UICollectionViewFlowLayout!

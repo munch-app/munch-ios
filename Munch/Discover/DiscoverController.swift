@@ -92,7 +92,7 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
      */
     func query(searchQuery: SearchQuery) {
         pagerView.showPage(at: 0, animated: false)
-        discoveryClient.search(query: searchQuery) { (meta, collections) in
+        discoveryClient.search(query: searchQuery) { (meta, collections, streetName) in
             if (meta.isOk()) {
                 // Set query to expiry in 1 hour
                 self.queryExpiryDate = Date().addingTimeInterval(60 * 60)
@@ -100,12 +100,14 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
                 
                 let cardCollections = collections.map { CardCollection(collection: $0) }
                 (self.pageControllers[1]! as! DiscoverTabController).render(collections: cardCollections)
+                
+                // Update search bar with query also to keep Concurrency, incase of double update
+                self.searchBar.apply(query: searchQuery, streetName: streetName)
+                
             } else {
                 self.present(meta.createAlert(), animated: true)
             }
         }
-        
-        // TODO: Update search bar with query also to keep Concurrency, incase of double update
     }
     
     // MARK: - View Pager
@@ -223,7 +225,34 @@ class SearchNavigationBar: UIView, UITextFieldDelegate {
      */
     func reset() {
         searchBar.text = nil
-        locationButton.setTitle("Singapore", for: .normal)
+        locationButton.setTitle("Current Location", for: .normal)
+    }
+    
+    /**
+     Apply search bar inputs
+     */
+    func apply(query: SearchQuery, streetName: String?) {
+        searchBar.text = query.query
+        
+        
+        // Applying Location Name
+        if let location = query.location {
+            // Using Defined Polygon Location
+            if let name = location.name {
+                locationButton.setTitle(name, for: .normal)
+            } else {
+                locationButton.setTitle("Defined Location", for: .normal)
+            }
+        } else if (MunchLocation.enabled) {
+            // Using implicit Location
+            if let streetName = streetName {
+                locationButton.setTitle(streetName, for: .normal)
+            } else {
+                locationButton.setTitle("Current Location", for: .normal)
+            }
+        } else {
+            locationButton.setTitle("Singapore", for: .normal)
+        }
     }
     
     @IBAction func actionTouchUp(_ sender: Any) {

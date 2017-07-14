@@ -197,56 +197,6 @@
                         <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EHd-0u-coE">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="48"/>
-                                <subviews>
-                                    <textField clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Type the location" minimumFontSize="14" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Hkz-pl-Vg9" customClass="DiscoverSearchField" customModule="Munch" customModuleProvider="target">
-                                        <rect key="frame" x="13" y="4" width="349" height="32"/>
-                                        <color key="backgroundColor" white="0.92000000000000004" alpha="1" colorSpace="calibratedWhite"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="32" id="0vB-bi-cdL"/>
-                                        </constraints>
-                                        <nil key="textColor"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits" returnKeyType="search"/>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="image" keyPath="leftImage" value="SC-Marker-20"/>
-                                            <userDefinedRuntimeAttribute type="color" keyPath="color">
-                                                <color key="value" white="0.17999999999999999" alpha="1" colorSpace="calibratedWhite"/>
-                                            </userDefinedRuntimeAttribute>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="leftImagePadding">
-                                                <real key="value" value="1"/>
-                                            </userDefinedRuntimeAttribute>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                <integer key="value" value="4"/>
-                                            </userDefinedRuntimeAttribute>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="leftImageWidth">
-                                                <real key="value" value="32"/>
-                                            </userDefinedRuntimeAttribute>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="leftImageSize">
-                                                <real key="value" value="20"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
-                                    </textField>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="w8J-FW-qFX">
-                                        <rect key="frame" x="0.0" y="47" width="375" height="1"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.25" colorSpace="calibratedWhite"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="1" id="OcM-ig-xeK" customClass="HairlineConstraint" customModule="Munch" customModuleProvider="target"/>
-                                        </constraints>
-                                    </view>
-                                </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstItem="Hkz-pl-Vg9" firstAttribute="leading" secondItem="EHd-0u-coE" secondAttribute="leading" constant="13" id="3Tq-v2-J29"/>
-                                    <constraint firstAttribute="height" constant="48" id="6bf-8P-NV2"/>
-                                    <constraint firstAttribute="trailing" secondItem="Hkz-pl-Vg9" secondAttribute="trailing" constant="13" id="7zS-La-AfT"/>
-                                    <constraint firstItem="w8J-FW-qFX" firstAttribute="leading" secondItem="EHd-0u-coE" secondAttribute="leading" id="WIz-Tl-A5S"/>
-                                    <constraint firstAttribute="bottom" secondItem="w8J-FW-qFX" secondAttribute="bottom" id="nKZ-lR-abj"/>
-                                    <constraint firstAttribute="trailing" secondItem="w8J-FW-qFX" secondAttribute="trailing" id="oMS-dG-AKB"/>
-                                    <constraint firstAttribute="bottom" secondItem="Hkz-pl-Vg9" secondAttribute="bottom" constant="12" id="yvW-2J-Xre"/>
-                                </constraints>
-                            </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Q9P-0W-BWc">
                                 <rect key="frame" x="0.0" y="48" width="375" height="555"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -287,7 +237,7 @@
                                             <outlet property="detectLocationButton" destination="Ocl-iu-KKx" id="S16-mO-uaX"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="LocationTextCell" id="aYK-sz-N0P" customClass="LocationTextCell" customModule="Munch" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="LocationTextCell" rowHeight="44" id="aYK-sz-N0P" customClass="LocationTextCell" customModule="Munch" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="95" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="aYK-sz-N0P" id="ji1-AO-uJD">
@@ -317,6 +267,54 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EHd-0u-coE" customClass="HairlineShadowView" customModule="Munch" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="48"/>
+                                <subviews>
+                                    <textField clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Type the location" minimumFontSize="14" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Hkz-pl-Vg9" customClass="DiscoverSearchField" customModule="Munch" customModuleProvider="target">
+                                        <rect key="frame" x="13" y="4" width="349" height="32"/>
+                                        <color key="backgroundColor" white="0.92000000000000004" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="32" id="0vB-bi-cdL"/>
+                                        </constraints>
+                                        <nil key="textColor"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" returnKeyType="search"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="image" keyPath="leftImage" value="SC-Marker-20"/>
+                                            <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                                <color key="value" white="0.17999999999999999" alpha="1" colorSpace="calibratedWhite"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="leftImagePadding">
+                                                <real key="value" value="1"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="4"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="leftImageWidth">
+                                                <real key="value" value="32"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="leftImageSize">
+                                                <real key="value" value="20"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="textFieldChanged:" destination="Yjm-xD-D9C" eventType="editingChanged" id="rjY-my-pgc"/>
+                                        </connections>
+                                    </textField>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="Hkz-pl-Vg9" firstAttribute="leading" secondItem="EHd-0u-coE" secondAttribute="leading" constant="13" id="3Tq-v2-J29"/>
+                                    <constraint firstAttribute="height" constant="48" id="6bf-8P-NV2"/>
+                                    <constraint firstAttribute="trailing" secondItem="Hkz-pl-Vg9" secondAttribute="trailing" constant="13" id="7zS-La-AfT"/>
+                                    <constraint firstAttribute="bottom" secondItem="Hkz-pl-Vg9" secondAttribute="bottom" constant="12" id="yvW-2J-Xre"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="hairlineShadowHeight">
+                                        <real key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -337,6 +335,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="searchBar" destination="Hkz-pl-Vg9" id="8ir-jb-oNV"/>
                         <outlet property="tableView" destination="Q9P-0W-BWc" id="DDY-BM-odh"/>
                     </connections>
                 </viewController>

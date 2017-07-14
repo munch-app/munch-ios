@@ -106,7 +106,7 @@ public class MunchLocation {
     public class func distance(asMetric latLng: String) -> String? {
         if let distance = distance(latLng: latLng) {
             if (distance < 1000) {
-                let m = (distance/50).roundTo(places: 0)
+                let m = (distance/50).roundTo(places: 0) * 50
                 return "\(m)m"
             } else if (distance < 100000) {
                 let demical = (distance/1000).roundTo(places: 1)
