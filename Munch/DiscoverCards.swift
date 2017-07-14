@@ -144,12 +144,11 @@ extension DiscoverTabController {
         // Add no results card if no collections at all
         if (collections.isEmpty) {
             self.collections.append(CardCollection.Empty)
-        }
-        
-        // Add no location card to first collection first item
-        if (!MunchLocation.enabled) {
+        } else if (!MunchLocation.enabled) {
+            // Add no location card to first collection first item
             collections[0].topItems.insert(DiscoverNoLocationCardView.card, at: 0)
         }
+        
 
         
         // Reload title and tabs

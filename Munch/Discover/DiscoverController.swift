@@ -21,11 +21,11 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
         2: "discover_segue_search"
     ]
     
-    let discoveryClient = MunchClient.instance.discovery
     @IBOutlet weak var searchBar: SearchNavigationBar!
     @IBOutlet weak var pagerView: MXPagerView!
     
-    var queryExpiryDate = Date().addingTimeInterval(-6000)
+    var currentSearchQuery = SearchQuery()
+    var queryExpiryDate = Date().addingTimeInterval(-60 * 100) // 100 Minutes
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,6 +48,19 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        if (currentSearchQuery != searchBar.searchQuery) {
+            // Apply Search due to change
+            self.query()
+        } else {
+            // Check if query has expired
+            self.refreshExpiredQuery()
+        }
+    }
+    
+    /**
+     Check if query has expired, if so, refresh
+     */
+    private func refreshExpiredQuery() {
         // Search query have expired
         if (queryExpiryDate < Date()) {
             // Get current Location
@@ -58,12 +71,12 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
                         self.alert(error: error)
                     } else {
                         // Once successful, just query once
-                        self.query(searchQuery: SearchQuery())
+                        self.query()
                     }
                 }
             } else {
                 // Location service is not enabled
-                self.query(searchQuery: SearchQuery())
+                self.query()
             }
         } else {
             // Not yet expire, extend by 30 minutes
@@ -84,15 +97,20 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
      */
     func searchBarDidEnd(withSearch search: Bool) {
         pagerView.showPage(at: 1, animated: false)
+        if (self.currentSearchQuery != self.searchBar.searchQuery) {
+            self.query()
+        }
     }
     
     /**
-     Query with SearchQuery
+     Query with SearchQuery taken from SearchBar
      When querying is in progress, it cannot be queried again
      */
-    func query(searchQuery: SearchQuery) {
+    func query() {
+        let searchQuery = self.searchBar.searchQuery
+        self.currentSearchQuery = searchQuery
         pagerView.showPage(at: 0, animated: false)
-        discoveryClient.search(query: searchQuery) { (meta, collections, streetName) in
+        MunchApi.discovery.search(query: searchQuery) { (meta, collections, streetName) in
             if (meta.isOk()) {
                 // Set query to expiry in 1 hour
                 self.queryExpiryDate = Date().addingTimeInterval(60 * 60)
@@ -102,7 +120,7 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
                 (self.pageControllers[1]! as! DiscoverTabController).render(collections: cardCollections)
                 
                 // Update search bar with query also to keep Concurrency, incase of double update
-                self.searchBar.apply(query: searchQuery, streetName: streetName)
+                self.searchBar.apply(searchQuery: searchQuery, streetName: streetName)
                 
             } else {
                 self.present(meta.createAlert(), animated: true)
@@ -142,7 +160,6 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
      Unwind to main Discover View Controller
      */
     @IBAction func unwindToDiscover(segue: UIStoryboardSegue) {
-        
     }
     
     /**
@@ -154,6 +171,17 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
         controller.place = place
         
         self.navigationController!.pushViewController(controller, animated: true)
+    }
+    
+    /**
+     Storyboard segue prepares
+     */
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let navigation = segue.destination as? UINavigationController {
+            if let controller = navigation.topViewController as? LocationDiscoverPopover {
+                controller.searchBar = self.searchBar
+            }
+        }
     }
 }
 
@@ -202,18 +230,18 @@ class SearchNavigationBar: UIView, UITextFieldDelegate {
     
     @IBOutlet weak var locationButton: UIButton!
     @IBOutlet weak var searchBar: DiscoverSearchField!
-    
     @IBOutlet weak var actionBtnWidth: NSLayoutConstraint!
     @IBOutlet weak var actionButton: UIButton!
+    @IBOutlet weak var heightConstraint: NSLayoutConstraint!
     
     static let maxHeight: CGFloat = 103.0
     static let minHeight: CGFloat = 20.0
     static let diffHeight: CGFloat = 83.0
     static let fieldHeight: CGFloat = 35.0
     
-    @IBOutlet weak var heightConstraint: NSLayoutConstraint!
     var state = State.Open
     private var delegate: SearchNavigationBarDelegate?
+    var searchQuery = SearchQuery()
     
     func setDelegate(delegate: SearchNavigationBarDelegate) {
         self.delegate = delegate
@@ -221,22 +249,23 @@ class SearchNavigationBar: UIView, UITextFieldDelegate {
     }
     
     /**
-     Reset search bar inputs
+     Reset search bar
      */
     func reset() {
-        searchBar.text = nil
-        locationButton.setTitle("Current Location", for: .normal)
+        apply(searchQuery: SearchQuery(), streetName: nil)
     }
     
     /**
-     Apply search bar inputs
+     Apply search bar from results of munch-api
+     searchQuery: SearchQuery
+     streetName: String
      */
-    func apply(query: SearchQuery, streetName: String?) {
-        searchBar.text = query.query
-        
+    func apply(searchQuery: SearchQuery, streetName: String?) {
+        self.searchQuery = searchQuery
+        searchBar.text = searchQuery.query
         
         // Applying Location Name
-        if let location = query.location {
+        if let location = searchQuery.location {
             // Using Defined Polygon Location
             if let name = location.name {
                 locationButton.setTitle(name, for: .normal)
@@ -253,6 +282,15 @@ class SearchNavigationBar: UIView, UITextFieldDelegate {
         } else {
             locationButton.setTitle("Singapore", for: .normal)
         }
+    }
+    
+    /**
+     Apply search bar with location for DiscoverPopover.LocationController
+     location: Location, nil = currentLocation
+     */
+    func apply(location: Location?) {
+        self.searchQuery.location = location
+        apply(searchQuery: self.searchQuery, streetName: nil)
     }
     
     @IBAction func actionTouchUp(_ sender: Any) {
@@ -373,9 +411,7 @@ protocol SearchNavigationBarDelegate {
 }
 
 class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    
     var discoverDelegate: DiscoverDelegate!
-    let placeClient = MunchClient.instance.places
     
     @IBOutlet weak var topConstraint: NSLayoutConstraint!
     @IBOutlet weak var tabCollection: UICollectionView!

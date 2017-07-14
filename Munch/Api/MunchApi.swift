@@ -117,7 +117,7 @@ let MunchApi = MunchClient.instance
 public class MunchClient: RestfulClient {
     public static let instance = MunchClient()
     
-    private static let baseUrl = MunchPlist.get(asString: "MunchApiBaseUrl-Office")!
+    private static let baseUrl = MunchPlist.get(asString: "MunchApiBaseUrl-Home")!
     
     let discovery = DiscoveryClient(baseUrl)
     let places = PlaceClient(baseUrl)

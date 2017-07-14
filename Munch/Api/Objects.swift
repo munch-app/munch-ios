@@ -219,7 +219,7 @@ struct Menu {
  - size: pagination size
  - query: search query string
  */
-public struct SearchQuery {
+public struct SearchQuery: Equatable {
     var from: Int?
     var size: Int?
     
@@ -340,6 +340,10 @@ public struct SearchQuery {
         // params["sort"] = sort.toParams()
         return params
     }
+    
+    public static func == (lhs: SearchQuery, rhs: SearchQuery) -> Bool {
+        return NSDictionary(dictionary: lhs.toParams()).isEqual(to: rhs.toParams())
+    }
 }
 
 /**
@@ -367,7 +371,7 @@ struct SearchCollection {
      Method to parse search result type
      */
     public static func parse(searchResult json: JSON) -> SearchResult? {
-        switch json["_type"].stringValue {
+        switch json["type"].stringValue {
         case "Place": return Place(json: json)
         case "Location": return Location(json: json)
         default: return nil

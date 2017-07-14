@@ -12,7 +12,8 @@ import RealmSwift
 import SwiftyJSON
 
 class LocationDiscoverPopover: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    @IBOutlet weak var searchBar: DiscoverSearchField!
+    var searchBar: SearchNavigationBar!
+    @IBOutlet weak var searchField: DiscoverSearchField!
     @IBOutlet weak var tableView: UITableView!
     
     var realm: Realm!
@@ -34,11 +35,13 @@ class LocationDiscoverPopover: UIViewController, UITableViewDataSource, UITableV
         self.realm = try! Realm()
         let results = realm.objects(LocationHistory.self).sorted(byKeyPath: "queryDate", ascending: false)
         self.historyList = Array(results)
+        
+        self.searchField.becomeFirstResponder()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        self.searchBar.becomeFirstResponder()
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.searchField.resignFirstResponder()
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -92,7 +95,7 @@ class LocationDiscoverPopover: UIViewController, UITableViewDataSource, UITableV
     }
     
     @IBAction func textFieldChanged(_ sender: Any) {
-        if let text = searchBar.text {
+        if let text = searchField.text {
             searchList.removeAll()
             isSearchResult = true
             tableView.reloadData()
@@ -113,18 +116,23 @@ class LocationDiscoverPopover: UIViewController, UITableViewDataSource, UITableV
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if (indexPath.section == 0) {
-            // TODO Click
+            searchBar.apply(location: nil)
+            performSegue(withIdentifier: "unwindToDiscover", sender: nil)
         } else {
             if (isSearchResult) {
                 if let location = searchList.get(indexPath.row) {
                     addToRealm(history: LocationHistory.create(from: location))
-                    
-                    // TODO Click
+                    searchBar.apply(location: location)
+                    performSegue(withIdentifier: "unwindToDiscover", sender: nil)
                 }
             } else {
                 if let history = historyList.get(indexPath.row) {
                     addToRealm(history: history)
-                    // TODO Click
+                    if let data = history.data {
+                        let location = Location(json: JSON(data))
+                        searchBar.apply(location: location)
+                        performSegue(withIdentifier: "unwindToDiscover", sender: nil)
+                    }
                 }
             }
         }
@@ -176,7 +184,7 @@ class LocationTextCell: UITableViewCell {
 class LocationHistory: Object {
     dynamic var name: String = ""
     
-    dynamic var json: String = ""
+    dynamic var data: Data?
     dynamic var queryDate = Int(Date().timeIntervalSince1970)
     
     /**
@@ -186,11 +194,9 @@ class LocationHistory: Object {
         if let name = location.name {
             let history = LocationHistory()
             history.name = name
-            if let jsonData = try? JSONSerialization.data(withJSONObject: location.toParams(), options: []) {
-                if let jsonText = String(data: jsonData, encoding: .ascii){
-                    history.json = jsonText
-                    return history
-                }
+            if let jsonData = try? JSONSerialization.data(withJSONObject: location.toParams()) {
+                history.data = jsonData
+                return history
             }
         }
         

@@ -210,7 +210,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="66.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ocl-iu-KKx">
+                                                <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ocl-iu-KKx">
                                                     <rect key="frame" x="13" y="15" width="349" height="36"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="36" id="frT-dO-aXD"/>
@@ -330,12 +330,12 @@
                     <navigationItem key="navigationItem" title="Select Location" id="EAG-jQ-vyM">
                         <barButtonItem key="rightBarButtonItem" title="Cancel" id="OT3-ui-vLa">
                             <connections>
-                                <segue destination="nt3-GB-tsF" kind="unwind" unwindAction="unwindToDiscoverWithSegue:" id="vh9-AS-NOp"/>
+                                <segue destination="nt3-GB-tsF" kind="unwind" identifier="unwindToDiscover" unwindAction="unwindToDiscoverWithSegue:" id="vh9-AS-NOp"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="searchBar" destination="Hkz-pl-Vg9" id="8ir-jb-oNV"/>
+                        <outlet property="searchField" destination="Hkz-pl-Vg9" id="PiY-Sa-QrX"/>
                         <outlet property="tableView" destination="Q9P-0W-BWc" id="DDY-BM-odh"/>
                     </connections>
                 </viewController>
