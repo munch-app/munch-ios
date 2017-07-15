@@ -203,3 +203,14 @@ public class MunchPlist {
         return instance.dictionary[key] as? String
     }
 }
+
+class CachedSync {
+    
+    class func sync() {
+    
+    }
+    
+    class func getPopularLocations() -> [Location] {
+        return []
+    }
+}

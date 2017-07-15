@@ -17,24 +17,28 @@ class LocationDiscoverPopover: UIViewController, UITableViewDataSource, UITableV
     @IBOutlet weak var tableView: UITableView!
     
     var realm: Realm!
-    var isSearchResult = false
-    var historyList: [LocationHistory]!
-    var searchList = [Location]()
+    var historyList = [Location]()
+    var suggestList = [Location]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         self.navigationController!.navigationBar.shadowImage = UIImage()
         
+        self.realm = try! Realm()
+        for history in realm.objects(LocationHistory.self).sorted(byKeyPath: "queryDate", ascending: false) {
+            if let data = history.data, let location = Location(json: JSON(data)) {
+                self.historyList.append(location)
+            }
+        }
+        
         self.tableView.delegate = self
         self.tableView.dataSource = self
         
         self.tableView.rowHeight = UITableViewAutomaticDimension
         self.tableView.estimatedRowHeight = 44
-        
-        self.realm = try! Realm()
-        let results = realm.objects(LocationHistory.self).sorted(byKeyPath: "queryDate", ascending: false)
-        self.historyList = Array(results)
+        self.tableView.tableFooterView = UIView(frame: .zero)
+        self.tableView.tableFooterView?.backgroundColor = UIColor.white
         
         self.searchField.becomeFirstResponder()
     }
@@ -45,105 +49,101 @@ class LocationDiscoverPopover: UIViewController, UITableViewDataSource, UITableV
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        // Detect My Location
+        // Popular Locations
+        // Suggested Locations
+        // Recent Locations
+        return 4
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if (section == 0) {
-            // Detect my location section
-            return 1
-        } else {
-            if (isSearchResult) {
-                return searchList.count
-            } else {
-                return historyList.count
-            }
+        switch section {
+        case 0: return 1
+        case 1: return suggestList.isEmpty ? 1 : 0
+        case 2: return suggestList.count
+        case 3: return historyList.count
+        default: return 0
         }
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if (section == 0) {
-            // Detect my location section
-            return nil
-        } else {
-            if (isSearchResult) {
-                return "Suggested Locations"
-            } else {
-                return "Recent Locations"
-            }
+        switch section {
+        case 1: return suggestList.isEmpty ? "POPULAR LOCATIONS" : nil
+        case 2: return suggestList.isEmpty ? nil : "SUGGESTED LOCATIONS"
+        case 3: return historyList.isEmpty ? nil : "RECENT LOCATIONS"
+        default: return nil
         }
     }
     
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header = view as! UITableViewHeaderFooterView
-        header.textLabel!.font = UIFont.boldSystemFont(ofSize: 13)
-        header.textLabel!.textColor = UIColor.black.withAlphaComponent(0.7)
+        header.tintColor = UIColor(hex: "F9F9F9")
+        header.textLabel!.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightMedium)
+        header.textLabel!.textColor = UIColor.black.withAlphaComponent(0.8)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if (indexPath.section == 0) {
-            return tableView.dequeueReusableCell(withIdentifier: "LocationDetectMyCell") as! LocationDetectMyCell
+        switch indexPath.section {
+        case 0: return tableView.dequeueReusableCell(withIdentifier: "LocationDetectMyCell")!
+        case 1: return tableView.dequeueReusableCell(withIdentifier: "LocationPopularCell")!
+        default:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "LocationTextCell") as! LocationTextCell
+            let name = suggestList.isEmpty ? historyList.get(indexPath.row)?.name : suggestList.get(indexPath.row)?.name
+            cell.render(title: name)
+            return cell
         }
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "LocationTextCell") as! LocationTextCell
-        if (isSearchResult) {
-            cell.render(title: searchList.get(indexPath.row)?.name)
-        } else {
-            cell.render(title: historyList.get(indexPath.row)?.name)
-        }
-        return cell
     }
     
     @IBAction func textFieldChanged(_ sender: Any) {
         if let text = searchField.text {
-            searchList.removeAll()
-            isSearchResult = true
+            suggestList.removeAll()
             tableView.reloadData()
             
             if (text.characters.count >= 3) {
                 MunchApi.locations.suggest(text: text) { (meta, locations) in
-                    self.searchList = locations
-                    self.isSearchResult = true
+                    self.suggestList = locations
                     self.tableView.reloadData()
                 }
             }
         } else {
-            searchList.removeAll()
-            isSearchResult = false
+            suggestList.removeAll()
             tableView.reloadData()
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if (indexPath.section == 0) {
-            searchBar.apply(location: nil)
-            performSegue(withIdentifier: "unwindToDiscover", sender: nil)
-        } else {
-            if (isSearchResult) {
-                if let location = searchList.get(indexPath.row) {
-                    addToRealm(history: LocationHistory.create(from: location))
-                    searchBar.apply(location: location)
-                    performSegue(withIdentifier: "unwindToDiscover", sender: nil)
-                }
-            } else {
-                if let history = historyList.get(indexPath.row) {
-                    addToRealm(history: history)
-                    if let data = history.data {
-                        let location = Location(json: JSON(data))
-                        searchBar.apply(location: location)
-                        performSegue(withIdentifier: "unwindToDiscover", sender: nil)
-                    }
-                }
-            }
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        switch indexPath.section {
+        case 0:
+            apply(location: nil)
+            break
+        case 2:
+            apply(location: suggestList.get(indexPath.row))
+            break
+        case 3:
+            apply(location: historyList.get(indexPath.row))
+            break
+        default:
+            break
         }
+    }
+    
+    /**
+     Apply, click for location
+     */
+    func apply(location: Location?) {
+        addToRealm(location: location)
+        searchBar.apply(location: location)
+        performSegue(withIdentifier: "unwindToDiscover", sender: nil)
     }
     
     /**
      Add new history to realm
      If history already exist, update the queryDate
      */
-    func addToRealm(history: LocationHistory?) {
-        if let history = history {
+    func addToRealm(location: Location?) {
+        if let history = LocationHistory.create(from: location) {
             if let exist = realm.objects(LocationHistory.self).filter("name == '\(history.name)'").first {
                 try! realm.write {
                     exist.queryDate = Int(Date().timeIntervalSince1970)
@@ -173,6 +173,49 @@ class LocationDetectMyCell: UITableViewCell {
     }
 }
 
+class LocationPopularCell: UITableViewCell, UICollectionViewDataSource, UICollectionViewDelegate {
+    @IBOutlet weak var cardCollections: UICollectionView!
+    
+    var locations = [Location]()
+    var delegate: LocationDiscoverPopover?
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.cardCollections.delegate = self
+        self.cardCollections.dataSource = self
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return locations.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let card = collectionView.dequeueReusableCell(withReuseIdentifier: "LocationPopularCellCard", for: indexPath) as! LocationPopularCellCard
+        if let location = locations.get(indexPath.row) {
+            card.render(location: location)
+        }
+        return card
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let location = locations.get(indexPath.row) {
+            delegate?.apply(location: location)
+        }
+    }
+    
+    class LocationPopularCellCard: UICollectionViewCell {
+        @IBOutlet weak var nameLabel: UILabel!
+        @IBOutlet weak var distanceLabel: UILabel!
+        
+        func render(location: Location) {
+            self.nameLabel.text = location.name
+            if let latLng = location.center {
+                self.distanceLabel.text = MunchLocation.distance(asMetric: latLng)
+            }
+        }
+    }
+}
+
 class LocationTextCell: UITableViewCell {
     @IBOutlet weak var locationLabel: UILabel!
     
@@ -190,11 +233,11 @@ class LocationHistory: Object {
     /**
      Create history from Location
      */
-    class func create(from location: Location) -> LocationHistory? {
-        if let name = location.name {
+    class func create(from location: Location?) -> LocationHistory? {
+        if let name = location?.name {
             let history = LocationHistory()
             history.name = name
-            if let jsonData = try? JSONSerialization.data(withJSONObject: location.toParams()) {
+            if let jsonData = try? JSONSerialization.data(withJSONObject: location!.toParams()) {
                 history.data = jsonData
                 return history
             }
