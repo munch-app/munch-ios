@@ -17,6 +17,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         self.window = UIWindow(frame: UIScreen.main.bounds)
+        // Sync cached data
+        CachedSync.sync()
+        
         // Select initial view provider to use
         self.window?.rootViewController = InitialViewProvider.main()
         self.window?.makeKeyAndVisible()
@@ -83,7 +86,6 @@ enum InitialViewProvider {
  Main tab bar content styling
  */
 class MunchTabBarContentView: ESTabBarItemContentView {
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         titleLabel.font = UIFont.systemFont(ofSize: 9, weight: UIFontWeightSemibold)

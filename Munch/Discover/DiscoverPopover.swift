@@ -16,7 +16,6 @@ class LocationDiscoverPopover: UIViewController, UITableViewDataSource, UITableV
     @IBOutlet weak var searchField: DiscoverSearchField!
     @IBOutlet weak var tableView: UITableView!
     
-    var realm: Realm!
     var historyList = [Location]()
     var suggestList = [Location]()
     
@@ -25,7 +24,7 @@ class LocationDiscoverPopover: UIViewController, UITableViewDataSource, UITableV
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         self.navigationController!.navigationBar.shadowImage = UIImage()
         
-        self.realm = try! Realm()
+        let realm = try! Realm()
         for history in realm.objects(LocationHistory.self).sorted(byKeyPath: "queryDate", ascending: false) {
             if let data = history.data, let location = Location(json: JSON(data)) {
                 self.historyList.append(location)
@@ -37,8 +36,10 @@ class LocationDiscoverPopover: UIViewController, UITableViewDataSource, UITableV
         
         self.tableView.rowHeight = UITableViewAutomaticDimension
         self.tableView.estimatedRowHeight = 44
-        self.tableView.tableFooterView = UIView(frame: .zero)
-        self.tableView.tableFooterView?.backgroundColor = UIColor.white
+        
+        let footerView = UIView(frame: .zero)
+        footerView.backgroundColor = .white
+        self.tableView.tableFooterView = footerView
         
         self.searchField.becomeFirstResponder()
     }
@@ -77,7 +78,7 @@ class LocationDiscoverPopover: UIViewController, UITableViewDataSource, UITableV
     
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header = view as! UITableViewHeaderFooterView
-        header.tintColor = UIColor(hex: "F9F9F9")
+        header.tintColor = UIColor(hex: "F1F1F1")
         header.textLabel!.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightMedium)
         header.textLabel!.textColor = UIColor.black.withAlphaComponent(0.8)
     }
@@ -85,7 +86,10 @@ class LocationDiscoverPopover: UIViewController, UITableViewDataSource, UITableV
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0: return tableView.dequeueReusableCell(withIdentifier: "LocationDetectMyCell")!
-        case 1: return tableView.dequeueReusableCell(withIdentifier: "LocationPopularCell")!
+        case 1:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "LocationPopularCell") as! LocationPopularCell
+            cell.delegate = self
+            return cell
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: "LocationTextCell") as! LocationTextCell
             let name = suggestList.isEmpty ? historyList.get(indexPath.row)?.name : suggestList.get(indexPath.row)?.name
@@ -133,7 +137,7 @@ class LocationDiscoverPopover: UIViewController, UITableViewDataSource, UITableV
      Apply, click for location
      */
     func apply(location: Location?) {
-        addToRealm(location: location)
+        persistHistory(location: location)
         searchBar.apply(location: location)
         performSegue(withIdentifier: "unwindToDiscover", sender: nil)
     }
@@ -142,8 +146,9 @@ class LocationDiscoverPopover: UIViewController, UITableViewDataSource, UITableV
      Add new history to realm
      If history already exist, update the queryDate
      */
-    func addToRealm(location: Location?) {
+    func persistHistory(location: Location?) {
         if let history = LocationHistory.create(from: location) {
+            let realm = try! Realm()
             if let exist = realm.objects(LocationHistory.self).filter("name == '\(history.name)'").first {
                 try! realm.write {
                     exist.queryDate = Int(Date().timeIntervalSince1970)
@@ -151,6 +156,15 @@ class LocationDiscoverPopover: UIViewController, UITableViewDataSource, UITableV
             } else {
                 try! realm.write {
                     realm.add(history)
+                    let saved = realm.objects(LocationHistory.self).sorted(byKeyPath: "queryDate", ascending: false)
+                    // Delete if more then 20
+                    if (saved.count > 20) {
+                        for (index, element) in saved.enumerated() {
+                            if (index > 20) {
+                                realm.delete(element)
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -167,7 +181,7 @@ class LocationDetectMyCell: UITableViewCell {
         if (needPrepare){
             detectLocationButton.layer.cornerRadius = 4.0
             detectLocationButton.layer.borderWidth = 1.0
-            detectLocationButton.layer.borderColor = UIColor(hex: "007AFF").cgColor
+            detectLocationButton.layer.borderColor = UIColor.secondary.cgColor
             needPrepare = false
         }
     }
@@ -176,7 +190,8 @@ class LocationDetectMyCell: UITableViewCell {
 class LocationPopularCell: UITableViewCell, UICollectionViewDataSource, UICollectionViewDelegate {
     @IBOutlet weak var cardCollections: UICollectionView!
     
-    var locations = [Location]()
+    // Get popular locations from cached source
+    var locations = CachedSync.getPopularLocations()
     var delegate: LocationDiscoverPopover?
     
     override func layoutSubviews() {
@@ -202,16 +217,16 @@ class LocationPopularCell: UITableViewCell, UICollectionViewDataSource, UICollec
             delegate?.apply(location: location)
         }
     }
+}
+
+class LocationPopularCellCard: UICollectionViewCell {
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var distanceLabel: UILabel!
     
-    class LocationPopularCellCard: UICollectionViewCell {
-        @IBOutlet weak var nameLabel: UILabel!
-        @IBOutlet weak var distanceLabel: UILabel!
-        
-        func render(location: Location) {
-            self.nameLabel.text = location.name
-            if let latLng = location.center {
-                self.distanceLabel.text = MunchLocation.distance(asMetric: latLng)
-            }
+    func render(location: Location) {
+        self.nameLabel.text = location.name
+        if let latLng = location.center {
+            self.distanceLabel.text = MunchLocation.distance(asMetric: latLng)
         }
     }
 }

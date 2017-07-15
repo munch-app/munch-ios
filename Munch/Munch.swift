@@ -8,6 +8,8 @@
 
 import Foundation
 import UIKit
+import RealmSwift
+import SwiftyJSON
 
 extension UIColor {
     convenience init(hex: String) {
@@ -207,10 +209,46 @@ public class MunchPlist {
 class CachedSync {
     
     class func sync() {
-    
+        print("Sycning cached data")
+        let realm = try! Realm()
+        MunchApi.cached.hashes { meta, hashes in
+            for remoteHash in hashes {
+                let localHash = realm.object(ofType: KeyHashData.self, forPrimaryKey: remoteHash.key)
+                if (localHash?.dataHash != remoteHash.value) {
+                    MunchApi.cached.get(dataKey: remoteHash.key) { meta, hash, json in
+                        if (meta.isOk()) {
+                            let hashData = KeyHashData()
+                            hashData.dataKey = remoteHash.key
+                            hashData.dataHash = hash!
+                            hashData.data = try? json.rawData()
+                            
+                            try! realm.write {
+                                realm.add(hashData)
+                                print("Sycned \(remoteHash.key) with hash: \(remoteHash.value)")
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     
     class func getPopularLocations() -> [Location] {
+        let realm = try! Realm()
+        if let data = realm.object(ofType: KeyHashData.self, forPrimaryKey: "popular-locations")?.data {
+            return JSON(data).map { Location(json: $0.1)! }
+        }
         return []
+    }
+}
+
+
+class KeyHashData: Object {
+    dynamic var dataKey = ""
+    dynamic var dataHash = ""
+    dynamic var data: Data?
+    
+    override static func primaryKey() -> String? {
+        return "dataKey"
     }
 }

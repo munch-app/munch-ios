@@ -117,11 +117,12 @@ let MunchApi = MunchClient.instance
 public class MunchClient: RestfulClient {
     public static let instance = MunchClient()
     
-    private static let baseUrl = MunchPlist.get(asString: "MunchApiBaseUrl-Office")!
+    private static let baseUrl = MunchPlist.get(asString: "MunchApiBaseUrl-Home")!
     
     let discovery = DiscoveryClient(baseUrl)
     let places = PlaceClient(baseUrl)
     let locations = LocationClient(baseUrl)
+    let cached = CachedSyncClient(baseUrl)
     
     private init() {
         super.init(MunchClient.baseUrl)
@@ -160,7 +161,7 @@ class DiscoveryClient: RestfulClient {
  PlaceClient from PlaceService in munch-core/munch-api
  */
 class PlaceClient: RestfulClient {
-    func get(id: String, callback: @escaping (_ meta: MetaJSON, _ place: PlaceDetail) -> Void) {
+    func get(id: String, callback: @escaping (_ meta: MetaJSON, _ place: PlaceDetail?) -> Void) {
         super.get("/places/\(id)") { meta, json in
             callback(meta, PlaceDetail(json: json["data"]))
         }
@@ -241,6 +242,31 @@ class LocationClient: RestfulClient {
             callback(meta, json["data"].map { Location(json: $0.1)! })
         }
     }
+}
+
+/**
+ CachedSyncClient from CachedSyncService in munch-core/munch-api
+ */
+class CachedSyncClient: RestfulClient {
+    
+    func hashes(callback: @escaping (_ meta: MetaJSON, _ hashes: [String: String]) -> Void) {
+        super.get("/cached/hashes") { meta, json in
+            var hashes = [String: String]()
+            for hash in json["data"] {
+                hashes[hash.0] = hash.1.stringValue
+            }
+            callback(meta, hashes)
+        }
+    }
+    
+    func get(dataKey: String, callback: @escaping (_ meta: MetaJSON, _ hash: String?, _ json: JSON) -> Void) {
+        super.get("/cached/data/\(dataKey)") { meta, json in
+            let hash = json["data"]["hash"].string
+            let data = json["data"]["data"]
+            callback(meta, hash, data)
+        }
+    }
+    
 }
 
 /**

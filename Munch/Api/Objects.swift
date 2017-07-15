@@ -196,7 +196,8 @@ struct PlaceDetail {
     let medias: [Media]
     let articles: [Article]
     
-    init(json: JSON) {
+    init?(json: JSON) {
+        if (!json.exists()) { return nil }
         self.place = Place(json: json["place"])
         self.medias = json["medias"].map({Media(json: $0.1)})
         self.articles = json["articles"].map({Article(json: $0.1)})
