@@ -166,24 +166,6 @@
             </objects>
             <point key="canvasLocation" x="-962.39999999999998" y="-321.58920539730138"/>
         </scene>
-        <!--View Controller-->
-        <scene sceneID="rTq-dT-Z3t">
-            <objects>
-                <viewController id="Hwy-Rt-acy" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="hFx-fW-5P9"/>
-                        <viewControllerLayoutGuide type="bottom" id="0O4-U8-UCF"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="vXa-Ix-YcJ">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="jE8-fi-9v2" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1591" y="-322"/>
-        </scene>
         <!--Navigation Controller-->
         <scene sceneID="lxj-fu-sTm">
             <objects>
@@ -967,6 +949,7 @@
                                                     <subviews>
                                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="BWh-3J-wmg">
                                                             <rect key="frame" x="0.0" y="0.0" width="327" height="228"/>
+                                                            <color key="backgroundColor" red="1" green="0.32549019610000002" blue="0.22352941179999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         </imageView>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zqz-HX-saf">
                                                             <rect key="frame" x="0.0" y="228" width="327" height="73"/>
