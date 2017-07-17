@@ -132,7 +132,10 @@ class LocationDiscoverPopover: UIViewController, UITableViewDataSource, UITableV
             break
         }
     }
-    
+}
+
+// Apply actions for Location Discover
+extension LocationDiscoverPopover {
     /**
      Apply, click for location
      */

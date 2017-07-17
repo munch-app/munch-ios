@@ -133,7 +133,7 @@ public class MunchClient: RestfulClient {
  DiscoveryClient from DiscoveryService in munch-core/munch-api
  */
 class DiscoveryClient: RestfulClient {
-    func suggest(text: String, size: Int, latLng: String?, callback: @escaping (_ meta: MetaJSON, _ places: [SearchResult]) -> Void) {
+    func suggest(text: String, size: Int, latLng: String? = nil, callback: @escaping (_ meta: MetaJSON, _ results: [SearchResult]) -> Void) {
         var params = Parameters()
         params["text"] = text
         params["size"] = size

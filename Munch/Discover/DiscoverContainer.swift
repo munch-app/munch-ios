@@ -8,7 +8,16 @@
 
 import Foundation
 import UIKit
+
+import RealmSwift
 import NVActivityIndicatorView
+
+/**
+ All classes that need discover delegate can extend this and will get the delegate
+ */
+protocol ContainDiscoverDelegate {
+    var discoverDelegate: DiscoverDelegate! { get set }
+}
 
 class DiscoverLoadingController: UIViewController {
     @IBOutlet weak var indicatorView: NVActivityIndicatorView!
@@ -20,6 +29,228 @@ class DiscoverLoadingController: UIViewController {
         self.indicatorView.color = .primary700
         self.indicatorView.startAnimating()
     }
+}
+
+class DiscoverSearchController: UIViewController, UITableViewDataSource, UITableViewDelegate, ContainDiscoverDelegate {
+    var discoverDelegate: DiscoverDelegate!
+    var searchDelegate: SearchNavigationBarDelegate!
+    
+    var searchBar: SearchNavigationBar {
+        return discoverDelegate.searchBar
+    }
+    
+    @IBOutlet weak var tableView: UITableView!
+    
+    var historyList = [QueryHistory]()
+    var suggestList = [SearchResult]()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        self.navigationController!.navigationBar.shadowImage = UIImage()
+        
+        let realm = try! Realm()
+        for history in realm.objects(QueryHistory.self).sorted(byKeyPath: "queryDate", ascending: false) {
+            self.historyList.append(history)
+        }
+        
+        self.textFieldAddTarget()
+        
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
+        
+        self.tableView.rowHeight = UITableViewAutomaticDimension
+        self.tableView.estimatedRowHeight = 44
+        
+        let footerView = UIView(frame: .zero)
+        footerView.backgroundColor = .white
+        self.tableView.tableFooterView = footerView
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        // Popular Queries, TODO
+        // Suggested Result
+        // Recent Query
+        return 3
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        switch section {
+        case 0: return 0
+        case 1: return suggestList.count
+        case 2: return historyList.count
+        default: return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch section {
+        case 0: return nil
+        case 1: return suggestList.isEmpty ? nil : "SUGGESTIONS"
+        case 2: return historyList.isEmpty ? nil : "RECENT SEARCH"
+        default: return nil
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        let header = view as! UITableViewHeaderFooterView
+        header.tintColor = UIColor(hex: "F1F1F1")
+        header.textLabel!.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightMedium)
+        header.textLabel!.textColor = UIColor.black.withAlphaComponent(0.8)
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        switch indexPath.section {
+        case 1:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "SearchSuggestCell") as! SearchSuggestCell
+            let result = suggestList.get(indexPath.row)
+            if let place = result as? Place {
+                cell.render(text: place.name, type: "PLACE")
+            } else if let location = result as? Location {
+                cell.render(text: location.name, type: "LOCATION")
+            } else {
+                cell.render(text: nil, type: nil)
+            }
+            return cell
+        default:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "SearchHistoryCell") as! SearchHistoryCell
+            cell.render(text: historyList.get(indexPath.row)?.query)
+            return cell
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        switch indexPath.section {
+        case 0:
+            break
+        case 1:
+            apply(result: suggestList.get(indexPath.row)!)
+            break
+        case 2:
+            apply(query: historyList.get(indexPath.row)!.query)
+            break
+        default:
+            break
+        }
+    }
+}
+
+/**
+ For text field delegate
+ */
+extension DiscoverSearchController {
+    func textFieldAddTarget(){
+        // Register targets for searchField
+        searchBar.searchField.addTarget(self, action:#selector(textFieldChanged(_:)), for: .editingChanged)
+        searchBar.searchField.addTarget(self, action:#selector(textFieldShouldReturn(_:)), for: .editingDidEndOnExit)
+    }
+    
+    func textFieldChanged(_ sender: Any) {
+        if let text = searchBar.searchField.text {
+            suggestList.removeAll()
+            tableView.reloadData()
+            
+            if (text.characters.count >= 3) {
+                MunchApi.discovery.suggest(text: text, size: 15) { (meta, results) in
+                    self.suggestList = results
+                    self.tableView.reloadData()
+                }
+            }
+        } else {
+            suggestList.removeAll()
+            tableView.reloadData()
+        }
+    }
+    
+    func textFieldShouldReturn(_ sender: Any) -> Bool {
+        if let text = self.searchBar.searchField.text {
+            // Persist query history
+            apply(query: text)
+        } else {
+            self.searchBar.searchBarWillEnd(withReturn: true)
+        }
+        return true
+    }
+}
+
+/**
+ Before exit, must apply search bar
+ Else changes won't be persisted when searched
+ */
+extension DiscoverSearchController {
+    func apply(query: String) {
+        persistHistory(query: query)
+        self.searchBar.searchField.text = query
+        self.searchBar.searchBarWillEnd(withReturn: true)
+    }
+    
+    func apply(result: SearchResult) {
+        if let place = result as? Place {
+            // Present Place Result Directly
+            self.searchBar.searchField.resignFirstResponder()
+            self.discoverDelegate.present(place: place)
+        } else if let location = result as? Location {
+            // Apply Location to Search Result and End
+            self.discoverDelegate.searchBar.searchField.text = nil
+            self.discoverDelegate.searchBar.apply(location: location)
+            self.searchBar.searchBarWillEnd(withReturn: false)
+        }
+    }
+    
+    /**
+     Add new history to realm
+     If history already exist, update the queryDate
+     */
+    func persistHistory(query: String) {
+        let realm = try! Realm()
+        if let exist = realm.objects(QueryHistory.self).filter("query == '\(query)'").first {
+            try! realm.write {
+                exist.queryDate = Int(Date().timeIntervalSince1970)
+            }
+        } else {
+            try! realm.write {
+                let history = QueryHistory()
+                history.query = query
+                history.queryDate = Int(Date().timeIntervalSince1970)
+                
+                realm.add(history)
+                let saved = realm.objects(LocationHistory.self).sorted(byKeyPath: "queryDate", ascending: false)
+                // Delete if more then 20
+                if (saved.count > 20) {
+                    for (index, element) in saved.enumerated() {
+                        if (index > 20) {
+                            realm.delete(element)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+class SearchSuggestCell: UITableViewCell {
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var typeLabel: UILabel!
+    
+    func render(text: String?, type: String? = nil) {
+        self.titleLabel.text = text
+        self.typeLabel.text = type
+    }
+}
+
+class SearchHistoryCell: UITableViewCell {
+    @IBOutlet weak var titleLabel: UILabel!
+    
+    func render(text: String?) {
+        self.titleLabel.text = text
+    }
+}
+
+class QueryHistory: Object {
+    dynamic var query: String = ""
+    dynamic var queryDate = Int(Date().timeIntervalSince1970)
 }
 
 /**
@@ -36,8 +267,7 @@ protocol CollectionController {
  When working with auto layout take note of the 20px that is the top layout guide
  For container view, use the super.View.top instead
  */
-protocol ExtendedDiscoverDelegate: DiscoverDelegate {
-    var discoverDelegate: DiscoverDelegate! { get set }
+protocol ExtendedDiscoverDelegate: ContainDiscoverDelegate, DiscoverDelegate {
 }
 
 extension ExtendedDiscoverDelegate {

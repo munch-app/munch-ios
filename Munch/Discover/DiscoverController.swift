@@ -73,7 +73,7 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
         pageControllers[index] = pageViewController
         
         // Assiocate and link delegate
-        if var controller = pageViewController as? ExtendedDiscoverDelegate {
+        if var controller = pageViewController as? ContainDiscoverDelegate {
             controller.discoverDelegate = self
         }
     }
@@ -205,11 +205,12 @@ extension DiscoverController {
     }
 }
 
+// Search Navigation Bar Delegate
 extension DiscoverController: SearchNavigationBarDelegate {
     /**
      Search bar did begin, keyboard appears
      */
-    func searchBarDidBegin() {
+    func searchDidBegin() {
         pagerView.showPage(at: SeguePage.search, animated: false)
     }
     
@@ -217,14 +218,25 @@ extension DiscoverController: SearchNavigationBarDelegate {
      Search bar did end, keyboard will dispear now
      Parameter search: true = user clicked on the search button of the keyboard
      */
-    func searchBarDidEnd(withSearch search: Bool) {
-        pagerView.showPage(at: collectionPageType, animated: false)
-        if (self.currentSearchQuery != self.searchBar.searchQuery) {
+    func searchDidEnd(withReturn search: Bool) {
+        if (search) {
+            // User Clicked on Search Button
+            self.searchBar.searchQuery.query = self.searchBar.searchField.text
             self.query()
+            pagerView.showPage(at: SeguePage.loading, animated: false)
+        } else if (self.currentSearchQuery != self.searchBar.searchQuery) {
+            // User edited search query via other methods
+            self.query()
+            pagerView.showPage(at: SeguePage.loading, animated: false)
+        } else {
+            // User Clicked on Cancel
+            self.searchBar.apply(searchQuery: currentSearchQuery)
+            pagerView.showPage(at: collectionPageType, animated: false)
         }
     }
 }
 
+// Discover Delegate Implemention on Discover Controller
 extension DiscoverController: DiscoverDelegate {
     /**
      Wind to place discover view controller
@@ -295,12 +307,12 @@ protocol DiscoverDelegate {
 }
 
 protocol SearchNavigationBarDelegate {
-    func searchBarDidBegin()
+    func searchDidBegin()
     
     /**
      Paramaters: search = true if search bar did end with search
      */
-    func searchBarDidEnd(withSearch search: Bool)
+    func searchDidEnd(withReturn search: Bool)
 }
 
 class SearchNavigationBar: UIView, UITextFieldDelegate {
@@ -318,7 +330,7 @@ class SearchNavigationBar: UIView, UITextFieldDelegate {
     
     var searchQuery = SearchQuery()
     
-    // MARK: Click Actions
+    // MARK: - Click Actions
     override func layoutSubviews() {
         super.layoutSubviews()
         self.searchField.delegate = self
@@ -326,7 +338,7 @@ class SearchNavigationBar: UIView, UITextFieldDelegate {
     
     @IBAction func actionTouchUp(_ sender: Any) {
         if (self.actionButton.currentTitle == "Cancel") {
-            searchBarWillEnd(withSearch: false)
+            searchBarWillEnd(withReturn: false)
         }
     }
     
@@ -338,15 +350,10 @@ class SearchNavigationBar: UIView, UITextFieldDelegate {
             self.layoutIfNeeded()
         }
         
-        delegate.searchBarDidBegin()
+        delegate.searchDidBegin()
     }
     
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        searchBarWillEnd(withSearch: true)
-        return true
-    }
-    
-    func searchBarWillEnd(withSearch: Bool) {
+    func searchBarWillEnd(withReturn search: Bool) {
         UIView.animate(withDuration: 0.3) {
             self.actionButton.setTitle(nil, for: .normal)
             self.actionBtnWidth.constant = 45
@@ -355,7 +362,7 @@ class SearchNavigationBar: UIView, UITextFieldDelegate {
         }
         
         searchField.resignFirstResponder()
-        delegate.searchBarDidEnd(withSearch: withSearch)
+        delegate.searchDidEnd(withReturn: search)
     }
 }
 
@@ -443,8 +450,7 @@ extension SearchNavigationBar {
      streetName: String
      */
     func apply(searchQuery: SearchQuery, streetName: String?) {
-        self.searchQuery = searchQuery
-        searchField.text = searchQuery.query
+        apply(searchQuery: searchQuery)
         
         // Applying Location Name
         if let location = searchQuery.location {
@@ -464,6 +470,14 @@ extension SearchNavigationBar {
         } else {
             locationButton.setTitle("Singapore", for: .normal)
         }
+    }
+    
+    /**
+     Apply only search bar but not location name
+     */
+    func apply(searchQuery: SearchQuery) {
+        self.searchQuery = searchQuery
+        searchField.text = searchQuery.query
     }
     
     /**
@@ -528,4 +542,3 @@ extension SearchNavigationBar {
         attributedPlaceholder = NSAttributedString(string: placeholder != nil ?  placeholder! : "", attributes:[NSForegroundColorAttributeName: color])
     }
 }
-
