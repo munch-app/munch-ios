@@ -12,7 +12,7 @@ import RealmSwift
 import SwiftyJSON
 
 class LocationDiscoverPopover: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    var searchBar: SearchNavigationBar!
+    var discoverDelegate: DiscoverDelegate!
     @IBOutlet weak var searchField: DiscoverSearchField!
     @IBOutlet weak var tableView: UITableView!
     
@@ -138,7 +138,7 @@ class LocationDiscoverPopover: UIViewController, UITableViewDataSource, UITableV
      */
     func apply(location: Location?) {
         persistHistory(location: location)
-        searchBar.apply(location: location)
+        discoverDelegate.searchBar.apply(location: location)
         performSegue(withIdentifier: "unwindToDiscover", sender: nil)
     }
     

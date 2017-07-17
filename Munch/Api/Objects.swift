@@ -402,13 +402,6 @@ protocol SearchResult {
 }
 
 /**
- Possible types are:
- - Place
- */
-protocol CardItem: SearchResult {
-}
-
-/**
  Format hour in String
  Example:
  Mon - Fri: 11:00am - 8:00pm
