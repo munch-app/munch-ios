@@ -18,12 +18,14 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
         static let tabs = 1
         static let search = 2
         static let no_results = 3
+        static let tabless = 4
         
         static let pages = [
             loading: "discover_segue_loading",
             tabs: "discover_segue_tabs",
             search: "discover_segue_search",
-            no_results: "discover_segue_no_results"
+            no_results: "discover_segue_no_results",
+            tabless: "discover_segue_tabless"
         ]
     }
     var pageIndex: Int = 0
@@ -197,7 +199,7 @@ extension DiscoverController {
     var collectionPageType: Int {
         switch(collections.count) {
         case 0: return SeguePage.no_results
-        case 1: return SeguePage.tabs
+        case 1: return SeguePage.tabless
         default: return SeguePage.tabs
         }
     }

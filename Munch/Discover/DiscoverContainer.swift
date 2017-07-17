@@ -38,13 +38,6 @@ protocol CollectionController {
  */
 protocol ExtendedDiscoverDelegate: DiscoverDelegate {
     var discoverDelegate: DiscoverDelegate! { get set }
-    
-    /**
-     Height of the extended bar only
-     */
-    var extendedBarHeight: CGFloat { get }
-    
-    var extendedBarHeightConstraint: NSLayoutConstraint! { get }
 }
 
 extension ExtendedDiscoverDelegate {
@@ -56,28 +49,15 @@ extension ExtendedDiscoverDelegate {
         self.discoverDelegate.present(place: place)
     }
     
-    func collectionViewDidScroll(_ scrollView: UIScrollView) {
-        self.discoverDelegate.collectionViewDidScroll(scrollView)
-        self.extendedBarHeightConstraint.constant = self.searchBar.height + self.extendedBarHeight
-    }
-    
-    /**
-     For tab controller, the animation is applied here and not delegated down
-     */
     func collectionViewDidScrollFinish(_ scrollView: UIScrollView) {
         self.discoverDelegate.collectionViewDidScrollFinish(scrollView)
     }
-    
-    var headerHeight: CGFloat {
-        return self.discoverDelegate.headerHeight + extendedBarHeight
-    }
 }
 
-class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, CollectionController, ExtendedDiscoverDelegate {
+class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, CollectionController {
     var discoverDelegate: DiscoverDelegate!
     var collectionController: CardCollectionController!
     
-    var extendedBarHeight: CGFloat = 50
     @IBOutlet weak var extendedBarHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var tabCollection: UICollectionView!
     
@@ -147,6 +127,17 @@ class DiscoverTabController: UIViewController, UICollectionViewDataSource, UICol
     }
 }
 
+extension DiscoverTabController: ExtendedDiscoverDelegate {
+    func collectionViewDidScroll(_ scrollView: UIScrollView) {
+        self.discoverDelegate.collectionViewDidScroll(scrollView)
+        self.extendedBarHeightConstraint.constant = self.searchBar.height + 50
+    }
+    
+    var headerHeight: CGFloat {
+        return self.discoverDelegate.headerHeight + 50
+    }
+}
+
 /**
  Title cell for Discovery Page
  */
@@ -174,13 +165,11 @@ class DiscoverTabTitleCell: UICollectionViewCell {
     }
 }
 
-class DiscoverTablessController: UIViewController, CollectionController, ExtendedDiscoverDelegate {
+class DiscoverTablessController: UIViewController, CollectionController {
     var discoverDelegate: DiscoverDelegate!
     var collectionController: CardCollectionController!
     
-    var extendedBarHeight: CGFloat = 50
     @IBOutlet weak var extendedBarHeightConstraint: NSLayoutConstraint!
-    
     var collection: CardCollection!
     
     override func viewDidLoad() {
@@ -191,7 +180,12 @@ class DiscoverTablessController: UIViewController, CollectionController, Extende
      Render collections view
      */
     func render(collections: [CardCollection]) {
-        self.collection = collections.get(0)
+        self.collection = collections[0]
+        self.collectionController.render(collection: collection)
+    }
+    
+    @IBAction func actionOnTitle(_ sender: Any) {
+        self.collectionController.collectionView.setContentOffset(CGPoint.zero, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -199,5 +193,22 @@ class DiscoverTablessController: UIViewController, CollectionController, Extende
             self.collectionController = controller
             controller.discoverDelegate = self
         }
+    }
+}
+
+extension DiscoverTablessController: ExtendedDiscoverDelegate {
+    func collectionViewDidScroll(_ scrollView: UIScrollView) {
+        self.discoverDelegate.collectionViewDidScroll(scrollView)
+        let height = self.searchBar.height + 12
+        let minHeight = SearchNavigationBar.minHeight + 45
+        if (height <= minHeight) {
+            self.extendedBarHeightConstraint.constant = minHeight
+        } else {
+            self.extendedBarHeightConstraint.constant = height
+        }
+    }
+    
+    var headerHeight: CGFloat {
+        return self.discoverDelegate.headerHeight + 12
     }
 }
