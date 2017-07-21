@@ -666,6 +666,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="collectionButton" destination="7sD-n2-VVS" id="0yL-N0-wfL"/>
                         <outlet property="extendedBarHeightConstraint" destination="qCj-ro-QDN" id="Jq2-y9-LsW"/>
                     </connections>
                 </viewController>

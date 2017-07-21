@@ -13,8 +13,6 @@
 		032F89061E82DFA300AD3818 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 032F89041E82DFA300AD3818 /* LaunchScreen.storyboard */; };
 		032F89111E82DFA300AD3818 /* MunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F89101E82DFA300AD3818 /* MunchTests.swift */; };
 		032F891C1E82DFA300AD3818 /* MunchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F891B1E82DFA300AD3818 /* MunchUITests.swift */; };
-		032F892A1E82E79000AD3818 /* Cartfile in Resources */ = {isa = PBXBuildFile; fileRef = 032F89291E82E79000AD3818 /* Cartfile */; };
-		032F892E1E82EF3D00AD3818 /* Carthage in Resources */ = {isa = PBXBuildFile; fileRef = 032F892D1E82EF3D00AD3818 /* Carthage */; };
 		032F89311E82EF8B00AD3818 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89301E82EF8B00AD3818 /* Alamofire.framework */; };
 		032F89341E82F14A00AD3818 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89331E82F14A00AD3818 /* SwiftyJSON.framework */; };
 		033E62F11F1C116300AE97FA /* DiscoverCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033E62EF1F1C116300AE97FA /* DiscoverCards.swift */; };
@@ -424,8 +422,6 @@
 				032F89031E82DFA300AD3818 /* Assets.xcassets in Resources */,
 				033E62F81F1D381F00AE97FA /* Main.storyboard in Resources */,
 				03D3FEFF1E8ABEE300ACFF50 /* Place.storyboard in Resources */,
-				032F892A1E82E79000AD3818 /* Cartfile in Resources */,
-				032F892E1E82EF3D00AD3818 /* Carthage in Resources */,
 				03E216A51EFA005300465BE3 /* Discover.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -649,6 +645,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = Munch/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = co.munch.MunchApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -668,6 +665,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = Munch/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = co.munch.MunchApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";

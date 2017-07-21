@@ -268,7 +268,6 @@ public struct SearchQuery: Equatable {
             rating.min = json["rating"]["min"].double
             
             distance.latLng = json["distance"]["latLng"].string
-            distance.min = json["distance"]["min"].int
             distance.max = json["distance"]["max"].int
         }
         
@@ -293,9 +292,7 @@ public struct SearchQuery: Equatable {
         
         public struct Distance {
             var latLng: String?
-            // min, max are in metres
-            var min: Int?
-            var max: Int?
+            var max: Int? // In metres
         }
         
         public func toParams() -> Parameters {
@@ -306,7 +303,6 @@ public struct SearchQuery: Equatable {
             
             var distanceParams = Parameters()
             distanceParams["latLng"] = distance.latLng
-            distanceParams["min"] = distance.min
             distanceParams["max"] = distance.max
             params["distance"] = distanceParams
             return params
@@ -314,15 +310,24 @@ public struct SearchQuery: Equatable {
     }
     
     public struct Sort {
+        var distance = Distance()
+        
         init() {
             
         }
         
         init(json: JSON) {
+            distance.latLng = json["distance"]["latLng"].string
+        }
+        
+        public struct Distance {
+            var latLng: String?
         }
         
         public func toParams() -> Parameters {
-            return Parameters()
+            var params = Parameters()
+            params["distance"] = ["latLng": distance.latLng]
+            return params
         }
     }
     
@@ -338,7 +343,7 @@ public struct SearchQuery: Equatable {
         params["location"] = location?.toParams()
         
         params["filter"] = filter.toParams()
-        // params["sort"] = sort.toParams()
+        params["sort"] = sort.toParams()
         return params
     }
     

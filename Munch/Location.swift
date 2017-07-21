@@ -107,6 +107,7 @@ public class MunchLocation {
         if let distance = distance(latLng: latLng) {
             if (distance < 1000) {
                 let m = (distance/50).roundTo(places: 0) * 50
+                if (m == 1000) { return "1.0km" }
                 return "\(m)m"
             } else if (distance < 100000) {
                 let demical = (distance/1000).roundTo(places: 1)

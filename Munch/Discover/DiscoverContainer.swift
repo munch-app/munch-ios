@@ -204,6 +204,9 @@ extension DiscoverSearchController {
      If history already exist, update the queryDate
      */
     func persistHistory(query: String) {
+        // Don't Persist Empty Query
+        if (query.isEmpty) { return }
+        
         let realm = try! Realm()
         if let exist = realm.objects(QueryHistory.self).filter("query == '\(query)'").first {
             try! realm.write {
@@ -399,6 +402,8 @@ class DiscoverTablessController: UIViewController, CollectionController {
     var discoverDelegate: DiscoverDelegate!
     var collectionController: CardCollectionController!
     
+    @IBOutlet weak var collectionButton: UIButton!
+    
     @IBOutlet weak var extendedBarHeightConstraint: NSLayoutConstraint!
     var collection: CardCollection!
     
@@ -412,6 +417,11 @@ class DiscoverTablessController: UIViewController, CollectionController {
     func render(collections: [CardCollection]) {
         self.collection = collections[0]
         self.collectionController.render(collection: collection)
+        if let title = collection.name {
+            collectionButton.setTitle(title, for: .normal)
+        } else {
+            collectionButton.setTitle("Search Result", for: .normal)
+        }
     }
     
     @IBAction func actionOnTitle(_ sender: Any) {
