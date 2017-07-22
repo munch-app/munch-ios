@@ -215,20 +215,35 @@ class CachedSync {
             for remoteHash in hashes {
                 let localHash = realm.object(ofType: KeyHashData.self, forPrimaryKey: remoteHash.key)
                 if (localHash?.dataHash != remoteHash.value) {
-                    MunchApi.cached.get(dataKey: remoteHash.key) { meta, hash, json in
-                        if (meta.isOk()) {
-                            let hashData = KeyHashData()
-                            hashData.dataKey = remoteHash.key
-                            hashData.dataHash = hash!
-                            hashData.data = try? json.rawData()
-                            
-                            try! realm.write {
-                                realm.add(hashData)
-                                print("Sycned \(remoteHash.key) with hash: \(remoteHash.value)")
-                            }
-                        }
+                    CachedSync.update(key: remoteHash.key, localHash: localHash)
+                }
+            }
+        }
+    }
+    
+    /**
+     Updating of a key, hash and data
+     */
+    private class func update(key: String, localHash: KeyHashData!) {
+        MunchApi.cached.get(dataKey: key) { meta, hash, json in
+            if (meta.isOk()) {
+                let realm = try! Realm()
+                if (localHash != nil) {
+                    try! realm.write {
+                        localHash.dataHash = hash!
+                        localHash.data = try? json.rawData()
+                        realm.add(localHash)
+                    }
+                } else {
+                    try! realm.write {
+                        let updateHash = KeyHashData()
+                        updateHash.dataKey = key
+                        updateHash.dataHash = hash!
+                        updateHash.data = try? json.rawData()
+                        realm.add(updateHash)
                     }
                 }
+                print("Sycned \(key) with hash: \(hash!)")
             }
         }
     }
