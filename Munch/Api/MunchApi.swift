@@ -15,9 +15,13 @@ public class RestfulClient {
     public static var lastLatLng: String?
     
     private let url: String
+    private let version: String
+    private let build: String
     
     init(_ url: String) {
         self.url = url
+        self.version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
+        self.build = Bundle.main.infoDictionary?["CFBundleVersion"] as! String
     }
     
     /**
@@ -43,6 +47,8 @@ public class RestfulClient {
      */
     fileprivate func request(method: HTTPMethod, path: String, parameters: Parameters, encoding: ParameterEncoding, callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
         var headers = [String: String]()
+        headers["Application-Version"] = version
+        headers["Application-Build"] = build
         
         // Set latLng if available
         if let latLng = MunchLocation.getLatLng() {

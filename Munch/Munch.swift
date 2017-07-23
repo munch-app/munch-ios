@@ -212,10 +212,12 @@ class CachedSync {
         print("Sycning cached data")
         let realm = try! Realm()
         MunchApi.cached.hashes { meta, hashes in
-            for remoteHash in hashes {
-                let localHash = realm.object(ofType: KeyHashData.self, forPrimaryKey: remoteHash.key)
-                if (localHash?.dataHash != remoteHash.value) {
-                    CachedSync.update(key: remoteHash.key, localHash: localHash)
+            if (meta.isOk()) {
+                for remoteHash in hashes {
+                    let localHash = realm.object(ofType: KeyHashData.self, forPrimaryKey: remoteHash.key)
+                    if (localHash?.dataHash != remoteHash.value) {
+                        CachedSync.update(key: remoteHash.key, localHash: localHash)
+                    }
                 }
             }
         }
