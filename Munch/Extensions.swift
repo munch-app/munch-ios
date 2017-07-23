@@ -88,6 +88,13 @@ extension UIView {
         }
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        if (hairlineShadowHeight != 0) {
+            hairlineShadow(height: hairlineShadowHeight)
+        }
+    }
 }
 
 extension MutableCollection where Indices.Iterator.Element == Index {
