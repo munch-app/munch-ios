@@ -116,17 +116,6 @@ struct Place: CardItem, Equatable {
             self.open = json["open"].string
             self.close = json["close"].string
         }
-        
-        func rangeText() -> String {
-            return HourFormatter.format(hour: self)
-        }
-        
-        func dayText() -> String {
-            if (day == "evePh"){
-                return "Eve of Ph"
-            }
-            return day!.capitalized
-        }
     }
     
     func isOpen() -> Bool? {
@@ -446,8 +435,8 @@ class HourFormatter {
      Accepts: Time in String
      Format time to 10:00am
     */
-    func format(string: String) -> String {
-        let date = inFormatter.date(from: string)
+    func format(time: String) -> String {
+        let date = inFormatter.date(from: time)
         return outFormatter.string(from: date!)
     }
     
@@ -470,45 +459,94 @@ class HourFormatter {
      Accepts: Hour
      Format hour open to String: 10:00am - 3:00pm
     */
-    class func format(hour: Place.Hour) -> String {
-        let open = instance.format(string: hour.open!)
-        let close = instance.format(string: hour.close!)
+    func format(hour: Place.Hour) -> String {
+        let open = format(time: hour.open!)
+        let close = format(time: hour.close!)
         return "\(open) - \(close)"
+    }
+    
+    class func format(hours: [Place.Hour]) -> String? {
+        if (hours.isEmpty) { return nil }
+        
+        // Sort by open time and days in asc order
+        let sorted = hours.sorted(by: { $0.0.open! <  $0.1.open! })
+            .sorted(by: {daysOrder[$0.0.day!]! < daysOrder[$0.1.day!]!})
+        
+        // Compact into day lines, (day, time)
+        var dayLines: [(String, String)] = []
+        for hour in sorted {
+            if dayLines.last?.0 == hour.day {
+                let last = dayLines.popLast()
+                dayLines.append((hour.day!, "\(last!.1 ), \(instance.format(hour: hour))"))
+            } else {
+                // Else add new line
+                dayLines.append((hour.day!, instance.format(hour: hour)))
+            }
+        }
+        
+        // Compact days into smaller lines if similar, (day, day, time)
+        var rangeLines: [(String, String, String)] = []
+        for dayLine in dayLines {
+            if (rangeLines.last?.2 == dayLine.1) {
+                let last = rangeLines.popLast()
+                rangeLines.append((last!.0, dayLine.0, dayLine.1))
+            } else {
+                rangeLines.append((dayLine.0, dayLine.0, dayLine.1))
+            }
+        }
+        
+        // If first and last are the same, join them
+//        if (rangeLines.count > 2) {
+//            if (rangeLines.first?.2 == rangeLines.last?.2) {
+//                let last = rangeLines.popLast()
+//                let first = rangeLines.first
+//                first?.0
+//            }
+//        }
+        return rangeLines.map({
+            if ($0.0 == $0.1) {
+                return "\($0.0.capitalized): \($0.2)"
+            } else {
+                return "\($0.0.capitalized) - \($0.1.capitalized): \($0.2)"
+            }
+        }).joined(separator: "\n")
     }
     
     /**
      Accepts: Array of Hour
      Format hours to packed: "Mon - Fri: 10:00am - 3:00pm" joined by \n
     */
-    class func format(hours: [Place.Hour]) -> String? {
-        if (hours.isEmpty) { return nil }
-        let sorted = hours.sorted(by: {daysOrder[$0.0.day!]! < daysOrder[$0.1.day!]!})
-        var lines = [String]()
-        var tuple: (String, String, String)! = nil
-        
-        func make() -> String {
-            if (tuple.1 == tuple.2) {
-                return "\(tuple.1.capitalized): \(tuple.0)"
-            } else {
-                return "\(tuple.1.capitalized) - \(tuple.2.capitalized): \(tuple.0)"
-            }
-        }
-        
-        for hour in sorted {
-            if (tuple == nil) {
-                tuple = (hour.rangeText(), hour.day!, hour.day!)
-            } else {
-                if (tuple.0 == hour.rangeText() && (daysOrder[tuple.2]! + 1) == daysOrder[hour.day!]) {
-                    tuple.2 = hour.day!
-                }else{
-                    lines.append(make())
-                    tuple = (hour.rangeText(), hour.day!, hour.day!)
-                }
-            }
-        }
-        lines.append(make())
-        return lines.joined(separator: "\n")
-    }
+//    class func format(hours: [Place.Hour]) -> String? {
+//        if (hours.isEmpty) { return nil }
+//        
+//        // Sorted opening hours
+//        let sorted = hours.sorted(by: {daysOrder[$0.0.day!]! < daysOrder[$0.1.day!]!})
+//        var lines = [String]()
+//        var tuple: (String, String, String)! = nil
+//        
+//        func make() -> String {
+//            if (tuple.1 == tuple.2) {
+//                return "\(tuple.1.capitalized): \(tuple.0)"
+//            } else {
+//                return "\(tuple.1.capitalized) - \(tuple.2.capitalized): \(tuple.0)"
+//            }
+//        }
+//        
+//        for hour in sorted {
+//            if (tuple == nil) {
+//                tuple = (hour.rangeText(), hour.day!, hour.day!)
+//            } else {
+//                if (tuple.0 == hour.rangeText() && (daysOrder[tuple.2]! + 1) == daysOrder[hour.day!]) {
+//                    tuple.2 = hour.day!
+//                }else{
+//                    lines.append(make())
+//                    tuple = (hour.rangeText(), hour.day!, hour.day!)
+//                }
+//            }
+//        }
+//        lines.append(make())
+//        return lines.joined(separator: "\n")
+//    }
 }
 
 /**
