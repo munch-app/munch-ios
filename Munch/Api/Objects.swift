@@ -120,6 +120,8 @@ struct Place: CardItem, Equatable {
     
     func isOpen() -> Bool? {
         if let hours = hours {
+            if (hours.isEmpty) { return nil }
+            
             let date = Date()
             let day = HourFormatter.instance.dayNow().lowercased()
             let todays = hours.filter { $0.day == day }
