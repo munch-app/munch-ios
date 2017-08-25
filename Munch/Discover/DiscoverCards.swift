@@ -29,7 +29,7 @@ class DiscoverPlaceCardView: DiscoverCardView {
         renderThirdLine(place: place)
         
         // Render first images if exist
-        imageView.render(imageMeta: place.images?.get(0))
+        imageView.render(placeImage: place.images?.get(0))
     }
     
     private func renderFirstLine(place: Place) {

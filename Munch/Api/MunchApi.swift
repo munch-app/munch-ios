@@ -187,49 +187,6 @@ class PlaceClient: RestfulClient {
 }
 
 /**
- Offline place testing tools
- */
-extension PlaceClient {
-    private class func randomCollection() -> [SearchCollection] {
-        return [
-            SearchCollection(name: "NEARBY", query: SearchQuery(), results: randomPlaces()),
-            SearchCollection(name: "HEALTHY OPTIONS", query: SearchQuery(), results: randomPlaces()),
-            SearchCollection(name: "CAFES", query: SearchQuery(), results: randomPlaces()),
-            SearchCollection(name: "PUBS & BARS", query: SearchQuery(), results: [])
-        ]
-    }
-    
-    private class func randomPlaces() -> [Place] {
-        var place1 = Place()
-        place1.name = "Char-Grill Bar"
-        place1.tags = ["Western", "Bar", "Restaurant"]
-        place1.images = [ImageMeta(images: ["1082x976": "http://2.bp.blogspot.com/-TtLzNIIy7k4/T9zBgKVwmBI/AAAAAAAAAoQ/u3o820ef0_c/s1600/_DSC8145.jpg"])]
-        
-        var place2 = Place()
-        place2.name = "Isteak Diner"
-        place2.tags = ["Western", "Steak", "Restaurant"]
-        place2.images = [ImageMeta(images: ["1024x683": "https://c4.staticflickr.com/9/8879/27776438723_dc366674ed_b.jpg"])]
-        
-        var place3 = Place()
-        place3.name = "The Daily Cut"
-        place3.tags = ["Western", "Salad", "Restaurant"]
-        place3.images = [ImageMeta(images: ["640x480": "http://lh4.googleusercontent.com/-olXUBLvg834/VSo53q_7cqI/AAAAAAAADeU/5tnAT6r9GAQ/s640/blogger-image-796908253.jpg"])]
-        
-        var place4 = Place()
-        place4.name = "Nandos"
-        place4.tags = ["Chicken", "Grill", "Restaurant"]
-        place4.images = [ImageMeta(images: ["1037x691": "https://ohhhoney.files.wordpress.com/2013/03/nandos_singapore_ohhhoney.jpg"])]
-        
-        var place5 = Place()
-        place5.name = "Diao Xiao Er"
-        place5.tags = ["Chinese", "Restaurant"]
-        place5.images = [ImageMeta(images: ["500x385": "https://www.hpility.sg/wp-content/uploads/2012/12/DianXiaoEr01.jpg"])]
-        
-        return [place1, place2, place3, place4, place5, place1, place2, place3, place4, place5].shuffled()
-    }
-}
-
-/**
  LocationClient from LocationService in munch-core/munch-api
  that is direct proxy to LocationService in munch-core/service-location
  */

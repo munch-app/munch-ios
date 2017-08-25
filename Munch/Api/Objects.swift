@@ -29,7 +29,7 @@ struct Place: CardItem, Equatable {
     // Many
     var tags: [String]?
     var hours: [Hour]?
-    var images: [ImageMeta]?
+    var images: [Image]?
     
     init() {
         
@@ -48,7 +48,7 @@ struct Place: CardItem, Equatable {
         
         self.tags = json["tags"].map { $0.1.stringValue }
         self.hours = json["hours"].map { Hour(json: $0.1) }
-        self.images = json["images"].map { ImageMeta(json: $0.1) }
+        self.images = json["images"].map { Image(json: $0.1) }
     }
     
     struct Price {
@@ -92,6 +92,23 @@ struct Place: CardItem, Equatable {
             
             self.postal = json["postal"].string
             self.latLng = json["latLng"].string
+        }
+    }
+    
+    /** 
+     Place.Image from munch-core/munch-data
+     */
+    struct Image {
+        var source: String?
+        var imageMeta: ImageMeta?
+        
+        init() {
+            
+        }
+        
+        init(json: JSON) {
+            self.source = json["source"].string
+            self.imageMeta = ImageMeta(json: json["imageMeta"])
         }
     }
     
@@ -634,7 +651,7 @@ struct ImageMeta {
         self.key = json["key"].string
         self.images = json["images"].reduce([String:String]()) { (result, json) -> [String: String] in
             var result = result
-            result[json.0] = json.1["url"].string
+            result[json.0] = json.1.string
             return result
         }
     }

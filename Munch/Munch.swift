@@ -147,6 +147,14 @@ extension UIColor {
 extension UIImageView {
     
     /**
+     Render PlaceImage to UIImageView
+     PlaceImage will contain a ImageMeta to use for rendering
+     */
+    func render(placeImage: Place.Image?) {
+        render(imageMeta: placeImage?.imageMeta)
+    }
+    
+    /**
      Render ImageMeta to UIImageView
      Choose the smallest fitting image if available
      Else if the largest images if none fit

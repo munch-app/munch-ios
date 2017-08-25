@@ -80,11 +80,11 @@ enum InitialViewProvider {
         let discoverController = discoverStoryboard.instantiateInitialViewController()!
         discoverController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "DISCOVER", image: UIImage(named: "icons8-Search-35"))
         
-        // Profile
-        let profileController = UIViewController()
-        profileController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "PROFILE", image: UIImage(named: "icons8-customer-35"))
+//        // Profile
+//        let profileController = UIViewController()
+//        profileController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "PROFILE", image: UIImage(named: "icons8-customer-35"))
         
-        tabController.viewControllers = [discoverController, profileController]
+        tabController.viewControllers = [discoverController]
         return tabController
     }
 }

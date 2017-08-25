@@ -186,7 +186,7 @@ extension PlaceViewController {
         // Render image
         if let images = place.images {
             if (!images.isEmpty) {
-                placeImageView.render(imageMeta: images[0])
+                placeImageView.render(placeImage: images[0])
             }
         }
         
