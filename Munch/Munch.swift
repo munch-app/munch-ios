@@ -235,7 +235,7 @@ class CachedSync {
      Updating of a key, hash and data
      */
     private class func update(key: String, localHash: KeyHashData!) {
-        MunchApi.cached.get(dataKey: key) { meta, hash, json in
+        MunchApi.cached.get(type: key) { meta, hash, json in
             if (meta.isOk()) {
                 let realm = try! Realm()
                 if (localHash != nil) {

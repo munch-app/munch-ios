@@ -161,6 +161,26 @@ struct Place: CardItem, Equatable {
 }
 
 /**
+ Basic and Vendor typed Cards
+ */
+struct PlaceCard {
+    var id: String
+    var json: JSON
+    
+    init(json: JSON) {
+        self.id = json["id"].stringValue
+        self.json = json
+    }
+    
+    /**
+     Subscript to get data from json with its name
+     */
+    subscript(name: String) -> JSON {
+        return json[name]
+    }
+}
+
+/**
  Location object form munch-core/service-location
  Used in search for munch-core/service-places
  */

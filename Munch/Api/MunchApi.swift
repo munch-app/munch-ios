@@ -151,9 +151,9 @@ class DiscoveryClient: RestfulClient {
         }
     }
     
-    func search(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ collections: [SearchCollection], _ streetName: String?) -> Void) {
+    func search(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ collections: [SearchCollection]) -> Void) {
         super.post("/discovery/search", parameters: query.toParams()) { meta, json in
-            callback(meta, json["data"].map { SearchCollection(json: $0.1) }, json["street"]["name"].string)
+            callback(meta, json["data"].map { SearchCollection(json: $0.1) })
         }
     }
     
@@ -168,21 +168,15 @@ class DiscoveryClient: RestfulClient {
  PlaceClient from PlaceService in munch-core/munch-api
  */
 class PlaceClient: RestfulClient {
-    func get(id: String, callback: @escaping (_ meta: MetaJSON, _ place: PlaceDetail?) -> Void) {
+    func get(id: String, callback: @escaping (_ meta: MetaJSON, _ place: Place?) -> Void) {
         super.get("/places/\(id)") { meta, json in
-            callback(meta, PlaceDetail(json: json["data"]))
+            callback(meta, Place(json: json["data"]))
         }
     }
     
-    func medias(id: String, from: Int, size: Int, callback: @escaping (_ meta: MetaJSON, _ medias: [Media]) -> Void) {
-        super.get("/places/\(id)/instagram/medias/list", parameters: ["from": from, "size": size]) { meta, json in
-            callback(meta, json["data"].map({Media(json: $0.1)}))
-        }
-    }
-    
-    func articles(id: String, from: Int, size: Int, callback: @escaping (_ meta: MetaJSON, _ articles: [Article]) -> Void) {
-        super.get("/places/\(id)/articles/list", parameters: ["from": from, "size": size]) { meta, json in
-            callback(meta, json["data"].map({Article(json: $0.1)}))
+    func cards(id: String, callback: @escaping (_ meta: MetaJSON, _ cards: [PlaceCard]) -> Void) {
+        super.get("/places/\(id)/cards") { meta, json in
+            callback(meta, json["data"].map { PlaceCard(json: $0.1) })
         }
     }
 }
@@ -193,16 +187,27 @@ class PlaceClient: RestfulClient {
  */
 class LocationClient: RestfulClient {
     
-    func streetReverse(lat: Double, lng: Double, callback: @escaping (_ meta: MetaJSON, _ location: String?) -> Void) {
-        super.get("/locations/streets/reverse", parameters: ["latLng": "\(lat),\(lng)"]) { meta, json in
-            callback(meta, json["data"].string)
+    /**
+     Find the location the user is currently at
+     Different from reverse, is the location given here can be street based
+     */
+    func find(callback: @escaping (_ meta: MetaJSON, _ location: Location?) -> Void) {
+        var params = Parameters()
+        params["latLng"] = MunchLocation.getLatLng()
+        
+        super.get("/location/find", parameters: params) { meta, json in
+            callback(meta, Location(json: json["data"]))
+        }
+    }
+    
+    func reverse(lat: Double, lng: Double, callback: @escaping (_ meta: MetaJSON, _ location: Location?) -> Void) {
+        super.get("/locations/reverse", parameters: ["latLng": "\(lat),\(lng)"]) { meta, json in
+            callback(meta, Location(json: json["data"]))
         }
     }
     
     func suggest(text: String, callback: @escaping (_ meta: MetaJSON, _ locations: [Location]) -> Void) {
-        var params = Parameters()
-        params["text"] = text
-        super.get("/locations/suggest", parameters: params) { meta, json in
+        super.get("/locations/suggest", parameters: ["text": text]) { meta, json in
             callback(meta, json["data"].map { Location(json: $0.1)! })
         }
     }
@@ -223,7 +228,7 @@ class CachedSyncClient: RestfulClient {
         }
     }
     
-    func get(dataKey: String, callback: @escaping (_ meta: MetaJSON, _ hash: String?, _ json: JSON) -> Void) {
+    func get(type: String, callback: @escaping (_ meta: MetaJSON, _ hash: String?, _ json: JSON) -> Void) {
         super.get("/cached/data/\(dataKey)") { meta, json in
             let hash = json["data"]["hash"].string
             let data = json["data"]["data"]

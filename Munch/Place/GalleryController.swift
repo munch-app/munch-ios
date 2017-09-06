@@ -39,15 +39,7 @@ class PlaceGalleryController: PlaceControllers, UICollectionViewDataSource, UICo
         self.galleryFlowLayout.sectionInset = UIEdgeInsets(top: 18, left: minSpacing, bottom: 16, right: minSpacing)
         self.galleryFlowLayout.minimumLineSpacing = minSpacing
         self.galleryFlowLayout.minimumInteritemSpacing = floorf(halfWidth) == halfWidth ? minSpacing : minSpacing + 1
-        
-        client.places.medias(id: place.id!, from: 0, size: 10){ meta, medias in
-            if (meta.isOk()){
-                self.medias += medias
-                self.galleryCollection.reloadData()
-            }else{
-                self.present(meta.createAlert(), animated: true, completion: nil)
-            }
-        }
+
     }
     
     override func viewDidAppear(_ animated: Bool) {
