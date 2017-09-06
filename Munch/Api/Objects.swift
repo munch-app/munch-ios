@@ -165,6 +165,7 @@ struct Place: CardItem, Equatable {
  Used in search for munch-core/service-places
  */
 struct Location: SearchResult {
+    var id: String?
     var name: String?
     var city: String?
     var country: String?
@@ -175,6 +176,7 @@ struct Location: SearchResult {
     init?(json: JSON) {
         if (!json.exists()) { return nil }
     
+        self.id = json["id"].string
         self.name = json["name"].string
         self.city = json["city"].string
         self.country = json["country"].string
@@ -185,6 +187,7 @@ struct Location: SearchResult {
     
     func toParams() -> Parameters {
         var params = Parameters()
+        params["id"] = id
         params["name"] = name
         params["city"] = city
         params["country"] = country
@@ -192,23 +195,6 @@ struct Location: SearchResult {
         params["center"] = center
         params["points"] = points
         return params
-    }
-}
-
-/**
- PlaceDetail object from munch-core/service-places
- Used to to send place, medias, articles and review in one object
- */
-struct PlaceDetail {
-    let place: Place
-    let medias: [Media]
-    let articles: [Article]
-    
-    init?(json: JSON) {
-        if (!json.exists()) { return nil }
-        self.place = Place(json: json["place"])
-        self.medias = json["medias"].map({Media(json: $0.1)})
-        self.articles = json["articles"].map({Article(json: $0.1)})
     }
 }
 
@@ -235,7 +221,6 @@ public struct SearchQuery: Equatable {
     var query: String?
     var location: Location?
     
-    // These types should never be nil
     var filter: Filter
     var sort: Sort
     
@@ -258,9 +243,7 @@ public struct SearchQuery: Equatable {
     public struct Filter {
         var price = Price()
         var tag = Tag()
-        var rating = Rating()
         var hour = Hour()
-        var distance = Distance()
         
         init() {
             
@@ -272,11 +255,10 @@ public struct SearchQuery: Equatable {
             
             tag.positives = json["tag"]["positives"].arrayValue.map { $0.stringValue }
             tag.negatives = json["tag"]["negatives"].arrayValue.map { $0.stringValue }
+        
+            hour.day = json["hour"]["day"].string
+            hour.time = json["hour"]["time"].string
             
-            rating.min = json["rating"]["min"].double
-            
-            distance.latLng = json["distance"]["latLng"].string
-            distance.max = json["distance"]["max"].int
         }
         
         public struct Price {
@@ -290,51 +272,38 @@ public struct SearchQuery: Equatable {
             var negatives: [String]?
         }
         
-        public struct Rating {
-            var min: Double?
-        }
-        
         public struct Hour {
-            
-        }
-        
-        public struct Distance {
-            var latLng: String?
-            var max: Int? // In metres
+            var day: String?
+            var time: String?
         }
         
         public func toParams() -> Parameters {
             var params = Parameters()
             params["price"] = ["min": price.min, "max": price.max]
             params["tag"] = ["positives": tag.positives, "negatives": tag.negatives]
-            params["rating"] = ["min": rating.min]
-            
-            var distanceParams = Parameters()
-            distanceParams["latLng"] = distance.latLng
-            distanceParams["max"] = distance.max
-            params["distance"] = distanceParams
+            params["hour"] = ["day": hour.day, "time": hour.time]
             return params
         }
     }
     
     public struct Sort {
-        var distance = Distance()
+        // See MunchCore for the available sort methods
+        var type: String?
+        var latLng: String?
         
         init() {
             
         }
         
         init(json: JSON) {
-            distance.latLng = json["distance"]["latLng"].string
-        }
-        
-        public struct Distance {
-            var latLng: String?
+            type = json["sort"]["type"].string
+            latLng = json["sort"]["latLng"].string
         }
         
         public func toParams() -> Parameters {
             var params = Parameters()
-            params["distance"] = ["latLng": distance.latLng]
+            params["type"] = type
+            params["latLng"] = latLng
             return params
         }
     }

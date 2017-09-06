@@ -50,7 +50,8 @@ public class RestfulClient {
         headers["Application-Version"] = version
         headers["Application-Build"] = build
         
-        // Set latLng if available
+        // Always set latLng if available, only to get from header for logging, debugging purpose only
+        // Otherwise, use the explicit value declared
         if let latLng = MunchLocation.getLatLng() {
             headers["Location-LatLng"] = latLng
         }
