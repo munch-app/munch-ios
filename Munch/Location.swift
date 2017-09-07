@@ -39,12 +39,17 @@ public class MunchLocation {
     
     /**
      Wait util an accurate location is available
+     Will return nil latLng if not found
      */
     public class func waitFor(completion: @escaping (_ latLng: String?, _ error: Error?) -> Void) {
-        // Already have latLng
-        if let latLng = lastLatLng, locationExpiry > Date() {
+        if (!enabled) {
+            // If not enabled, just return nil latLng
+            completion(nil, nil)
+        } else if let latLng = lastLatLng, locationExpiry > Date() {
+            // Already have latLng, and not yet expiried
             completion(latLng, nil)
         } else {
+            // Location already expiried, query again
             SwiftLocation.Location.getLocation(accuracy: .block, frequency: .oneShot, success: { request, location in
                 let coord = location.coordinate
                 MunchLocation.lastLatLng = "\(coord.latitude),\(coord.longitude)"

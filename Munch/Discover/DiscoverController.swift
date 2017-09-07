@@ -64,7 +64,7 @@ class DiscoverController: UIViewController, MXPagerViewDelegate, MXPagerViewData
             self.query()
         } else {
             // Else check if query has expired
-            self.refreshExpiredQuery()
+            self.refreshQuery()
         }
     }
     
@@ -120,22 +120,23 @@ extension DiscoverController {
     /**
      Check if query has expired, if so, refresh
      */
-    func refreshExpiredQuery() {
-        // Search query have expired
+    func refreshQuery() {
+        // Check if search query have expired
         if (queryExpiryDate < Date()) {
-            // Get current Location
-            if (MunchLocation.enabled) {
-                // Wait for first location update
-                MunchLocation.waitFor() { (latLng, err) in
-                    if let error = err {
-                        self.alert(error: error)
-                    } else {
-                        self.query()
-                    }
+            // Get current Location if available
+            MunchLocation.waitFor() { latLng, err in
+                if let latLng = latLng {
+                    MunchApi.locations.find(latLng: latLng, callback: { meta, location in
+                        if meta.isOk() {
+                            self.searchBar.searchQuery.location = location
+                            self.query()
+                        } else {
+                            self.present(meta.createAlert(), animated: true)
+                        }
+                    })
+                } else if let error = err {
+                    self.alert(error: error)
                 }
-            } else {
-                // Location service is not enabled
-                self.query()
             }
         } else {
             // Not yet expire, extend by 30 minutes
@@ -152,7 +153,8 @@ extension DiscoverController {
         self.currentSearchQuery = searchQuery
         pagerView.showPage(at: SeguePage.loading, animated: false)
         
-        MunchApi.discovery.search(query: searchQuery) { (meta, collections, streetName) in
+        MunchApi.discovery.search(query: searchQuery) { (meta, collections) in
+            // TODO, changes in search bar operations
             if (meta.isOk()) {
                 // Set query to expiry in 1 hour
                 self.queryExpiryDate = Date().addingTimeInterval(60 * 60)
@@ -161,7 +163,7 @@ extension DiscoverController {
                 self.render(collections: collections.map { CardCollection(collection: $0) })
                 
                 // Update search bar with query also to keep Concurrency, incase of double update
-                self.searchBar.apply(searchQuery: searchQuery, streetName: streetName)
+                self.searchBar.apply(searchQuery: searchQuery, streetName: "TODO")
                 
             } else {
                 self.present(meta.createAlert(), animated: true)
@@ -242,11 +244,12 @@ extension DiscoverController: DiscoverDelegate {
      Wind to place discover view controller
      */
     func present(place: Place) {
-        let storyboard = UIStoryboard(name: "Place", bundle: nil)
-        let controller = storyboard.instantiateInitialViewController() as! PlaceViewController
-        controller.place = place
-        
-        self.navigationController!.pushViewController(controller, animated: true)
+        print(place.id)
+//        let storyboard = UIStoryboard(name: "Place", bundle: nil)
+//        let controller = storyboard.instantiateInitialViewController() as! PlaceViewController
+//        controller.place = place
+//        
+//        self.navigationController!.pushViewController(controller, animated: true)
     }
     
     /**

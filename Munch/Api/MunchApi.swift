@@ -191,9 +191,9 @@ class LocationClient: RestfulClient {
      Find the location the user is currently at
      Different from reverse, is the location given here can be street based
      */
-    func find(callback: @escaping (_ meta: MetaJSON, _ location: Location?) -> Void) {
+    func find(latLng: String?, callback: @escaping (_ meta: MetaJSON, _ location: Location?) -> Void) {
         var params = Parameters()
-        params["latLng"] = MunchLocation.getLatLng()
+        params["latLng"] = latLng
         
         super.get("/location/find", parameters: params) { meta, json in
             callback(meta, Location(json: json["data"]))
@@ -229,7 +229,7 @@ class CachedSyncClient: RestfulClient {
     }
     
     func get(type: String, callback: @escaping (_ meta: MetaJSON, _ hash: String?, _ json: JSON) -> Void) {
-        super.get("/cached/data/\(dataKey)") { meta, json in
+        super.get("/cached/data/\(type)") { meta, json in
             let hash = json["data"]["hash"].string
             let data = json["data"]["data"]
             callback(meta, hash, data)
