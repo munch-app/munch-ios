@@ -195,7 +195,7 @@ class LocationClient: RestfulClient {
         var params = Parameters()
         params["latLng"] = latLng
         
-        super.get("/location/find", parameters: params) { meta, json in
+        super.get("/locations/find", parameters: params) { meta, json in
             callback(meta, Location(json: json["data"]))
         }
     }

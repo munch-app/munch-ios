@@ -149,6 +149,21 @@ extension UIViewController {
     }
 }
 
+extension UINavigationController {
+    override open var supportedInterfaceOrientations : UIInterfaceOrientationMask     {
+        return .all
+    }
+}
+
+
+// For supporting development in school
+
+extension UITabBarController {
+    override open var supportedInterfaceOrientations : UIInterfaceOrientationMask     {
+        return .all
+    }
+}
+
 extension Double {
     /// Rounds the double to decimal places value
     func roundTo(places:Int) -> Double {

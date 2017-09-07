@@ -44,7 +44,7 @@ class DiscoverPlaceCardView: DiscoverCardView {
         if let establishments = place.tags?.filter({priorityTags.contains($0.lowercased())}) {
             if (!establishments.isEmpty){
                 let format = [NSFontAttributeName: UIFont.systemFont(ofSize: 15, weight: UIFontWeightSemibold)]
-                let estab = NSMutableAttributedString(string: "\(establishments[0].uppercased())", attributes: format)
+                let estab = NSMutableAttributedString(string: "\(establishments[0].capitalized)", attributes: format)
                 line.append(estab)
                 line.append(NSMutableAttributedString(string: " • ", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 15, weight: UIFontWeightUltraLight)]))
             } else {
