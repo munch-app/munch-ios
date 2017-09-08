@@ -9,9 +9,10 @@
 import Foundation
 import UIKit
 
-class PlaceViewController: UIViewController {
+class PlaceViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     var placeId: String!
     var cards = [PlaceCard]()
+    var cardTypes = [String: PlaceCardView.Type]()
     
     @IBOutlet weak var collectionView: UICollectionView!
     
@@ -25,34 +26,102 @@ class PlaceViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.collectionView.delegate = self
+        self.collectionView.dataSource = self
         
-        // Register all the cards
-        collectionView.register(PlaceShimmerImageBannerCardView.self, forCellWithReuseIdentifier: "PlaceShimmerImageBannerCardView")
-        collectionView.register(PlaceShimmerNameCardView.self, forCellWithReuseIdentifier: "PlaceShimmerNameCardView")
+        let layout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
+        // Top: -NavBar
+        // Bottom: BottomBar
+        layout.sectionInset = UIEdgeInsets(top: -64, left: 0, bottom: 7, right: 0)
         
-        // TODO add shimer cards
-        // TODO how to differentiate cards
-        collectionView.reloadData()
+        registerCards()
+        loadShimmerCards()
         
-        MunchApi.places.cards(id: placeId) { meta, cards in
-            if (meta.isOk()) {
-                self.cards = cards
-                self.collectionView.reloadData()
-            } else {
-                self.present(meta.createAlert(), animated: true)
-            }
-        }
+//        MunchApi.places.cards(id: placeId) { meta, cards in
+//            if (meta.isOk()) {
+//                self.cards = cards
+//                self.collectionView.reloadData()
+//            } else {
+//                self.present(meta.createAlert(), animated: true)
+//            }
+//        }
     }
     
-    // TODO CollectionView functions to render those cards
-    // Find correct view
-    // Render correct view
-    // Assign correct size
+    private func loadShimmerCards() {
+        cards.append(PlaceCard(id: PlaceShimmerImageBannerCardView.id))
+        cards.append(PlaceCard(id: PlaceShimmerNameCardView.id))
+        collectionView.reloadData()
+    }
+}
+
+
+// CardType and tools
+extension PlaceViewController {
+    func registerCards() {
+        // Register Shimmer Cards
+        register(PlaceShimmerImageBannerCardView.self, forCellWithReuseIdentifier: "PlaceShimmerImageBannerCardView")
+        register(PlaceShimmerNameCardView.self, forCellWithReuseIdentifier: "PlaceShimmerNameCardView")
+    }
+    
+    func findCardType(card: PlaceCard) -> (String, PlaceCardView.Type)? {
+        for type in cardTypes {
+            if (type.value.id == card.id) {
+                return type
+            }
+        }
+        return nil
+    }
+    
+    private func register(_ cellClass: PlaceCardView.Type, forCellWithReuseIdentifier identifier: String) {
+        collectionView.register(cellClass as? Swift.AnyClass, forCellWithReuseIdentifier: identifier)
+        cardTypes[identifier] = cellClass
+    }
+}
+
+// Card CollectionView
+extension PlaceViewController {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return cards.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let placeCard = cards[indexPath.row]
+        if let (_, type) = findCardType(card: placeCard) {
+            return type.size
+        }
+        return CGSize()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let placeCard = cards[indexPath.row]
+        
+        if let (identifier, _) = findCardType(card: placeCard) {
+            let cardView = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! PlaceCardView
+            cardView.render(card: placeCard)
+            return cardView as! UICollectionViewCell
+        }
+        
+        return UICollectionViewCell()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // let placeCard = cards[indexPath.row]
+        // TODO: When cards have click features
+    }
 }
 
 protocol PlaceCardView {
-    
     func render(card: PlaceCard)
     
-    var height: CGFloat { get }
+    static var id: String { get }
+    
+    static var height: CGFloat { get }
+    
+    static var size: CGSize { get }
+}
+
+extension PlaceCardView {
+    static var size: CGSize {
+        return CGSize(width: UIScreen.main.bounds.width, height: self.height)
+    }
 }

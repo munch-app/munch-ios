@@ -167,6 +167,11 @@ struct PlaceCard {
     var id: String
     var json: JSON
     
+    init(id: String) {
+        self.id = id
+        self.json = JSON(parseJSON: "{}")
+    }
+    
     init(json: JSON) {
         self.id = json["id"].stringValue
         self.json = json

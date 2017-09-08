@@ -24,8 +24,6 @@
 		03CD276D1F6286FC003562A1 /* PlaceBasicCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD276A1F6286FC003562A1 /* PlaceBasicCards.swift */; };
 		03CD276E1F6286FC003562A1 /* PlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD276B1F6286FC003562A1 /* PlaceController.swift */; };
 		03CD27741F62BD5C003562A1 /* PlaceShimmerCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD27731F62BD5C003562A1 /* PlaceShimmerCards.swift */; };
-		03CD27791F62BDBE003562A1 /* PlaceBasicCards.xib in Resources */ = {isa = PBXBuildFile; fileRef = 03CD27771F62BDBE003562A1 /* PlaceBasicCards.xib */; };
-		03CD277C1F62BDD6003562A1 /* PlaceVendorCards.xib in Resources */ = {isa = PBXBuildFile; fileRef = 03CD277B1F62BDD6003562A1 /* PlaceVendorCards.xib */; };
 		03CD277E1F62BDEA003562A1 /* PlaceVendorCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD277D1F62BDEA003562A1 /* PlaceVendorCards.swift */; };
 		03CF0AA21E97AA3C00A3FD1F /* Objects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CF0A9F1E97AA3C00A3FD1F /* Objects.swift */; };
 		03CF0AA41E97AA3C00A3FD1F /* MunchApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CF0AA11E97AA3C00A3FD1F /* MunchApi.swift */; };
@@ -99,8 +97,6 @@
 		03CD276A1F6286FC003562A1 /* PlaceBasicCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceBasicCards.swift; path = Place/PlaceBasicCards.swift; sourceTree = "<group>"; };
 		03CD276B1F6286FC003562A1 /* PlaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceController.swift; path = Place/PlaceController.swift; sourceTree = "<group>"; };
 		03CD27731F62BD5C003562A1 /* PlaceShimmerCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceShimmerCards.swift; path = Place/PlaceShimmerCards.swift; sourceTree = "<group>"; };
-		03CD27771F62BDBE003562A1 /* PlaceBasicCards.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PlaceBasicCards.xib; path = Place/PlaceBasicCards.xib; sourceTree = "<group>"; };
-		03CD277B1F62BDD6003562A1 /* PlaceVendorCards.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PlaceVendorCards.xib; path = Place/PlaceVendorCards.xib; sourceTree = "<group>"; };
 		03CD277D1F62BDEA003562A1 /* PlaceVendorCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceVendorCards.swift; path = Place/PlaceVendorCards.swift; sourceTree = "<group>"; };
 		03CF0A9B1E96A7B100A3FD1F /* ESTabBarController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ESTabBarController.framework; path = Carthage/Build/iOS/ESTabBarController.framework; sourceTree = "<group>"; };
 		03CF0A9F1E97AA3C00A3FD1F /* Objects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Objects.swift; path = Api/Objects.swift; sourceTree = "<group>"; };
@@ -272,9 +268,7 @@
 				03CD27691F6286FC003562A1 /* Place.storyboard */,
 				03CD276B1F6286FC003562A1 /* PlaceController.swift */,
 				03CD27731F62BD5C003562A1 /* PlaceShimmerCards.swift */,
-				03CD27771F62BDBE003562A1 /* PlaceBasicCards.xib */,
 				03CD276A1F6286FC003562A1 /* PlaceBasicCards.swift */,
-				03CD277B1F62BDD6003562A1 /* PlaceVendorCards.xib */,
 				03CD277D1F62BDEA003562A1 /* PlaceVendorCards.swift */,
 			);
 			name = Place;
@@ -427,9 +421,7 @@
 				038275831F0A8DE400C5954A /* Munch.plist in Resources */,
 				032F89061E82DFA300AD3818 /* LaunchScreen.storyboard in Resources */,
 				032F89031E82DFA300AD3818 /* Assets.xcassets in Resources */,
-				03CD27791F62BDBE003562A1 /* PlaceBasicCards.xib in Resources */,
 				033E62F81F1D381F00AE97FA /* Main.storyboard in Resources */,
-				03CD277C1F62BDD6003562A1 /* PlaceVendorCards.xib in Resources */,
 				03CD276C1F6286FC003562A1 /* Place.storyboard in Resources */,
 				03E216A51EFA005300465BE3 /* Discover.storyboard in Resources */,
 			);
@@ -566,6 +558,7 @@
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SKPhotoBrowser/SKPhotoBrowser.framework",
+				"${BUILT_PRODUCTS_DIR}/Shimmer/Shimmer.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftLocation/SwiftLocation.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
@@ -582,6 +575,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SKPhotoBrowser.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Shimmer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftLocation.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",

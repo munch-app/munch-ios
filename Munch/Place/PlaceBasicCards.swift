@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class PlaceNameCardView: UICollectionViewCell, PlaceCardView {
+class PlaceNameCardView: UICollectionViewCell {
     @IBOutlet weak var nameLabel: UILabel!
     
     var height: CGFloat {
