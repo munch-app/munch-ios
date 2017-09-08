@@ -244,12 +244,11 @@ extension DiscoverController: DiscoverDelegate {
      Wind to place discover view controller
      */
     func present(place: Place) {
-        print(place.id)
-//        let storyboard = UIStoryboard(name: "Place", bundle: nil)
-//        let controller = storyboard.instantiateInitialViewController() as! PlaceViewController
-//        controller.place = place
-//        
-//        self.navigationController!.pushViewController(controller, animated: true)
+        let storyboard = UIStoryboard(name: "Place", bundle: nil)
+        let controller = storyboard.instantiateInitialViewController() as! PlaceViewController
+        controller.placeId = place.id
+        
+        self.navigationController!.pushViewController(controller, animated: true)
     }
     
     /**
