@@ -13,7 +13,6 @@ PODS:
   - Realm/Headers (3.0.0-beta.3)
   - RealmSwift (3.0.0-beta.3):
     - Realm (= 3.0.0-beta.3)
-  - Shimmer (1.0.2)
   - SKPhotoBrowser (4.1.0)
   - SnapKit (3.2.0)
   - SwiftLocation (2.0.7)
@@ -28,7 +27,6 @@ DEPENDENCIES:
   - MXPagerView (~> 0.2)
   - NVActivityIndicatorView (~> 3.7)
   - RealmSwift (= 3.0.0-beta.3)
-  - Shimmer (~> 1.0)
   - SKPhotoBrowser (~> 4.1)
   - SnapKit (~> 3.2)
   - SwiftLocation (~> 2.0)
@@ -53,12 +51,11 @@ SPEC CHECKSUMS:
   NVActivityIndicatorView: d3738df7e2e476aca0ba6bf32a8c9fbcfc33d64b
   Realm: 33bd2ac5a5d7649920b131d2e79e2d5c8421da47
   RealmSwift: a5fb1853c3167912fc5325fe264a410bfe3e2cbc
-  Shimmer: c5374be1c2b0c9e292fb05b339a513cf291cac86
   SKPhotoBrowser: 1fbfdc34979335f9ea0ace7dcc6b08c5e7326a8b
   SnapKit: 1ca44df72cfa543218d177cb8aab029d10d86ea7
   SwiftLocation: 1fe2e15a5812e961496e82eeaca71d03e829e47a
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
 
-PODFILE CHECKSUM: 556554013f76db8f3a3207df0c5708ce4906bb95
+PODFILE CHECKSUM: 8520a22b969309dbc225d50b3c95c1fe01bbeceb
 
 COCOAPODS: 1.3.1

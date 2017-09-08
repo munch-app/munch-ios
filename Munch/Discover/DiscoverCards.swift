@@ -19,6 +19,7 @@ let visibleTags: [String] = ["halal"]
  Card to display place content
  */
 class DiscoverPlaceCardView: DiscoverCardView {
+
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var firstLabel: UILabel!
     @IBOutlet weak var secondLabel: UILabel!

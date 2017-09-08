@@ -20,7 +20,6 @@ target 'Munch' do
 
   # UI Components Library
   pod 'ESTabBarController-swift', '~> 2.5'
-  pod 'Shimmer', '~> 1.0'
   pod 'SKPhotoBrowser', '~> 4.1'
   pod 'MXPagerView', '~> 0.2'
 

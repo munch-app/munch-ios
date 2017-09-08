@@ -150,9 +150,10 @@ extension UIImageView {
     /**
      Render PlaceImage to UIImageView
      PlaceImage will contain a ImageMeta to use for rendering
+     Shimmer is set to true by default
      */
-    func render(placeImage: Place.Image?) {
-        render(imageMeta: placeImage?.imageMeta)
+    func render(placeImage: Place.Image?, shimmer: Bool = true) {
+        render(imageMeta: placeImage?.imageMeta, shimmer: shimmer)
     }
     
     /**
@@ -160,8 +161,13 @@ extension UIImageView {
      Choose the smallest fitting image if available
      Else if the largest images if none fit
      If imageMeta is nil, image will be set to nil too
+     Shimmer is set to true by default
      */
-    func render(imageMeta: ImageMeta?) {
+    func render(imageMeta: ImageMeta?, shimmer: Bool = true) {
+        if (shimmer) {
+            startShimmering()
+        }
+        
         if let imageMeta = imageMeta {
             let size = frameSize()
             let images = imageMeta.imageList()
@@ -171,17 +177,26 @@ extension UIImageView {
             
             if let fit = fitting.get(0) {
                 // Found the smallest fitting image
-                kf.setImage(with: URL(string: fit.2))
+                setImage(url: URL(string: fit.2))
             } else {
                 // No fitting image found, take largest image
                 let images = images.sorted { $0.0 * $0.1 > $1.0 * $1.1 }
                 if let image = images.get(0) {
-                    kf.setImage(with: URL(string: image.2))
+                    setImage(url: URL(string: image.2))
                 }
             }
         } else {
             image = nil
         }
+    }
+    
+    private func setImage(url: URL?) {
+        kf.setImage(with: url, completionHandler: { (_, error, _, _) in
+            if (error == nil) {
+                // No Error, stop shimmering
+                self.stopShimmering()
+            }
+        })
     }
     
     /**
