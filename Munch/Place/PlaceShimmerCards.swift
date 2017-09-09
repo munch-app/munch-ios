@@ -11,10 +11,10 @@ import UIKit
 import SnapKit
 import Shimmer
 
-class PlaceShimmerImageBannerCardView: UICollectionViewCell, PlaceCardView {
+class PlaceShimmerImageBannerCardView: UITableViewCell, PlaceCardView {
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         let shimmerView = FBShimmeringView()
         let colorView = UIView()
@@ -24,6 +24,7 @@ class PlaceShimmerImageBannerCardView: UICollectionViewCell, PlaceCardView {
         self.addSubview(shimmerView)
         
         shimmerView.snp.makeConstraints { make in
+            make.height.equalTo(240)
             make.edges.equalTo(self).inset(UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0))
         }
     }
@@ -38,16 +39,12 @@ class PlaceShimmerImageBannerCardView: UICollectionViewCell, PlaceCardView {
     static var id: String {
         return "shimmer_PlaceShimmerImageBannerCardView"
     }
-    
-    static var height: CGFloat {
-        return 200
-    }
 }
 
-class PlaceShimmerNameCardView: UICollectionViewCell, PlaceCardView {
+class PlaceShimmerNameCardView: UITableViewCell, PlaceCardView {
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         let shimmerView = FBShimmeringView()
         let colorView = UIView()
@@ -57,6 +54,7 @@ class PlaceShimmerNameCardView: UICollectionViewCell, PlaceCardView {
         self.addSubview(shimmerView)
         
         shimmerView.snp.makeConstraints { make in
+            make.height.equalTo(40)
             make.edges.equalTo(self).inset(UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15))
         }
     }
@@ -71,6 +69,4 @@ class PlaceShimmerNameCardView: UICollectionViewCell, PlaceCardView {
     static var id: String {
         return "shimer_PlaceShimmerNameCardView"
     }
-    
-    static var height: CGFloat = 60
 }
