@@ -67,6 +67,6 @@ class PlaceShimmerNameCardView: UITableViewCell, PlaceCardView {
     }
     
     static var id: String {
-        return "shimer_PlaceShimmerNameCardView"
+        return "shimmer_PlaceShimmerNameCardView"
     }
 }

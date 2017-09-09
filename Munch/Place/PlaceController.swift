@@ -39,14 +39,14 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         registerCards()
         loadShimmerCards()
         
-//        MunchApi.places.cards(id: placeId) { meta, cards in
-//            if (meta.isOk()) {
-//                self.cards = cards
-//                self.collectionView.reloadData()
-//            } else {
-//                self.present(meta.createAlert(), animated: true)
-//            }
-//        }
+        MunchApi.places.cards(id: placeId) { meta, cards in
+            if (meta.isOk()) {
+                self.cards = cards
+                self.cardTableView.reloadData()
+            } else {
+                self.present(meta.createAlert(), animated: true)
+            }
+        }
     }
     
     private func loadShimmerCards() {
@@ -60,18 +60,16 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
 // CardType and tools
 extension PlaceViewController {
     func registerCards() {
+        // Register Static Cards
+        register(PlaceStaticEmptyCardView.self)
+        
         // Register Shimmer Cards
         register(PlaceShimmerImageBannerCardView.self)
         register(PlaceShimmerNameCardView.self)
-    }
-    
-    func findCardType(card: PlaceCard) -> (String, PlaceCardView.Type)? {
-        for type in cardTypes {
-            if (type.value.id == card.id) {
-                return type
-            }
-        }
-        return nil
+        
+        // Register Place Cards
+        register(PlaceNameCardView.self)
+        register(PlaceImageBannerCardView.self)
     }
     
     private func register(_ cellClass: PlaceCardView.Type) {
@@ -93,8 +91,8 @@ extension PlaceViewController {
             return cardView as! UITableViewCell
         }
         
-        // TODO Implement a 0 height space
-        return UITableViewCell()
+        // Static Empty CardView
+        return cardTableView.dequeueReusableCell(withIdentifier: PlaceStaticEmptyCardView.id)!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -107,4 +105,22 @@ protocol PlaceCardView {
     func render(card: PlaceCard)
     
     static var id: String { get }
+}
+
+class PlaceStaticEmptyCardView: UITableViewCell, PlaceCardView {
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func render(card: PlaceCard) {
+    }
+    
+    static var id: String {
+        return "static_PlaceStaticEmptyCardView"
+    }
 }
