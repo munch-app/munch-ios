@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import MapKit
 
 class BasicImageBannerCardView: UITableViewCell, PlaceCardView {
     let imageGradientView = UIView()
@@ -85,8 +86,28 @@ class BasicNameCardView: UITableViewCell, PlaceCardView {
 }
 
 class BasicTagCardView: UITableViewCell, PlaceCardView {
-    func render(card: PlaceCard) {
+    let tagLabel = UILabel()
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
         
+        tagLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightMedium)
+        tagLabel.numberOfLines = 1
+        self.addSubview(tagLabel)
+        
+        tagLabel.snp.makeConstraints { make in
+            make.edges.equalTo(self).inset(UIEdgeInsets(topBottom: topBottom, leftRight: leftRight))
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func render(card: PlaceCard) {
+        let tags = card["tags"].map{ $0.1.stringValue.capitalized }
+        tagLabel.text = tags.joined(separator: ", ")
     }
     
     static var id: String {
@@ -94,9 +115,132 @@ class BasicTagCardView: UITableViewCell, PlaceCardView {
     }
 }
 
-class BasicLocationDetailCard: UITableViewCell, PlaceCardView {
-    func render(card: PlaceCard) {
+class BasicBusinessHourCard: UITableViewCell, PlaceCardView {
+    let openingLabel = UILabel()
+    let hoursLabel = UILabel()
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
         
+        openingLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightRegular)
+        openingLabel.numberOfLines = 1
+        self.addSubview(openingLabel)
+        
+        hoursLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightRegular)
+        hoursLabel.numberOfLines = 0
+        self.addSubview(hoursLabel)
+        
+        openingLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(leftRight)
+            
+            make.top.equalTo(self)
+            make.height.equalTo(20)
+        }
+        
+        hoursLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(leftRight)
+            
+            make.top.equalTo(openingLabel.snp.bottom)
+            make.bottom.equalTo(self).inset(topBottom)
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func render(card: PlaceCard) {
+        // TODO
+        openingLabel.text = "Open Now:"
+        hoursLabel.text = "Hour Label: 10am - 8pm"
+    }
+    
+    static var id: String {
+        return "basic_BusinessHour_07092017"
+    }
+}
+
+class BasicLocationDetailCard: UITableViewCell, PlaceCardView {
+    let lineOneLabel = UILabel()
+    let lineTwoLabel = UILabel()
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+    
+        lineOneLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFontWeightRegular)
+        lineOneLabel.numberOfLines = 0
+        self.addSubview(lineOneLabel)
+        
+        lineTwoLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFontWeightRegular)
+        lineTwoLabel.numberOfLines = 1
+        self.addSubview(lineTwoLabel)
+        
+        lineOneLabel.snp.makeConstraints { make in
+            make.height.equalTo(lineTwoLabel)
+            make.top.equalTo(self).inset(topBottom)
+            make.bottom.equalTo(lineTwoLabel.snp.top)
+            
+            make.left.right.equalTo(self).inset(leftRight)
+        }
+        
+        lineTwoLabel.snp.makeConstraints { make in
+            make.height.equalTo(lineOneLabel)
+            make.top.equalTo(lineOneLabel.snp.bottom)
+            make.bottom.equalTo(self).inset(topBottom)
+            
+            make.left.right.equalTo(self).inset(leftRight)
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func render(card: PlaceCard) {
+        render(lineOne: card)
+        render(lineTwo: card)
+    }
+    
+    private func render(lineOne card: PlaceCard) {
+        var line = [String]()
+        
+        if let latLng = card["location"]["latLng"].string, MunchLocation.enabled {
+            if let distance = MunchLocation.distance(asMetric: latLng) {
+                line.append(distance)
+            }
+        }
+        
+        if let nearestTrain = card["location"]["nearestTrain"].string {
+            line.append(nearestTrain + " MRT")
+        }
+        
+        lineTwoLabel.text = line.joined(separator: " • ")
+    }
+    
+    private func render(lineTwo card: PlaceCard) {
+        let location = card["location"]
+        var line = [String]()
+        
+        if let street = location["street"].string {
+            line.append(street)
+        }
+        
+        if let unitNumber = location["unitNumber"].string {
+            line.append(unitNumber)
+        }
+        
+        if let city = location["city"].string, let postal = location["postal"].string {
+            line.append("\(city) \(postal)")
+        }
+        
+        if (line.isEmpty) {
+            let address = card["location"]["address"].string
+            lineOneLabel.text = address
+        } else {
+            lineOneLabel.text = line.joined(separator: ", ")
+        }
     }
     
     static var id: String {
@@ -105,8 +249,42 @@ class BasicLocationDetailCard: UITableViewCell, PlaceCardView {
 }
 
 class BasicLocationMapCard: UITableViewCell, PlaceCardView {
-    func render(card: PlaceCard) {
+    let mapView = MKMapView()
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
         
+        mapView.isUserInteractionEnabled = false
+        mapView.showsUserLocation = true
+        self.addSubview(mapView)
+        
+        mapView.snp.makeConstraints { make in
+            make.height.equalTo(280)
+            make.top.bottom.equalTo(topBottom)
+            make.left.right.equalTo(self)
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func render(card: PlaceCard) {
+        if let coordinate = CLLocation(latLng: card["location"]["latLng"].stringValue)?.coordinate {
+            var region = MKCoordinateRegion()
+            region.center.latitude = coordinate.latitude
+            region.center.longitude = coordinate.longitude
+            region.span.latitudeDelta = 0.005
+            region.span.longitudeDelta = 0.005
+            mapView.setRegion(region, animated: false)
+            
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = coordinate
+            annotation.title = "Something"
+            annotation.subtitle = "What"
+            mapView.addAnnotation(annotation)
+        }
     }
     
     static var id: String {

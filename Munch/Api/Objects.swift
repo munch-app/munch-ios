@@ -162,10 +162,11 @@ struct Place: CardItem, Equatable {
 
 /**
  Basic and Vendor typed Cards
+ Access json through the subscript
  */
 struct PlaceCard {
     var id: String
-    var json: JSON
+    private var json: JSON
     
     init(id: String) {
         self.id = id

@@ -10,6 +10,7 @@ target 'Munch' do
   pod 'SwiftLocation', ' ~> 2.0'
   pod 'Kingfisher', ' ~> 3.12'
   pod 'SnapKit', '~> 3.2'
+  pod 'SwiftRichString', '~> 0.9'
 
   # Transition Library
   pod 'KMNavigationBarTransition', :git => 'https://github.com/Fuxingloh/KMNavigationBarTransition'

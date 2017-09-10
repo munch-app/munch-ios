@@ -25,8 +25,8 @@ class ShimmerImageBannerCardView: UITableViewCell, PlaceCardView {
         self.addSubview(shimmerView)
         
         shimmerView.snp.makeConstraints { make in
-            make.height.equalTo(240)
-            make.edges.equalTo(self).inset(UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0))
+            make.height.equalTo(260)
+            make.edges.equalTo(self).inset(UIEdgeInsets(top: 0, left: 0, bottom: topBottom, right: 0))
         }
     }
     
@@ -57,7 +57,7 @@ class ShimmerNameCardView: UITableViewCell, PlaceCardView {
         
         shimmerView.snp.makeConstraints { make in
             make.height.equalTo(40)
-            make.edges.equalTo(self).inset(UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15))
+            make.edges.equalTo(self).inset(UIEdgeInsets(topBottom: topBottom, leftRight: leftRight))
         }
     }
     

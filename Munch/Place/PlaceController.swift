@@ -88,6 +88,10 @@ extension PlaceViewController {
         // Register Place Cards
         register(BasicNameCardView.self)
         register(BasicImageBannerCardView.self)
+        register(BasicTagCardView.self)
+        register(BasicLocationDetailCard.self)
+        register(BasicLocationMapCard.self)
+        register(BasicBusinessHourCard.self)
     }
     
     private func register(_ cellClass: PlaceCardView.Type) {
