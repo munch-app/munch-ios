@@ -11,6 +11,7 @@ import UIKit
 import RealmSwift
 import SwiftyJSON
 import Kingfisher
+import Shimmer
 
 extension UIColor {
     convenience init(hex: String) {
@@ -165,7 +166,9 @@ extension UIImageView {
      */
     func render(imageMeta: ImageMeta?, shimmer: Bool = true) {
         if (shimmer) {
-            startShimmering()
+            let shimmering = FBShimmeringLayer()
+            shimmering.isShimmering = true
+            self.layer.mask = shimmering
         }
         
         if let imageMeta = imageMeta {
@@ -194,7 +197,7 @@ extension UIImageView {
         kf.setImage(with: url, completionHandler: { (_, error, _, _) in
             if (error == nil) {
                 // No Error, stop shimmering
-                self.stopShimmering()
+                self.layer.mask = nil
             }
         })
     }
@@ -203,6 +206,7 @@ extension UIImageView {
      Return width and height in pixel
      */
     private func frameSize() -> (Int, Int) {
+        layoutIfNeeded()
         let scale = UIScreen.main.scale
         let width = frame.size.width
         let height = frame.size.height

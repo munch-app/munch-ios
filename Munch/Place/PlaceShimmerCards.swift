@@ -11,10 +11,11 @@ import UIKit
 import SnapKit
 import Shimmer
 
-class PlaceShimmerImageBannerCardView: UITableViewCell, PlaceCardView {
+class ShimmerImageBannerCardView: UITableViewCell, PlaceCardView {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
         
         let shimmerView = FBShimmeringView()
         let colorView = UIView()
@@ -41,10 +42,11 @@ class PlaceShimmerImageBannerCardView: UITableViewCell, PlaceCardView {
     }
 }
 
-class PlaceShimmerNameCardView: UITableViewCell, PlaceCardView {
+class ShimmerNameCardView: UITableViewCell, PlaceCardView {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
         
         let shimmerView = FBShimmeringView()
         let colorView = UIView()

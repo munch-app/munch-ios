@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
     var placeId: String!
     var cards = [PlaceCard]()
     var cardTypes = [String: PlaceCardView.Type]()
@@ -22,6 +22,24 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         navigationController?.setNavigationBarHidden(false, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
+    
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        setBarStyle(whiteBackground: false)
+    }
+    
+    private func setBarStyle(whiteBackground: Bool) {
+        if (whiteBackground) {
+            navigationController?.navigationBar.barStyle = .default
+            navigationItem.leftBarButtonItem!.tintColor = UIColor.black
+        } else {
+            navigationController?.navigationBar.barStyle = .blackTranslucent
+            navigationItem.leftBarButtonItem!.tintColor = UIColor.white
+        }
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
     }
     
     override func viewDidLoad() {
@@ -50,8 +68,8 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     private func loadShimmerCards() {
-        cards.append(PlaceCard(id: PlaceShimmerImageBannerCardView.id))
-        cards.append(PlaceCard(id: PlaceShimmerNameCardView.id))
+        cards.append(PlaceCard(id: ShimmerImageBannerCardView.id))
+        cards.append(PlaceCard(id: ShimmerNameCardView.id))
         cardTableView.reloadData()
     }
 }
@@ -61,15 +79,15 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
 extension PlaceViewController {
     func registerCards() {
         // Register Static Cards
-        register(PlaceStaticEmptyCardView.self)
+        register(StaticEmptyCardView.self)
         
         // Register Shimmer Cards
-        register(PlaceShimmerImageBannerCardView.self)
-        register(PlaceShimmerNameCardView.self)
+        register(ShimmerImageBannerCardView.self)
+        register(ShimmerNameCardView.self)
         
         // Register Place Cards
-        register(PlaceNameCardView.self)
-        register(PlaceImageBannerCardView.self)
+        register(BasicNameCardView.self)
+        register(BasicImageBannerCardView.self)
     }
     
     private func register(_ cellClass: PlaceCardView.Type) {
@@ -92,7 +110,7 @@ extension PlaceViewController {
         }
         
         // Static Empty CardView
-        return cardTableView.dequeueReusableCell(withIdentifier: PlaceStaticEmptyCardView.id)!
+        return cardTableView.dequeueReusableCell(withIdentifier: StaticEmptyCardView.id)!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -104,13 +122,30 @@ extension PlaceViewController {
 protocol PlaceCardView {
     func render(card: PlaceCard)
     
+    var leftRight: CGFloat { get }
+    var topBottom: CGFloat { get }
+    
     static var id: String { get }
 }
 
-class PlaceStaticEmptyCardView: UITableViewCell, PlaceCardView {
+extension PlaceCardView {
+    var leftRight: CGFloat {
+        return 24.0
+    }
+    
+    var topBottom: CGFloat {
+        return 10.0
+    }
+}
+
+class StaticEmptyCardView: UITableViewCell, PlaceCardView {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.backgroundColor = UIColor.black
+        self.snp.makeConstraints { make in
+            make.height.equalTo(0)
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {

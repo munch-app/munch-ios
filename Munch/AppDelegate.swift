@@ -23,7 +23,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Select initial view provider to use
         self.window?.rootViewController = InitialViewProvider.main()
         self.window?.makeKeyAndVisible()
-        
         return true
     }
 
