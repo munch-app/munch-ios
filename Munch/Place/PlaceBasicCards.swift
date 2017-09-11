@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import MapKit
+import SwiftRichString
 
 class BasicImageBannerCardView: UITableViewCell, PlaceCardView {
     let imageGradientView = UIView()
@@ -47,12 +48,14 @@ class BasicImageBannerCardView: UITableViewCell, PlaceCardView {
     }
     
     func render(card: PlaceCard) {
-        let imageMeta = ImageMeta(json: card["image"])
-        imageBannerView.render(imageMeta: imageMeta)
+        let imageMeta = card["images"][0]["imageMeta"]
+        if (imageMeta.exists()) {
+            imageBannerView.render(imageMeta: ImageMeta(json: imageMeta))
+        }
     }
     
     static var id: String {
-        return "basic_ImageBanner_06092017"
+        return "basic_ImageBanner_11092017"
     }
 }
 
@@ -151,9 +154,61 @@ class BasicBusinessHourCard: UITableViewCell, PlaceCardView {
     }
     
     func render(card: PlaceCard) {
-        // TODO
-        openingLabel.text = "Open Now:"
-        hoursLabel.text = "Hour Label: 10am - 8pm"
+        let hours = card["hours"].flatMap { Place.Hour(json: $0.1) }
+            .sorted { $0.0.open > $0.1.open }
+        
+        if Place.Hour.Formatter.isOpen(hours: hours) ?? false {
+            openingLabel.attributedText = "Open Now:".set(style: Style.default {
+                $0.color = UIColor.secondary
+            })
+        } else {
+            openingLabel.attributedText = "Closed Now:".set(style: Style.default {
+                $0.color = UIColor.primary
+            })
+        }
+        
+        var dayHours = [String: String]()
+        for hour in hours {
+            if let timeText = dayHours[hour.day] {
+                dayHours[hour.day] = timeText + ", " + hour.timeText()
+            } else {
+                dayHours[hour.day] = hour.timeText()
+            }
+        }
+        
+        let dayNow = Place.Hour.Formatter.dayNow()
+        
+        func createLine(day: String, append: String = "\n") -> NSAttributedString {
+            let text: String
+            
+            if let time = dayHours[day] {
+                text = "\(day.capitalized): \(time) \(append)"
+            } else {
+                text = "\(day.capitalized): Closed \(append)"
+            }
+            
+            
+            if (day == dayNow) {
+                return text.set(style: Style.default {
+                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightMedium))
+                })
+            }
+            
+            return NSAttributedString(string: text)
+        }
+        
+        let hourText = NSMutableAttributedString()
+        hourText.append(createLine(day: "mon"))
+        hourText.append(createLine(day: "tue"))
+        hourText.append(createLine(day: "wed"))
+        hourText.append(createLine(day: "thu"))
+        hourText.append(createLine(day: "fri"))
+        hourText.append(createLine(day: "sat"))
+        hourText.append(createLine(day: "sun"))
+        hourText.append(createLine(day: "ph"))
+        hourText.append(createLine(day: "evePh", append: ""))
+        
+        hoursLabel.attributedText = hourText
     }
     
     static var id: String {
@@ -168,7 +223,7 @@ class BasicLocationDetailCard: UITableViewCell, PlaceCardView {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
-    
+        
         lineOneLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFontWeightRegular)
         lineOneLabel.numberOfLines = 0
         self.addSubview(lineOneLabel)

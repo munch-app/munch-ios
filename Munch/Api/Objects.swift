@@ -47,7 +47,7 @@ struct Place: CardItem, Equatable {
         self.location = Location(json: json["location"])
         
         self.tags = json["tags"].map { $0.1.stringValue }
-        self.hours = json["hours"].map { Hour(json: $0.1) }
+        self.hours = json["hours"].flatMap { Hour(json: $0.1) }
         self.images = json["images"].map { Image(json: $0.1) }
     }
     
@@ -102,10 +102,6 @@ struct Place: CardItem, Equatable {
         var source: String?
         var imageMeta: ImageMeta?
         
-        init() {
-            
-        }
-        
         init(json: JSON) {
             self.source = json["source"].string
             self.imageMeta = ImageMeta(json: json["imageMeta"])
@@ -120,34 +116,89 @@ struct Place: CardItem, Equatable {
      TODO improve with enum type for day
      */
     struct Hour {
-        var day: String?
-        var open: String?
-        var close: String?
+        let day: String
+        let open: String
+        let close: String
         
-        init() {
-            
+        init?(json: JSON) {
+            if let day = json["day"].string, let open = json["open"].string, let close = json["close"].string {
+                self.day = day
+                self.open = open
+                self.close = close
+            }
+            return nil
         }
         
-        init(json: JSON) {
-            self.day = json["day"].string
-            self.open = json["open"].string
-            self.close = json["close"].string
+        func timeText() -> String {
+            return Formatter.parse(open: open, close: close)
+        }
+        
+        class Formatter {
+            private let inFormatter = DateFormatter()
+            private let outFormatter = DateFormatter()
+            private let dayFormatter = DateFormatter()
+            
+            init() {
+                inFormatter.locale = Locale(identifier: "en_US_POSIX")
+                inFormatter.dateFormat = "HH:mm"
+                
+                outFormatter.locale = Locale(identifier: "en_US_POSIX")
+                outFormatter.dateFormat = "h:mma"
+                outFormatter.amSymbol = "am"
+                outFormatter.pmSymbol = "pm"
+                
+                dayFormatter.dateFormat = "EEE"
+            }
+            
+            private static let instance = Formatter()
+            
+            class func parse(open: String, close: String) -> String {
+                return "\(parse(time: open)) - \(parse(time: close))"
+            }
+            
+            class func parse(time: String) -> String {
+                let date = instance.inFormatter.date(from: time)
+                return instance.outFormatter.string(from: date!)
+            }
+            
+            class func dayNow() -> String {
+                return instance.dayFormatter.string(from: Date())
+            }
+            
+            class func isBetween(hour: Place.Hour, date: Date) -> Bool {
+                let now = Int(instance.inFormatter.string(from: date).replacingOccurrences(of: ":", with: ""))
+                let open = Int(hour.open.replacingOccurrences(of: ":", with: ""))
+                let close = Int(hour.close.replacingOccurrences(of: ":", with: ""))
+                
+                if let open = open, let close = close, let now = now {
+                    return open < now && now < close
+                }
+                return false
+            }
+            
+            class func isOpen(hours: [Hour]) -> Bool? {
+                if (hours.isEmpty) { return nil }
+                
+                let date = Date()
+                let day = dayNow().lowercased()
+                let todays = hours.filter { $0.day == day }
+                
+                for today in todays {
+                    if (isBetween(hour: today, date: date)) {
+                        return true
+                    }
+                }
+                return false
+            }
         }
     }
     
+    /**
+     Check whether place is open now based on hours in Place
+     */
     func isOpen() -> Bool? {
         if let hours = hours {
-            if (hours.isEmpty) { return nil }
-            
-            let date = Date()
-            let day = HourFormatter.instance.dayNow().lowercased()
-            let todays = hours.filter { $0.day == day }
-            for today in todays {
-                if let open = HourFormatter.instance.isBetween(hour: today, date: date) {
-                    if (open) { return true }
-                }
-            }
-            return false
+            return Hour.Formatter.isOpen(hours: hours)
         }
         return nil
     }
@@ -410,160 +461,6 @@ protocol SearchResult {
 }
 
 /**
- Format hour in String
- Example:
- Mon - Fri: 11:00am - 8:00pm
- Sat - Sun: 12:00am - 10:00pm
- */
-class HourFormatter {
-    static let instance = HourFormatter()
-    static let daysOrder = [
-        "mon": 1,
-        "tue": 2,
-        "wed": 3,
-        "thu": 4,
-        "fri": 5,
-        "sat": 6,
-        "sun": 7,
-        "ph": 100,
-        "evePh": 1000
-    ]
-    
-    let inFormatter = DateFormatter()
-    let outFormatter = DateFormatter()
-    let dayFormatter = DateFormatter()
-    
-    init() {
-        inFormatter.locale = Locale(identifier: "en_US_POSIX")
-        inFormatter.dateFormat = "HH:mm"
-        
-        outFormatter.locale = Locale(identifier: "en_US_POSIX")
-        outFormatter.dateFormat = "h:mma"
-        outFormatter.amSymbol = "am"
-        outFormatter.pmSymbol = "pm"
-        
-        dayFormatter.dateFormat = "EEE"
-    }
-    
-    /**
-     Accepts: Time in String
-     Format time to 10:00am
-    */
-    func format(time: String) -> String {
-        let date = inFormatter.date(from: time)
-        return outFormatter.string(from: date!)
-    }
-    
-    func dayNow() -> String {
-        return dayFormatter.string(from: Date())
-    }
-    
-    func isBetween(hour: Place.Hour, date: Date) -> Bool? {
-        let now = inFormatter.string(from: date).replacingOccurrences(of: ":", with: "")
-        if let open = hour.open?.replacingOccurrences(of: ":", with: ""),
-            let close = hour.close?.replacingOccurrences(of: ":", with: "") {
-            if let openI = Int(open), let closeI = Int(close), let nowI = Int(now) {
-                return openI < nowI && nowI < closeI
-            }
-        }
-        return nil
-    }
-    
-    /**
-     Accepts: Hour
-     Format hour open to String: 10:00am - 3:00pm
-    */
-    func format(hour: Place.Hour) -> String {
-        let open = format(time: hour.open!)
-        let close = format(time: hour.close!)
-        return "\(open) - \(close)"
-    }
-    
-    class func format(hours: [Place.Hour]) -> String? {
-        if (hours.isEmpty) { return nil }
-        
-        // Sort by open time and days in asc order
-        let sorted = hours.sorted(by: { $0.0.open! <  $0.1.open! })
-            .sorted(by: {daysOrder[$0.0.day!]! < daysOrder[$0.1.day!]!})
-        
-        // Compact into day lines, (day, time)
-        var dayLines: [(String, String)] = []
-        for hour in sorted {
-            if dayLines.last?.0 == hour.day {
-                let last = dayLines.popLast()
-                dayLines.append((hour.day!, "\(last!.1 ), \(instance.format(hour: hour))"))
-            } else {
-                // Else add new line
-                dayLines.append((hour.day!, instance.format(hour: hour)))
-            }
-        }
-        
-        // Compact days into smaller lines if similar, (day, day, time)
-        var rangeLines: [(String, String, String)] = []
-        for dayLine in dayLines {
-            if (rangeLines.last?.2 == dayLine.1) {
-                let last = rangeLines.popLast()
-                rangeLines.append((last!.0, dayLine.0, dayLine.1))
-            } else {
-                rangeLines.append((dayLine.0, dayLine.0, dayLine.1))
-            }
-        }
-        
-        // If first and last are the same, join them
-//        if (rangeLines.count > 2) {
-//            if (rangeLines.first?.2 == rangeLines.last?.2) {
-//                let last = rangeLines.popLast()
-//                let first = rangeLines.first
-//                first?.0
-//            }
-//        }
-        return rangeLines.map({
-            if ($0.0 == $0.1) {
-                return "\($0.0.capitalized): \($0.2)"
-            } else {
-                return "\($0.0.capitalized) - \($0.1.capitalized): \($0.2)"
-            }
-        }).joined(separator: "\n")
-    }
-    
-    /**
-     Accepts: Array of Hour
-     Format hours to packed: "Mon - Fri: 10:00am - 3:00pm" joined by \n
-    */
-//    class func format(hours: [Place.Hour]) -> String? {
-//        if (hours.isEmpty) { return nil }
-//        
-//        // Sorted opening hours
-//        let sorted = hours.sorted(by: {daysOrder[$0.0.day!]! < daysOrder[$0.1.day!]!})
-//        var lines = [String]()
-//        var tuple: (String, String, String)! = nil
-//        
-//        func make() -> String {
-//            if (tuple.1 == tuple.2) {
-//                return "\(tuple.1.capitalized): \(tuple.0)"
-//            } else {
-//                return "\(tuple.1.capitalized) - \(tuple.2.capitalized): \(tuple.0)"
-//            }
-//        }
-//        
-//        for hour in sorted {
-//            if (tuple == nil) {
-//                tuple = (hour.rangeText(), hour.day!, hour.day!)
-//            } else {
-//                if (tuple.0 == hour.rangeText() && (daysOrder[tuple.2]! + 1) == daysOrder[hour.day!]) {
-//                    tuple.2 = hour.day!
-//                }else{
-//                    lines.append(make())
-//                    tuple = (hour.rangeText(), hour.day!, hour.day!)
-//                }
-//            }
-//        }
-//        lines.append(make())
-//        return lines.joined(separator: "\n")
-//    }
-}
-
-/**
  Primary data type from munch-core/service-gallery
  it is a version of Instagram Media
  */
@@ -636,7 +533,7 @@ struct Article {
  */
 struct ImageMeta {
     var key: String?
-    var images: [String: String]
+    let images: [String: String]
     
     init(images: [String: String]) {
         self.images = images
