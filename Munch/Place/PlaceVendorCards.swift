@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class VendorArticleGridCard: UITableViewCell, PlaceCardView {
+class PlaceVendorArticleGridCard: UITableViewCell, PlaceCardView {
     let titleLabel = UILabel()
     let seeMoreBtn = UIButton()
     let articleView1 = ArticleGridView()

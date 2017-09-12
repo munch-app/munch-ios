@@ -11,7 +11,7 @@ import UIKit
 import SnapKit
 import Shimmer
 
-class StaticEmptyCardView: UITableViewCell, PlaceCardView {
+class PlaceStaticEmptyCard: UITableViewCell, PlaceCardView {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -29,11 +29,11 @@ class StaticEmptyCardView: UITableViewCell, PlaceCardView {
     }
     
     static var id: String {
-        return "static_PlaceStaticEmptyCardView"
+        return "static_PlaceStaticEmptyCard"
     }
 }
 
-class ShimmerImageBannerCardView: UITableViewCell, PlaceCardView {
+class PlaceShimmerImageBannerCard: UITableViewCell, PlaceCardView {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -60,11 +60,11 @@ class ShimmerImageBannerCardView: UITableViewCell, PlaceCardView {
     }
     
     static var id: String {
-        return "shimmer_PlaceShimmerImageBannerCardView"
+        return "shimmer_PlaceShimmerImageBannerCard"
     }
 }
 
-class ShimmerNameCardView: UITableViewCell, PlaceCardView {
+class PlaceShimmerNameTagCard: UITableViewCell, PlaceCardView {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -91,6 +91,6 @@ class ShimmerNameCardView: UITableViewCell, PlaceCardView {
     }
     
     static var id: String {
-        return "shimmer_PlaceShimmerNameCardView"
+        return "shimmer_PlaceShimmerNameTagCard"
     }
 }

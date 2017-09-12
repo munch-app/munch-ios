@@ -68,8 +68,8 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     private func loadShimmerCards() {
-        cards.append(PlaceCard(id: ShimmerImageBannerCardView.id))
-        cards.append(PlaceCard(id: ShimmerNameCardView.id))
+        cards.append(PlaceCard(id: PlaceShimmerImageBannerCard.id))
+        cards.append(PlaceCard(id: PlaceShimmerNameTagCard.id))
         cardTableView.reloadData()
     }
 }
@@ -79,19 +79,17 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
 extension PlaceViewController {
     func registerCards() {
         // Register Static Cards
-        register(StaticEmptyCardView.self)
+        register(PlaceStaticEmptyCard.self)
         
         // Register Shimmer Cards
-        register(ShimmerImageBannerCardView.self)
-        register(ShimmerNameCardView.self)
+        register(PlaceShimmerImageBannerCard.self)
+        register(PlaceShimmerNameTagCard.self)
         
         // Register Place Cards
-        register(BasicNameCardView.self)
-        register(BasicImageBannerCardView.self)
-        register(BasicTagCardView.self)
-        register(BasicLocationDetailCard.self)
-        register(BasicLocationMapCard.self)
-        register(BasicBusinessHourCard.self)
+        register(PlaceBasicNameTagCard.self)
+        register(PlaceBasicImageBannerCard.self)
+        register(PlaceBasicLocationCard.self)
+        register(PlaceBasicBusinessHourCard.self)
     }
     
     private func register(_ cellClass: PlaceCardView.Type) {
@@ -114,7 +112,7 @@ extension PlaceViewController {
         }
         
         // Static Empty CardView
-        return cardTableView.dequeueReusableCell(withIdentifier: StaticEmptyCardView.id)!
+        return cardTableView.dequeueReusableCell(withIdentifier: PlaceStaticEmptyCard.id)!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

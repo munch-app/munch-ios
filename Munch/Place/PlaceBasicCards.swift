@@ -11,7 +11,7 @@ import UIKit
 import MapKit
 import SwiftRichString
 
-class BasicImageBannerCardView: UITableViewCell, PlaceCardView {
+class PlaceBasicImageBannerCard: UITableViewCell, PlaceCardView {
     let imageGradientView = UIView()
     let imageBannerView = UIImageView()
     
@@ -59,8 +59,9 @@ class BasicImageBannerCardView: UITableViewCell, PlaceCardView {
     }
 }
 
-class BasicNameCardView: UITableViewCell, PlaceCardView {
+class PlaceBasicNameTagCard: UITableViewCell, PlaceCardView {
     let nameLabel = UILabel()
+    // TODO Tag Label
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -84,41 +85,11 @@ class BasicNameCardView: UITableViewCell, PlaceCardView {
     }
     
     static var id: String {
-        return "basic_Name_06092017"
+        return "basic_NameTag_12092017"
     }
 }
 
-class BasicTagCardView: UITableViewCell, PlaceCardView {
-    let tagLabel = UILabel()
-    
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-        
-        tagLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightMedium)
-        tagLabel.numberOfLines = 1
-        self.addSubview(tagLabel)
-        
-        tagLabel.snp.makeConstraints { make in
-            make.edges.equalTo(self).inset(UIEdgeInsets(topBottom: topBottom, leftRight: leftRight))
-        }
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func render(card: PlaceCard) {
-        let tags = card["tags"].map{ $0.1.stringValue.capitalized }
-        tagLabel.text = tags.joined(separator: ", ")
-    }
-    
-    static var id: String {
-        return "basic_Tag_07092017"
-    }
-}
-
-class BasicBusinessHourCard: UITableViewCell, PlaceCardView {
+class PlaceBasicBusinessHourCard: UITableViewCell, PlaceCardView {
     let openingLabel = UILabel()
     let hoursLabel = UILabel()
     
@@ -216,7 +187,7 @@ class BasicBusinessHourCard: UITableViewCell, PlaceCardView {
     }
 }
 
-class BasicLocationDetailCard: UITableViewCell, PlaceCardView {
+class PlaceBasicLocationCard: UITableViewCell, PlaceCardView {
     let lineOneLabel = UILabel()
     let lineTwoLabel = UILabel()
     
@@ -299,50 +270,6 @@ class BasicLocationDetailCard: UITableViewCell, PlaceCardView {
     }
     
     static var id: String {
-        return "basic_LocationDetail_07092017"
-    }
-}
-
-class BasicLocationMapCard: UITableViewCell, PlaceCardView {
-    let mapView = MKMapView()
-    
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-        
-        mapView.isUserInteractionEnabled = false
-        mapView.showsUserLocation = true
-        self.addSubview(mapView)
-        
-        mapView.snp.makeConstraints { make in
-            make.height.equalTo(280)
-            make.top.bottom.equalTo(topBottom)
-            make.left.right.equalTo(self)
-        }
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func render(card: PlaceCard) {
-        if let coordinate = CLLocation(latLng: card["location"]["latLng"].stringValue)?.coordinate {
-            var region = MKCoordinateRegion()
-            region.center.latitude = coordinate.latitude
-            region.center.longitude = coordinate.longitude
-            region.span.latitudeDelta = 0.005
-            region.span.longitudeDelta = 0.005
-            mapView.setRegion(region, animated: false)
-            
-            let annotation = MKPointAnnotation()
-            annotation.coordinate = coordinate
-            annotation.title = "Something"
-            annotation.subtitle = "What"
-            mapView.addAnnotation(annotation)
-        }
-    }
-    
-    static var id: String {
-        return "basic_LocationMap_10092017"
+        return "basic_Location_12092017"
     }
 }
