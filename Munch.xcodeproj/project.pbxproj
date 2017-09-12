@@ -12,9 +12,9 @@
 		032F89061E82DFA300AD3818 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 032F89041E82DFA300AD3818 /* LaunchScreen.storyboard */; };
 		032F89111E82DFA300AD3818 /* MunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F89101E82DFA300AD3818 /* MunchTests.swift */; };
 		032F891C1E82DFA300AD3818 /* MunchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F891B1E82DFA300AD3818 /* MunchUITests.swift */; };
-		033E62F11F1C116300AE97FA /* DiscoverCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033E62EF1F1C116300AE97FA /* DiscoverCards.swift */; };
-		033E62F21F1C116300AE97FA /* DiscoverCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033E62F01F1C116300AE97FA /* DiscoverCollection.swift */; };
-		033E62F61F1CA07E00AE97FA /* DiscoverContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033E62F51F1CA07E00AE97FA /* DiscoverContainer.swift */; };
+		033E62F11F1C116300AE97FA /* DiscoveryCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033E62EF1F1C116300AE97FA /* DiscoveryCards.swift */; };
+		033E62F21F1C116300AE97FA /* DiscoveryCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033E62F01F1C116300AE97FA /* DiscoveryCollection.swift */; };
+		033E62F61F1CA07E00AE97FA /* DiscoveryContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 033E62F51F1CA07E00AE97FA /* DiscoveryContainer.swift */; };
 		033E62F81F1D381F00AE97FA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 033E62F71F1D381F00AE97FA /* Main.storyboard */; };
 		0378849B1E8E563E006025B5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0378849A1E8E563E006025B5 /* Extensions.swift */; };
 		038275781F03B7A700C5954A /* Munch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038275771F03B7A700C5954A /* Munch.swift */; };
@@ -32,9 +32,9 @@
 		03D3FEE51E89494600ACFF50 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89331E82F14A00AD3818 /* SwiftyJSON.framework */; };
 		03D3FEF01E8A647E00ACFF50 /* SwiftLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */; };
 		03D3FEF41E8A8DB500ACFF50 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEF21E8A8DA500ACFF50 /* SDWebImage.framework */; };
-		03E216A51EFA005300465BE3 /* Discover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 03E216A41EFA005300465BE3 /* Discover.storyboard */; };
-		03E216A71EFA006900465BE3 /* DiscoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E216A61EFA006900465BE3 /* DiscoverController.swift */; };
-		03E216AF1EFAD80A00465BE3 /* DiscoverPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E216AE1EFAD80A00465BE3 /* DiscoverPopover.swift */; };
+		03E216A51EFA005300465BE3 /* Discovery.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 03E216A41EFA005300465BE3 /* Discovery.storyboard */; };
+		03E216A71EFA006900465BE3 /* DiscoveryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E216A61EFA006900465BE3 /* DiscoveryController.swift */; };
+		03E216AF1EFAD80A00465BE3 /* DiscoveryPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E216AE1EFAD80A00465BE3 /* DiscoveryPopover.swift */; };
 		12855D04BD7B4359954CC379 /* Pods_MunchTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30933A940AE4DF2E7F80A839 /* Pods_MunchTests.framework */; };
 		DB136C8B43E175A72028D87F /* Pods_MunchUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2CE8E9F738C2A64071DD8B3 /* Pods_MunchUITests.framework */; };
 		FFCBE8C721F3D06666C1DA69 /* Pods_Munch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE98581AD7B5040948A2CD79 /* Pods_Munch.framework */; };
@@ -75,9 +75,9 @@
 		032F891D1E82DFA300AD3818 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		032F89301E82EF8B00AD3818 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		032F89331E82F14A00AD3818 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
-		033E62EF1F1C116300AE97FA /* DiscoverCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiscoverCards.swift; path = Discover/DiscoverCards.swift; sourceTree = "<group>"; };
-		033E62F01F1C116300AE97FA /* DiscoverCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiscoverCollection.swift; path = Discover/DiscoverCollection.swift; sourceTree = "<group>"; };
-		033E62F51F1CA07E00AE97FA /* DiscoverContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiscoverContainer.swift; path = Discover/DiscoverContainer.swift; sourceTree = "<group>"; };
+		033E62EF1F1C116300AE97FA /* DiscoveryCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiscoveryCards.swift; path = Discover/DiscoveryCards.swift; sourceTree = "<group>"; };
+		033E62F01F1C116300AE97FA /* DiscoveryCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiscoveryCollection.swift; path = Discover/DiscoveryCollection.swift; sourceTree = "<group>"; };
+		033E62F51F1CA07E00AE97FA /* DiscoveryContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiscoveryContainer.swift; path = Discover/DiscoveryContainer.swift; sourceTree = "<group>"; };
 		033E62F71F1D381F00AE97FA /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		034820551E9CB3C400B0076A /* ImageViewer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageViewer.framework; path = Carthage/Build/iOS/ImageViewer.framework; sourceTree = "<group>"; };
 		034820571E9CB92A00B0076A /* SKPhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SKPhotoBrowser.framework; path = Carthage/Build/iOS/SKPhotoBrowser.framework; sourceTree = "<group>"; };
@@ -110,9 +110,9 @@
 		03D5295D1E9CFB17003D5350 /* TransitionAnimation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TransitionAnimation.framework; path = Carthage/Build/iOS/TransitionAnimation.framework; sourceTree = "<group>"; };
 		03D529601E9D03C0003D5350 /* FlexibleHeightBar.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlexibleHeightBar.framework; path = Carthage/Build/iOS/FlexibleHeightBar.framework; sourceTree = "<group>"; };
 		03D88C141E9DF412005F825B /* Hero.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Hero.framework; path = Carthage/Build/iOS/Hero.framework; sourceTree = "<group>"; };
-		03E216A41EFA005300465BE3 /* Discover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Discover.storyboard; path = Discover/Discover.storyboard; sourceTree = "<group>"; };
-		03E216A61EFA006900465BE3 /* DiscoverController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiscoverController.swift; path = Discover/DiscoverController.swift; sourceTree = "<group>"; };
-		03E216AE1EFAD80A00465BE3 /* DiscoverPopover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiscoverPopover.swift; path = Discover/DiscoverPopover.swift; sourceTree = "<group>"; };
+		03E216A41EFA005300465BE3 /* Discovery.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Discovery.storyboard; path = Discover/Discovery.storyboard; sourceTree = "<group>"; };
+		03E216A61EFA006900465BE3 /* DiscoveryController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiscoveryController.swift; path = Discover/DiscoveryController.swift; sourceTree = "<group>"; };
+		03E216AE1EFAD80A00465BE3 /* DiscoveryPopover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiscoveryPopover.swift; path = Discover/DiscoveryPopover.swift; sourceTree = "<group>"; };
 		03EE235D1E83039A009AFBFC /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		19CC2B7B7A468F7A24511641 /* Pods-Munch.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Munch.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Munch/Pods-Munch.debug.xcconfig"; sourceTree = "<group>"; };
 		30933A940AE4DF2E7F80A839 /* Pods_MunchTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MunchTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -285,12 +285,12 @@
 		03E216A11EFA000000465BE3 /* Discovery */ = {
 			isa = PBXGroup;
 			children = (
-				03E216A41EFA005300465BE3 /* Discover.storyboard */,
-				03E216A61EFA006900465BE3 /* DiscoverController.swift */,
-				033E62F51F1CA07E00AE97FA /* DiscoverContainer.swift */,
-				033E62F01F1C116300AE97FA /* DiscoverCollection.swift */,
-				033E62EF1F1C116300AE97FA /* DiscoverCards.swift */,
-				03E216AE1EFAD80A00465BE3 /* DiscoverPopover.swift */,
+				03E216A41EFA005300465BE3 /* Discovery.storyboard */,
+				03E216A61EFA006900465BE3 /* DiscoveryController.swift */,
+				033E62F51F1CA07E00AE97FA /* DiscoveryContainer.swift */,
+				033E62F01F1C116300AE97FA /* DiscoveryCollection.swift */,
+				033E62EF1F1C116300AE97FA /* DiscoveryCards.swift */,
+				03E216AE1EFAD80A00465BE3 /* DiscoveryPopover.swift */,
 			);
 			name = Discovery;
 			sourceTree = "<group>";
@@ -431,7 +431,7 @@
 				032F89031E82DFA300AD3818 /* Assets.xcassets in Resources */,
 				033E62F81F1D381F00AE97FA /* Main.storyboard in Resources */,
 				03CD276C1F6286FC003562A1 /* Place.storyboard in Resources */,
-				03E216A51EFA005300465BE3 /* Discover.storyboard in Resources */,
+				03E216A51EFA005300465BE3 /* Discovery.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -652,16 +652,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				038275781F03B7A700C5954A /* Munch.swift in Sources */,
-				033E62F21F1C116300AE97FA /* DiscoverCollection.swift in Sources */,
+				033E62F21F1C116300AE97FA /* DiscoveryCollection.swift in Sources */,
 				03CD276E1F6286FC003562A1 /* PlaceController.swift in Sources */,
 				03CF0AA21E97AA3C00A3FD1F /* Objects.swift in Sources */,
-				033E62F61F1CA07E00AE97FA /* DiscoverContainer.swift in Sources */,
-				03E216AF1EFAD80A00465BE3 /* DiscoverPopover.swift in Sources */,
+				033E62F61F1CA07E00AE97FA /* DiscoveryContainer.swift in Sources */,
+				03E216AF1EFAD80A00465BE3 /* DiscoveryPopover.swift in Sources */,
 				038275811F06DB8D00C5954A /* Location.swift in Sources */,
 				032F88FC1E82DFA300AD3818 /* AppDelegate.swift in Sources */,
-				033E62F11F1C116300AE97FA /* DiscoverCards.swift in Sources */,
+				033E62F11F1C116300AE97FA /* DiscoveryCards.swift in Sources */,
 				0378849B1E8E563E006025B5 /* Extensions.swift in Sources */,
-				03E216A71EFA006900465BE3 /* DiscoverController.swift in Sources */,
+				03E216A71EFA006900465BE3 /* DiscoveryController.swift in Sources */,
 				03CD277E1F62BDEA003562A1 /* PlaceVendorCards.swift in Sources */,
 				03CD27741F62BD5C003562A1 /* PlaceStaticCards.swift in Sources */,
 				03CD276D1F6286FC003562A1 /* PlaceBasicCards.swift in Sources */,
