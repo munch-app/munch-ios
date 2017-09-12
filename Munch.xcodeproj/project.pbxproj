@@ -23,7 +23,7 @@
 		03CD276C1F6286FC003562A1 /* Place.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 03CD27691F6286FC003562A1 /* Place.storyboard */; };
 		03CD276D1F6286FC003562A1 /* PlaceBasicCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD276A1F6286FC003562A1 /* PlaceBasicCards.swift */; };
 		03CD276E1F6286FC003562A1 /* PlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD276B1F6286FC003562A1 /* PlaceController.swift */; };
-		03CD27741F62BD5C003562A1 /* PlaceShimmerCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD27731F62BD5C003562A1 /* PlaceShimmerCards.swift */; };
+		03CD27741F62BD5C003562A1 /* PlaceStaticCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD27731F62BD5C003562A1 /* PlaceStaticCards.swift */; };
 		03CD277E1F62BDEA003562A1 /* PlaceVendorCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD277D1F62BDEA003562A1 /* PlaceVendorCards.swift */; };
 		03CF0AA21E97AA3C00A3FD1F /* Objects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CF0A9F1E97AA3C00A3FD1F /* Objects.swift */; };
 		03CF0AA41E97AA3C00A3FD1F /* MunchApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CF0AA11E97AA3C00A3FD1F /* MunchApi.swift */; };
@@ -96,7 +96,7 @@
 		03CD27691F6286FC003562A1 /* Place.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Place.storyboard; path = Place/Place.storyboard; sourceTree = "<group>"; };
 		03CD276A1F6286FC003562A1 /* PlaceBasicCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceBasicCards.swift; path = Place/PlaceBasicCards.swift; sourceTree = "<group>"; };
 		03CD276B1F6286FC003562A1 /* PlaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceController.swift; path = Place/PlaceController.swift; sourceTree = "<group>"; };
-		03CD27731F62BD5C003562A1 /* PlaceShimmerCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceShimmerCards.swift; path = Place/PlaceShimmerCards.swift; sourceTree = "<group>"; };
+		03CD27731F62BD5C003562A1 /* PlaceStaticCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceStaticCards.swift; path = Place/PlaceStaticCards.swift; sourceTree = "<group>"; };
 		03CD277D1F62BDEA003562A1 /* PlaceVendorCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceVendorCards.swift; path = Place/PlaceVendorCards.swift; sourceTree = "<group>"; };
 		03CF0A9B1E96A7B100A3FD1F /* ESTabBarController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ESTabBarController.framework; path = Carthage/Build/iOS/ESTabBarController.framework; sourceTree = "<group>"; };
 		03CF0A9F1E97AA3C00A3FD1F /* Objects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Objects.swift; path = Api/Objects.swift; sourceTree = "<group>"; };
@@ -185,7 +185,8 @@
 				032F89351E82F1F300AD3818 /* Api */,
 				032F88FB1E82DFA300AD3818 /* AppDelegate.swift */,
 				033E62F71F1D381F00AE97FA /* Main.storyboard */,
-				03E216A11EFA000000465BE3 /* Discover */,
+				03E216A11EFA000000465BE3 /* Discovery */,
+				039B81BF1F6847060022ADCF /* Discover */,
 				03CD27621F628180003562A1 /* Place */,
 				032F89021E82DFA300AD3818 /* Assets.xcassets */,
 				032F89041E82DFA300AD3818 /* LaunchScreen.storyboard */,
@@ -262,19 +263,26 @@
 			name = Api;
 			sourceTree = "<group>";
 		};
+		039B81BF1F6847060022ADCF /* Discover */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Discover;
+			sourceTree = "<group>";
+		};
 		03CD27621F628180003562A1 /* Place */ = {
 			isa = PBXGroup;
 			children = (
 				03CD27691F6286FC003562A1 /* Place.storyboard */,
 				03CD276B1F6286FC003562A1 /* PlaceController.swift */,
-				03CD27731F62BD5C003562A1 /* PlaceShimmerCards.swift */,
+				03CD27731F62BD5C003562A1 /* PlaceStaticCards.swift */,
 				03CD276A1F6286FC003562A1 /* PlaceBasicCards.swift */,
 				03CD277D1F62BDEA003562A1 /* PlaceVendorCards.swift */,
 			);
 			name = Place;
 			sourceTree = "<group>";
 		};
-		03E216A11EFA000000465BE3 /* Discover */ = {
+		03E216A11EFA000000465BE3 /* Discovery */ = {
 			isa = PBXGroup;
 			children = (
 				03E216A41EFA005300465BE3 /* Discover.storyboard */,
@@ -284,7 +292,7 @@
 				033E62EF1F1C116300AE97FA /* DiscoverCards.swift */,
 				03E216AE1EFAD80A00465BE3 /* DiscoverPopover.swift */,
 			);
-			name = Discover;
+			name = Discovery;
 			sourceTree = "<group>";
 		};
 		7FAD2F52AB52E9E8804CF200 /* Pods */ = {
@@ -655,7 +663,7 @@
 				0378849B1E8E563E006025B5 /* Extensions.swift in Sources */,
 				03E216A71EFA006900465BE3 /* DiscoverController.swift in Sources */,
 				03CD277E1F62BDEA003562A1 /* PlaceVendorCards.swift in Sources */,
-				03CD27741F62BD5C003562A1 /* PlaceShimmerCards.swift in Sources */,
+				03CD27741F62BD5C003562A1 /* PlaceStaticCards.swift in Sources */,
 				03CD276D1F6286FC003562A1 /* PlaceBasicCards.swift in Sources */,
 				03CF0AA41E97AA3C00A3FD1F /* MunchApi.swift in Sources */,
 			);

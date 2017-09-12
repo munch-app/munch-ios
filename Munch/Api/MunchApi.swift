@@ -186,20 +186,6 @@ class PlaceClient: RestfulClient {
  that is direct proxy to LocationService in munch-core/service-location
  */
 class LocationClient: RestfulClient {
-    
-    /**
-     Find the location the user is currently at
-     Different from reverse, is the location given here can be street based
-     */
-    func find(latLng: String?, callback: @escaping (_ meta: MetaJSON, _ location: Location?) -> Void) {
-        var params = Parameters()
-        params["latLng"] = latLng
-        
-        super.get("/locations/find", parameters: params) { meta, json in
-            callback(meta, Location(json: json["data"]))
-        }
-    }
-    
     func reverse(lat: Double, lng: Double, callback: @escaping (_ meta: MetaJSON, _ location: Location?) -> Void) {
         super.get("/locations/reverse", parameters: ["latLng": "\(lat),\(lng)"]) { meta, json in
             callback(meta, Location(json: json["data"]))

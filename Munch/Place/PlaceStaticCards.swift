@@ -11,6 +11,28 @@ import UIKit
 import SnapKit
 import Shimmer
 
+class StaticEmptyCardView: UITableViewCell, PlaceCardView {
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.backgroundColor = UIColor.black
+        self.snp.makeConstraints { make in
+            make.height.equalTo(0)
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func render(card: PlaceCard) {
+    }
+    
+    static var id: String {
+        return "static_PlaceStaticEmptyCardView"
+    }
+}
+
 class ShimmerImageBannerCardView: UITableViewCell, PlaceCardView {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {

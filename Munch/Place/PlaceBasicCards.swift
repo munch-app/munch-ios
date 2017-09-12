@@ -176,21 +176,21 @@ class BasicBusinessHourCard: UITableViewCell, PlaceCardView {
             }
         }
         
-        let dayNow = Place.Hour.Formatter.dayNow()
+        let dayNow = Place.Hour.Formatter.dayNow().lowercased()
         
-        func createLine(day: String, append: String = "\n") -> NSAttributedString {
+        func createLine(day: String, append: String = "\n", dayText: String? = nil) -> NSAttributedString {
             let text: String
             
             if let time = dayHours[day] {
-                text = "\(day.capitalized): \(time) \(append)"
+                text = "\(dayText ?? day.uppercased()): \(time) \(append)"
             } else {
-                text = "\(day.capitalized): Closed \(append)"
+                text = "\(dayText ?? day.uppercased()): Closed \(append)"
             }
             
             
             if (day == dayNow) {
                 return text.set(style: Style.default {
-                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightMedium))
+                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightSemibold))
                 })
             }
             
@@ -205,8 +205,8 @@ class BasicBusinessHourCard: UITableViewCell, PlaceCardView {
         hourText.append(createLine(day: "fri"))
         hourText.append(createLine(day: "sat"))
         hourText.append(createLine(day: "sun"))
-        hourText.append(createLine(day: "ph"))
-        hourText.append(createLine(day: "evePh", append: ""))
+        hourText.append(createLine(day: "ph", dayText: "PH"))
+        hourText.append(createLine(day: "evePh", append: "", dayText: "Eve of PH"))
         
         hoursLabel.attributedText = hourText
     }

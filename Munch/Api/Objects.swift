@@ -125,8 +125,9 @@ struct Place: CardItem, Equatable {
                 self.day = day
                 self.open = open
                 self.close = close
+            } else {
+                return nil
             }
-            return nil
         }
         
         func timeText() -> String {
@@ -291,11 +292,12 @@ struct Menu {
  - size: pagination size
  - query: search query string
  */
-public struct SearchQuery: Equatable {
+struct SearchQuery: Equatable {
     var from: Int?
     var size: Int?
     
     var query: String?
+    var latLng: String?
     var location: Location?
     
     var filter: Filter
@@ -311,13 +313,14 @@ public struct SearchQuery: Equatable {
         self.size = json["size"].int
         
         self.query = json["query"].string
+        self.latLng = json["latLng"].string
         self.location = Location(json: json["location"])
         
         self.filter = Filter(json: json["filter"])
         self.sort = Sort(json: json["sort"])
     }
     
-    public struct Filter {
+    struct Filter {
         var price = Price()
         var tag = Tag()
         var hour = Hour()
@@ -338,23 +341,23 @@ public struct SearchQuery: Equatable {
             
         }
         
-        public struct Price {
+        struct Price {
             var min: Double?
             var max: Double?
             
         }
         
-        public struct Tag {
+        struct Tag {
             var positives: [String]?
             var negatives: [String]?
         }
         
-        public struct Hour {
+        struct Hour {
             var day: String?
             var time: String?
         }
         
-        public func toParams() -> Parameters {
+        func toParams() -> Parameters {
             var params = Parameters()
             params["price"] = ["min": price.min, "max": price.max]
             params["tag"] = ["positives": tag.positives, "negatives": tag.negatives]
@@ -363,10 +366,9 @@ public struct SearchQuery: Equatable {
         }
     }
     
-    public struct Sort {
+    struct Sort {
         // See MunchCore for the available sort methods
         var type: String?
-        var latLng: String?
         
         init() {
             
@@ -374,13 +376,11 @@ public struct SearchQuery: Equatable {
         
         init(json: JSON) {
             type = json["sort"]["type"].string
-            latLng = json["sort"]["latLng"].string
         }
         
-        public func toParams() -> Parameters {
+        func toParams() -> Parameters {
             var params = Parameters()
             params["type"] = type
-            params["latLng"] = latLng
             return params
         }
     }
@@ -401,7 +401,7 @@ public struct SearchQuery: Equatable {
         return params
     }
     
-    public static func == (lhs: SearchQuery, rhs: SearchQuery) -> Bool {
+    static func == (lhs: SearchQuery, rhs: SearchQuery) -> Bool {
         return NSDictionary(dictionary: lhs.toParams()).isEqual(to: rhs.toParams())
     }
 }

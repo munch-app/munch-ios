@@ -124,20 +124,8 @@ extension DiscoverController {
         // Check if search query have expired
         if (queryExpiryDate < Date()) {
             // Get current Location if available
-            MunchLocation.waitFor() { latLng, err in
-                if let latLng = latLng {
-                    MunchApi.locations.find(latLng: latLng, callback: { meta, location in
-                        if meta.isOk() {
-                            self.searchBar.searchQuery.location = location
-                            self.query()
-                        } else {
-                            self.present(meta.createAlert(), animated: true)
-                        }
-                    })
-                } else if let error = err {
-                    self.alert(error: error)
-                }
-            }
+            self.searchBar.reset()
+            self.query()
         } else {
             // Not yet expire, extend by 30 minutes
             queryExpiryDate = Date().addingTimeInterval(60 * 30)
@@ -330,8 +318,6 @@ class SearchNavigationBar: UIView, UITextFieldDelegate {
     static let minHeight: CGFloat = 20.0
     static let diffHeight: CGFloat = 83.0
     
-    var searchQuery = SearchQuery()
-    
     // MARK: - Click Actions
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -437,7 +423,7 @@ extension SearchNavigationBar {
     }
 }
 
-// Apply and Reset functions for navigation bar
+// SearchQuery Apply, Extract and Reset functions for navigation bar
 extension SearchNavigationBar {
     /**
      Reset search bar
@@ -445,6 +431,8 @@ extension SearchNavigationBar {
     func reset() {
         apply(searchQuery: SearchQuery(), streetName: nil)
     }
+    
+    
     
     /**
      Apply search bar from results of munch-api
