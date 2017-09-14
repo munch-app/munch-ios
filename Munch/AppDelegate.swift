@@ -41,7 +41,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let tabBar = self.window?.rootViewController as? ESTabBarController {
             if let navigation = tabBar.selectedViewController as? UINavigationController {
                 if let controller = navigation.topViewController as? DiscoverController {
-                    controller.refreshQuery()
+                    // TODO Refresh
+                    // controller.refreshQuery()
                 }
             }
         }

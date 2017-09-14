@@ -12,7 +12,6 @@ import UIKit
 class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
     var placeId: String!
     var cards = [PlaceCard]()
-    var cardTypes = [String: PlaceCardView.Type]()
     
     @IBOutlet weak var cardTableView: UITableView!
     
@@ -66,12 +65,6 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
             }
         }
     }
-    
-    private func loadShimmerCards() {
-        cards.append(PlaceCard(id: PlaceShimmerImageBannerCard.id))
-        cards.append(PlaceCard(id: PlaceShimmerNameTagCard.id))
-        cardTableView.reloadData()
-    }
 }
 
 
@@ -90,6 +83,12 @@ extension PlaceViewController {
         register(PlaceBasicImageBannerCard.self)
         register(PlaceBasicLocationCard.self)
         register(PlaceBasicBusinessHourCard.self)
+    }
+    
+    func loadShimmerCards() {
+        cards.append(PlaceCard(id: PlaceShimmerImageBannerCard.id))
+        cards.append(PlaceCard(id: PlaceShimmerNameTagCard.id))
+        cardTableView.reloadData()
     }
     
     private func register(_ cellClass: PlaceCardView.Type) {

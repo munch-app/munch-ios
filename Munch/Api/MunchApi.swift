@@ -11,6 +11,23 @@ import Foundation
 import Alamofire
 import SwiftyJSON
 
+let MunchApi = MunchClient.instance
+
+public class MunchClient: RestfulClient {
+    public static let instance = MunchClient()
+    
+    private static let baseUrl = MunchPlist.get(asString: "MunchApiBaseUrl-Beta")!
+    
+    let search = SearchClient(baseUrl)
+    let places = PlacesClient(baseUrl)
+    let locations = LocationsClient(baseUrl)
+    let cached = CachedSyncClient(baseUrl)
+    
+    private init() {
+        super.init(MunchClient.baseUrl)
+    }
+}
+
 public class RestfulClient {
     public static var lastLatLng: String?
     
@@ -27,14 +44,14 @@ public class RestfulClient {
     /**
      Params Encoding is query string
      */
-    fileprivate func get(_ path: String, parameters: Parameters = [:], callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
+    func get(_ path: String, parameters: Parameters = [:], callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
         request(method: .get, path: path, parameters: parameters, encoding: URLEncoding.default, callback: callback)
     }
     
     /**
      Params Encoding is json
      */
-    fileprivate func post(_ path: String, parameters: Parameters = [:], callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
+    func post(_ path: String, parameters: Parameters = [:], callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
         request(method: .post, path: path, parameters: parameters, encoding: JSONEncoding.default, callback: callback)
     }
     
@@ -118,117 +135,3 @@ public struct MetaJSON {
         return alert
     }
 }
-
-let MunchApi = MunchClient.instance
-
-public class MunchClient: RestfulClient {
-    public static let instance = MunchClient()
-    
-    private static let baseUrl = MunchPlist.get(asString: "MunchApiBaseUrl-Beta")!
-    
-    let discovery = DiscoveryClient(baseUrl)
-    let places = PlaceClient(baseUrl)
-    let locations = LocationClient(baseUrl)
-    let cached = CachedSyncClient(baseUrl)
-    
-    private init() {
-        super.init(MunchClient.baseUrl)
-    }
-}
-
-/**
- DiscoveryClient from DiscoveryService in munch-core/munch-api
- */
-class DiscoveryClient: RestfulClient {
-    func suggest(text: String, size: Int, latLng: String? = nil, callback: @escaping (_ meta: MetaJSON, _ results: [SearchResult]) -> Void) {
-        var params = Parameters()
-        params["text"] = text
-        params["size"] = size
-        params["latLng"] = latLng
-        
-        super.post("/discovery/suggest", parameters: params) { meta, json in
-            callback(meta, SearchCollection.parseList(searchResult: json["data"]))
-        }
-    }
-    
-    func search(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ collections: [SearchCollection]) -> Void) {
-        super.post("/discovery/search", parameters: query.toParams()) { meta, json in
-            callback(meta, json["data"].map { SearchCollection(json: $0.1) })
-        }
-    }
-    
-    func searchNext(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ results: [SearchResult]) -> Void) {
-        super.post("/discovery/search/next", parameters: query.toParams()) { meta, json in
-            callback(meta, SearchCollection.parseList(searchResult: json["data"]))
-        }
-    }
-}
-
-/**
- PlaceClient from PlaceService in munch-core/munch-api
- */
-class PlaceClient: RestfulClient {
-    func get(id: String, callback: @escaping (_ meta: MetaJSON, _ place: Place?) -> Void) {
-        super.get("/places/\(id)") { meta, json in
-            callback(meta, Place(json: json["data"]))
-        }
-    }
-    
-    func cards(id: String, callback: @escaping (_ meta: MetaJSON, _ cards: [PlaceCard]) -> Void) {
-        super.get("/places/\(id)/cards") { meta, json in
-            callback(meta, json["data"].map { PlaceCard(json: $0.1) })
-        }
-    }
-}
-
-/**
- LocationClient from LocationService in munch-core/munch-api
- that is direct proxy to LocationService in munch-core/service-location
- */
-class LocationClient: RestfulClient {
-    func reverse(lat: Double, lng: Double, callback: @escaping (_ meta: MetaJSON, _ location: Location?) -> Void) {
-        super.get("/locations/reverse", parameters: ["latLng": "\(lat),\(lng)"]) { meta, json in
-            callback(meta, Location(json: json["data"]))
-        }
-    }
-    
-    func suggest(text: String, callback: @escaping (_ meta: MetaJSON, _ locations: [Location]) -> Void) {
-        super.get("/locations/suggest", parameters: ["text": text]) { meta, json in
-            callback(meta, json["data"].map { Location(json: $0.1)! })
-        }
-    }
-}
-
-/**
- CachedSyncClient from CachedSyncService in munch-core/munch-api
- */
-class CachedSyncClient: RestfulClient {
-    
-    func hashes(callback: @escaping (_ meta: MetaJSON, _ hashes: [String: String]) -> Void) {
-        super.get("/cached/hashes") { meta, json in
-            var hashes = [String: String]()
-            for hash in json["data"] {
-                hashes[hash.0] = hash.1.stringValue
-            }
-            callback(meta, hashes)
-        }
-    }
-    
-    func get(type: String, callback: @escaping (_ meta: MetaJSON, _ hash: String?, _ json: JSON) -> Void) {
-        super.get("/cached/data/\(type)") { meta, json in
-            let hash = json["data"]["hash"].string
-            let data = json["data"]["data"]
-            callback(meta, hash, data)
-        }
-    }
-    
-}
-
-/**
- MetaClient from MetaService in munch-core/munch-api
- Used for facilitating alpha/beta testing
- */
-class MetaClient: RestfulClient {
-    
-}
-
