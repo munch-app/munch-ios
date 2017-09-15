@@ -6,7 +6,6 @@
 //  Copyright © 2017 Munch Technologies. All rights reserved.
 //
 
-import UIKit
 import Foundation
 import Alamofire
 import SwiftyJSON
@@ -15,15 +14,21 @@ import SwiftyJSON
  LocationClient from LocationService in munch-core/munch-api
  that is direct proxy to LocationService in munch-core/service-location
  */
-class LocationsClient: RestfulClient {
+class LocationClient {
+    func popular(callback: @escaping (_ meta: MetaJSON, _ locations: [Location]) -> Void) {
+        MunchApi.restful.get("/locations/popular") { meta, json in
+            callback(meta, json["data"].map { Location(json: $0.1)! })
+        }
+    }
+    
     func reverse(lat: Double, lng: Double, callback: @escaping (_ meta: MetaJSON, _ location: Location?) -> Void) {
-        super.get("/locations/reverse", parameters: ["latLng": "\(lat),\(lng)"]) { meta, json in
+        MunchApi.restful.get("/locations/reverse", parameters: ["latLng": "\(lat),\(lng)"]) { meta, json in
             callback(meta, Location(json: json["data"]))
         }
     }
     
     func suggest(text: String, callback: @escaping (_ meta: MetaJSON, _ locations: [Location]) -> Void) {
-        super.get("/locations/suggest", parameters: ["text": text]) { meta, json in
+        MunchApi.restful.get("/locations/suggest", parameters: ["text": text]) { meta, json in
             callback(meta, json["data"].map { Location(json: $0.1)! })
         }
     }

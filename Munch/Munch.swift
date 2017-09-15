@@ -8,8 +8,6 @@
 
 import Foundation
 import UIKit
-import RealmSwift
-import SwiftyJSON
 import Kingfisher
 import Shimmer
 
@@ -231,69 +229,5 @@ public class MunchPlist {
     
     class func get(asString key: String) -> String? {
         return instance.dictionary[key] as? String
-    }
-}
-
-class CachedSync {
-    
-    class func sync() {
-        print("Sycning cached data")
-        let realm = try! Realm()
-        MunchApi.cached.hashes { meta, hashes in
-            if (meta.isOk()) {
-                for remoteHash in hashes {
-                    let localHash = realm.object(ofType: KeyHashData.self, forPrimaryKey: remoteHash.key)
-                    if (localHash?.dataHash != remoteHash.value) {
-                        CachedSync.update(key: remoteHash.key, localHash: localHash)
-                    }
-                }
-            }
-        }
-    }
-    
-    /**
-     Updating of a key, hash and data
-     */
-    private class func update(key: String, localHash: KeyHashData!) {
-        MunchApi.cached.get(type: key) { meta, hash, json in
-            if (meta.isOk()) {
-                let realm = try! Realm()
-                if (localHash != nil) {
-                    try! realm.write {
-                        localHash.dataHash = hash!
-                        localHash.data = try? json.rawData()
-                        realm.add(localHash)
-                    }
-                } else {
-                    try! realm.write {
-                        let updateHash = KeyHashData()
-                        updateHash.dataKey = key
-                        updateHash.dataHash = hash!
-                        updateHash.data = try? json.rawData()
-                        realm.add(updateHash)
-                    }
-                }
-                print("Sycned \(key) with hash: \(hash!)")
-            }
-        }
-    }
-    
-    class func getPopularLocations() -> [Location] {
-        let realm = try! Realm()
-        if let data = realm.object(ofType: KeyHashData.self, forPrimaryKey: "popular-locations")?.data {
-            return JSON(data).map { Location(json: $0.1)! }
-        }
-        return []
-    }
-}
-
-
-class KeyHashData: Object {
-    dynamic var dataKey = ""
-    dynamic var dataHash = ""
-    dynamic var data: Data?
-    
-    override static func primaryKey() -> String? {
-        return "dataKey"
     }
 }

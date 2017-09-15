@@ -11,31 +11,23 @@ import Foundation
 import Alamofire
 import SwiftyJSON
 
-let MunchApi = MunchClient.instance
+let MunchApi = MunchClient()
 
-public class MunchClient: RestfulClient {
-    public static let instance = MunchClient()
+public class MunchClient {
+    public static let url = MunchPlist.get(asString: "MunchApi-Url")!
     
-    private static let baseUrl = MunchPlist.get(asString: "MunchApiBaseUrl-Beta")!
-    
-    let search = SearchClient(baseUrl)
-    let places = PlacesClient(baseUrl)
-    let locations = LocationsClient(baseUrl)
-    let cached = CachedSyncClient(baseUrl)
-    
-    private init() {
-        super.init(MunchClient.baseUrl)
-    }
+    let restful = RestfulClient()
+    let search = SearchClient()
+    let places = PlaceClient()
+    let locations = LocationClient()
 }
 
 public class RestfulClient {
-    public static var lastLatLng: String?
-    
     private let url: String
     private let version: String
     private let build: String
     
-    init(_ url: String) {
+    init(_ url: String = MunchClient.url) {
         self.url = url
         self.version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
         self.build = Bundle.main.infoDictionary?["CFBundleVersion"] as! String
@@ -63,7 +55,7 @@ public class RestfulClient {
      callback: Meta and Json
      */
     fileprivate func request(method: HTTPMethod, path: String, parameters: Parameters, encoding: ParameterEncoding, callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
-        var headers = [String: String]()
+        var headers = [String:String]()
         headers["Application-Version"] = version
         headers["Application-Build"] = build
         
@@ -88,6 +80,8 @@ public class RestfulClient {
         }
     }
 }
+
+
 
 /**
  Meta Json in response

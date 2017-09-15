@@ -6,7 +6,6 @@
 //  Copyright © 2017 Munch Technologies. All rights reserved.
 //
 
-import UIKit
 import Foundation
 import Alamofire
 import SwiftyJSON
@@ -14,15 +13,15 @@ import SwiftyJSON
 /**
  PlaceClient from PlaceService in munch-core/munch-api
  */
-class PlacesClient: RestfulClient {
+class PlaceClient {
     func get(id: String, callback: @escaping (_ meta: MetaJSON, _ place: Place?) -> Void) {
-        super.get("/places/\(id)") { meta, json in
+        MunchApi.restful.get("/places/\(id)") { meta, json in
             callback(meta, Place(json: json["data"]))
         }
     }
     
     func cards(id: String, callback: @escaping (_ meta: MetaJSON, _ cards: [PlaceCard]) -> Void) {
-        super.get("/places/\(id)/cards") { meta, json in
+        MunchApi.restful.get("/places/\(id)/cards") { meta, json in
             callback(meta, json["data"].map { PlaceCard(json: $0.1) })
         }
     }
@@ -33,16 +32,16 @@ class PlacesClient: RestfulClient {
  Access json through the subscript
  */
 struct PlaceCard {
-    var id: String
+    var cardId: String
     private var json: JSON
     
-    init(id: String) {
-        self.id = id
+    init(cardId: String) {
+        self.cardId = cardId
         self.json = JSON(parseJSON: "{}")
     }
     
     init(json: JSON) {
-        self.id = json["id"].stringValue
+        self.cardId = json["cardId"].stringValue
         self.json = json
     }
     
@@ -74,10 +73,6 @@ struct Place: SearchResult, Equatable {
     var tags: [String]?
     var hours: [Hour]?
     var images: [Image]?
-    
-    init() {
-        
-    }
     
     init(json: JSON){
         self.id = json["id"].string

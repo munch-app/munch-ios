@@ -11,12 +11,6 @@ import SwiftyJSON
 
 /**
  ImageMeta is provided by munch-core/service-images
- structure is {
-    key: "",
-    images: {
-        "type": {key: "", url : ""}
-    }
- }
  */
 struct ImageMeta {
     var key: String?

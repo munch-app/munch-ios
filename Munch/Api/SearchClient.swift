@@ -6,7 +6,6 @@
 //  Copyright © 2017 Munch Technologies. All rights reserved.
 //
 
-import UIKit
 import Foundation
 import Alamofire
 import SwiftyJSON
@@ -14,27 +13,39 @@ import SwiftyJSON
 /**
  DiscoveryClient from DiscoveryService in munch-core/munch-api
  */
-class SearchClient: RestfulClient {
+class SearchClient {
     func suggest(text: String, size: Int, latLng: String? = nil, callback: @escaping (_ meta: MetaJSON, _ results: [SearchResult]) -> Void) {
         var params = Parameters()
         params["text"] = text
         params["size"] = size
         params["latLng"] = latLng
         
-        super.post("/search/suggest", parameters: params) { meta, json in
-            callback(meta, SearchCollection.parseList(searchResult: json["data"]))
+        MunchApi.restful.post("/search/suggest", parameters: params) { meta, json in
+            callback(meta, json["data"].flatMap { SearchClient.parseResult(result: $0.1) })
         }
     }
     
     func collections(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ collections: [SearchCollection]) -> Void) {
-        super.post("/search/collections", parameters: query.toParams()) { meta, json in
+        MunchApi.restful.post("/search/collections", parameters: query.toParams()) { meta, json in
             callback(meta, json["data"].map { SearchCollection(json: $0.1) })
         }
     }
     
-    func collectionsSearch(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ results: [SearchResult]) -> Void) {
-        super.post("/search/collections/search", parameters: query.toParams()) { meta, json in
-            callback(meta, SearchCollection.parseList(searchResult: json["data"]))
+    func collectionsSearch(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ results: [SearchCard]) -> Void) {
+        MunchApi.restful.post("/search/collections/search", parameters: query.toParams()) { meta, json in
+            callback(meta, json["data"].map { SearchCard(json: $0.1) })
+        }
+    }
+    
+    /**
+     Method to parse search result type
+     */
+    public static func parseResult(result json: JSON) -> SearchResult? {
+        switch json["dataType"].stringValue {
+        case "Tag": return Tag(json: json)
+        case "Place": return Place(json: json)
+        case "Location": return Location(json: json)
+        default: return nil
         }
     }
 }
@@ -43,17 +54,36 @@ class SearchClient: RestfulClient {
  Possible types are:
  - Place
  - Location
+ - Tag
  */
-protocol SearchResult {
+protocol SearchResult {}
+
+/**
+ Tag object from munch-core/munch-data
+ */
+struct Tag: SearchResult {
+    var id: String?
+    var name: String?
+    var type: String?
+    
+    init(json: JSON) {
+        self.id = json["id"].string
+        self.name = json["name"].string
+        self.type = json["type"].string
+    }
+    
+    func toParams() -> Parameters {
+        var params = Parameters()
+        params["id"] = id
+        params["name"] = name
+        params["type"] = type
+        return params
+    }
 }
 
 /**
  SearchQuery object from munch-core/service-places
  This is a input and output data
- 
- - from: pagination from
- - size: pagination size
- - query: search query string
  */
 struct SearchQuery: Equatable {
     var from: Int?
@@ -170,47 +200,43 @@ struct SearchQuery: Equatable {
 }
 
 /**
+ Search typed Cards
+ Access json through the subscript
+ */
+struct SearchCard {
+    var cardId: String
+    private var json: JSON
+    
+    init(cardId: String) {
+        self.cardId = cardId
+        self.json = JSON(parseJSON: "{}")
+    }
+    
+    init(json: JSON) {
+        self.cardId = json["cardId"].stringValue
+        self.json = json
+    }
+    
+    /**
+     Subscript to get data from json with its name
+     */
+    subscript(name: String) -> JSON {
+        return json[name]
+    }
+}
+
+/**
  SearchCollection object from munch-core/munch-api
  used for containing a collection
  */
 struct SearchCollection {
     let name: String
     let query: SearchQuery
-    let results: [SearchResult]
+    let cards: [SearchCard]
     
     init(json: JSON) {
         self.name = json["name"].stringValue
         self.query = SearchQuery(json: json["query"])
-        self.results = SearchCollection.parseList(searchResult: json["results"])
-    }
-    
-    init(name: String, query: SearchQuery, results: [SearchResult]){
-        self.name = name
-        self.query = query
-        self.results = results
-    }
-    
-    /**
-     Method to parse search result type
-     */
-    public static func parse(searchResult json: JSON) -> SearchResult? {
-        switch json["type"].stringValue {
-        case "Place": return Place(json: json)
-        case "Location": return Location(json: json)
-        default: return nil
-        }
-    }
-    
-    /**
-     Parse only search item
-     */
-    public static func parseList(searchResult json: JSON) -> [SearchResult] {
-        var results = [SearchResult]()
-        for each in json {
-            if let item = parse(searchResult: each.1) {
-                results.append(item)
-            }
-        }
-        return results
+        self.cards = json["cards"].map { SearchCard(json: $0.1) }
     }
 }
