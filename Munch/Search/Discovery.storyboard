@@ -4,6 +4,7 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -157,7 +158,6 @@
                         <segue destination="7rT-dk-fUQ" kind="custom" identifier="discover_segue_search" customClass="MXPageSegue" id="xyt-pi-3u8"/>
                         <segue destination="jVJ-mT-mkE" kind="custom" identifier="discover_segue_tabs" customClass="MXPageSegue" id="7PZ-yb-h2A"/>
                         <segue destination="FCM-m7-OLa" kind="custom" identifier="discover_segue_loading" customClass="MXPageSegue" id="7Nf-9s-AAf"/>
-                        <segue destination="fiE-la-75O" kind="custom" identifier="discover_segue_no_results" customClass="MXPageSegue" id="p8a-ct-oJj"/>
                         <segue destination="Dkp-gW-WGP" kind="custom" identifier="discover_segue_tabless" customClass="MXPageSegue" id="gx2-jB-kG7"/>
                     </connections>
                 </viewController>
@@ -437,33 +437,6 @@
             </objects>
             <point key="canvasLocation" x="-2506.4000000000001" y="1514.392803598201"/>
         </scene>
-        <!--Select Filters-->
-        <scene sceneID="C23-AR-zYH">
-            <objects>
-                <viewController id="S6V-aI-6ZB" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="EcQ-xe-N0B"/>
-                        <viewControllerLayoutGuide type="bottom" id="rAR-Z6-Lfn"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="enf-KK-fVj">
-                        <rect key="frame" x="0.0" y="64" width="375" height="603"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                    <navigationItem key="navigationItem" title="Select Filters" id="jUU-FX-7Le">
-                        <barButtonItem key="rightBarButtonItem" title="Cancel" style="plain" id="Pfl-MA-K9f">
-                            <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                            <connections>
-                                <segue destination="sk9-to-Akc" kind="unwind" unwindAction="unwindToDiscoverWithSegue:" id="BHp-Un-cw0"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="e08-51-hhY" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="sk9-to-Akc" userLabel="Exit" sceneMemberID="exit"/>
-            </objects>
-            <point key="canvasLocation" x="-1535" y="1514"/>
-        </scene>
         <!--Discover Tab Controller-->
         <scene sceneID="eCL-mz-cB6">
             <objects>
@@ -731,23 +704,6 @@
             </objects>
             <point key="canvasLocation" x="-606" y="690"/>
         </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="Ehn-cQ-NDd">
-            <objects>
-                <navigationController id="xme-f9-6Uz" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="Om2-7G-uuS">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="S6V-aI-6ZB" kind="relationship" relationship="rootViewController" id="seD-c4-2kK"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="R0h-IM-MSG" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-1535" y="690"/>
-        </scene>
         <!--Discover Search Controller-->
         <scene sceneID="JEE-ud-wZe">
             <objects>
@@ -906,7 +862,7 @@
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="40" id="uks-NN-b6s"/>
                                                     </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -1113,58 +1069,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="o6z-tk-hM2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2388" y="1513"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="dY9-Cq-Ad2">
-            <objects>
-                <viewController id="fiE-la-75O" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="bAZ-xW-qfV"/>
-                        <viewControllerLayoutGuide type="bottom" id="F7Z-U4-22P"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="sUb-ao-OPK">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sfM-gl-ekQ" customClass="HairlineShadowView" customModule="Munch" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="115"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="115" id="fVX-er-aZ8"/>
-                                </constraints>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="hairlineShadowHeight">
-                                        <real key="value" value="1"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                            </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="No Result" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5TM-tx-r41">
-                                <rect key="frame" x="150" y="174" width="74" height="21"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="21" id="ldj-Oj-TTK"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="sfM-gl-ekQ" firstAttribute="leading" secondItem="sUb-ao-OPK" secondAttribute="leading" id="3wm-Me-ccM"/>
-                            <constraint firstItem="5TM-tx-r41" firstAttribute="top" secondItem="sfM-gl-ekQ" secondAttribute="bottom" constant="50" id="JGY-du-LWV"/>
-                            <constraint firstItem="5TM-tx-r41" firstAttribute="leading" secondItem="sUb-ao-OPK" secondAttribute="leadingMargin" id="XSl-nh-huJ"/>
-                            <constraint firstAttribute="trailing" secondItem="sfM-gl-ekQ" secondAttribute="trailing" id="kAh-Nb-wwP"/>
-                            <constraint firstItem="sfM-gl-ekQ" firstAttribute="top" secondItem="sUb-ao-OPK" secondAttribute="top" id="mYl-BT-SIi"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="5TM-tx-r41" secondAttribute="trailing" id="og8-TO-opG"/>
-                        </constraints>
-                    </view>
-                    <nil key="simulatedStatusBarMetrics"/>
-                    <nil key="simulatedTopBarMetrics"/>
-                    <nil key="simulatedBottomBarMetrics"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="iEx-vQ-d9s" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="247" y="690"/>
         </scene>
     </scenes>
     <resources>

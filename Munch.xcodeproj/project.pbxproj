@@ -27,6 +27,7 @@
 		038275781F03B7A700C5954A /* Munch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038275771F03B7A700C5954A /* Munch.swift */; };
 		038275811F06DB8D00C5954A /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038275801F06DB8D00C5954A /* Location.swift */; };
 		038275831F0A8DE400C5954A /* Munch.plist in Resources */ = {isa = PBXBuildFile; fileRef = 038275821F0A8DE400C5954A /* Munch.plist */; };
+		03B65F1C1F6C4A8C0030D12B /* SearchHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B65F1B1F6C4A8C0030D12B /* SearchHeaderView.swift */; };
 		03CD276C1F6286FC003562A1 /* Place.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 03CD27691F6286FC003562A1 /* Place.storyboard */; };
 		03CD276D1F6286FC003562A1 /* PlaceBasicCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD276A1F6286FC003562A1 /* PlaceBasicCards.swift */; };
 		03CD276E1F6286FC003562A1 /* PlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD276B1F6286FC003562A1 /* PlaceController.swift */; };
@@ -104,6 +105,7 @@
 		039C393E1E8D47F500A28533 /* MXSegmentedPager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXSegmentedPager.framework; path = Carthage/Build/iOS/MXSegmentedPager.framework; sourceTree = "<group>"; };
 		039C39411E8D485400A28533 /* MXPagerView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXPagerView.framework; path = Carthage/Build/iOS/MXPagerView.framework; sourceTree = "<group>"; };
 		039C39431E8D485800A28533 /* MXParallaxHeader.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXParallaxHeader.framework; path = Carthage/Build/iOS/MXParallaxHeader.framework; sourceTree = "<group>"; };
+		03B65F1B1F6C4A8C0030D12B /* SearchHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchHeaderView.swift; path = Search/SearchHeaderView.swift; sourceTree = "<group>"; };
 		03CD27691F6286FC003562A1 /* Place.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Place.storyboard; path = Place/Place.storyboard; sourceTree = "<group>"; };
 		03CD276A1F6286FC003562A1 /* PlaceBasicCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceBasicCards.swift; path = Place/PlaceBasicCards.swift; sourceTree = "<group>"; };
 		03CD276B1F6286FC003562A1 /* PlaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceController.swift; path = Place/PlaceController.swift; sourceTree = "<group>"; };
@@ -280,6 +282,7 @@
 				034FCF021F6C282E00D353F1 /* Discovery.storyboard */,
 				034FCF031F6C282E00D353F1 /* Search.storyboard */,
 				034FCF051F6C282E00D353F1 /* SearchController.swift */,
+				03B65F1B1F6C4A8C0030D12B /* SearchHeaderView.swift */,
 				034FCF041F6C282E00D353F1 /* SearchBasicCards.swift */,
 				034FCF061F6C282E00D353F1 /* SearchStaticCards.swift */,
 				034FCF071F6C282E00D353F1 /* SuggestController.swift */,
@@ -660,6 +663,7 @@
 				034FCF0C1F6C282E00D353F1 /* SearchStaticCards.swift in Sources */,
 				034FCEFD1F6C24D000D353F1 /* VersionClient.swift in Sources */,
 				0314786A1F6A18CC00246BCD /* LocationClient.swift in Sources */,
+				03B65F1C1F6C4A8C0030D12B /* SearchHeaderView.swift in Sources */,
 				031478661F6A16F900246BCD /* SearchClient.swift in Sources */,
 				031478641F6A16ED00246BCD /* PlaceClient.swift in Sources */,
 				03CD276E1F6286FC003562A1 /* PlaceController.swift in Sources */,

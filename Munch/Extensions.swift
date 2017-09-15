@@ -33,14 +33,6 @@ class UIBorder {
     }
 }
 
-extension UIScreen {
-    class var width: CGFloat {
-        get {
-            return main.bounds.width
-        }
-    }
-}
-
 extension UILabel {
     func textWidth() -> CGFloat {
         return UILabel.textWidth(label: self)

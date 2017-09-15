@@ -30,7 +30,15 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         registerCards()
         loadShimmerCards()
         
-        // TODO Query place
+        MunchApi.search.collections(query: SearchQuery()) { meta, collections in
+            if (meta.isOk()) {
+                // TODO
+                // self.cards = cards
+                self.cardTableView.reloadData()
+            } else {
+                self.present(meta.createAlert(), animated: true)
+            }
+        }
     }
 }
 
@@ -38,16 +46,20 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
 extension SearchController {
     func registerCards() {
         // Register Static Cards
+        register(SearchStaticNoResultCard.self)
+        register(SearchStaticNoLocationCard.self)
         
         // Register Shimmer Cards
+        register(SearchShimmerPlaceCard.self)
         
-        // Register Dsicover Cards
+        // Register Search Cards
+        register(SearchPlaceCard.self)
     }
     
     func loadShimmerCards() {
         cards.append(SearchCard(cardId: SearchShimmerPlaceCard.cardId))
         cards.append(SearchCard(cardId: SearchShimmerPlaceCard.cardId))
-        cards.append(SearchCard(cardId: SearchShimmerPlaceCard.cardId)) 
+        cards.append(SearchCard(cardId: SearchShimmerPlaceCard.cardId))
         cardTableView.reloadData()
     }
     
@@ -92,10 +104,10 @@ protocol SearchCardView {
 
 extension SearchCardView {
     var leftRight: CGFloat {
-        return 16.0
+        return 24.0
     }
     
     var topBottom: CGFloat {
-        return 8.0
+        return 16.0
     }
 }

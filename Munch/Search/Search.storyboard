@@ -79,10 +79,10 @@
             </objects>
             <point key="canvasLocation" x="-711" y="-1147"/>
         </scene>
-        <!--Discover Main Controller-->
+        <!--Search Controller-->
         <scene sceneID="d66-0w-G5h">
             <objects>
-                <viewController id="WsD-4B-YwB" customClass="DiscoverMainController" customModule="Munch" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="WsD-4B-YwB" customClass="SearchController" customModule="Munch" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="iU7-fY-TAQ"/>
                         <viewControllerLayoutGuide type="bottom" id="Z4F-6q-SWi"/>
@@ -94,6 +94,98 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ddd-UH-ZV9">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <view key="tableFooterView" contentMode="scaleToFill" id="rCV-4Y-ADF" customClass="SearchNavigationBar" customModule="Munch" customModuleProvider="target">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="103"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <textField clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Search any restaurant, cuisine" minimumFontSize="14" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="3wq-kw-PLE" customClass="SearchTextField" customModule="Munch" customModuleProvider="target">
+                                            <rect key="frame" x="24" y="68" width="282" height="32"/>
+                                            <color key="backgroundColor" white="0.92000000000000004" alpha="1" colorSpace="calibratedWhite"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="32" id="bu5-7N-DnP"/>
+                                            </constraints>
+                                            <nil key="textColor"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <textInputTraits key="textInputTraits" returnKeyType="search"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="image" keyPath="leftImage" value="SC-Search-18"/>
+                                                <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                                    <color key="value" white="0.17999999999999999" alpha="1" colorSpace="calibratedWhite"/>
+                                                </userDefinedRuntimeAttribute>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="leftImagePadding">
+                                                    <real key="value" value="1"/>
+                                                </userDefinedRuntimeAttribute>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                    <integer key="value" value="4"/>
+                                                </userDefinedRuntimeAttribute>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="leftImageWidth">
+                                                    <real key="value" value="32"/>
+                                                </userDefinedRuntimeAttribute>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="leftImageSize">
+                                                    <real key="value" value="18"/>
+                                                </userDefinedRuntimeAttribute>
+                                            </userDefinedRuntimeAttributes>
+                                        </textField>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z5K-Xd-VQb" userLabel="Filter Button">
+                                            <rect key="frame" x="306" y="68" width="45" height="32"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="45" id="MjC-rp-9mV"/>
+                                                <constraint firstAttribute="height" constant="32" id="Pd8-un-p6b"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                            <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                            <state key="normal" image="icons8-Horizontal Settings Mixer-30">
+                                                <color key="titleColor" white="0.10000000000000001" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="actionTouchUp:" destination="rCV-4Y-ADF" eventType="touchUpInside" id="D6D-7Z-2Eb"/>
+                                            </connections>
+                                        </button>
+                                        <button opaque="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pRM-hd-7Pe">
+                                            <rect key="frame" x="24" y="20" width="327" height="45"/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="45" id="AcT-u6-rUI"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                            <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                            <inset key="contentEdgeInsets" minX="0.0" minY="2" maxX="0.0" maxY="0.0"/>
+                                            <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                            <state key="normal" title="Singapore" image="icons8-Expand Arrow-20">
+                                                <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                        </button>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Hgd-04-2xT" userLabel="Status Bar View">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="20"/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="20" id="ghx-HJ-PLa"/>
+                                            </constraints>
+                                        </view>
+                                    </subviews>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <constraints>
+                                        <constraint firstItem="Hgd-04-2xT" firstAttribute="leading" secondItem="rCV-4Y-ADF" secondAttribute="leading" id="2nC-Qv-OdD"/>
+                                        <constraint firstItem="z5K-Xd-VQb" firstAttribute="leading" secondItem="3wq-kw-PLE" secondAttribute="trailing" id="7RH-8u-DBb"/>
+                                        <constraint firstItem="pRM-hd-7Pe" firstAttribute="top" secondItem="Hgd-04-2xT" secondAttribute="bottom" id="BOd-8t-tNI"/>
+                                        <constraint firstAttribute="height" constant="103" id="EB7-a1-VRB"/>
+                                        <constraint firstAttribute="trailing" secondItem="z5K-Xd-VQb" secondAttribute="trailing" constant="24" id="IzM-2C-FCw"/>
+                                        <constraint firstAttribute="bottom" secondItem="z5K-Xd-VQb" secondAttribute="bottom" constant="3" id="RGz-wh-ULo"/>
+                                        <constraint firstItem="3wq-kw-PLE" firstAttribute="leading" secondItem="rCV-4Y-ADF" secondAttribute="leading" constant="24" id="eBF-3I-15D"/>
+                                        <constraint firstAttribute="trailing" secondItem="pRM-hd-7Pe" secondAttribute="trailing" constant="24" id="gui-pv-AWI"/>
+                                        <constraint firstItem="pRM-hd-7Pe" firstAttribute="leading" secondItem="rCV-4Y-ADF" secondAttribute="leading" constant="24" id="hPH-ov-Wom"/>
+                                        <constraint firstAttribute="bottom" secondItem="3wq-kw-PLE" secondAttribute="bottom" constant="3" id="orr-Fu-fKZ"/>
+                                        <constraint firstAttribute="trailing" secondItem="Hgd-04-2xT" secondAttribute="trailing" id="uN5-gW-kGZ"/>
+                                        <constraint firstItem="Hgd-04-2xT" firstAttribute="top" secondItem="rCV-4Y-ADF" secondAttribute="top" id="xhE-kb-eOy"/>
+                                    </constraints>
+                                    <connections>
+                                        <outlet property="actionBtnWidth" destination="MjC-rp-9mV" id="NJK-fL-89H"/>
+                                        <outlet property="actionButton" destination="z5K-Xd-VQb" id="jOr-R2-CXn"/>
+                                        <outlet property="heightConstraint" destination="EB7-a1-VRB" id="WIU-hY-Jzf"/>
+                                        <outlet property="locationButton" destination="pRM-hd-7Pe" id="h1n-Y6-Luo"/>
+                                        <outlet property="searchField" destination="3wq-kw-PLE" id="tLP-nc-FAi"/>
+                                    </connections>
+                                </view>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -107,7 +199,7 @@
                     <navigationItem key="navigationItem" id="2Su-VP-EC8"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
-                        <outlet property="cardTableView" destination="ddd-UH-ZV9" id="HDu-xf-qH2"/>
+                        <outlet property="cardTableView" destination="ddd-UH-ZV9" id="B5g-WE-wq6"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Keu-5K-mEN" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -115,4 +207,9 @@
             <point key="canvasLocation" x="-1719" y="-311"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="SC-Search-18" width="14" height="14"/>
+        <image name="icons8-Expand Arrow-20" width="15" height="15"/>
+        <image name="icons8-Horizontal Settings Mixer-30" width="23" height="23"/>
+    </resources>
 </document>
