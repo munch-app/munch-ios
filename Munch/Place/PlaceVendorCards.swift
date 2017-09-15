@@ -35,7 +35,7 @@ class PlaceVendorArticleGridCard: UITableViewCell, PlaceCardView {
         // Hide Articles if not shown
     }
     
-    static var id: String {
+    static var cardId: String {
         return "vendor_ArticleGrid_10092017"
     }
     

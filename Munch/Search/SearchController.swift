@@ -9,11 +9,10 @@
 import Foundation
 import UIKit
 
-class DiscoverController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
+class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var cardTableView: UITableView!
     var collections = [SearchCollection]()
-    var results = [SearchResult]()
+    var cards = [SearchCard]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,17 +32,10 @@ class DiscoverController: UIViewController, UITableViewDelegate, UITableViewData
         
         // TODO Query place
     }
-    
-    private func loadShimmerCards() {
-        cards.append(PlaceCard(id: DiscoverShimmerPlaceCard.id))
-        cards.append(PlaceCard(id: DiscoverShimmerPlaceCard.id))
-        cards.append(PlaceCard(id: DiscoverShimmerPlaceCard.id))
-        cardTableView.reloadData()
-    }
 }
 
 // CardType and tools
-extension DiscoverController {
+extension SearchController {
     func registerCards() {
         // Register Static Cards
         
@@ -52,28 +44,35 @@ extension DiscoverController {
         // Register Dsicover Cards
     }
     
-    private func register(_ cellClass: DiscoverCardView.Type) {
-        cardTableView.register(cellClass as? Swift.AnyClass, forCellReuseIdentifier: cellClass.id)
+    func loadShimmerCards() {
+        cards.append(SearchCard(cardId: SearchShimmerPlaceCard.cardId))
+        cards.append(SearchCard(cardId: SearchShimmerPlaceCard.cardId))
+        cards.append(SearchCard(cardId: SearchShimmerPlaceCard.cardId)) 
+        cardTableView.reloadData()
+    }
+    
+    private func register(_ cellClass: SearchCardView.Type) {
+        cardTableView.register(cellClass as? Swift.AnyClass, forCellReuseIdentifier: cellClass.cardId)
     }
 }
 
 // Card CollectionView
-extension DiscoverController {
+extension SearchController {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 0
         // return cards.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let placeCard = cards[indexPath.row]
+        let card = cards[indexPath.row]
         
-        if let cardView = cardTableView.dequeueReusableCell(withIdentifier: placeCard.id) as? PlaceCardView {
-            cardView.render(card: placeCard)
+        if let cardView = cardTableView.dequeueReusableCell(withIdentifier: card.cardId) as? SearchCardView {
+            cardView.render(card: card)
             return cardView as! UITableViewCell
         }
         
         // Static Empty CardView
-        return cardTableView.dequeueReusableCell(withIdentifier: PlaceStaticEmptyCard.id)!
+        return cardTableView.dequeueReusableCell(withIdentifier: SearchStaticEmptyCard.cardId)!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -82,16 +81,16 @@ extension DiscoverController {
     }
 }
 
-protocol DiscoverCardView {
-    func render(card: PlaceCard)
+protocol SearchCardView {
+    func render(card: SearchCard)
     
     var leftRight: CGFloat { get }
     var topBottom: CGFloat { get }
     
-    static var id: String { get }
+    static var cardId: String { get }
 }
 
-extension DiscoverCardView {
+extension SearchCardView {
     var leftRight: CGFloat {
         return 16.0
     }

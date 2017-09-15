@@ -54,7 +54,7 @@ class PlaceBasicImageBannerCard: UITableViewCell, PlaceCardView {
         }
     }
     
-    static var id: String {
+    static var cardId: String {
         return "basic_ImageBanner_11092017"
     }
 }
@@ -84,7 +84,7 @@ class PlaceBasicNameTagCard: UITableViewCell, PlaceCardView {
         self.nameLabel.text = card["name"].stringValue
     }
     
-    static var id: String {
+    static var cardId: String {
         return "basic_NameTag_12092017"
     }
 }
@@ -182,7 +182,7 @@ class PlaceBasicBusinessHourCard: UITableViewCell, PlaceCardView {
         hoursLabel.attributedText = hourText
     }
     
-    static var id: String {
+    static var cardId: String {
         return "basic_BusinessHour_07092017"
     }
 }
@@ -269,7 +269,7 @@ class PlaceBasicLocationCard: UITableViewCell, PlaceCardView {
         }
     }
     
-    static var id: String {
+    static var cardId: String {
         return "basic_Location_12092017"
     }
 }

@@ -86,13 +86,13 @@ extension PlaceViewController {
     }
     
     func loadShimmerCards() {
-        cards.append(PlaceCard(id: PlaceShimmerImageBannerCard.id))
-        cards.append(PlaceCard(id: PlaceShimmerNameTagCard.id))
+        cards.append(PlaceCard(cardId: PlaceShimmerImageBannerCard.cardId))
+        cards.append(PlaceCard(cardId: PlaceShimmerNameTagCard.cardId))
         cardTableView.reloadData()
     }
     
     private func register(_ cellClass: PlaceCardView.Type) {
-        cardTableView.register(cellClass as? Swift.AnyClass, forCellReuseIdentifier: cellClass.id)
+        cardTableView.register(cellClass as? Swift.AnyClass, forCellReuseIdentifier: cellClass.cardId)
     }
 }
 
@@ -103,15 +103,15 @@ extension PlaceViewController {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let placeCard = cards[indexPath.row]
+        let card = cards[indexPath.row]
         
-        if let cardView = cardTableView.dequeueReusableCell(withIdentifier: placeCard.id) as? PlaceCardView {
-            cardView.render(card: placeCard)
+        if let cardView = cardTableView.dequeueReusableCell(withIdentifier: card.cardId) as? PlaceCardView {
+            cardView.render(card: card)
             return cardView as! UITableViewCell
         }
         
         // Static Empty CardView
-        return cardTableView.dequeueReusableCell(withIdentifier: PlaceStaticEmptyCard.id)!
+        return cardTableView.dequeueReusableCell(withIdentifier: PlaceStaticEmptyCard.cardId)!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -126,7 +126,7 @@ protocol PlaceCardView {
     var leftRight: CGFloat { get }
     var topBottom: CGFloat { get }
     
-    static var id: String { get }
+    static var cardId: String { get }
 }
 
 extension PlaceCardView {

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		031478621F6A0A2A00246BCD /* DiscoverBasicCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 031478611F6A0A2A00246BCD /* DiscoverBasicCards.swift */; };
 		031478641F6A16ED00246BCD /* PlaceClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 031478631F6A16ED00246BCD /* PlaceClient.swift */; };
 		031478661F6A16F900246BCD /* SearchClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 031478651F6A16F900246BCD /* SearchClient.swift */; };
 		0314786A1F6A18CC00246BCD /* LocationClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 031478691F6A18CC00246BCD /* LocationClient.swift */; };
@@ -18,14 +17,16 @@
 		032F891C1E82DFA300AD3818 /* MunchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F891B1E82DFA300AD3818 /* MunchUITests.swift */; };
 		033E62F81F1D381F00AE97FA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 033E62F71F1D381F00AE97FA /* Main.storyboard */; };
 		034FCEFD1F6C24D000D353F1 /* VersionClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCEFC1F6C24D000D353F1 /* VersionClient.swift */; };
+		034FCF081F6C282E00D353F1 /* Discovery.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 034FCF021F6C282E00D353F1 /* Discovery.storyboard */; };
+		034FCF091F6C282E00D353F1 /* Search.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 034FCF031F6C282E00D353F1 /* Search.storyboard */; };
+		034FCF0A1F6C282E00D353F1 /* SearchBasicCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCF041F6C282E00D353F1 /* SearchBasicCards.swift */; };
+		034FCF0B1F6C282E00D353F1 /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCF051F6C282E00D353F1 /* SearchController.swift */; };
+		034FCF0C1F6C282E00D353F1 /* SearchStaticCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCF061F6C282E00D353F1 /* SearchStaticCards.swift */; };
+		034FCF0D1F6C282E00D353F1 /* SuggestController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCF071F6C282E00D353F1 /* SuggestController.swift */; };
 		0378849B1E8E563E006025B5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0378849A1E8E563E006025B5 /* Extensions.swift */; };
 		038275781F03B7A700C5954A /* Munch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038275771F03B7A700C5954A /* Munch.swift */; };
 		038275811F06DB8D00C5954A /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038275801F06DB8D00C5954A /* Location.swift */; };
 		038275831F0A8DE400C5954A /* Munch.plist in Resources */ = {isa = PBXBuildFile; fileRef = 038275821F0A8DE400C5954A /* Munch.plist */; };
-		039B81C31F684D410022ADCF /* Discover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 039B81C21F684D410022ADCF /* Discover.storyboard */; };
-		039B81C51F684E120022ADCF /* DiscoverStaticCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039B81C41F684E120022ADCF /* DiscoverStaticCards.swift */; };
-		039B81C71F684E290022ADCF /* DiscoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039B81C61F684E290022ADCF /* DiscoverController.swift */; };
-		039B81C91F6853F60022ADCF /* DiscoverSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039B81C81F6853F60022ADCF /* DiscoverSearchController.swift */; };
 		03CD276C1F6286FC003562A1 /* Place.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 03CD27691F6286FC003562A1 /* Place.storyboard */; };
 		03CD276D1F6286FC003562A1 /* PlaceBasicCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD276A1F6286FC003562A1 /* PlaceBasicCards.swift */; };
 		03CD276E1F6286FC003562A1 /* PlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD276B1F6286FC003562A1 /* PlaceController.swift */; };
@@ -38,7 +39,6 @@
 		03D3FEE51E89494600ACFF50 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89331E82F14A00AD3818 /* SwiftyJSON.framework */; };
 		03D3FEF01E8A647E00ACFF50 /* SwiftLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */; };
 		03D3FEF41E8A8DB500ACFF50 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEF21E8A8DA500ACFF50 /* SDWebImage.framework */; };
-		03E216A51EFA005300465BE3 /* Discovery.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 03E216A41EFA005300465BE3 /* Discovery.storyboard */; };
 		12855D04BD7B4359954CC379 /* Pods_MunchTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30933A940AE4DF2E7F80A839 /* Pods_MunchTests.framework */; };
 		DB136C8B43E175A72028D87F /* Pods_MunchUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2CE8E9F738C2A64071DD8B3 /* Pods_MunchUITests.framework */; };
 		FFCBE8C721F3D06666C1DA69 /* Pods_Munch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE98581AD7B5040948A2CD79 /* Pods_Munch.framework */; };
@@ -62,7 +62,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		031478611F6A0A2A00246BCD /* DiscoverBasicCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiscoverBasicCards.swift; path = Discover/DiscoverBasicCards.swift; sourceTree = "<group>"; };
 		031478631F6A16ED00246BCD /* PlaceClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceClient.swift; path = Api/PlaceClient.swift; sourceTree = "<group>"; };
 		031478651F6A16F900246BCD /* SearchClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchClient.swift; path = Api/SearchClient.swift; sourceTree = "<group>"; };
 		031478691F6A18CC00246BCD /* LocationClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationClient.swift; path = Api/LocationClient.swift; sourceTree = "<group>"; };
@@ -87,6 +86,12 @@
 		034820551E9CB3C400B0076A /* ImageViewer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageViewer.framework; path = Carthage/Build/iOS/ImageViewer.framework; sourceTree = "<group>"; };
 		034820571E9CB92A00B0076A /* SKPhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SKPhotoBrowser.framework; path = Carthage/Build/iOS/SKPhotoBrowser.framework; sourceTree = "<group>"; };
 		034FCEFC1F6C24D000D353F1 /* VersionClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VersionClient.swift; path = Api/VersionClient.swift; sourceTree = "<group>"; };
+		034FCF021F6C282E00D353F1 /* Discovery.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Discovery.storyboard; path = Search/Discovery.storyboard; sourceTree = "<group>"; };
+		034FCF031F6C282E00D353F1 /* Search.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Search.storyboard; path = Search/Search.storyboard; sourceTree = "<group>"; };
+		034FCF041F6C282E00D353F1 /* SearchBasicCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchBasicCards.swift; path = Search/SearchBasicCards.swift; sourceTree = "<group>"; };
+		034FCF051F6C282E00D353F1 /* SearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchController.swift; path = Search/SearchController.swift; sourceTree = "<group>"; };
+		034FCF061F6C282E00D353F1 /* SearchStaticCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchStaticCards.swift; path = Search/SearchStaticCards.swift; sourceTree = "<group>"; };
+		034FCF071F6C282E00D353F1 /* SuggestController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SuggestController.swift; path = Search/SuggestController.swift; sourceTree = "<group>"; };
 		037884981E8E4E3F006025B5 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Carthage/Build/iOS/SnapKit.framework; sourceTree = "<group>"; };
 		0378849A1E8E563E006025B5 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		038275771F03B7A700C5954A /* Munch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Munch.swift; sourceTree = "<group>"; };
@@ -95,10 +100,6 @@
 		0382757D1F06427300C5954A /* NVActivityIndicatorView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NVActivityIndicatorView.framework; path = Carthage/Build/iOS/NVActivityIndicatorView.framework; sourceTree = "<group>"; };
 		038275801F06DB8D00C5954A /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		038275821F0A8DE400C5954A /* Munch.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Munch.plist; sourceTree = "<group>"; };
-		039B81C21F684D410022ADCF /* Discover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Discover.storyboard; path = Discover/Discover.storyboard; sourceTree = "<group>"; };
-		039B81C41F684E120022ADCF /* DiscoverStaticCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiscoverStaticCards.swift; path = Discover/DiscoverStaticCards.swift; sourceTree = "<group>"; };
-		039B81C61F684E290022ADCF /* DiscoverController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiscoverController.swift; path = Discover/DiscoverController.swift; sourceTree = "<group>"; };
-		039B81C81F6853F60022ADCF /* DiscoverSearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiscoverSearchController.swift; path = Discover/DiscoverSearchController.swift; sourceTree = "<group>"; };
 		039C393C1E8D47E300A28533 /* HMSegmentedControl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HMSegmentedControl.framework; path = Carthage/Build/iOS/HMSegmentedControl.framework; sourceTree = "<group>"; };
 		039C393E1E8D47F500A28533 /* MXSegmentedPager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXSegmentedPager.framework; path = Carthage/Build/iOS/MXSegmentedPager.framework; sourceTree = "<group>"; };
 		039C39411E8D485400A28533 /* MXPagerView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXPagerView.framework; path = Carthage/Build/iOS/MXPagerView.framework; sourceTree = "<group>"; };
@@ -120,7 +121,6 @@
 		03D5295D1E9CFB17003D5350 /* TransitionAnimation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TransitionAnimation.framework; path = Carthage/Build/iOS/TransitionAnimation.framework; sourceTree = "<group>"; };
 		03D529601E9D03C0003D5350 /* FlexibleHeightBar.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlexibleHeightBar.framework; path = Carthage/Build/iOS/FlexibleHeightBar.framework; sourceTree = "<group>"; };
 		03D88C141E9DF412005F825B /* Hero.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Hero.framework; path = Carthage/Build/iOS/Hero.framework; sourceTree = "<group>"; };
-		03E216A41EFA005300465BE3 /* Discovery.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Discovery.storyboard; path = Discover/Discovery.storyboard; sourceTree = "<group>"; };
 		03EE235D1E83039A009AFBFC /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		19CC2B7B7A468F7A24511641 /* Pods-Munch.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Munch.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Munch/Pods-Munch.debug.xcconfig"; sourceTree = "<group>"; };
 		30933A940AE4DF2E7F80A839 /* Pods_MunchTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MunchTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -193,8 +193,7 @@
 				032F89351E82F1F300AD3818 /* Api */,
 				032F88FB1E82DFA300AD3818 /* AppDelegate.swift */,
 				033E62F71F1D381F00AE97FA /* Main.storyboard */,
-				03E216A11EFA000000465BE3 /* Discovery */,
-				039B81BF1F6847060022ADCF /* Discover */,
+				039B81BF1F6847060022ADCF /* Search */,
 				03CD27621F628180003562A1 /* Place */,
 				032F89021E82DFA300AD3818 /* Assets.xcassets */,
 				032F89041E82DFA300AD3818 /* LaunchScreen.storyboard */,
@@ -275,16 +274,17 @@
 			name = Api;
 			sourceTree = "<group>";
 		};
-		039B81BF1F6847060022ADCF /* Discover */ = {
+		039B81BF1F6847060022ADCF /* Search */ = {
 			isa = PBXGroup;
 			children = (
-				039B81C21F684D410022ADCF /* Discover.storyboard */,
-				039B81C61F684E290022ADCF /* DiscoverController.swift */,
-				039B81C41F684E120022ADCF /* DiscoverStaticCards.swift */,
-				031478611F6A0A2A00246BCD /* DiscoverBasicCards.swift */,
-				039B81C81F6853F60022ADCF /* DiscoverSearchController.swift */,
+				034FCF021F6C282E00D353F1 /* Discovery.storyboard */,
+				034FCF031F6C282E00D353F1 /* Search.storyboard */,
+				034FCF051F6C282E00D353F1 /* SearchController.swift */,
+				034FCF041F6C282E00D353F1 /* SearchBasicCards.swift */,
+				034FCF061F6C282E00D353F1 /* SearchStaticCards.swift */,
+				034FCF071F6C282E00D353F1 /* SuggestController.swift */,
 			);
-			name = Discover;
+			name = Search;
 			sourceTree = "<group>";
 		};
 		03CD27621F628180003562A1 /* Place */ = {
@@ -297,14 +297,6 @@
 				03CD277D1F62BDEA003562A1 /* PlaceVendorCards.swift */,
 			);
 			name = Place;
-			sourceTree = "<group>";
-		};
-		03E216A11EFA000000465BE3 /* Discovery */ = {
-			isa = PBXGroup;
-			children = (
-				03E216A41EFA005300465BE3 /* Discovery.storyboard */,
-			);
-			name = Discovery;
 			sourceTree = "<group>";
 		};
 		7FAD2F52AB52E9E8804CF200 /* Pods */ = {
@@ -442,9 +434,9 @@
 				032F89061E82DFA300AD3818 /* LaunchScreen.storyboard in Resources */,
 				032F89031E82DFA300AD3818 /* Assets.xcassets in Resources */,
 				033E62F81F1D381F00AE97FA /* Main.storyboard in Resources */,
+				034FCF091F6C282E00D353F1 /* Search.storyboard in Resources */,
 				03CD276C1F6286FC003562A1 /* Place.storyboard in Resources */,
-				039B81C31F684D410022ADCF /* Discover.storyboard in Resources */,
-				03E216A51EFA005300465BE3 /* Discovery.storyboard in Resources */,
+				034FCF081F6C282E00D353F1 /* Discovery.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -665,22 +657,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				038275781F03B7A700C5954A /* Munch.swift in Sources */,
+				034FCF0C1F6C282E00D353F1 /* SearchStaticCards.swift in Sources */,
 				034FCEFD1F6C24D000D353F1 /* VersionClient.swift in Sources */,
-				031478621F6A0A2A00246BCD /* DiscoverBasicCards.swift in Sources */,
 				0314786A1F6A18CC00246BCD /* LocationClient.swift in Sources */,
 				031478661F6A16F900246BCD /* SearchClient.swift in Sources */,
-				039B81C71F684E290022ADCF /* DiscoverController.swift in Sources */,
 				031478641F6A16ED00246BCD /* PlaceClient.swift in Sources */,
 				03CD276E1F6286FC003562A1 /* PlaceController.swift in Sources */,
 				03CF0AA21E97AA3C00A3FD1F /* Objects.swift in Sources */,
+				034FCF0D1F6C282E00D353F1 /* SuggestController.swift in Sources */,
 				038275811F06DB8D00C5954A /* Location.swift in Sources */,
 				032F88FC1E82DFA300AD3818 /* AppDelegate.swift in Sources */,
 				0378849B1E8E563E006025B5 /* Extensions.swift in Sources */,
-				039B81C51F684E120022ADCF /* DiscoverStaticCards.swift in Sources */,
 				03CD277E1F62BDEA003562A1 /* PlaceVendorCards.swift in Sources */,
-				039B81C91F6853F60022ADCF /* DiscoverSearchController.swift in Sources */,
+				034FCF0B1F6C282E00D353F1 /* SearchController.swift in Sources */,
 				03CD27741F62BD5C003562A1 /* PlaceStaticCards.swift in Sources */,
 				03CD276D1F6286FC003562A1 /* PlaceBasicCards.swift in Sources */,
+				034FCF0A1F6C282E00D353F1 /* SearchBasicCards.swift in Sources */,
 				03CF0AA41E97AA3C00A3FD1F /* MunchApi.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

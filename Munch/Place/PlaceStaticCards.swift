@@ -28,7 +28,7 @@ class PlaceStaticEmptyCard: UITableViewCell, PlaceCardView {
     func render(card: PlaceCard) {
     }
     
-    static var id: String {
+    static var cardId: String {
         return "static_PlaceStaticEmptyCard"
     }
 }
@@ -59,7 +59,7 @@ class PlaceShimmerImageBannerCard: UITableViewCell, PlaceCardView {
     func render(card: PlaceCard) {
     }
     
-    static var id: String {
+    static var cardId: String {
         return "shimmer_PlaceShimmerImageBannerCard"
     }
 }
@@ -90,7 +90,7 @@ class PlaceShimmerNameTagCard: UITableViewCell, PlaceCardView {
     func render(card: PlaceCard) {
     }
     
-    static var id: String {
+    static var cardId: String {
         return "shimmer_PlaceShimmerNameTagCard"
     }
 }

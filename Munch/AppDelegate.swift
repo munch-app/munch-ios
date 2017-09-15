@@ -17,8 +17,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        // Sync cached data
-        CachedSync.sync()
         
         // Select initial view provider to use
         self.window?.rootViewController = InitialViewProvider.main()
@@ -40,7 +38,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
         if let tabBar = self.window?.rootViewController as? ESTabBarController {
             if let navigation = tabBar.selectedViewController as? UINavigationController {
-                if let controller = navigation.topViewController as? DiscoverController {
+                if let controller = navigation.topViewController as? SearchController {
                     // TODO Refresh
                     // controller.refreshQuery()
                 }
@@ -76,15 +74,15 @@ enum InitialViewProvider {
         tabController.tabBar.hairlineShadow(height: -1.0)
         
         // Discover
-        let discoverStoryboard = UIStoryboard(name: "Discover", bundle: nil)
-        let discoverController = discoverStoryboard.instantiateInitialViewController()!
-        discoverController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "DISCOVER", image: UIImage(named: "icons8-Search-35"))
+        let searchStoryboard = UIStoryboard(name: "Search", bundle: nil)
+        let searchController = searchStoryboard.instantiateInitialViewController()!
+        searchController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "SEARCH", image: UIImage(named: "icons8-Search-35"))
         
 //        // Profile
 //        let profileController = UIViewController()
 //        profileController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "PROFILE", image: UIImage(named: "icons8-customer-35"))
         
-        tabController.viewControllers = [discoverController]
+        tabController.viewControllers = [searchController]
         return tabController
     }
 }
