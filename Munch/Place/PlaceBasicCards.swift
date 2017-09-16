@@ -79,7 +79,7 @@ class PlaceBasicNameTagCard: UITableViewCell, PlaceCardView {
     }
     
     func render(card: PlaceCard) {
-        self.nameLabel.text = card["name"].stringValue
+        self.nameLabel.text = card["name"].string
     }
     
     static var cardId: String {

@@ -166,6 +166,7 @@ class ShimmerImageView: FBShimmeringView {
         self.isShimmering = true
         imageView.render(imageMeta: imageMeta) { _, error, _, _ in
             if (error == nil) {
+                
                 self.isShimmering = false
             }
         }
