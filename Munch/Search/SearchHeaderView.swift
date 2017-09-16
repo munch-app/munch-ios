@@ -22,27 +22,32 @@ protocol SearchHeaderDelegate {
 }
 
 class SearchHeaderView: UIView {
+    var delegate: SearchHeaderDelegate?
+    
     let locationButton = SearchLocationButton()
     let queryLabel = SearchQueryLabel()
     let filterButton = SearchFilterButton()
-    let tabCollection: UICollectionView
+    let tabCollection = SearchTabCollection()
     
     var heightConstraint: Constraint! = nil
     
+    var tabNames = [String]()
+    var selectedTab = 0
+    
     override init(frame: CGRect = CGRect()) {
-        let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: 100, height: 100)
-        tabCollection = UICollectionView(frame: frame, collectionViewLayout: layout)
-        
         super.init(frame: frame)
         tabCollection.delegate = self
         tabCollection.dataSource = self
         
         self.backgroundColor = UIColor.white
+        
         self.addSubview(locationButton)
         self.addSubview(queryLabel)
         self.addSubview(filterButton)
         self.addSubview(tabCollection)
+        
+        registerCell()
+        loadShimmerTab()
         
         let statusView = UIView()
         statusView.backgroundColor = UIColor.white
@@ -81,6 +86,11 @@ class SearchHeaderView: UIView {
             make.bottom.left.right.equalTo(self)
             make.height.equalTo(50)
         }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.hairlineShadow(height: 1.0)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -151,21 +161,142 @@ class SearchFilterButton: UIButton {
     }
 }
 
+class SearchTabCollection: UICollectionView {
+    init(frame: CGRect = CGRect()) {
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: 150, height: 50)
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 0
+        layout.sectionInset.left = 24
+        layout.scrollDirection = .horizontal
+        super.init(frame: frame, collectionViewLayout: layout)
+        
+        self.showsVerticalScrollIndicator = false
+        self.showsHorizontalScrollIndicator = false
+        self.backgroundColor = UIColor.white
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class SearchTabNameCell: UICollectionViewCell {
+    static let titleFont = UIFont.systemFont(ofSize: 12, weight: UIFontWeightSemibold)
+    
+    let label = UILabel()
+    let indicator = UIView()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.label.font = SearchTabNameCell.titleFont
+        self.addSubview(label)
+        self.addSubview(indicator)
+        
+        label.snp.makeConstraints { make in
+            make.top.bottom.left.equalTo(self)
+            make.right.equalTo(self).inset(24)
+        }
+        
+        indicator.snp.makeConstraints { make in
+            make.left.bottom.equalTo(self)
+            make.right.equalTo(self).inset(24)
+            make.height.equalTo(2)
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func render(title: String, selected: Bool) {
+        self.label.text = title.uppercased()
+        if selected {
+            label.textColor = UIColor.black.withAlphaComponent(0.85)
+            indicator.backgroundColor = .primary300
+        } else {
+            label.textColor = UIColor.black.withAlphaComponent(0.35)
+            indicator.backgroundColor = .white
+        }
+    }
+    
+    class func width(title: String) -> CGSize {
+        let width = UILabel.textWidth(font: titleFont, text: title.uppercased())
+        return CGSize(width: width + 24, height: 50)
+    }
+}
+
+class SearchTabShimmerCell: UICollectionViewCell {
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        let label = ShimmerView()
+        label.shimmeringSpeed = 90
+        self.addSubview(label)
+        
+        label.snp.makeConstraints { make in
+            make.left.equalTo(self)
+            make.right.equalTo(self).inset(24)
+            
+            make.topMargin.bottomMargin.equalTo(self).inset(14)
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    class func width() -> CGSize {
+        return CGSize(width: 90, height: 50)
+    }
+}
+
 extension SearchHeaderView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    func registerCell() {
+        tabCollection.register(SearchTabShimmerCell.self, forCellWithReuseIdentifier: "SearchTabShimmerCell")
+        tabCollection.register(SearchTabNameCell.self, forCellWithReuseIdentifier: "SearchTabNameCell")
+    }
+    
+    func loadShimmerTab() {
+        tabNames = []
+        selectedTab = 0
+        tabCollection.reloadData()
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 0
+        if (tabNames.isEmpty) {
+            return 5
+        } else {
+            return tabNames.count
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize()
+        if (tabNames.isEmpty) {
+            return SearchTabShimmerCell.width()
+        } else {
+            let title = tabNames[indexPath.row]
+            return SearchTabNameCell.width(title: title)
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        return UICollectionViewCell()
+        if (tabNames.isEmpty) {
+            return collectionView.dequeueReusableCell(withReuseIdentifier: "SearchTabShimmerCell", for: indexPath)
+        } else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchTabNameCell", for: indexPath) as! SearchTabNameCell
+            let title = tabNames[indexPath.row]
+            cell.render(title: title, selected: selectedTab == indexPath.row)
+            return cell
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
+        if (!tabNames.isEmpty) {
+            self.selectedTab = indexPath.row
+            collectionView.reloadData()
+            self.delegate?.searchHeader(didSelect: .tab(indexPath.row))
+        }
     }
 }
 
@@ -181,7 +312,7 @@ extension SearchHeaderView {
     }
 }
 
-// Apply and Reset functions for navigation bar
+// Render search query functions
 extension SearchHeaderView {
     
 }

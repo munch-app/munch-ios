@@ -157,7 +157,6 @@
                         <outlet property="searchBar" destination="06x-B7-TO6" id="6Yu-UU-I5i"/>
                         <segue destination="7rT-dk-fUQ" kind="custom" identifier="discover_segue_search" customClass="MXPageSegue" id="xyt-pi-3u8"/>
                         <segue destination="jVJ-mT-mkE" kind="custom" identifier="discover_segue_tabs" customClass="MXPageSegue" id="7PZ-yb-h2A"/>
-                        <segue destination="Dkp-gW-WGP" kind="custom" identifier="discover_segue_tabless" customClass="MXPageSegue" id="gx2-jB-kG7"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VuX-yq-SLp" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -557,87 +556,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wev-au-bfo" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1940" y="690"/>
-        </scene>
-        <!--Discover Tabless Controller-->
-        <scene sceneID="NeV-Wb-h5b">
-            <objects>
-                <viewController id="Dkp-gW-WGP" customClass="DiscoverTablessController" customModule="Munch" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="A2h-bK-xIf"/>
-                        <viewControllerLayoutGuide type="bottom" id="B8T-pc-8U7"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="UBg-b5-T8D">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GEG-BG-Ch4">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                            </containerView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vF2-Xe-Wcb">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="115"/>
-                                <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zrV-FV-hwQ" customClass="HairlineShadowView" customModule="Munch" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="65" width="375" height="50"/>
-                                        <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7sD-n2-VVS">
-                                                <rect key="frame" x="0.0" y="5" width="375" height="45"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="45" id="E6N-NW-Zyu"/>
-                                                </constraints>
-                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
-                                                <state key="normal" title="Collection Name">
-                                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                </state>
-                                                <connections>
-                                                    <action selector="actionOnTitle:" destination="Dkp-gW-WGP" eventType="touchUpInside" id="7f0-jg-eac"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <constraints>
-                                            <constraint firstAttribute="trailing" secondItem="7sD-n2-VVS" secondAttribute="trailing" id="DgP-g3-ebk"/>
-                                            <constraint firstAttribute="bottom" secondItem="7sD-n2-VVS" secondAttribute="bottom" id="Sss-Y8-BgJ"/>
-                                            <constraint firstItem="7sD-n2-VVS" firstAttribute="leading" secondItem="zrV-FV-hwQ" secondAttribute="leading" id="gvc-Gy-9IA"/>
-                                            <constraint firstAttribute="height" constant="50" id="tO9-ih-FMm"/>
-                                        </constraints>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="hairlineShadowHeight">
-                                                <real key="value" value="1"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
-                                    </view>
-                                </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="zrV-FV-hwQ" secondAttribute="bottom" id="Eug-7p-SlS"/>
-                                    <constraint firstAttribute="height" constant="115" id="qCj-ro-QDN"/>
-                                    <constraint firstAttribute="trailing" secondItem="zrV-FV-hwQ" secondAttribute="trailing" id="qeQ-Xa-BcW"/>
-                                    <constraint firstItem="zrV-FV-hwQ" firstAttribute="leading" secondItem="vF2-Xe-Wcb" secondAttribute="leading" id="ycH-8Z-6It"/>
-                                </constraints>
-                            </view>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="vF2-Xe-Wcb" firstAttribute="top" secondItem="UBg-b5-T8D" secondAttribute="top" id="7nw-Fa-qfn"/>
-                            <constraint firstItem="GEG-BG-Ch4" firstAttribute="top" secondItem="UBg-b5-T8D" secondAttribute="top" id="cuE-hw-g5i"/>
-                            <constraint firstAttribute="trailing" secondItem="vF2-Xe-Wcb" secondAttribute="trailing" id="jTp-JP-erU"/>
-                            <constraint firstItem="B8T-pc-8U7" firstAttribute="top" secondItem="GEG-BG-Ch4" secondAttribute="bottom" id="qJK-e9-YvR"/>
-                            <constraint firstItem="vF2-Xe-Wcb" firstAttribute="leading" secondItem="UBg-b5-T8D" secondAttribute="leading" id="sZd-hF-pa7"/>
-                            <constraint firstItem="GEG-BG-Ch4" firstAttribute="leading" secondItem="UBg-b5-T8D" secondAttribute="leading" id="ury-Jn-6JH"/>
-                            <constraint firstAttribute="trailing" secondItem="GEG-BG-Ch4" secondAttribute="trailing" id="yNm-vj-bxA"/>
-                        </constraints>
-                    </view>
-                    <nil key="simulatedStatusBarMetrics"/>
-                    <nil key="simulatedTopBarMetrics"/>
-                    <nil key="simulatedBottomBarMetrics"/>
-                    <connections>
-                        <outlet property="collectionButton" destination="7sD-n2-VVS" id="0yL-N0-wfL"/>
-                        <outlet property="extendedBarHeightConstraint" destination="qCj-ro-QDN" id="Jq2-y9-LsW"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="JWD-ci-KmI" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2828" y="690"/>
         </scene>
         <!--Discover Search Controller-->
         <scene sceneID="JEE-ud-wZe">
