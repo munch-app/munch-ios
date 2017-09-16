@@ -11,6 +11,8 @@ import UIKit
 
 class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var cardTableView: UITableView!
+    let headerView = SearchHeaderView()
+    
     var collections = [SearchCollection]()
     var cards = [SearchCard]()
     
@@ -24,6 +26,10 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.addSubview(headerView)
+        headerView.snp.makeConstraints { make in
+            make.top.left.right.equalTo(self.view)
+        }
         
         // Setup Card Table View
         self.cardTableView.delegate = self

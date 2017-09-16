@@ -47,7 +47,7 @@
                                 <subviews>
                                     <textField clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Search any restaurant, cuisine" minimumFontSize="14" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Hs0-4P-Yo8" customClass="DiscoverSearchField" customModule="Munch" customModuleProvider="target">
                                         <rect key="frame" x="24" y="68" width="282" height="32"/>
-                                        <color key="backgroundColor" white="0.92000000000000004" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" red="0.92156862745098034" green="0.92156862745098034" blue="0.92156862745098034" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="32" id="sUn-PK-Vb1"/>
                                         </constraints>
@@ -57,7 +57,7 @@
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="image" keyPath="leftImage" value="SC-Search-18"/>
                                             <userDefinedRuntimeAttribute type="color" keyPath="color">
-                                                <color key="value" white="0.17999999999999999" alpha="1" colorSpace="calibratedWhite"/>
+                                                <color key="value" red="0.1803921568627451" green="0.1803921568627451" blue="0.1803921568627451" alpha="1" colorSpace="calibratedRGB"/>
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="number" keyPath="leftImagePadding">
                                                 <real key="value" value="1"/>

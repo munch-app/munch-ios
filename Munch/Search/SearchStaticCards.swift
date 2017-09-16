@@ -58,21 +58,21 @@ class SearchShimmerPlaceCard: UITableViewCell, SearchCardView {
             self.addSubview(locationLabel)
             
             nameLabel.snp.makeConstraints { make in
-                make.height.equalTo(20)
+                make.height.equalTo(18)
                 make.width.equalTo(200)
                 make.left.equalTo(self)
-                make.bottom.equalTo(tagLabel.snp.top).inset(-5)
+                make.bottom.equalTo(tagLabel.snp.top).inset(-7)
             }
             
             tagLabel.snp.makeConstraints { make in
-                make.height.equalTo(16)
+                make.height.equalTo(15)
                 make.width.equalTo(140)
                 make.left.equalTo(self)
-                make.bottom.equalTo(locationLabel.snp.top).inset(-5)
+                make.bottom.equalTo(locationLabel.snp.top).inset(-7)
             }
             
             locationLabel.snp.makeConstraints { make in
-                make.height.equalTo(16)
+                make.height.equalTo(15)
                 make.width.equalTo(265)
                 make.left.equalTo(self)
                 make.bottom.equalTo(self)
