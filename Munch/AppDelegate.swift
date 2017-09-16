@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import ESTabBarController_swift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -36,7 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
-        if let tabBar = self.window?.rootViewController as? ESTabBarController {
+        if let tabBar = self.window?.rootViewController as? TabBarController {
             if let navigation = tabBar.selectedViewController as? UINavigationController {
                 if let controller = navigation.topViewController as? SearchController {
                     // TODO Refresh
@@ -54,57 +53,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-}
-
-
-/**
- Initial view provider
- */
-enum InitialViewProvider {
-    
-    /**
-     Main tab controllers for Munch App
-     */
-    static func main() -> ESTabBarController {
-        let tabController = ESTabBarController()
-        tabController.tabBar.isTranslucent = false
-        tabController.tabBar.backgroundColor = UIColor.white
-        tabController.tabBar.shadowImage = UIImage()
-        tabController.tabBar.backgroundImage = UIImage()
-        tabController.tabBar.hairlineShadow(height: -1.0)
-        
-        // Discover
-        let searchStoryboard = UIStoryboard(name: "Search", bundle: nil)
-        let searchController = searchStoryboard.instantiateInitialViewController()!
-        searchController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "SEARCH", image: UIImage(named: "icons8-Search-35"))
-        
-//        // Profile
-//        let profileController = UIViewController()
-//        profileController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "PROFILE", image: UIImage(named: "icons8-customer-35"))
-        
-        tabController.viewControllers = [searchController]
-        return tabController
-    }
-}
-
-/**
- Main tab bar content styling
- */
-class MunchTabBarContentView: ESTabBarItemContentView {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        titleLabel.font = UIFont.systemFont(ofSize: 9, weight: UIFontWeightSemibold)
-        insets.bottom = 3
-        insets.top = 3
-        
-        iconColor = UIColor.black.withAlphaComponent(0.75)
-        textColor = UIColor.black.withAlphaComponent(0.75)
-        
-        highlightIconColor = UIColor.primary
-        highlightTextColor = UIColor.primary
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }

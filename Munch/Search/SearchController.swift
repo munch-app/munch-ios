@@ -50,6 +50,10 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
             }
         }
     }
+    
+    func scrollToTop() {
+        cardTableView.setContentOffset(CGPoint.zero, animated: true)
+    }
 }
 
 // CardType and tools
