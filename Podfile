@@ -21,7 +21,6 @@ target 'Munch' do
   pod 'NVActivityIndicatorView', '~> 3.7'
   pod 'ESTabBarController-swift', '~> 2.5'
   pod 'SKPhotoBrowser', '~> 4.1'
-  pod 'MXPagerView', '~> 0.2'
 
   # Pods for Testing
   target 'MunchTests' do

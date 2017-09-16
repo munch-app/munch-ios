@@ -11,7 +11,7 @@ import UIKit
 import SwiftRichString
 
 class SearchPlaceCard: UITableViewCell, SearchCardView {
-    var topImageView = ShimmerImageView()
+    let topImageView = ShimmerImageView()
     let bottomView = BottomView()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -36,8 +36,7 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         containerView.snp.makeConstraints { make in
             let height = (UIScreen.main.bounds.width * 0.888) - (topBottom * 2)
             make.height.equalTo(height)
-            make.left.right.equalTo(self).inset(leftRight)
-            make.top.bottom.equalTo(self).inset(topBottom)
+            make.edges.equalTo(self).inset(UIEdgeInsets(topBottom: topBottom, leftRight: leftRight))
         }
     }
     
@@ -61,8 +60,8 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         let tagLabel = UILabel()
         let locationLabel = UILabel()
         
-        init() {
-            super.init(frame: CGRect())
+        override init(frame: CGRect = CGRect()) {
+            super.init(frame: frame)
             nameLabel.font = UIFont.systemFont(ofSize: 18, weight: UIFontWeightSemibold)
             nameLabel.textColor = UIColor.black.withAlphaComponent(0.8)
             self.addSubview(nameLabel)
@@ -77,7 +76,6 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
             
             nameLabel.snp.makeConstraints { make in
                 make.height.equalTo(26)
-                make.top.equalTo(9)
                 make.left.right.equalTo(self)
                 make.bottom.equalTo(tagLabel.snp.top)
             }

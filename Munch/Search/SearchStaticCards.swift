@@ -12,20 +12,33 @@ import Shimmer
 
 class SearchShimmerPlaceCard: UITableViewCell, SearchCardView {
     
+    let topView = ShimmerView()
+    let bottomView = BottomView()
+    
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         
-        let shimmerView = FBShimmeringView()
-        let colorView = UIView()
-        colorView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
-        shimmerView.contentView = colorView
-        shimmerView.isShimmering = true
-        self.addSubview(shimmerView)
+        let containerView = UIView()
+        containerView.addSubview(topView)
+        containerView.addSubview(bottomView)
+        self.addSubview(containerView)
         
-        shimmerView.snp.makeConstraints { make in
-            make.height.equalTo(260)
-            make.edges.equalTo(self).inset(UIEdgeInsets(top: 0, left: 0, bottom: topBottom, right: 0))
+        topView.snp.makeConstraints { make in
+            make.left.right.top.equalTo(containerView)
+            make.bottom.equalTo(bottomView.snp.top)
+        }
+        
+        bottomView.snp.makeConstraints { make in
+            make.left.right.bottom.equalTo(containerView)
+            make.height.equalTo(73)
+        }
+        
+        containerView.snp.makeConstraints { make in
+            let height = (UIScreen.main.bounds.width * 0.888) - (topBottom * 2)
+            make.height.equalTo(height)
+            make.left.right.equalTo(self).inset(leftRight)
+            make.top.bottom.equalTo(self).inset(topBottom)
         }
     }
     
@@ -33,8 +46,45 @@ class SearchShimmerPlaceCard: UITableViewCell, SearchCardView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func render(card: SearchCard) {
+    class BottomView: UIView {
+        let nameLabel = ShimmerView()
+        let tagLabel = ShimmerView()
+        let locationLabel = ShimmerView()
+        
+        override init(frame: CGRect = CGRect()) {
+            super.init(frame: frame)
+            self.addSubview(nameLabel)
+            self.addSubview(tagLabel)
+            self.addSubview(locationLabel)
+            
+            nameLabel.snp.makeConstraints { make in
+                make.height.equalTo(20)
+                make.width.equalTo(200)
+                make.left.equalTo(self)
+                make.bottom.equalTo(tagLabel.snp.top).inset(-5)
+            }
+            
+            tagLabel.snp.makeConstraints { make in
+                make.height.equalTo(16)
+                make.width.equalTo(140)
+                make.left.equalTo(self)
+                make.bottom.equalTo(locationLabel.snp.top).inset(-5)
+            }
+            
+            locationLabel.snp.makeConstraints { make in
+                make.height.equalTo(16)
+                make.width.equalTo(265)
+                make.left.equalTo(self)
+                make.bottom.equalTo(self)
+            }
+        }
+        
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
     }
+    
+    func render(card: SearchCard) {}
     
     static var cardId: String {
         return "shimmer_DiscoverShimmerPlaceCard"
@@ -97,7 +147,7 @@ class SearchStaticNoResultCard: UITableViewCell, SearchCardView {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
-    
+        
         let label = UILabel()
         label.text = "No Result"
         label.textAlignment = .center
