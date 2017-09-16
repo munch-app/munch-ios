@@ -13,14 +13,12 @@ import SwiftRichString
 
 class PlaceBasicImageBannerCard: UITableViewCell, PlaceCardView {
     let imageGradientView = UIView()
-    let imageBannerView = UIImageView()
+    let imageBannerView = ShimmerImageView()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         
-        imageBannerView.contentMode = .scaleAspectFill
-        imageBannerView.clipsToBounds = true
         self.addSubview(imageBannerView)
         
         imageBannerView.snp.makeConstraints { make in
@@ -29,12 +27,12 @@ class PlaceBasicImageBannerCard: UITableViewCell, PlaceCardView {
         }
         
         let gradientLayer = CAGradientLayer()
-        gradientLayer.frame = CGRect(x: 0, y: 0, width: UIScreen.width, height: 64)
+        gradientLayer.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 64)
         gradientLayer.colors = [UIColor.black.withAlphaComponent(0.5).cgColor, UIColor.clear.cgColor]
         imageGradientView.layer.insertSublayer(gradientLayer, at: 0)
         imageGradientView.backgroundColor = UIColor.clear
-        
         self.addSubview(imageGradientView)
+        
         imageGradientView.snp.makeConstraints { make in
             make.height.equalTo(64)
             make.top.equalTo(self)

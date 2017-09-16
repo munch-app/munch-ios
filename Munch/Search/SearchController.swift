@@ -14,6 +14,14 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     var collections = [SearchCollection]()
     var cards = [SearchCard]()
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Make navigation bar transparent, bar must be hidden
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.shadowImage = UIImage()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -22,7 +30,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         self.cardTableView.dataSource = self
         
         self.cardTableView.rowHeight = UITableViewAutomaticDimension
-        self.cardTableView.estimatedRowHeight = 44
+        self.cardTableView.estimatedRowHeight = 50
         
         // TODO insets
         self.cardTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
@@ -33,7 +41,9 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         MunchApi.search.collections(query: SearchQuery()) { meta, collections in
             if (meta.isOk()) {
                 // TODO
-                // self.cards = cards
+                if let cards = collections.get(0)?.cards {
+                    self.cards = cards
+                }
                 self.cardTableView.reloadData()
             } else {
                 self.present(meta.createAlert(), animated: true)
@@ -71,8 +81,7 @@ extension SearchController {
 // Card CollectionView
 extension SearchController {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
-        // return cards.count
+        return cards.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

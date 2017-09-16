@@ -141,6 +141,37 @@ extension UIColor {
     }
 }
 
+class ShimmerImageView: FBShimmeringView {
+    let imageView = UIImageView()
+    
+    override init(frame: CGRect = CGRect()) {
+        super.init(frame: frame)
+        self.contentView = imageView
+        
+        // Override default image setting
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func render(placeImage: Place.Image?) {
+        render(imageMeta: placeImage?.imageMeta)
+    }
+    
+    func render(imageMeta: ImageMeta?) {
+        self.isShimmering = true
+        imageView.render(imageMeta: imageMeta) { _, error, _, _ in
+            if (error == nil) {
+                self.isShimmering = false
+            }
+        }
+    }
+}
+
 /**
  Image view extension for rendering image meta data
  */
@@ -151,8 +182,8 @@ extension UIImageView {
      PlaceImage will contain a ImageMeta to use for rendering
      Shimmer is set to true by default
      */
-    func render(placeImage: Place.Image?, shimmer: Bool = true) {
-        render(imageMeta: placeImage?.imageMeta, shimmer: shimmer)
+    func render(placeImage: Place.Image?, completionHandler: CompletionHandler? = nil) {
+        render(imageMeta: placeImage?.imageMeta, completionHandler: completionHandler)
     }
     
     /**
@@ -162,13 +193,7 @@ extension UIImageView {
      If imageMeta is nil, image will be set to nil too
      Shimmer is set to true by default
      */
-    func render(imageMeta: ImageMeta?, shimmer: Bool = true) {
-        if (shimmer) {
-            let shimmering = FBShimmeringLayer()
-            shimmering.isShimmering = true
-            self.layer.mask = shimmering
-        }
-        
+    func render(imageMeta: ImageMeta?, completionHandler: CompletionHandler? = nil) {
         if let imageMeta = imageMeta {
             let size = frameSize()
             let images = imageMeta.imageList()
@@ -178,26 +203,17 @@ extension UIImageView {
             
             if let fit = fitting.get(0) {
                 // Found the smallest fitting image
-                setImage(url: URL(string: fit.2))
+                kf.setImage(with: URL(string: fit.2), completionHandler: completionHandler)
             } else {
                 // No fitting image found, take largest image
                 let images = images.sorted { $0.0 * $0.1 > $1.0 * $1.1 }
                 if let image = images.get(0) {
-                    setImage(url: URL(string: image.2))
+                    kf.setImage(with: URL(string: image.2), completionHandler: completionHandler)
                 }
             }
         } else {
             image = nil
         }
-    }
-    
-    private func setImage(url: URL?) {
-        kf.setImage(with: url, completionHandler: { (_, error, _, _) in
-            if (error == nil) {
-                // No Error, stop shimmering
-                self.layer.mask = nil
-            }
-        })
     }
     
     /**

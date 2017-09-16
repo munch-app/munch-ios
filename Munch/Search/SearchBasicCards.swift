@@ -8,31 +8,36 @@
 
 import Foundation
 import UIKit
+import SwiftRichString
 
 class SearchPlaceCard: UITableViewCell, SearchCardView {
-    let bannerView = UIImageView()
+    var topImageView = ShimmerImageView()
     let bottomView = BottomView()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         
-        self.addSubview(bannerView)
-        self.addSubview(bottomView)
-     
-        bannerView.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(self).inset(topBottom)
-            make.bottom.equalTo(self)
+        let containerView = UIView()
+        containerView.addSubview(topImageView)
+        containerView.addSubview(bottomView)
+        self.addSubview(containerView)
+        
+        topImageView.snp.makeConstraints { make in
+            make.left.right.top.equalTo(containerView)
+            make.bottom.equalTo(bottomView.snp.top)
         }
         
         bottomView.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(leftRight)
-            make.bottom.equalTo(self).inset(topBottom)
+            make.left.right.bottom.equalTo(containerView)
+            make.height.equalTo(73)
         }
         
-        self.snp.makeConstraints { make in
-            make.height.equalTo(UIScreen.main.bounds.width * 0.888)
+        containerView.snp.makeConstraints { make in
+            let height = (UIScreen.main.bounds.width * 0.888) - (topBottom * 2)
+            make.height.equalTo(height)
+            make.left.right.equalTo(self).inset(leftRight)
+            make.top.bottom.equalTo(self).inset(topBottom)
         }
     }
     
@@ -41,15 +46,14 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
     }
     
     func render(card: SearchCard) {
-        let place = Place(json: card["place"])
+        let images = card["images"].flatMap {  Place.Image(json: $0.1) }
         
-        let placeImage = place.images?.get(0)
-        bannerView.render(placeImage: placeImage, shimmer: true)
-        bottomView.render(place: place)
+        topImageView.render(placeImage: images.get(0))
+        bottomView.render(card: card)
     }
     
     static var cardId: String {
-        return "basic_Place_13092017"
+        return "basic_Place_16092017"
     }
     
     class BottomView: UIView {
@@ -60,28 +64,34 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         init() {
             super.init(frame: CGRect())
             nameLabel.font = UIFont.systemFont(ofSize: 18, weight: UIFontWeightSemibold)
-            nameLabel.textColor = UIColor.black.withAlphaComponent(0.2)
+            nameLabel.textColor = UIColor.black.withAlphaComponent(0.8)
+            self.addSubview(nameLabel)
             
             tagLabel.font = UIFont.systemFont(ofSize: 14, weight: UIFontWeightRegular)
-            tagLabel.textColor = UIColor.black.withAlphaComponent(0.25)
+            tagLabel.textColor = UIColor.black.withAlphaComponent(0.75)
+            self.addSubview(tagLabel)
             
             locationLabel.font = UIFont.systemFont(ofSize: 13, weight: UIFontWeightRegular)
-            locationLabel.textColor = UIColor.black.withAlphaComponent(0.25)
+            locationLabel.textColor = UIColor.black.withAlphaComponent(0.75)
+            self.addSubview(locationLabel)
             
             nameLabel.snp.makeConstraints { make in
                 make.height.equalTo(26)
-                make.left.right.bottom.equalTo(self)
                 make.top.equalTo(9)
+                make.left.right.equalTo(self)
+                make.bottom.equalTo(tagLabel.snp.top)
             }
             
             tagLabel.snp.makeConstraints { make in
                 make.height.equalTo(19)
-                make.edges.equalTo(self)
+                make.left.right.equalTo(self)
+                make.bottom.equalTo(locationLabel.snp.top)
             }
             
             locationLabel.snp.makeConstraints { make in
                 make.height.equalTo(19)
-                make.edges.equalTo(self)
+                make.left.right.equalTo(self)
+                make.bottom.equalTo(self)
             }
         }
         
@@ -89,18 +99,68 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
             fatalError("init(coder:) has not been implemented")
         }
         
-        func render(place: Place) {
-            nameLabel.text = place.name
-            render(tag: place)
-            render(location: place)
+        func render(card: SearchCard) {
+            nameLabel.text = card["name"].string
+            render(tag: card)
+            render(location: card)
         }
         
-        private func render(tag place: Place) {
-        
+        private func render(tag card: SearchCard) {
+            let line = NSMutableAttributedString()
+            
+            // Establishment
+            if let establishment = card["establishment"].string {
+                line.append(string: establishment, style: Style.default {
+                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: UIFontWeightSemibold))
+                })
+            }
+            
+            let tags = card["tags"].flatMap { $0.1.string }
+            if !tags.isEmpty {
+                line.append(string: " • ", style: Style.default {
+                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: UIFontWeightUltraLight))
+                })
+                
+                let text = tags[0..<(tags.count < 2 ? tags.count : 2)].joined(separator: ", ")
+                line.append(string: text, style: Style.default {
+                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: UIFontWeightRegular))
+                })
+            }
+            
+            self.tagLabel.attributedText = line
         }
         
-        private func render(location place: Place) {
-        
+        private func render(location card: SearchCard) {
+            let line = NSMutableAttributedString()
+            
+            // Street
+            if let street = card["location"]["street"].string {
+                line.append(NSMutableAttributedString(string: street))
+            } else {
+                line.append(NSMutableAttributedString(string: "Singapore"))
+            }
+            
+            // Distance
+            if let latLng = card["location"]["latLng"].string, MunchLocation.enabled {
+                if let distance = MunchLocation.distance(asMetric: latLng) {
+                    line.append(NSMutableAttributedString(string: " - \(distance)"))
+                }
+            }
+            
+            // Open Now
+            let hours = card["hours"].flatMap { Place.Hour(json: $0.1) }
+            if let open  = Place.Hour.Formatter.isOpen(hours: hours) {
+                line.append(NSMutableAttributedString(string: " • ", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 15, weight: UIFontWeightUltraLight)]))
+                if (open) {
+                    let onFormat = [NSForegroundColorAttributeName: UIColor.secondary]
+                    line.append(NSMutableAttributedString(string: "Open Now", attributes: onFormat))
+                } else {
+                    let onFormat = [NSForegroundColorAttributeName: UIColor.primary]
+                    line.append(NSMutableAttributedString(string: "Closed Now", attributes: onFormat))
+                }
+            }
+            
+            self.locationLabel.attributedText = line
         }
     }
 }

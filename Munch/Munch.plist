@@ -2,11 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>MunchApiUrl-Office</key>
+	<key>MunchApi-Url-Office</key>
 	<string>http://192.168.1.197:8800</string>
-	<key>MunchApiUrl-Home</key>
+	<key>MunchApi-Url-Home</key>
 	<string>http://10.0.1.8:8800</string>
-	<key>MunchApiUrl-Beta</key>
+	<key>MunchApi-Url</key>
 	<string>http://api.beta.munchapp.co</string>
 </dict>
 </plist>
