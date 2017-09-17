@@ -32,9 +32,11 @@ class ShimmerImageView: FBShimmeringView {
     
     func render(imageMeta: ImageMeta?) {
         self.isShimmering = true
+        self.shimmeringSpeed = 230
         imageView.render(imageMeta: imageMeta) { _, error, _, _ in
             if (error == nil) {
                 self.isShimmering = false
+                self.shimmeringSpeed = 999999999
             }
         }
     }

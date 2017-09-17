@@ -40,12 +40,16 @@ class SearchCollectionManager {
         return topCards + cardsList.reduce([], +) + [SearchCollectionManager.loadingCard]
     }
     
+    convenience init(collection: SearchCollection) {
+        self.init(name: collection.name, query: collection.query, cards: collection.cards)
+    }
+    
     init(name: String, query: SearchQuery?, cards: [SearchCard], topCards: [SearchCard] = []) {
         self.name = name
         self.query = query
         
         self.topCards = topCards
-        if cards.isEmpty {
+        if !cards.isEmpty {
             self.cardsList.append(cards)
         }
         

@@ -69,8 +69,10 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
 extension SearchController {
     func registerCards() {
         // Register Static Cards
+        register(SearchStaticEmptyCard.self)
         register(SearchStaticNoResultCard.self)
         register(SearchStaticNoLocationCard.self)
+        register(SearchStaticLoadingCard.self)
         
         // Register Shimmer Cards
         register(SearchShimmerPlaceCard.self)

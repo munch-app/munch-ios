@@ -94,6 +94,9 @@ class SearchHeaderView: UIView {
             make.bottom.left.right.equalTo(self)
             make.height.equalTo(50)
         }
+        
+        // Query once loaded
+        self.query()
     }
     
     override func layoutSubviews() {
@@ -105,9 +108,17 @@ class SearchHeaderView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    var searchQuery: SearchQuery = SearchQuery() {
-        didSet {
-            // TODO Render search bar again
+    var searchQuery = SearchQuery()
+    
+    func query() {
+        MunchApi.search.collections(query: searchQuery) { meta, collections in
+            if (meta.isOk()) {
+                self.collectionManagers = collections.map { SearchCollectionManager(collection: $0) }
+                self.tabCollection.reloadData()
+                self.controller.headerView(render: self.collectionManagers.get(0))
+            } else {
+                self.controller.present(meta.createAlert(), animated: true)
+            }
         }
     }
 }
