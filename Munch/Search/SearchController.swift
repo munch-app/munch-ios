@@ -105,8 +105,16 @@ extension SearchController {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // let placeCard = cards[indexPath.row]
-        // TODO: When cards have click features
+        let card = cards[indexPath.row]
+        
+        if card.cardId == SearchPlaceCard.cardId, let placeId = card["placeId"].string {
+            // Place Card
+            let storyboard = UIStoryboard(name: "Place", bundle: nil)
+            let controller = storyboard.instantiateInitialViewController() as! PlaceViewController
+            controller.placeId = placeId
+            
+            self.navigationController!.pushViewController(controller, animated: true)
+        }
     }
 }
 
@@ -135,6 +143,31 @@ extension SearchController {
                     self.present(meta.createAlert(), animated: true)
                 }
             })
+        }
+    }
+}
+
+// MARK: Scroll View
+extension SearchController {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        self.headerView.contentDidScroll(scrollView: scrollView)
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if (!decelerate) {
+            scrollViewDidFinish(scrollView)
+        }
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        scrollViewDidFinish(scrollView)
+    }
+    
+    func scrollViewDidFinish(_ scrollView: UIScrollView) {
+        // Check nearest locate and move to it
+        if let y = self.headerView.contentShouldMove(scrollView: scrollView) {
+            let point = CGPoint(x: 0, y: y)
+            cardTableView.setContentOffset(point, animated: true)
         }
     }
 }

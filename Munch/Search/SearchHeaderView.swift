@@ -35,8 +35,7 @@ class SearchHeaderView: UIView {
     let queryLabel = SearchQueryLabel()
     let filterButton = SearchFilterButton()
     let tabCollection = SearchTabCollection()
-    
-    let maxHeight: CGFloat = 153
+
     var heightConstraint: Constraint! = nil
     
     var collectionManagers = [SearchCollectionManager]()
@@ -320,13 +319,44 @@ extension SearchHeaderView: UICollectionViewDataSource, UICollectionViewDelegate
 
 // Scroll operations
 extension SearchHeaderView {
-    func scroll() {
-        // 153 = Max
-        // 70 = Min
+    var maxHeight: CGFloat { return 153 }
+    var minHeight: CGFloat { return 70 }
+    var centerHeight: CGFloat { return (maxHeight - minHeight)/2 + minHeight }
+    
+    func contentDidScroll(scrollView: UIScrollView) {
+        let height = calculateHeight(scrollView: scrollView)
+        self.heightConstraint.layoutConstraints[0].constant = height
     }
     
-    func scrollDidEnd() {
+    func calculateHeight(scrollView: UIScrollView) -> CGFloat {
+        let y = scrollView.contentOffset.y
+        if y <= -maxHeight {
+            return maxHeight
+        } else if y >= -minHeight {
+            return minHeight
+        } else {
+            return Swift.abs(y)
+        }
+    }
+    
+    /**
+     nil means don't move
+     */
+    func contentShouldMove(scrollView: UIScrollView) -> CGFloat? {
+        let height = calculateHeight(scrollView: scrollView)
         
+        // Already fully closed or opened
+        if (height == maxHeight || height == minHeight) {
+            return nil
+        }
+        
+        if (height < centerHeight) {
+            // To close
+            return -minHeight
+        } else {
+            // To open
+            return -maxHeight
+        }
     }
 }
 

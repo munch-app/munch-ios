@@ -47,7 +47,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.cardTableView.dataSource = self
         
         self.cardTableView.rowHeight = UITableViewAutomaticDimension
-        self.cardTableView.estimatedRowHeight = 100
+        self.cardTableView.estimatedRowHeight = 50
         
         // Top: -NavigationBar.height
         // Bottom: BottomBar.height

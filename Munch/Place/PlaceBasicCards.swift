@@ -28,7 +28,7 @@ class PlaceBasicImageBannerCard: UITableViewCell, PlaceCardView {
         
         let gradientLayer = CAGradientLayer()
         gradientLayer.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 64)
-        gradientLayer.colors = [UIColor.black.withAlphaComponent(0.5).cgColor, UIColor.clear.cgColor]
+        gradientLayer.colors = [UIColor.black.withAlphaComponent(0.4).cgColor, UIColor.clear.cgColor]
         imageGradientView.layer.insertSublayer(gradientLayer, at: 0)
         imageGradientView.backgroundColor = UIColor.clear
         self.addSubview(imageGradientView)
@@ -53,12 +53,13 @@ class PlaceBasicImageBannerCard: UITableViewCell, PlaceCardView {
     }
     
     static var cardId: String {
-        return "basic_ImageBanner_11092017"
+        return "basic_ImageBanner_15092017"
     }
 }
 
 class PlaceBasicNameTagCard: UITableViewCell, PlaceCardView {
     let nameLabel = UILabel()
+    let tagsLabel = UILabel()
     // TODO Tag Label
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -268,6 +269,6 @@ class PlaceBasicLocationCard: UITableViewCell, PlaceCardView {
     }
     
     static var cardId: String {
-        return "basic_Location_12092017"
+        return "basic_Location_15092017"
     }
 }

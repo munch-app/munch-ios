@@ -11,28 +11,6 @@ import UIKit
 import SnapKit
 import Shimmer
 
-class PlaceStaticEmptyCard: UITableViewCell, PlaceCardView {
-    
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.backgroundColor = UIColor.black
-        self.snp.makeConstraints { make in
-            make.height.equalTo(0)
-        }
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func render(card: PlaceCard) {
-    }
-    
-    static var cardId: String {
-        return "static_PlaceStaticEmptyCard"
-    }
-}
-
 class PlaceShimmerImageBannerCard: UITableViewCell, PlaceCardView {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -92,5 +70,31 @@ class PlaceShimmerNameTagCard: UITableViewCell, PlaceCardView {
     
     static var cardId: String {
         return "shimmer_PlaceShimmerNameTagCard"
+    }
+}
+
+class PlaceStaticEmptyCard: UITableViewCell, PlaceCardView {
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.backgroundColor = UIColor.clear
+        
+        let view = UIView()
+        self.addSubview(view)
+        view.snp.makeConstraints { make in
+            make.height.equalTo(0.5)
+            make.edges.equalTo(self)
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func render(card: PlaceCard) {
+    }
+    
+    static var cardId: String {
+        return "static_PlaceStaticEmptyCard"
     }
 }

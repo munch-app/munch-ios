@@ -209,11 +209,13 @@ class SearchStaticEmptyCard: UITableViewCell, SearchCardView {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
+        self.backgroundColor = UIColor.clear
         
-        self.backgroundColor = UIColor.black
-        self.snp.makeConstraints { make in
-            make.height.equalTo(0)
+        let view = UIView()
+        self.addSubview(view)
+        view.snp.makeConstraints { make in
+            make.height.equalTo(0.5)
+            make.edges.equalTo(self)
         }
     }
     
