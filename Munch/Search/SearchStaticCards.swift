@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Shimmer
+import NVActivityIndicatorView
 
 class SearchShimmerPlaceCard: UITableViewCell, SearchCardView {
     
@@ -180,7 +181,14 @@ class SearchStaticLoadingCard: UITableViewCell, SearchCardView {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         
-        // TODO Loading card
+        let indicator = NVActivityIndicatorView(frame: frame, type: .ballBeat, color: .primary700, padding: 10)
+        indicator.startAnimating()
+        self.addSubview(indicator)
+        
+        indicator.snp.makeConstraints { make in
+            make.height.equalTo(50)
+            make.edges.equalTo(self)
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
