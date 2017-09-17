@@ -36,6 +36,7 @@ class SearchHeaderView: UIView {
     let filterButton = SearchFilterButton()
     let tabCollection = SearchTabCollection()
     
+    let maxHeight: CGFloat = 153
     var heightConstraint: Constraint! = nil
     
     var collectionManagers = [SearchCollectionManager]()
@@ -62,7 +63,7 @@ class SearchHeaderView: UIView {
         self.addSubview(statusView)
         
         self.snp.makeConstraints { make in
-            self.heightConstraint = make.height.equalTo(153).constraint
+            self.heightConstraint = make.height.equalTo(maxHeight).constraint
         }
         
         statusView.snp.makeConstraints { make in
@@ -114,6 +115,10 @@ class SearchHeaderView: UIView {
         MunchApi.search.collections(query: searchQuery) { meta, collections in
             if (meta.isOk()) {
                 self.collectionManagers = collections.map { SearchCollectionManager(collection: $0) }
+                if MunchLocation.isEnabled {
+                    self.collectionManagers.get(0)?.topCards.append(SearchStaticNoLocationCard.card)
+                }
+                
                 self.tabCollection.reloadData()
                 self.controller.headerView(render: self.collectionManagers.get(0))
             } else {

@@ -106,6 +106,7 @@ class SearchStaticNoLocationCard: UITableViewCell, SearchCardView {
         
         let button = UIButton()
         button.setTitle("Enable Location", for: .normal)
+        button.setTitleColor(.primary300, for: .normal)
         button.titleLabel?.textAlignment = .center
         button.titleLabel?.font = UIFont.systemFont(ofSize: 18.0, weight: UIFontWeightRegular)
         button.addTarget(self, action: #selector(enableLocation(button:)), for: .touchUpInside)
@@ -114,7 +115,7 @@ class SearchStaticNoLocationCard: UITableViewCell, SearchCardView {
         label.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
             
-            make.top.equalTo(self)
+            make.top.equalTo(self).inset(topBottom)
             make.height.equalTo(40)
         }
         

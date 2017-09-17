@@ -26,7 +26,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         // Make navigation bar transparent, bar must be hidden
-        navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
     }
@@ -46,8 +46,8 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         self.cardTableView.rowHeight = UITableViewAutomaticDimension
         self.cardTableView.estimatedRowHeight = 50
         
-        // TODO insets
-        self.cardTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        // Fix insets so that contents appear below
+        self.cardTableView.contentInset = UIEdgeInsets(top: headerView.maxHeight - 20, left: 0, bottom: 0, right: 0)
         
         registerCards()
     }
@@ -155,5 +155,9 @@ extension SearchCardView {
     
     var topBottom: CGFloat {
         return 16.0
+    }
+    
+    static var card: SearchCard {
+        return SearchCard(cardId: cardId)
     }
 }

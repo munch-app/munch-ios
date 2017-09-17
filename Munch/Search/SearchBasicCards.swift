@@ -139,7 +139,7 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
             }
             
             // Distance
-            if let latLng = card["location"]["latLng"].string, MunchLocation.enabled {
+            if let latLng = card["location"]["latLng"].string, MunchLocation.isEnabled {
                 if let distance = MunchLocation.distance(asMetric: latLng) {
                     line.append(NSMutableAttributedString(string: " - \(distance)"))
                 }

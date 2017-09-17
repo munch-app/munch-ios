@@ -9,13 +9,10 @@
 import Foundation
 
 class SearchCollectionManager {
-    static let noResultCard = SearchCard(cardId: SearchStaticNoResultCard.cardId)
-    static let loadingCard = SearchCard(cardId: SearchStaticLoadingCard.cardId)
-    
     let name: String
     var query: SearchQuery?
     
-    private var topCards: [SearchCard]
+    var topCards: [SearchCard]
     private var cardsList = [[SearchCard]]()
     
     private var loadingAppend = false
@@ -23,25 +20,25 @@ class SearchCollectionManager {
     var cards: [SearchCard] {
         // No Content Loaded Already
         if (cardsList.isEmpty) {
-            return topCards + [SearchCollectionManager.loadingCard]
+            return topCards + [SearchStaticLoadingCard.card]
         }
         
         // Last Card Contain No Result
         if (cardsList.last!.isEmpty) {
             // No Result returned by all card in list
             if (cardsList.reduce(0, {$0.0 + $0.1.count}) == 0) {
-                return topCards + [SearchCollectionManager.noResultCard]
+                return topCards + [SearchStaticNoResultCard.card]
             }
             
             return topCards + cardsList.reduce([], +)
         }
         
         // Else still might contain results
-        return topCards + cardsList.reduce([], +) + [SearchCollectionManager.loadingCard]
+        return topCards + cardsList.reduce([], +) + [SearchStaticLoadingCard.card]
     }
     
-    convenience init(collection: SearchCollection) {
-        self.init(name: collection.name, query: collection.query, cards: collection.cards)
+    convenience init(collection: SearchCollection, topCards: [SearchCard] = []) {
+        self.init(name: collection.name, query: collection.query, cards: collection.cards, topCards: topCards)
     }
     
     init(name: String, query: SearchQuery?, cards: [SearchCard], topCards: [SearchCard] = []) {

@@ -230,7 +230,7 @@ class PlaceBasicLocationCard: UITableViewCell, PlaceCardView {
     private func render(lineOne card: PlaceCard) {
         var line = [String]()
         
-        if let latLng = card["location"]["latLng"].string, MunchLocation.enabled {
+        if let latLng = card["location"]["latLng"].string, MunchLocation.isEnabled {
             if let distance = MunchLocation.distance(asMetric: latLng) {
                 line.append(distance)
             }

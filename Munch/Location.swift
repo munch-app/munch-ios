@@ -28,7 +28,7 @@ public class MunchLocation {
     /**
      Check if location service is enabled
      */
-    public class var enabled: Bool {
+    public class var isEnabled: Bool {
         switch (SwiftLocation.LocAuth.status) {
         case .alwaysAuthorized, .inUseAuthorized:
             return true
@@ -42,7 +42,7 @@ public class MunchLocation {
      Will return nil latLng if not found
      */
     public class func waitFor(completion: @escaping (_ latLng: String?, _ error: Error?) -> Void) {
-        if (!enabled) {
+        if (!isEnabled) {
             // If not enabled, just return nil latLng
             completion(nil, nil)
         } else if let latLng = lastLatLng, locationExpiry > Date() {
@@ -68,7 +68,7 @@ public class MunchLocation {
      And schedule a load once
      */
     public class func getLatLng() -> String? {
-        if (enabled) {
+        if (isEnabled) {
             scheduleOnce()
         }
         if let latLng = lastLatLng {
