@@ -14,15 +14,22 @@ enum SearchHeaderAction {
     case location
     case query
     case filter
-    case tab(Int)
 }
 
 protocol SearchHeaderDelegate {
-    func searchHeader(didSelect: SearchHeaderAction)
+    
+    /**
+    When collectManager is nil means that the value is loading
+     */
+    func headerView(render collectionManager: SearchCollectionManager?)
 }
 
+/**
+ SearchHeader controls data managements query, update refresh
+ SearchController only controls rendering of the data
+ */
 class SearchHeaderView: UIView {
-    var delegate: SearchHeaderDelegate?
+    var controller: SearchController!
     
     let locationButton = SearchLocationButton()
     let queryLabel = SearchQueryLabel()
@@ -31,13 +38,15 @@ class SearchHeaderView: UIView {
     
     var heightConstraint: Constraint! = nil
     
-    var tabNames = [String]()
+    var collectionManagers = [SearchCollectionManager]()
     var selectedTab = 0
     
-    override init(frame: CGRect = CGRect()) {
-        super.init(frame: frame)
-        tabCollection.delegate = self
-        tabCollection.dataSource = self
+    init(controller: SearchController) {
+        super.init(frame: CGRect())
+        self.controller = controller
+        
+        self.tabCollection.delegate = self
+        self.tabCollection.dataSource = self
         
         self.backgroundColor = UIColor.white
         
@@ -47,7 +56,6 @@ class SearchHeaderView: UIView {
         self.addSubview(tabCollection)
         
         registerCell()
-        loadShimmerTab()
         
         let statusView = UIView()
         statusView.backgroundColor = UIColor.white
@@ -231,7 +239,7 @@ class SearchTabShimmerCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         let label = ShimmerView()
-        label.shimmeringSpeed = 90
+        label.shimmeringSpeed = 80
         self.addSubview(label)
         
         label.snp.makeConstraints { make in
@@ -257,45 +265,39 @@ extension SearchHeaderView: UICollectionViewDataSource, UICollectionViewDelegate
         tabCollection.register(SearchTabNameCell.self, forCellWithReuseIdentifier: "SearchTabNameCell")
     }
     
-    func loadShimmerTab() {
-        tabNames = []
-        selectedTab = 0
-        tabCollection.reloadData()
-    }
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if (tabNames.isEmpty) {
+        if (collectionManagers.isEmpty) {
             return 5
         } else {
-            return tabNames.count
+            return collectionManagers.count
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if (tabNames.isEmpty) {
+        if (collectionManagers.isEmpty) {
             return SearchTabShimmerCell.width()
         } else {
-            let title = tabNames[indexPath.row]
+            let title = collectionManagers[indexPath.row].name
             return SearchTabNameCell.width(title: title)
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if (tabNames.isEmpty) {
+        if (collectionManagers.isEmpty) {
             return collectionView.dequeueReusableCell(withReuseIdentifier: "SearchTabShimmerCell", for: indexPath)
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchTabNameCell", for: indexPath) as! SearchTabNameCell
-            let title = tabNames[indexPath.row]
+            let title = collectionManagers[indexPath.row].name
             cell.render(title: title, selected: selectedTab == indexPath.row)
             return cell
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if (!tabNames.isEmpty) {
+        if (!collectionManagers.isEmpty) {
             self.selectedTab = indexPath.row
             collectionView.reloadData()
-            self.delegate?.searchHeader(didSelect: .tab(indexPath.row))
+            self.controller.headerView(render: collectionManagers[indexPath.row])
         }
     }
 }
@@ -314,5 +316,7 @@ extension SearchHeaderView {
 
 // Render search query functions
 extension SearchHeaderView {
-    
+    func render() {
+        // Update changes in the search query
+    }
 }

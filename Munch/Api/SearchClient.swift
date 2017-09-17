@@ -203,8 +203,9 @@ struct SearchQuery: Equatable {
  Search typed Cards
  Access json through the subscript
  */
-struct SearchCard {
+struct SearchCard: Equatable {
     var cardId: String
+    var uniqueId: String?
     private var json: JSON
     
     init(cardId: String) {
@@ -214,6 +215,7 @@ struct SearchCard {
     
     init(json: JSON) {
         self.cardId = json["cardId"].stringValue
+        self.uniqueId = json["uniqueId"].string
         self.json = json
     }
     
@@ -222,6 +224,10 @@ struct SearchCard {
      */
     subscript(name: String) -> JSON {
         return json[name]
+    }
+    
+    static func == (lhs: SearchCard, rhs: SearchCard) -> Bool {
+        return lhs.cardId == rhs.cardId && lhs.uniqueId == rhs.uniqueId
     }
 }
 

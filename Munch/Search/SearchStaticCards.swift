@@ -174,10 +174,33 @@ class SearchStaticNoResultCard: UITableViewCell, SearchCardView {
     }
 }
 
+class SearchStaticLoadingCard: UITableViewCell, SearchCardView {
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        
+        // TODO Loading card
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func render(card: SearchCard) {
+    }
+    
+    static var cardId: String {
+        return "static_SearchStaticLoadingCard"
+    }
+}
+
 class SearchStaticEmptyCard: UITableViewCell, SearchCardView {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        
         self.backgroundColor = UIColor.black
         self.snp.makeConstraints { make in
             make.height.equalTo(0)

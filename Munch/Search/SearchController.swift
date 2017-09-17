@@ -9,12 +9,11 @@
 import Foundation
 import UIKit
 
-class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSource, SearchHeaderDelegate {
     @IBOutlet weak var cardTableView: UITableView!
-    let headerView = SearchHeaderView()
+    var headerView: SearchHeaderView!
     
-    var collections = [SearchCollection]()
-    var cards = [SearchCard]()
+    var collectionManager: SearchCollectionManager?
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -26,7 +25,8 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(headerView)
+        self.headerView = SearchHeaderView(controller: self)
+        self.view.addSubview(headerView)
         headerView.snp.makeConstraints { make in
             make.top.left.right.equalTo(self.view)
         }
@@ -42,23 +42,17 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         self.cardTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         
         registerCards()
-        loadShimmerCards()
-        
-        MunchApi.search.collections(query: SearchQuery()) { meta, collections in
-            if (meta.isOk()) {
-                // TODO
-                if let cards = collections.get(0)?.cards {
-                    self.cards = cards
-                }
-                self.cardTableView.reloadData()
-            } else {
-                self.present(meta.createAlert(), animated: true)
-            }
-        }
     }
     
     func scrollToTop() {
         cardTableView.setContentOffset(CGPoint.zero, animated: true)
+    }
+    
+    /**
+     If collectionManager is nil means show shimmer cards?
+     */
+    func headerView(render collectionManager: SearchCollectionManager?) {
+        
     }
 }
 
@@ -75,14 +69,7 @@ extension SearchController {
         // Register Search Cards
         register(SearchPlaceCard.self)
     }
-    
-    func loadShimmerCards() {
-        cards.append(SearchCard(cardId: SearchShimmerPlaceCard.cardId))
-        cards.append(SearchCard(cardId: SearchShimmerPlaceCard.cardId))
-        cards.append(SearchCard(cardId: SearchShimmerPlaceCard.cardId))
-        cardTableView.reloadData()
-    }
-    
+
     private func register(_ cellClass: SearchCardView.Type) {
         cardTableView.register(cellClass as? Swift.AnyClass, forCellReuseIdentifier: cellClass.cardId)
     }
@@ -91,24 +78,64 @@ extension SearchController {
 // Card CollectionView
 extension SearchController {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cards.count
+        if let manager = collectionManager {
+            return manager.cards.count
+        }
+        // Else show 2 shimmer card
+        return 2
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let card = cards[indexPath.row]
-        
-        if let cardView = cardTableView.dequeueReusableCell(withIdentifier: card.cardId) as? SearchCardView {
-            cardView.render(card: card)
-            return cardView as! UITableViewCell
+        if let manager = collectionManager {
+            let card = manager.cards[indexPath.row]
+            
+            if let cardView = cardTableView.dequeueReusableCell(withIdentifier: card.cardId) as? SearchCardView {
+                cardView.render(card: card)
+                return cardView as! UITableViewCell
+            }
+            
+            // Else Static Empty CardView
+            return cardTableView.dequeueReusableCell(withIdentifier: SearchStaticEmptyCard.cardId)!
+        } else {
+            // Else show shimmer card
+            return cardTableView.dequeueReusableCell(withIdentifier: SearchShimmerPlaceCard.cardId)!
         }
-        
-        // Static Empty CardView
-        return cardTableView.dequeueReusableCell(withIdentifier: SearchStaticEmptyCard.cardId)!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // let placeCard = cards[indexPath.row]
         // TODO: When cards have click features
+    }
+}
+
+// Lazy Append Loading
+extension SearchController {
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if let manager = collectionManager {
+            let card = manager.cards[indexPath.row]
+            
+            if card.cardId == SearchStaticLoadingCard.cardId {
+                DispatchQueue.main.async {
+                    self.appendLoad()
+                }
+            }
+        }
+    }
+    
+    func appendLoad() {
+        if let manager = self.collectionManager {
+            manager.append(load: { meta in
+                if (meta.isOk()) {
+                    // Check reference is still the same
+                    if (manager === self.collectionManager) {
+                        self.cardTableView.reloadData()
+                    }
+                } else {
+                    self.present(meta.createAlert(), animated: true)
+                }
+            })
+        }
     }
 }
 
