@@ -182,6 +182,7 @@ class SearchStaticLoadingCard: UITableViewCell, SearchCardView {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         
+        let frame = CGRect(origin: CGPoint.zero, size: CGSize(width: UIScreen.main.bounds.width, height: 50))
         let indicator = NVActivityIndicatorView(frame: frame, type: .ballBeat, color: .primary700, padding: 10)
         indicator.startAnimating()
         self.addSubview(indicator)
