@@ -15,6 +15,14 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     
     var collectionManager: SearchCollectionManager?
     
+    var cards: [SearchCard] {
+        if let manager = collectionManager {
+            return manager.cards
+        }
+        let searchCard = SearchCard(cardId: SearchShimmerPlaceCard.cardId)
+        return [searchCard, searchCard, searchCard]
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         // Make navigation bar transparent, bar must be hidden
@@ -52,7 +60,8 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
      If collectionManager is nil means show shimmer cards?
      */
     func headerView(render collectionManager: SearchCollectionManager?) {
-        
+        self.collectionManager = collectionManager
+        self.cardTableView.reloadData()
     }
 }
 
@@ -78,28 +87,19 @@ extension SearchController {
 // Card CollectionView
 extension SearchController {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let manager = collectionManager {
-            return manager.cards.count
-        }
-        // Else show 2 shimmer card
-        return 2
+        return cards.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let manager = collectionManager {
-            let card = manager.cards[indexPath.row]
-            
-            if let cardView = cardTableView.dequeueReusableCell(withIdentifier: card.cardId) as? SearchCardView {
-                cardView.render(card: card)
-                return cardView as! UITableViewCell
-            }
-            
-            // Else Static Empty CardView
-            return cardTableView.dequeueReusableCell(withIdentifier: SearchStaticEmptyCard.cardId)!
-        } else {
-            // Else show shimmer card
-            return cardTableView.dequeueReusableCell(withIdentifier: SearchShimmerPlaceCard.cardId)!
+        let card = cards[indexPath.row]
+        
+        if let cardView = cardTableView.dequeueReusableCell(withIdentifier: card.cardId) as? SearchCardView {
+            cardView.render(card: card)
+            return cardView as! UITableViewCell
         }
+        
+        // Else Static Empty CardView
+        return cardTableView.dequeueReusableCell(withIdentifier: SearchStaticEmptyCard.cardId)!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -112,13 +112,11 @@ extension SearchController {
 extension SearchController {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if let manager = collectionManager {
-            let card = manager.cards[indexPath.row]
-            
-            if card.cardId == SearchStaticLoadingCard.cardId {
-                DispatchQueue.main.async {
-                    self.appendLoad()
-                }
+        let card = cards[indexPath.row]
+        
+        if card.cardId == SearchStaticLoadingCard.cardId {
+            DispatchQueue.main.async {
+                self.appendLoad()
             }
         }
     }
