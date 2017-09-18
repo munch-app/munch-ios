@@ -40,6 +40,9 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         }
         
         // Setup Card Table View
+        self.cardTableView.separatorStyle = .none
+        self.cardTableView.showsVerticalScrollIndicator = false
+        self.cardTableView.showsHorizontalScrollIndicator = false
         self.cardTableView.delegate = self
         self.cardTableView.dataSource = self
         

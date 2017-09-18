@@ -43,6 +43,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.cardTableView.separatorStyle = .none
         self.cardTableView.delegate = self
         self.cardTableView.dataSource = self
         
