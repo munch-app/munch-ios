@@ -171,9 +171,9 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
                         <outlet property="cardTableView" destination="ddd-UH-ZV9" id="B5g-WE-wq6"/>
-                        <segue destination="vsY-13-xWw" kind="showDetail" identifier="SearchHeaderView_location" id="C2m-xv-bgL"/>
-                        <segue destination="7Bn-j6-Xvw" kind="showDetail" identifier="SearchHeaderView_filter" id="tU4-7g-1MU"/>
-                        <segue destination="9UU-2X-uSb" kind="showDetail" identifier="SearchHeaderView_query" id="7Rf-Z6-bEX"/>
+                        <segue destination="vsY-13-xWw" kind="showDetail" identifier="SearchHeaderView_location" customClass="HeaderViewSegue" customModule="Munch" customModuleProvider="target" id="C2m-xv-bgL"/>
+                        <segue destination="7Bn-j6-Xvw" kind="showDetail" identifier="SearchHeaderView_filter" customClass="HeaderViewSegue" customModule="Munch" customModuleProvider="target" id="tU4-7g-1MU"/>
+                        <segue destination="9UU-2X-uSb" kind="showDetail" identifier="SearchHeaderView_query" customClass="HeaderViewSegue" customModule="Munch" customModuleProvider="target" id="7Rf-Z6-bEX"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Keu-5K-mEN" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -183,7 +183,7 @@
         <!--Select Location-->
         <scene sceneID="wr5-ez-uBz">
             <objects>
-                <viewController id="vsY-13-xWw" sceneMemberID="viewController">
+                <viewController id="vsY-13-xWw" customClass="SearchLocationController" customModule="Munch" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="5TD-s9-fkx"/>
                         <viewControllerLayoutGuide type="bottom" id="dkL-wW-WoV"/>
@@ -193,12 +193,12 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="YwN-U5-q4O">
-                                <rect key="frame" x="0.0" y="119" width="375" height="548"/>
+                                <rect key="frame" x="0.0" y="110" width="375" height="557"/>
                                 <color key="backgroundColor" red="0.94509803920000002" green="0.94509803920000002" blue="0.94509803920000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <inset key="separatorInset" minX="24" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <color key="sectionIndexColor" red="0.93055665489999995" green="0.94564646480000003" blue="0.95811277630000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="LocationDetectMyCell" rowHeight="61" id="RbS-zC-kGc" customClass="LocationDetectMyCell" customModule="Munch" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="61" id="RbS-zC-kGc">
                                         <rect key="frame" x="0.0" y="28" width="375" height="61"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="RbS-zC-kGc" id="z3V-dh-tCr">
@@ -233,7 +233,7 @@
                                             <outlet property="detectLocationButton" destination="79T-3R-rFz" id="lrT-yc-gwQ"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="LocationTextCell" rowHeight="44" id="JDp-Dl-qQI" customClass="LocationTextCell" customModule="Munch" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="44" id="JDp-Dl-qQI">
                                         <rect key="frame" x="0.0" y="89" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="JDp-Dl-qQI" id="BOA-Il-MmL">
@@ -264,10 +264,10 @@
                                 </prototypes>
                             </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5ZS-DR-BFb" customClass="HairlineShadowView" customModule="Munch" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="20" width="375" height="99"/>
+                                <rect key="frame" x="0.0" y="20" width="375" height="90"/>
                                 <subviews>
                                     <textField clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Search any location" minimumFontSize="14" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Jay-4a-Jmy" customClass="SearchTextField" customModule="Munch" customModuleProvider="target">
-                                        <rect key="frame" x="24" y="52" width="327" height="32"/>
+                                        <rect key="frame" x="24" y="48" width="327" height="32"/>
                                         <color key="backgroundColor" white="0.92000000000000004" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="32" id="Zjx-8r-UdL"/>
@@ -294,16 +294,44 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                         <connections>
-                                            <action selector="textFieldChanged:" destination="vsY-13-xWw" eventType="editingChanged" id="PGE-dq-AOA"/>
+                                            <action selector="textFieldDidChange:" destination="vsY-13-xWw" eventType="editingChanged" id="qdn-OT-dqf"/>
                                         </connections>
                                     </textField>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select Location" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cdc-3a-fzp">
+                                        <rect key="frame" x="126" y="11" width="123" height="22"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="22" id="MpO-C7-8wR"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CRs-CG-JJb">
+                                        <rect key="frame" x="285" y="5" width="90" height="34"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="34" id="iwa-eV-HWZ"/>
+                                            <constraint firstAttribute="width" constant="90" id="tnW-8k-Cub"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <inset key="titleEdgeInsets" minX="0.0" minY="0.0" maxX="24" maxY="0.0"/>
+                                        <state key="normal" title="Cancel">
+                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="actionCancel:" destination="vsY-13-xWw" eventType="touchUpInside" id="sIt-pU-0OD"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
+                                    <constraint firstItem="cdc-3a-fzp" firstAttribute="centerX" secondItem="5ZS-DR-BFb" secondAttribute="centerX" id="AB9-Lf-yQl"/>
+                                    <constraint firstItem="CRs-CG-JJb" firstAttribute="top" secondItem="5ZS-DR-BFb" secondAttribute="top" constant="5" id="LA8-Ql-oa4"/>
                                     <constraint firstAttribute="trailing" secondItem="Jay-4a-Jmy" secondAttribute="trailing" constant="24" id="PRw-xa-NUa"/>
+                                    <constraint firstItem="cdc-3a-fzp" firstAttribute="top" secondItem="5ZS-DR-BFb" secondAttribute="top" constant="11" id="SoH-Mu-0UA"/>
                                     <constraint firstItem="Jay-4a-Jmy" firstAttribute="leading" secondItem="5ZS-DR-BFb" secondAttribute="leading" constant="24" id="W4p-tq-8im"/>
-                                    <constraint firstAttribute="bottom" secondItem="Jay-4a-Jmy" secondAttribute="bottom" constant="15" id="Yuh-2k-7Lt"/>
-                                    <constraint firstAttribute="height" constant="99" id="haX-Xh-RnQ"/>
+                                    <constraint firstAttribute="trailing" secondItem="CRs-CG-JJb" secondAttribute="trailing" id="X2K-bm-FlF"/>
+                                    <constraint firstAttribute="bottom" secondItem="Jay-4a-Jmy" secondAttribute="bottom" constant="10" id="Yuh-2k-7Lt"/>
+                                    <constraint firstAttribute="height" constant="90" id="haX-Xh-RnQ"/>
                                 </constraints>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="hairlineShadowHeight">
@@ -340,14 +368,14 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="searchField" destination="Jay-4a-Jmy" id="HWo-TD-lb9"/>
-                        <outlet property="tableView" destination="YwN-U5-q4O" id="wrM-fq-DlW"/>
+                        <outlet property="tableView" destination="YwN-U5-q4O" id="Ko3-dt-flK"/>
+                        <outlet property="textField" destination="Jay-4a-Jmy" id="qcP-q6-Kuj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kiZ-Sb-m23" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="R1x-g6-BmZ" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-2798" y="-1147"/>
+            <point key="canvasLocation" x="-2799.1999999999998" y="-1147.3763118440781"/>
         </scene>
     </scenes>
     <resources>

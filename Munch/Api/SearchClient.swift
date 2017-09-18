@@ -187,6 +187,7 @@ struct SearchQuery: Equatable {
         params["size"] = size
         
         params["query"] = query
+        params["latLng"] = latLng
         params["location"] = location?.toParams()
         
         params["filter"] = filter.toParams()

@@ -386,31 +386,12 @@ extension SearchHeaderView {
     }
     
     private func doQuery(searchQuery: SearchQuery) {
-        func search(serachQuery: SearchQuery) {
-            // Save reference
-            self.mainSearchQuery = searchQuery
-            
-            MunchApi.search.collections(query: self.mainSearchQuery) { meta, collections in
-                if (meta.isOk()) {
-                    self.collectionManagers = collections.map { SearchCollectionManager(collection: $0) }
-                    if MunchLocation.isEnabled {
-                        self.collectionManagers.get(0)?.topCards.append(SearchStaticNoLocationCard.card)
-                    }
-                    
-                    self.tabCollection.reloadData()
-                    self.controller.headerView(render: self.collectionManagers.get(0))
-                } else {
-                    self.controller.present(meta.createAlert(), animated: true)
-                }
-            }
-        }
-        
         if MunchLocation.isEnabled {
             MunchLocation.waitFor(completion: { latLng, error in
                 if let latLng = latLng {
                     var updatedQuery = searchQuery
                     updatedQuery.latLng = latLng
-                    search(serachQuery: updatedQuery)
+                    self.search(searchQuery: updatedQuery)
                 } else if let error = error {
                     self.controller.alert(title: "Location Error", error: error)
                 } else {
@@ -418,11 +399,56 @@ extension SearchHeaderView {
                 }
             })
         } else {
-            search(serachQuery: searchQuery)
+            self.search(searchQuery: searchQuery)
         }
     }
     
-    private func render() {
-        // TODO Update changes in the search query
+    private func search(searchQuery: SearchQuery) {
+        // Change to shimmer view
+        self.collectionManagers = []
+        self.selectedTab = 0
+        self.tabCollection.reloadData()
+        self.controller.headerView(render: nil)
+        
+        // Render update header view
+        self.render(searchQuery: searchQuery)
+        
+        // Save reference & do search
+        self.mainSearchQuery = searchQuery
+        MunchApi.search.collections(query: self.mainSearchQuery) { meta, collections in
+            if (meta.isOk()) {
+                self.collectionManagers = collections.map { SearchCollectionManager(collection: $0) }
+                if !MunchLocation.isEnabled {
+                    self.collectionManagers.get(0)?.topCards.append(SearchStaticNoLocationCard.card)
+                }
+                
+                self.tabCollection.reloadData()
+                self.controller.headerView(render: self.collectionManagers.get(0))
+            } else {
+                self.controller.present(meta.createAlert(), animated: true)
+            }
+        }
+    }
+    
+    private func render(searchQuery: SearchQuery) {
+        if let location = searchQuery.location {
+            self.locationButton.setTitle(location.name, for: .normal)
+        } else if MunchLocation.isEnabled {
+            self.locationButton.setTitle("Current Location", for: .normal)
+        } else {
+            self.locationButton.setTitle("Singapore", for: .normal)
+        }
+        
+        self.queryLabel.field.text = searchQuery.query
+    }
+}
+
+class HeaderViewSegue: UIStoryboardSegue {
+    override func perform() {
+        super.perform()
+        let headerView = (source as! SearchController).headerView!
+        if let location = destination as? SearchLocationController {
+            location.headerView = headerView
+        }
     }
 }
