@@ -10,12 +10,6 @@ import Foundation
 import UIKit
 import SnapKit
 
-enum SearchHeaderAction {
-    case location
-    case query
-    case filter
-}
-
 protocol SearchHeaderDelegate {
     
     /**
@@ -35,8 +29,9 @@ class SearchHeaderView: UIView {
     let queryLabel = SearchQueryLabel()
     let filterButton = SearchFilterButton()
     let tabCollection = SearchTabCollection()
-
     var heightConstraint: Constraint! = nil
+    
+    var mainSearchQuery = SearchQuery()
     
     var collectionManagers = [SearchCollectionManager]()
     var selectedTab = 0
@@ -97,7 +92,7 @@ class SearchHeaderView: UIView {
         }
         
         // Query once loaded
-        self.query()
+        self.onHeaderApply(action: .apply(SearchQuery()))
     }
     
     override func layoutSubviews() {
@@ -107,24 +102,6 @@ class SearchHeaderView: UIView {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    var searchQuery = SearchQuery()
-    
-    func query() {
-        MunchApi.search.collections(query: searchQuery) { meta, collections in
-            if (meta.isOk()) {
-                self.collectionManagers = collections.map { SearchCollectionManager(collection: $0) }
-                if MunchLocation.isEnabled {
-                    self.collectionManagers.get(0)?.topCards.append(SearchStaticNoLocationCard.card)
-                }
-                
-                self.tabCollection.reloadData()
-                self.controller.headerView(render: self.collectionManagers.get(0))
-            } else {
-                self.controller.present(meta.createAlert(), animated: true)
-            }
-        }
     }
 }
 
@@ -370,16 +347,23 @@ extension SearchHeaderView {
     }
 }
 
+enum SearchHeaderAction {
+    case apply(SearchQuery)
+    case cancel // No Change
+    case reset // Refresh Query
+}
+
 // Render search query functions
 extension SearchHeaderView {
     func registerActions() {
-        locationButton.addTarget(self, action: #selector(headerAction(for:)), for: .touchUpInside)
-        queryLabel.addTarget(self, action: #selector(headerAction(for:)), for: .touchUpInside)
-        filterButton.addTarget(self, action: #selector(headerAction(for:)), for: .touchUpInside)
+        locationButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
+        queryLabel.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
+        filterButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
     }
     
-    @objc func headerAction(for view: UIView) {
+    @objc func onHeaderAction(for view: UIView) {
         if view is SearchLocationButton {
+            // TODO Pass SearchQuery On
             controller.performSegue(withIdentifier: "SearchHeaderView_location", sender: self)
         } else if view is SearchQueryLabel {
             controller.performSegue(withIdentifier: "SearchHeaderView_query", sender: self)
@@ -388,7 +372,57 @@ extension SearchHeaderView {
         }
     }
     
-    func render() {
-        // Update changes in the search query
+    func onHeaderApply(action: SearchHeaderAction) {
+        switch action {
+        case .apply(let searchQuery):
+            self.doQuery(searchQuery: searchQuery)
+            return
+        case .reset:
+            doQuery(searchQuery: SearchQuery())
+            return
+        default:
+            return
+        }
+    }
+    
+    private func doQuery(searchQuery: SearchQuery) {
+        func search(serachQuery: SearchQuery) {
+            // Save reference
+            self.mainSearchQuery = searchQuery
+            
+            MunchApi.search.collections(query: self.mainSearchQuery) { meta, collections in
+                if (meta.isOk()) {
+                    self.collectionManagers = collections.map { SearchCollectionManager(collection: $0) }
+                    if MunchLocation.isEnabled {
+                        self.collectionManagers.get(0)?.topCards.append(SearchStaticNoLocationCard.card)
+                    }
+                    
+                    self.tabCollection.reloadData()
+                    self.controller.headerView(render: self.collectionManagers.get(0))
+                } else {
+                    self.controller.present(meta.createAlert(), animated: true)
+                }
+            }
+        }
+        
+        if MunchLocation.isEnabled {
+            MunchLocation.waitFor(completion: { latLng, error in
+                if let latLng = latLng {
+                    var updatedQuery = searchQuery
+                    updatedQuery.latLng = latLng
+                    search(serachQuery: updatedQuery)
+                } else if let error = error {
+                    self.controller.alert(title: "Location Error", error: error)
+                } else {
+                    self.controller.alert(title: "Location Error", message: "No Error or Location Data")
+                }
+            })
+        } else {
+            search(serachQuery: searchQuery)
+        }
+    }
+    
+    private func render() {
+        // TODO Update changes in the search query
     }
 }

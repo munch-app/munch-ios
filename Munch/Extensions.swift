@@ -135,9 +135,11 @@ extension Array {
 extension UIViewController {
     
     func alert(error: Error) {
-        let alert = UIAlertController(title: "Unhandled Error", message: error.localizedDescription, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
-        present(alert, animated: true)
+        alert(title: "Unhandled Error", message: error.localizedDescription)
+    }
+    
+    func alert(title: String, error: Error) {
+        alert(title: title, message: error.localizedDescription)
     }
     
     func alert(title: String, message: String) {
