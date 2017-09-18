@@ -58,6 +58,9 @@ class SearchQueryController: UIViewController, UITableViewDataSource, UITableVie
         self.tableView.tableFooterView = footerView
         self.tableView.contentInset.top = -20
         
+        self.textField.text = self.headerView.mainSearchQuery.query
+        self.textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+        self.textField.addTarget(self, action: #selector(textFieldShouldReturn(_:)), for: .editingDidEndOnExit)
         registerCell()
     }
     
@@ -70,9 +73,20 @@ class SearchQueryController: UIViewController, UITableViewDataSource, UITableVie
         self.dismiss(animated: true)
     }
     
-    @IBAction func textFieldDidChange(_ sender: Any) {
+    func textFieldDidChange(_ sender: Any) {
         NSObject.cancelPreviousPerformRequests(withTarget: self)
         self.perform(#selector(textFieldDidCommit(text:)), with: textField.text, afterDelay: 0.4)
+    }
+    
+    func textFieldShouldReturn(_ sender: Any) -> Bool {
+        if let text = textField.text {
+            self.dismiss(animated: true) {
+                var query = self.headerView.mainSearchQuery
+                query.query = text
+                self.headerView.onHeaderApply(action: .apply(query))
+            }
+        }
+        return true
     }
     
     @objc func textFieldDidCommit(text: String?) {
