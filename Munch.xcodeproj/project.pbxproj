@@ -17,17 +17,18 @@
 		032F891C1E82DFA300AD3818 /* MunchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F891B1E82DFA300AD3818 /* MunchUITests.swift */; };
 		033E62F81F1D381F00AE97FA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 033E62F71F1D381F00AE97FA /* Main.storyboard */; };
 		034FCEFD1F6C24D000D353F1 /* VersionClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCEFC1F6C24D000D353F1 /* VersionClient.swift */; };
-		034FCF081F6C282E00D353F1 /* Discovery.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 034FCF021F6C282E00D353F1 /* Discovery.storyboard */; };
 		034FCF091F6C282E00D353F1 /* Search.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 034FCF031F6C282E00D353F1 /* Search.storyboard */; };
 		034FCF0A1F6C282E00D353F1 /* SearchBasicCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCF041F6C282E00D353F1 /* SearchBasicCards.swift */; };
 		034FCF0B1F6C282E00D353F1 /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCF051F6C282E00D353F1 /* SearchController.swift */; };
 		034FCF0C1F6C282E00D353F1 /* SearchStaticCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCF061F6C282E00D353F1 /* SearchStaticCards.swift */; };
-		034FCF0D1F6C282E00D353F1 /* SearchActionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCF071F6C282E00D353F1 /* SearchActionController.swift */; };
 		0378849B1E8E563E006025B5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0378849A1E8E563E006025B5 /* Extensions.swift */; };
 		038275781F03B7A700C5954A /* Munch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038275771F03B7A700C5954A /* Munch.swift */; };
 		038275811F06DB8D00C5954A /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038275801F06DB8D00C5954A /* Location.swift */; };
 		038275831F0A8DE400C5954A /* Munch.plist in Resources */ = {isa = PBXBuildFile; fileRef = 038275821F0A8DE400C5954A /* Munch.plist */; };
 		03B65F1C1F6C4A8C0030D12B /* SearchHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B65F1B1F6C4A8C0030D12B /* SearchHeaderView.swift */; };
+		03BB67F41F6FA9A800F17A1A /* SearchLocationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BB67F31F6FA9A800F17A1A /* SearchLocationController.swift */; };
+		03BB67F61F6FA9B500F17A1A /* SearchQueryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BB67F51F6FA9B500F17A1A /* SearchQueryController.swift */; };
+		03BB67F81F6FA9C400F17A1A /* SearchFilterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BB67F71F6FA9C400F17A1A /* SearchFilterController.swift */; };
 		03CD276C1F6286FC003562A1 /* Place.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 03CD27691F6286FC003562A1 /* Place.storyboard */; };
 		03CD276D1F6286FC003562A1 /* PlaceBasicCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD276A1F6286FC003562A1 /* PlaceBasicCards.swift */; };
 		03CD276E1F6286FC003562A1 /* PlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD276B1F6286FC003562A1 /* PlaceController.swift */; };
@@ -90,12 +91,10 @@
 		034820551E9CB3C400B0076A /* ImageViewer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageViewer.framework; path = Carthage/Build/iOS/ImageViewer.framework; sourceTree = "<group>"; };
 		034820571E9CB92A00B0076A /* SKPhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SKPhotoBrowser.framework; path = Carthage/Build/iOS/SKPhotoBrowser.framework; sourceTree = "<group>"; };
 		034FCEFC1F6C24D000D353F1 /* VersionClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VersionClient.swift; path = Api/VersionClient.swift; sourceTree = "<group>"; };
-		034FCF021F6C282E00D353F1 /* Discovery.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Discovery.storyboard; path = Search/Discovery.storyboard; sourceTree = "<group>"; };
 		034FCF031F6C282E00D353F1 /* Search.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Search.storyboard; path = Search/Search.storyboard; sourceTree = "<group>"; };
 		034FCF041F6C282E00D353F1 /* SearchBasicCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchBasicCards.swift; path = Search/SearchBasicCards.swift; sourceTree = "<group>"; };
 		034FCF051F6C282E00D353F1 /* SearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchController.swift; path = Search/SearchController.swift; sourceTree = "<group>"; };
 		034FCF061F6C282E00D353F1 /* SearchStaticCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchStaticCards.swift; path = Search/SearchStaticCards.swift; sourceTree = "<group>"; };
-		034FCF071F6C282E00D353F1 /* SearchActionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchActionController.swift; path = Search/SearchActionController.swift; sourceTree = "<group>"; };
 		037884981E8E4E3F006025B5 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Carthage/Build/iOS/SnapKit.framework; sourceTree = "<group>"; };
 		0378849A1E8E563E006025B5 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		038275771F03B7A700C5954A /* Munch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Munch.swift; sourceTree = "<group>"; };
@@ -109,6 +108,9 @@
 		039C39411E8D485400A28533 /* MXPagerView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXPagerView.framework; path = Carthage/Build/iOS/MXPagerView.framework; sourceTree = "<group>"; };
 		039C39431E8D485800A28533 /* MXParallaxHeader.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXParallaxHeader.framework; path = Carthage/Build/iOS/MXParallaxHeader.framework; sourceTree = "<group>"; };
 		03B65F1B1F6C4A8C0030D12B /* SearchHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchHeaderView.swift; path = Search/SearchHeaderView.swift; sourceTree = "<group>"; };
+		03BB67F31F6FA9A800F17A1A /* SearchLocationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchLocationController.swift; path = Search/SearchLocationController.swift; sourceTree = "<group>"; };
+		03BB67F51F6FA9B500F17A1A /* SearchQueryController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchQueryController.swift; path = Search/SearchQueryController.swift; sourceTree = "<group>"; };
+		03BB67F71F6FA9C400F17A1A /* SearchFilterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchFilterController.swift; path = Search/SearchFilterController.swift; sourceTree = "<group>"; };
 		03CD27691F6286FC003562A1 /* Place.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Place.storyboard; path = Place/Place.storyboard; sourceTree = "<group>"; };
 		03CD276A1F6286FC003562A1 /* PlaceBasicCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceBasicCards.swift; path = Place/PlaceBasicCards.swift; sourceTree = "<group>"; };
 		03CD276B1F6286FC003562A1 /* PlaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PlaceController.swift; path = Place/PlaceController.swift; sourceTree = "<group>"; };
@@ -287,14 +289,15 @@
 		039B81BF1F6847060022ADCF /* Search */ = {
 			isa = PBXGroup;
 			children = (
-				034FCF021F6C282E00D353F1 /* Discovery.storyboard */,
 				034FCF031F6C282E00D353F1 /* Search.storyboard */,
 				034FCF051F6C282E00D353F1 /* SearchController.swift */,
 				03B65F1B1F6C4A8C0030D12B /* SearchHeaderView.swift */,
 				03E1A5AB1F6E7B58005A6E58 /* SearchCollection.swift */,
 				034FCF041F6C282E00D353F1 /* SearchBasicCards.swift */,
 				034FCF061F6C282E00D353F1 /* SearchStaticCards.swift */,
-				034FCF071F6C282E00D353F1 /* SearchActionController.swift */,
+				03BB67F31F6FA9A800F17A1A /* SearchLocationController.swift */,
+				03BB67F51F6FA9B500F17A1A /* SearchQueryController.swift */,
+				03BB67F71F6FA9C400F17A1A /* SearchFilterController.swift */,
 			);
 			name = Search;
 			sourceTree = "<group>";
@@ -448,7 +451,6 @@
 				033E62F81F1D381F00AE97FA /* Main.storyboard in Resources */,
 				034FCF091F6C282E00D353F1 /* Search.storyboard in Resources */,
 				03CD276C1F6286FC003562A1 /* Place.storyboard in Resources */,
-				034FCF081F6C282E00D353F1 /* Discovery.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -669,6 +671,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				038275781F03B7A700C5954A /* Munch.swift in Sources */,
+				03BB67F41F6FA9A800F17A1A /* SearchLocationController.swift in Sources */,
 				034FCF0C1F6C282E00D353F1 /* SearchStaticCards.swift in Sources */,
 				034FCEFD1F6C24D000D353F1 /* VersionClient.swift in Sources */,
 				0314786A1F6A18CC00246BCD /* LocationClient.swift in Sources */,
@@ -677,18 +680,19 @@
 				031478641F6A16ED00246BCD /* PlaceClient.swift in Sources */,
 				03CD276E1F6286FC003562A1 /* PlaceController.swift in Sources */,
 				03CF0AA21E97AA3C00A3FD1F /* Objects.swift in Sources */,
-				034FCF0D1F6C282E00D353F1 /* SearchActionController.swift in Sources */,
 				03E1A5AA1F6D7BAB005A6E58 /* Shimmer.swift in Sources */,
 				038275811F06DB8D00C5954A /* Location.swift in Sources */,
 				032F88FC1E82DFA300AD3818 /* AppDelegate.swift in Sources */,
 				0378849B1E8E563E006025B5 /* Extensions.swift in Sources */,
 				03E1A5A81F6D4FA4005A6E58 /* TabBarController.swift in Sources */,
 				03E1A5AC1F6E7B58005A6E58 /* SearchCollection.swift in Sources */,
+				03BB67F81F6FA9C400F17A1A /* SearchFilterController.swift in Sources */,
 				03CD277E1F62BDEA003562A1 /* PlaceVendorCards.swift in Sources */,
 				034FCF0B1F6C282E00D353F1 /* SearchController.swift in Sources */,
 				03CD27741F62BD5C003562A1 /* PlaceStaticCards.swift in Sources */,
 				03CD276D1F6286FC003562A1 /* PlaceBasicCards.swift in Sources */,
 				034FCF0A1F6C282E00D353F1 /* SearchBasicCards.swift in Sources */,
+				03BB67F61F6FA9B500F17A1A /* SearchQueryController.swift in Sources */,
 				03CF0AA41E97AA3C00A3FD1F /* MunchApi.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

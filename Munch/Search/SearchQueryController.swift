@@ -1,8 +1,8 @@
 //
-//  DiscoverSearchController.swift
+//  SearchQueryController.swift
 //  Munch
 //
-//  Created by Fuxing Loh on 13/9/17.
+//  Created by Fuxing Loh on 18/9/17.
 //  Copyright © 2017 Munch Technologies. All rights reserved.
 //
 

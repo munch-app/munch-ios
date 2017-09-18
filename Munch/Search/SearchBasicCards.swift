@@ -30,13 +30,14 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         
         bottomView.snp.makeConstraints { make in
             make.left.right.bottom.equalTo(containerView)
-            make.height.equalTo(73)
+            make.height.equalTo(73).priority(999)
         }
         
         containerView.snp.makeConstraints { make in
             let height = (UIScreen.main.bounds.width * 0.888) - (topBottom * 2)
-            make.height.equalTo(height)
-            make.edges.equalTo(self).inset(UIEdgeInsets(topBottom: topBottom, leftRight: leftRight))
+            make.height.equalTo(height).priority(999)
+            make.left.right.equalTo(self).inset(leftRight)
+            make.top.bottom.equalTo(self).inset(topBottom)
         }
     }
     

@@ -56,7 +56,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     }
     
     func scrollToTop() {
-        cardTableView.setContentOffset(CGPoint.zero, animated: true)
+        cardTableView.setContentOffset(CGPoint(x: 0, y: -headerView.maxHeight), animated: true)
     }
     
     /**
@@ -65,6 +65,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     func headerView(render collectionManager: SearchCollectionManager?) {
         self.collectionManager = collectionManager
         self.cardTableView.reloadData()
+        self.scrollToTop()
     }
 }
 

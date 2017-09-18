@@ -22,7 +22,7 @@ class PlaceBasicImageBannerCard: UITableViewCell, PlaceCardView {
         self.addSubview(imageBannerView)
         
         imageBannerView.snp.makeConstraints { make in
-            make.height.equalTo(260)
+            make.height.equalTo(260).priority(999)
             make.edges.equalTo(self).inset(UIEdgeInsets(top: 0, left: 0, bottom: topBottom, right: 0))
         }
         

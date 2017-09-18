@@ -55,6 +55,7 @@ class SearchHeaderView: UIView {
         self.addSubview(filterButton)
         self.addSubview(tabCollection)
         
+        registerActions()
         registerCell()
         
         let statusView = UIView()
@@ -148,21 +149,30 @@ class SearchLocationButton: UIButton {
     }
 }
 
-class SearchQueryLabel: SearchTextField {
+class SearchQueryLabel: UIButton {
+    let field = SearchTextField()
+    
     override init(frame: CGRect = CGRect()) {
         super.init(frame: frame)
         
-        self.layer.cornerRadius = 4
-        self.color = UIColor(hex: "2E2E2E")
-        self.backgroundColor = UIColor.init(hex: "EBEBEB")
+        field.layer.cornerRadius = 4
+        field.color = UIColor(hex: "2E2E2E")
+        field.backgroundColor = UIColor.init(hex: "EBEBEB")
         
-        self.leftImage = UIImage(named: "SC-Search-18")
-        self.leftImagePadding = 1
-        self.leftImageWidth = 32
-        self.leftImageSize = 18
+        field.leftImage = UIImage(named: "SC-Search-18")
+        field.leftImagePadding = 1
+        field.leftImageWidth = 32
+        field.leftImageSize = 18
         
-        self.placeholder = "Search any restaurant or cuisine"
-        self.font = UIFont.systemFont(ofSize: 14, weight: UIFontWeightRegular)
+        field.placeholder = "Search any restaurant or cuisine"
+        field.font = UIFont.systemFont(ofSize: 14, weight: UIFontWeightRegular)
+        
+        field.isEnabled = false
+        
+        self.addSubview(field)
+        field.snp.makeConstraints { make in
+            make.edges.equalTo(self)
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -362,6 +372,22 @@ extension SearchHeaderView {
 
 // Render search query functions
 extension SearchHeaderView {
+    func registerActions() {
+        locationButton.addTarget(self, action: #selector(headerAction(for:)), for: .touchUpInside)
+        queryLabel.addTarget(self, action: #selector(headerAction(for:)), for: .touchUpInside)
+        filterButton.addTarget(self, action: #selector(headerAction(for:)), for: .touchUpInside)
+    }
+    
+    @objc func headerAction(for view: UIView) {
+        if view is SearchLocationButton {
+            controller.performSegue(withIdentifier: "SearchHeaderView_location", sender: self)
+        } else if view is SearchQueryLabel {
+            controller.performSegue(withIdentifier: "SearchHeaderView_query", sender: self)
+        } else if view is SearchFilterButton {
+            controller.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
+        }
+    }
+    
     func render() {
         // Update changes in the search query
     }
