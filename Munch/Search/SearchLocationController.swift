@@ -105,6 +105,8 @@ extension SearchLocationController {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
         var searchQuery = self.headerView.mainSearchQuery
         switch indexPath.section {
         case 0:

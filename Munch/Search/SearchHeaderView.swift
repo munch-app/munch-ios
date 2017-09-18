@@ -449,6 +449,10 @@ class HeaderViewSegue: UIStoryboardSegue {
         let headerView = (source as! SearchController).headerView!
         if let location = destination as? SearchLocationController {
             location.headerView = headerView
+        } else if let navigation = destination as? UINavigationController {
+            if let query = navigation.topViewController as? SearchQueryController {
+                query.headerView = headerView
+            }
         }
     }
 }
