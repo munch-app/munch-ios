@@ -8,3 +8,326 @@
 
 import Foundation
 import UIKit
+import TTGTagCollectionView
+
+class SearchFilterController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+    @IBOutlet weak var tableView: UITableView!
+    
+    var applyView: SearchFilterApplyView!
+    var headerView: SearchHeaderView!
+    var selectedTags = Set<String>()
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Make navigation bar transparent, bar must be hidden
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.shadowImage = UIImage()
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.view.addSubview(applyView)
+        applyView.snp.makeConstraints { (make) in
+            make.left.right.bottom.equalTo(self.view)
+        }
+        
+        self.tableView.separatorStyle = .none
+        self.tableView.allowsSelection = false
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
+        
+        self.tableView.rowHeight = UITableViewAutomaticDimension
+        self.tableView.estimatedRowHeight = 50
+        
+        let footerView = UIView(frame: CGRect.zero)
+        self.tableView.tableFooterView = footerView
+        self.tableView.contentInset.top = 10
+        self.tableView.contentInset.bottom = applyView.height + 12
+        
+        registerCell()
+        
+        // Transfer tag from headerView to filterView and render it
+        headerView.mainSearchQuery.filter.tag.positives?.forEach{ selectedTags.insert($0) }
+        applyView.render(tags: selectedTags)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        // To force auto layout
+        self.tableView.reloadData()
+    }
+    
+    @IBAction func actionCancel(_ sender: Any) {
+        self.dismiss(animated: true)
+    }
+}
+
+extension SearchFilterController: TTGTextTagCollectionViewDelegate {
+    func textTagCollectionView(_ textTagCollectionView: TTGTextTagCollectionView!, didTapTag tagText: String!, at index: UInt, selected: Bool) {
+        if selected {
+            selectedTags.insert(tagText)
+        } else {
+            selectedTags.remove(tagText)
+        }
+        self.applyView.render(tags: selectedTags)
+    }
+}
+
+extension SearchFilterController {
+    var cells: [(Swift.AnyClass, String)] {
+        return [
+            (SearchFilterHourCell.self, "SearchFilterHourCell"),
+            (SearchFilterNeighbourhoodCell.self, "SearchFilterNeighbourhoodCell"),
+            (SearchFilterCuisineCell.self, "SearchFilterCuisineCell"),
+            (SearchFilterOccasionCell.self, "SearchFilterOccasionCell"),
+            (SearchFilterEstablishmentCell.self, "SearchFilterEstablishmentCell")
+        ]
+    }
+    
+    func registerCell() {
+        for (cellType, id) in cells {
+            tableView.register(cellType, forCellReuseIdentifier: id)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return cells.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: cells[indexPath.row].1) as! SearchFilterTagCell
+        cell.attach(controller: self)
+        return cell
+    }
+}
+
+class SearchFilterHourCell: SearchFilterTagCell {
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override var title: String {
+        return "Opening Hour"
+    }
+    
+    override var tags: [String] {
+        return ["Open Now", "After Midnight"]
+    }
+}
+
+class SearchFilterNeighbourhoodCell: SearchFilterTagCell {
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override var title: String {
+        return "Neighbourhood"
+    }
+    
+    override var tags: [String] {
+        return ["Bishan", "Toa Payoh"]
+    }
+}
+
+class SearchFilterCuisineCell: SearchFilterTagCell {
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override var title: String {
+        return "Cuisine"
+    }
+    
+    override var tags: [String] {
+        return ["African", "American", "Arabic", "Argentinean", "Asian", "Australian", "Bangladeshi", "Barbecue", "Beijing", "Belgian", "Brazilian", "Burmese", "Cambodian", "Cantonese", "Caribbean", "Chinese", "Cuban", "Desserts", "Dim Sum", "Dongbei", "Dutch", "English", "Eurasian", "European", "Foochow", "French", "Fruits", "Fujian", "Fusion","German", "Greek", "Hainanese", "Hakka", "Hokkien", "Hong Kong", "Indian", "Indochinese", "International", "Iranian", "Irish", "Italian", "Japanese", "Korean", "Latin American", "Lebanese", "Malay Indonesian", "Mediterranean", "Mexican", "Middle Eastern", "Modern European", "Mongolian", "Moroccan", "Nonya Peranakan", "North Indian", "Others Asian", "Pakistani", "Pizza", "Portuguese", "Russian", "Seafood", "Shanghainese","Sze chuan", "Singaporean","Snacks", "South Indian", "Spanish", "Steak and Grills", "Steamboat", "Swiss", "Taiwanese", "Teochew", "Thai", "Turkish", "Vegetarian", "Vietnamese", "Western", "Zi Char"]
+    }
+}
+
+class SearchFilterOccasionCell: SearchFilterTagCell {
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override var title: String {
+        return "Occasion"
+    }
+    
+    override var tags: [String] {
+        return ["Brunch", "After Work", "Birthdays", "Guys Night Out", "Business Meal", "Budget", "Great to hang", "Great for dates", "Dinner", "Football Screening", "Large Group", "Lunch", "Ladies Night", "Private Dining", "People Watching", "Scenic View", "Supper"]
+    }
+}
+
+class SearchFilterEstablishmentCell: SearchFilterTagCell {
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override var title: String {
+        return "Establishment"
+    }
+    
+    override var tags: [String] {
+        return ["Restaurant", "Bakery", "Bars & Pubs", "BBQ", "Bistro", "Buffet", "Coffeeshop", "Café", "Cafe", "Dessert", "Family", "Fast Food", "Fine Dining", "Franchise", "Hawker", "High Tea", "Steamboat"]
+    }
+}
+
+class SearchFilterTagCell: UITableViewCell {
+    let titleLabel = UILabel()
+    let tagCollection = TTGTextTagCollectionView()
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.titleLabel.text = self.title
+        
+        titleLabel.font = UIFont.systemFont(ofSize: 20, weight: .medium)
+        titleLabel.textColor = UIColor.black.withAlphaComponent(0.8)
+        self.addSubview(titleLabel)
+        
+        tagCollection.addTags(self.tags)
+        tagCollection.defaultConfig.tagTextFont = UIFont.systemFont(ofSize: 14.0, weight: .regular)
+        tagCollection.defaultConfig.tagTextColor = UIColor.black.withAlphaComponent(0.7)
+        
+        tagCollection.defaultConfig.tagBackgroundColor = UIColor.white
+        tagCollection.defaultConfig.tagSelectedBackgroundColor = UIColor.primary
+        
+        tagCollection.defaultConfig.tagBorderWidth = 0
+        tagCollection.defaultConfig.tagSelectedBorderWidth = 0
+        
+        tagCollection.defaultConfig.tagShadowOffset = CGSize(width: 1, height: 1)
+        tagCollection.defaultConfig.tagShadowRadius = 1
+        self.addSubview(tagCollection)
+        
+        titleLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(self).inset(0)
+            make.left.right.equalTo(self).inset(24)
+            make.height.equalTo(36)
+        }
+        
+        tagCollection.snp.makeConstraints { (make) in
+            make.left.right.equalTo(self).inset(24)
+            make.top.equalTo(titleLabel.snp.bottom)
+            make.bottom.equalTo(self).inset(8)
+        }
+    }
+    
+    func attach(controller: SearchFilterController) {
+        self.tagCollection.delegate = controller
+        
+        // To force auto layout before display
+        self.layoutIfNeeded()
+        self.setNeedsDisplay()
+        
+        for (index, tag) in tags.enumerated() {
+            if (controller.selectedTags.contains(tag)) {
+                // Set tag to selected
+                self.tagCollection.setTagAt(UInt(index), selected: true)
+                
+            }
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    var title: String {
+        return ""
+    }
+    
+    var tags: [String] {
+        return []
+    }
+}
+
+class SearchFilterApplyView: UIView {
+    let label = UILabel()
+    let resetBtn = UIButton()
+    let applyBtn = UIButton()
+    
+    let height: CGFloat = 54
+    
+    var headerView: SearchHeaderView!
+    
+    init(headerView: SearchHeaderView, frame: CGRect = CGRect.zero) {
+        super.init(frame: frame)
+        self.headerView = headerView
+        self.backgroundColor = UIColor.white
+        label.text = "0 Selected Filters"
+        label.font = UIFont.systemFont(ofSize: 16, weight: .light)
+        self.addSubview(label)
+        
+        resetBtn.setTitle("Reset", for: .normal)
+        resetBtn.setTitleColor(UIColor.black.withAlphaComponent(0.6), for: .normal)
+        resetBtn.titleLabel!.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        resetBtn.contentHorizontalAlignment = .right
+        self.addSubview(resetBtn)
+        
+        applyBtn.setTitle("Apply", for: .normal)
+        applyBtn.setTitleColor(UIColor.primary, for: .normal)
+        applyBtn.titleLabel!.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        applyBtn.contentHorizontalAlignment = .right
+        applyBtn.titleEdgeInsets.right = 24
+        self.addSubview(applyBtn)
+        
+        label.snp.makeConstraints { (make) in
+            make.top.bottom.equalTo(self)
+            make.left.equalTo(self).inset(24)
+            make.right.equalTo(resetBtn.snp.left)
+        }
+        
+        resetBtn.snp.makeConstraints { (make) in
+            make.top.bottom.equalTo(self)
+            make.width.equalTo(70)
+            make.right.equalTo(applyBtn.snp.left)
+        }
+        
+        applyBtn.snp.makeConstraints { (make) in
+            make.top.bottom.equalTo(self)
+            make.right.equalTo(self)
+            make.width.equalTo(85)
+        }
+        
+        self.snp.makeConstraints { (make) in
+            make.height.equalTo(self.height)
+        }
+        
+        // TODO added target for all the buttons
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.hairlineShadow(height: -1)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func render(tags: Set<String>) {
+        label.text = "\(tags.count) Selected Filters"
+    }
+}
+
+

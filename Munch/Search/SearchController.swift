@@ -31,6 +31,12 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         navigationController?.navigationBar.shadowImage = UIImage()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // TODO, remove this testing code
+        self.headerView.filterButton.sendActions(for: .touchUpInside)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.headerView = SearchHeaderView(controller: self)

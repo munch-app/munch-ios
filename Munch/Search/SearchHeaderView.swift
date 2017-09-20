@@ -79,9 +79,10 @@ class SearchHeaderView: UIView {
             make.bottom.equalTo(tabCollection.snp.top).inset(-3)
         }
         
+        filterButton.imageEdgeInsets.right = 24
         filterButton.snp.makeConstraints { make in
-            make.right.equalTo(self).inset(24)
-            make.width.equalTo(45)
+            make.right.equalTo(self)
+            make.width.equalTo(45 + 24)
             make.height.equalTo(32)
             make.bottom.equalTo(tabCollection.snp.top).inset(-3)
         }
@@ -452,6 +453,8 @@ class HeaderViewSegue: UIStoryboardSegue {
         } else if let navigation = destination as? UINavigationController {
             if let query = navigation.topViewController as? SearchQueryController {
                 query.headerView = headerView
+            } else if let filter = navigation.topViewController as? SearchFilterController {
+                filter.headerView = headerView
             }
         }
     }
