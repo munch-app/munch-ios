@@ -12,10 +12,9 @@ import TTGTagCollectionView
 
 class SearchFilterController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     @IBOutlet weak var tableView: UITableView!
-    
     var applyView: SearchFilterApplyView!
     var headerView: SearchHeaderView!
-    var selectedTags = Set<String>()
+    var filterCells: [SearchFilterTagCell]!
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -27,10 +26,19 @@ class SearchFilterController: UIViewController, UITableViewDataSource, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.applyView = SearchFilterApplyView(controller: self, searchQuery: headerView.mainSearchQuery)
         self.view.addSubview(applyView)
         applyView.snp.makeConstraints { (make) in
             make.left.right.bottom.equalTo(self.view)
         }
+        
+        self.filterCells = [
+            SearchFilterHourCell(applyView: self.applyView),
+            SearchFilterNeighbourhoodCell(applyView: self.applyView),
+            SearchFilterCuisineCell(applyView: self.applyView),
+            SearchFilterOccasionCell(applyView: self.applyView),
+            SearchFilterEstablishmentCell(applyView: self.applyView),
+        ]
         
         self.tableView.separatorStyle = .none
         self.tableView.allowsSelection = false
@@ -44,17 +52,10 @@ class SearchFilterController: UIViewController, UITableViewDataSource, UITableVi
         self.tableView.tableFooterView = footerView
         self.tableView.contentInset.top = 10
         self.tableView.contentInset.bottom = applyView.height + 12
-        
-        registerCell()
-        
-        // Transfer tag from headerView to filterView and render it
-        headerView.mainSearchQuery.filter.tag.positives?.forEach{ selectedTags.insert($0) }
-        applyView.render(tags: selectedTags)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
         // To force auto layout
         self.tableView.reloadData()
     }
@@ -62,50 +63,34 @@ class SearchFilterController: UIViewController, UITableViewDataSource, UITableVi
     @IBAction func actionCancel(_ sender: Any) {
         self.dismiss(animated: true)
     }
-}
-
-extension SearchFilterController: TTGTextTagCollectionViewDelegate {
-    func textTagCollectionView(_ textTagCollectionView: TTGTextTagCollectionView!, didTapTag tagText: String!, at index: UInt, selected: Bool) {
-        if selected {
-            selectedTags.insert(tagText)
-        } else {
-            selectedTags.remove(tagText)
+    
+    @objc func actionApply(_ sender: Any) {
+        self.dismiss(animated: true) {
+            self.headerView.onHeaderApply(action: .apply(self.applyView.searchQuery))
         }
-        self.applyView.render(tags: selectedTags)
     }
 }
 
 extension SearchFilterController {
-    var cells: [(Swift.AnyClass, String)] {
-        return [
-            (SearchFilterHourCell.self, "SearchFilterHourCell"),
-            (SearchFilterNeighbourhoodCell.self, "SearchFilterNeighbourhoodCell"),
-            (SearchFilterCuisineCell.self, "SearchFilterCuisineCell"),
-            (SearchFilterOccasionCell.self, "SearchFilterOccasionCell"),
-            (SearchFilterEstablishmentCell.self, "SearchFilterEstablishmentCell")
-        ]
-    }
-    
-    func registerCell() {
-        for (cellType, id) in cells {
-            tableView.register(cellType, forCellReuseIdentifier: id)
-        }
-    }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cells.count
+        return filterCells.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cells[indexPath.row].1) as! SearchFilterTagCell
-        cell.attach(controller: self)
+        let cell = filterCells[indexPath.row]
+        cell.layoutIfNeeded()
+        cell.setNeedsDisplay()
         return cell
     }
 }
 
 class SearchFilterHourCell: SearchFilterTagCell {
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    let formatter = DateFormatter()
+    
+    override init(applyView: SearchFilterApplyView) {
+        super.init(applyView: applyView)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "HH:mm"
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -119,17 +104,37 @@ class SearchFilterHourCell: SearchFilterTagCell {
     override var tags: [String] {
         return ["Open Now", "After Midnight"]
     }
+    
+    override func textTagCollectionView(_ textTagCollectionView: TTGTextTagCollectionView!, didTapTag tagText: String!, at index: UInt, selected: Bool) {
+        if selected {
+            applyView.searchQuery.filter.hour.day = Place.Hour.Formatter.dayNow()
+            
+            if (tagText == "Open Now") {
+                applyView.searchQuery.filter.hour.time = "01:00"
+                self.tagCollection.setTagAt(1, selected: false)
+            } else if tagText == "After Midnight" {
+                applyView.searchQuery.filter.hour.time = formatter.string(from: Date())
+                self.tagCollection.setTagAt(0, selected: false)
+            }
+        } else {
+            applyView.searchQuery.filter.hour.day = nil
+            applyView.searchQuery.filter.hour.time = nil
+        }
+    }
+    
+    override func contains(tag: String) -> Bool {
+        if let time = applyView.searchQuery.filter.hour.time {
+            if tag == "After Midnight", time == "01:00" {
+                return true
+            } else if tag == "Open Now", time != "01:00" {
+                return true
+            }
+        }
+        return false
+    }
 }
 
 class SearchFilterNeighbourhoodCell: SearchFilterTagCell {
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override var title: String {
         return "Neighbourhood"
     }
@@ -140,14 +145,6 @@ class SearchFilterNeighbourhoodCell: SearchFilterTagCell {
 }
 
 class SearchFilterCuisineCell: SearchFilterTagCell {
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override var title: String {
         return "Cuisine"
     }
@@ -158,14 +155,6 @@ class SearchFilterCuisineCell: SearchFilterTagCell {
 }
 
 class SearchFilterOccasionCell: SearchFilterTagCell {
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override var title: String {
         return "Occasion"
     }
@@ -176,14 +165,6 @@ class SearchFilterOccasionCell: SearchFilterTagCell {
 }
 
 class SearchFilterEstablishmentCell: SearchFilterTagCell {
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override var title: String {
         return "Establishment"
     }
@@ -193,19 +174,23 @@ class SearchFilterEstablishmentCell: SearchFilterTagCell {
     }
 }
 
-class SearchFilterTagCell: UITableViewCell {
+class SearchFilterTagCell: UITableViewCell, TTGTextTagCollectionViewDelegate {
     let titleLabel = UILabel()
     let tagCollection = TTGTextTagCollectionView()
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.titleLabel.text = self.title
+    var applyView: SearchFilterApplyView!
+    
+    init(applyView: SearchFilterApplyView) {
+        super.init(style: .default, reuseIdentifier: nil)
+        self.applyView = applyView
         
+        titleLabel.text = self.title
         titleLabel.font = UIFont.systemFont(ofSize: 20, weight: .medium)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         self.addSubview(titleLabel)
         
         tagCollection.addTags(self.tags)
+        tagCollection.delegate = self
         tagCollection.defaultConfig.tagTextFont = UIFont.systemFont(ofSize: 14.0, weight: .regular)
         tagCollection.defaultConfig.tagTextColor = UIColor.black.withAlphaComponent(0.7)
         
@@ -230,26 +215,29 @@ class SearchFilterTagCell: UITableViewCell {
             make.top.equalTo(titleLabel.snp.bottom)
             make.bottom.equalTo(self).inset(8)
         }
-    }
-    
-    func attach(controller: SearchFilterController) {
-        self.tagCollection.delegate = controller
         
-        // To force auto layout before display
-        self.layoutIfNeeded()
-        self.setNeedsDisplay()
-        
+        // Set tags to selected
         for (index, tag) in tags.enumerated() {
-            if (controller.selectedTags.contains(tag)) {
-                // Set tag to selected
+            if (contains(tag: tag)) {
                 self.tagCollection.setTagAt(UInt(index), selected: true)
-                
             }
         }
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func textTagCollectionView(_ textTagCollectionView: TTGTextTagCollectionView!, didTapTag tagText: String!, at index: UInt, selected: Bool) {
+        if selected {
+            applyView.searchQuery.filter.tag.positives.insert(tagText)
+        } else {
+            applyView.searchQuery.filter.tag.positives.remove(tagText)
+        }
+    }
+    
+    func contains(tag: String) -> Bool {
+        return applyView.searchQuery.filter.tag.positives.contains(tag)
     }
     
     var title: String {
@@ -265,16 +253,23 @@ class SearchFilterApplyView: UIView {
     let label = UILabel()
     let resetBtn = UIButton()
     let applyBtn = UIButton()
-    
+
+    var searchQuery: SearchQuery! {
+        didSet {
+            render()
+        }
+    }
     let height: CGFloat = 54
     
-    var headerView: SearchHeaderView!
-    
-    init(headerView: SearchHeaderView, frame: CGRect = CGRect.zero) {
-        super.init(frame: frame)
-        self.headerView = headerView
+    init(controller: SearchFilterController, searchQuery: SearchQuery) {
+        super.init(frame: CGRect.zero)
         self.backgroundColor = UIColor.white
-        label.text = "0 Selected Filters"
+        self.searchQuery = searchQuery
+        render()
+        
+        resetBtn.addTarget(self, action: #selector(reset), for: .touchUpInside)
+        applyBtn.addTarget(controller, action: #selector(controller.actionApply(_:)), for: .touchUpInside)
+        
         label.font = UIFont.systemFont(ofSize: 16, weight: .light)
         self.addSubview(label)
         
@@ -290,7 +285,10 @@ class SearchFilterApplyView: UIView {
         applyBtn.contentHorizontalAlignment = .right
         applyBtn.titleEdgeInsets.right = 24
         self.addSubview(applyBtn)
-        
+        makeConstraints()
+    }
+    
+    private func makeConstraints() {
         label.snp.makeConstraints { (make) in
             make.top.bottom.equalTo(self)
             make.left.equalTo(self).inset(24)
@@ -312,8 +310,6 @@ class SearchFilterApplyView: UIView {
         self.snp.makeConstraints { (make) in
             make.height.equalTo(self.height)
         }
-        
-        // TODO added target for all the buttons
     }
     
     override func layoutSubviews() {
@@ -324,9 +320,17 @@ class SearchFilterApplyView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    @objc func reset() {
+        searchQuery.filter.tag.positives = []
+        searchQuery.filter.hour.day = nil
+        searchQuery.filter.hour.time = nil
+    }
     
-    func render(tags: Set<String>) {
-        label.text = "\(tags.count) Selected Filters"
+    private func render() {
+        var count = searchQuery.filter.tag.positives.count
+        if searchQuery.filter.hour.day != nil { count += 1 }
+        label.text = "\(count) Selected Filters"
     }
 }
 

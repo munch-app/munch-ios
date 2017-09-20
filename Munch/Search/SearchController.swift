@@ -33,8 +33,6 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        // TODO, remove this testing code
-        self.headerView.filterButton.sendActions(for: .touchUpInside)
     }
     
     override func viewDidLoad() {
