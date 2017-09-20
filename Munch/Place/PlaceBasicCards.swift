@@ -66,7 +66,7 @@ class PlaceBasicNameTagCard: UITableViewCell, PlaceCardView {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         
-        nameLabel.font = UIFont.systemFont(ofSize: 27.0, weight: UIFontWeightMedium)
+        nameLabel.font = UIFont.systemFont(ofSize: 27.0, weight: UIFont.Weight.medium)
         nameLabel.numberOfLines = 0
         self.addSubview(nameLabel)
         
@@ -96,11 +96,11 @@ class PlaceBasicBusinessHourCard: UITableViewCell, PlaceCardView {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         
-        openingLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightRegular)
+        openingLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.regular)
         openingLabel.numberOfLines = 1
         self.addSubview(openingLabel)
         
-        hoursLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightRegular)
+        hoursLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.regular)
         hoursLabel.numberOfLines = 0
         self.addSubview(hoursLabel)
         
@@ -125,7 +125,7 @@ class PlaceBasicBusinessHourCard: UITableViewCell, PlaceCardView {
     
     func render(card: PlaceCard) {
         let hours = card["hours"].flatMap { Place.Hour(json: $0.1) }
-            .sorted { $0.0.open > $0.1.open }
+            .sorted(by: { $0.open > $1.open } )
         
         if Place.Hour.Formatter.isOpen(hours: hours) ?? false {
             openingLabel.attributedText = "Open Now:".set(style: Style.default {
@@ -160,7 +160,7 @@ class PlaceBasicBusinessHourCard: UITableViewCell, PlaceCardView {
             
             if (day == dayNow) {
                 return text.set(style: Style.default {
-                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightSemibold))
+                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.semibold))
                 })
             }
             
@@ -194,11 +194,11 @@ class PlaceBasicLocationCard: UITableViewCell, PlaceCardView {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         
-        lineOneLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFontWeightRegular)
+        lineOneLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.regular)
         lineOneLabel.numberOfLines = 0
         self.addSubview(lineOneLabel)
         
-        lineTwoLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFontWeightRegular)
+        lineTwoLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.regular)
         lineTwoLabel.numberOfLines = 1
         self.addSubview(lineTwoLabel)
         

@@ -114,7 +114,7 @@ class SearchLocationButton: UIButton {
         
         self.setTitle("Singapore", for: .normal)
         self.setTitleColor(UIColor.black, for: .normal)
-        self.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: UIFontWeightSemibold)
+        self.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.semibold)
         
         self.setImage(UIImage(named: "icons8-Expand Arrow-20"), for: .normal)
         self.tintColor = UIColor.black
@@ -142,7 +142,7 @@ class SearchQueryLabel: UIButton {
         field.leftImageSize = 18
         
         field.placeholder = "Search any restaurant or cuisine"
-        field.font = UIFont.systemFont(ofSize: 14, weight: UIFontWeightRegular)
+        field.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.regular)
         
         field.isEnabled = false
         
@@ -192,7 +192,7 @@ class SearchTabCollection: UICollectionView {
 }
 
 class SearchTabNameCell: UICollectionViewCell {
-    static let titleFont = UIFont.systemFont(ofSize: 12, weight: UIFontWeightSemibold)
+    static let titleFont = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.semibold)
     
     let label = UILabel()
     let indicator = UIView()

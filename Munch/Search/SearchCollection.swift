@@ -26,7 +26,7 @@ class SearchCollectionManager {
         // Last Card Contain No Result
         if (cardsList.last!.isEmpty) {
             // No Result returned by all card in list
-            if (cardsList.reduce(0, {$0.0 + $0.1.count}) == 0) {
+            if (cardsList.contains(where: { !$0.isEmpty })) {
                 return topCards + [SearchStaticNoResultCard.card]
             }
             

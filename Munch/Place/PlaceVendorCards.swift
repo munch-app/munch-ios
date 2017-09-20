@@ -22,7 +22,7 @@ class PlaceVendorArticleGridCard: UITableViewCell, PlaceCardView {
         self.selectionStyle = .none
         
         titleLabel.text = "Articles"
-        titleLabel.font = UIFont.systemFont(ofSize: 20.0, weight: UIFontWeightMedium)
+        titleLabel.font = UIFont.systemFont(ofSize: 20.0, weight: UIFont.Weight.medium)
         super.addSubview(titleLabel)
     }
     

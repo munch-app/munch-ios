@@ -71,7 +71,7 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
 class MunchTabBarContentView: ESTabBarItemContentView {
     override init(frame: CGRect) {
         super.init(frame: frame)
-        titleLabel.font = UIFont.systemFont(ofSize: 9, weight: UIFontWeightSemibold)
+        titleLabel.font = UIFont.systemFont(ofSize: 9, weight: UIFont.Weight.semibold)
         insets.bottom = 3
         insets.top = 3
         

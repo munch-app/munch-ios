@@ -2,10 +2,8 @@ PODS:
   - Alamofire (4.5.1)
   - ESTabBarController-swift (2.5)
   - Hero (1.0.0-alpha.4)
-  - Kingfisher (3.12.2)
+  - Kingfisher (4.0.1)
   - KMNavigationBarTransition (1.0.0)
-  - Mapbox-iOS-SDK (3.6.2)
-  - MXPagerView (0.2.1)
   - NVActivityIndicatorView (3.7.0):
     - NVActivityIndicatorView/Presenter (= 3.7.0)
   - NVActivityIndicatorView/Presenter (3.7.0)
@@ -16,27 +14,27 @@ PODS:
     - Realm (= 3.0.0-beta.3)
   - Shimmer (1.0.2)
   - SKPhotoBrowser (4.1.0)
-  - SnapKit (3.2.0)
+  - SnapKit (4.0.0)
   - SwiftLocation (2.0.7)
-  - SwiftRichString (0.9.9)
+  - SwiftRichString (1.0.1)
   - SwiftyJSON (3.1.4)
+  - TTGTagCollectionView (1.6.0)
 
 DEPENDENCIES:
   - Alamofire (~> 4.5)
   - ESTabBarController-swift (~> 2.5)
   - Hero (= 1.0.0-alpha.4)
-  - Kingfisher (~> 3.12)
+  - Kingfisher (~> 4.0)
   - KMNavigationBarTransition (from `https://github.com/Fuxingloh/KMNavigationBarTransition`)
-  - Mapbox-iOS-SDK
-  - MXPagerView (~> 0.2)
   - NVActivityIndicatorView (~> 3.7)
   - RealmSwift (= 3.0.0-beta.3)
   - Shimmer (~> 1.0)
   - SKPhotoBrowser (~> 4.1)
-  - SnapKit (~> 3.2)
+  - SnapKit (~> 4.0)
   - SwiftLocation (~> 2.0)
-  - SwiftRichString
+  - SwiftRichString (~> 1.0)
   - SwiftyJSON (~> 3.1)
+  - TTGTagCollectionView (~> 1.6)
 
 EXTERNAL SOURCES:
   KMNavigationBarTransition:
@@ -51,20 +49,19 @@ SPEC CHECKSUMS:
   Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
   ESTabBarController-swift: 8daa432f2a9be8ebd25101dc46c84472fd760512
   Hero: 6ab58fdfb16c75ce9c6bfad48ef6abb54780b263
-  Kingfisher: 320626678acadfcf47008b3c6841cd882050737b
+  Kingfisher: b771785e9461ed4b8686d40e7145f9e58100cb24
   KMNavigationBarTransition: b3fb8337f7a1e4542add07fd6c45fb9980794d59
-  Mapbox-iOS-SDK: 1224c5ba79dc9bf9a80bfcc33ae320f5d672a42f
-  MXPagerView: ede184b5191b2ed689ccf05a750a9978cce42414
   NVActivityIndicatorView: d3738df7e2e476aca0ba6bf32a8c9fbcfc33d64b
   Realm: 33bd2ac5a5d7649920b131d2e79e2d5c8421da47
   RealmSwift: a5fb1853c3167912fc5325fe264a410bfe3e2cbc
   Shimmer: c5374be1c2b0c9e292fb05b339a513cf291cac86
   SKPhotoBrowser: 1fbfdc34979335f9ea0ace7dcc6b08c5e7326a8b
-  SnapKit: 1ca44df72cfa543218d177cb8aab029d10d86ea7
+  SnapKit: a42d492c16e80209130a3379f73596c3454b7694
   SwiftLocation: 1fe2e15a5812e961496e82eeaca71d03e829e47a
-  SwiftRichString: 44e99361a01e7e6c27e194b8af079c0e344bab8c
+  SwiftRichString: 2111627a29af277094a9e5d4d1bf6bfe0b8212ac
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
+  TTGTagCollectionView: ba35fb7dc284b368c86bf044bd889293a69114e8
 
-PODFILE CHECKSUM: 96454e1bc124066108ff1e15df8b347644fc283d
+PODFILE CHECKSUM: 6df8209b321d4c16b094c01e444b82eb7a8c8528
 
 COCOAPODS: 1.3.1

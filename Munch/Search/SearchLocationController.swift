@@ -90,7 +90,7 @@ extension SearchLocationController {
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header = view as! UITableViewHeaderFooterView
         header.tintColor = UIColor(hex: "F1F1F1")
-        header.textLabel!.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightMedium)
+        header.textLabel!.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.medium)
         header.textLabel!.textColor = UIColor.black.withAlphaComponent(0.8)
     }
     
@@ -143,7 +143,7 @@ class SearchLocationMyLocationCell: UITableViewCell {
         // Setup Text
         button.setTitle("Detect my current location", for: .normal)
         button.setTitleColor(UIColor.secondary, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: UIFontWeightRegular)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
         button.titleEdgeInsets.left = 20
         
         // Set Button Layer
@@ -175,7 +175,7 @@ class SearchLocationTextCell: UITableViewCell {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        nameLabel.font = UIFont.systemFont(ofSize: 14, weight: UIFontWeightRegular)
+        nameLabel.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.regular)
         nameLabel.textColor = .black
         nameLabel.numberOfLines = 1
         nameLabel.textAlignment = .natural

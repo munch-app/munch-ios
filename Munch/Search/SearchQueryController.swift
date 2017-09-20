@@ -121,7 +121,7 @@ extension SearchQueryController {
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header = view as! UITableViewHeaderFooterView
         header.tintColor = UIColor(hex: "F1F1F1")
-        header.textLabel!.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightMedium)
+        header.textLabel!.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.medium)
         header.textLabel!.textColor = UIColor.black.withAlphaComponent(0.8)
     }
     
@@ -173,11 +173,11 @@ class SearchQueryCell: UITableViewCell {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        titleLabel.font = UIFont.systemFont(ofSize: 14, weight: UIFontWeightRegular)
+        titleLabel.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.regular)
         titleLabel.textColor = .black
         self.addSubview(titleLabel)
         
-        typeLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular)
+        typeLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.regular)
         typeLabel.textColor = UIColor(hex: "686868")
         typeLabel.textAlignment = .right
         self.addSubview(typeLabel)
@@ -257,6 +257,6 @@ class SearchQueryCell: UITableViewCell {
         }
         
         // Placeholder text color
-        attributedPlaceholder = NSAttributedString(string: placeholder != nil ?  placeholder! : "", attributes:[NSForegroundColorAttributeName: color])
+        attributedPlaceholder = NSAttributedString(string: placeholder != nil ?  placeholder! : "", attributes:[NSAttributedStringKey.foregroundColor: color])
     }
 }

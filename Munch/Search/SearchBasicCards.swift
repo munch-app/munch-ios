@@ -63,15 +63,15 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         
         override init(frame: CGRect = CGRect()) {
             super.init(frame: frame)
-            nameLabel.font = UIFont.systemFont(ofSize: 18, weight: UIFontWeightSemibold)
+            nameLabel.font = UIFont.systemFont(ofSize: 18, weight: UIFont.Weight.semibold)
             nameLabel.textColor = UIColor.black.withAlphaComponent(0.8)
             self.addSubview(nameLabel)
             
-            tagLabel.font = UIFont.systemFont(ofSize: 14, weight: UIFontWeightRegular)
+            tagLabel.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.regular)
             tagLabel.textColor = UIColor.black.withAlphaComponent(0.75)
             self.addSubview(tagLabel)
             
-            locationLabel.font = UIFont.systemFont(ofSize: 13, weight: UIFontWeightRegular)
+            locationLabel.font = UIFont.systemFont(ofSize: 13, weight: UIFont.Weight.regular)
             locationLabel.textColor = UIColor.black.withAlphaComponent(0.75)
             self.addSubview(locationLabel)
             
@@ -110,19 +110,19 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
             // Establishment
             if let establishment = card["establishment"].string {
                 line.append(string: establishment, style: Style.default {
-                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: UIFontWeightSemibold))
+                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.semibold))
                 })
             }
             
             let tags = card["tags"].flatMap { $0.1.string }
             if !tags.isEmpty {
                 line.append(string: " • ", style: Style.default {
-                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: UIFontWeightUltraLight))
+                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.ultraLight))
                 })
                 
                 let text = tags[0..<(tags.count < 2 ? tags.count : 2)].joined(separator: ", ")
                 line.append(string: text, style: Style.default {
-                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: UIFontWeightRegular))
+                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular))
                 })
             }
             
@@ -149,12 +149,12 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
             // Open Now
             let hours = card["hours"].flatMap { Place.Hour(json: $0.1) }
             if let open  = Place.Hour.Formatter.isOpen(hours: hours) {
-                line.append(NSMutableAttributedString(string: " • ", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 15, weight: UIFontWeightUltraLight)]))
+                line.append(NSMutableAttributedString(string: " • ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.ultraLight)]))
                 if (open) {
-                    let onFormat = [NSForegroundColorAttributeName: UIColor.secondary]
+                    let onFormat = [NSAttributedStringKey.foregroundColor: UIColor.secondary]
                     line.append(NSMutableAttributedString(string: "Open Now", attributes: onFormat))
                 } else {
-                    let onFormat = [NSForegroundColorAttributeName: UIColor.primary]
+                    let onFormat = [NSAttributedStringKey.foregroundColor: UIColor.primary]
                     line.append(NSMutableAttributedString(string: "Closed Now", attributes: onFormat))
                 }
             }

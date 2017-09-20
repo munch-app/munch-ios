@@ -101,14 +101,14 @@ class SearchStaticNoLocationCard: UITableViewCell, SearchCardView {
         let label = UILabel()
         label.text = "No Location"
         label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 18.0, weight: UIFontWeightRegular)
+        label.font = UIFont.systemFont(ofSize: 18.0, weight: UIFont.Weight.regular)
         self.addSubview(label)
         
         let button = UIButton()
         button.setTitle("Enable Location", for: .normal)
         button.setTitleColor(.primary300, for: .normal)
         button.titleLabel?.textAlignment = .center
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 18.0, weight: UIFontWeightRegular)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 18.0, weight: UIFont.Weight.regular)
         button.addTarget(self, action: #selector(enableLocation(button:)), for: .touchUpInside)
         self.addSubview(button)
         
@@ -153,7 +153,7 @@ class SearchStaticNoResultCard: UITableViewCell, SearchCardView {
         let label = UILabel()
         label.text = "No Result"
         label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 18.0, weight: UIFontWeightRegular)
+        label.font = UIFont.systemFont(ofSize: 18.0, weight: UIFont.Weight.regular)
         self.addSubview(label)
         
         label.snp.makeConstraints { make in
