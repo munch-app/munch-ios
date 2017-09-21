@@ -60,18 +60,30 @@ class PlaceBasicImageBannerCard: UITableViewCell, PlaceCardView {
 class PlaceBasicNameTagCard: UITableViewCell, PlaceCardView {
     let nameLabel = UILabel()
     let tagsLabel = UILabel()
-    // TODO Tag Label
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         
         nameLabel.font = UIFont.systemFont(ofSize: 27.0, weight: UIFont.Weight.medium)
+        nameLabel.textColor = UIColor.black.withAlphaComponent(0.9)
         nameLabel.numberOfLines = 0
         self.addSubview(nameLabel)
         
+        tagsLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.regular)
+        tagsLabel.textColor = UIColor.black.withAlphaComponent(0.75)
+        tagsLabel.numberOfLines = 1
+        self.addSubview(tagsLabel)
+        
         nameLabel.snp.makeConstraints { make in
-            make.edges.equalTo(self).inset(UIEdgeInsets(topBottom: topBottom, leftRight: leftRight))
+            make.top.equalTo(self).inset(topBottom)
+            make.left.right.equalTo(self).inset(leftRight)
+        }
+        
+        tagsLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(nameLabel.snp.bottom).inset(2)
+            make.left.right.equalTo(self).inset(leftRight)
+            make.bottom.equalTo(self).inset(topBottom)
         }
     }
     
@@ -81,6 +93,8 @@ class PlaceBasicNameTagCard: UITableViewCell, PlaceCardView {
     
     func render(card: PlaceCard) {
         self.nameLabel.text = card["name"].string
+        let tags = card["tags"].arrayValue.map { $0.stringValue.capitalized }
+        self.tagsLabel.text = tags.joined(separator: ", ")
     }
     
     static var cardId: String {
