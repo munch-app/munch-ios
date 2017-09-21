@@ -81,7 +81,7 @@ class PlaceBasicNameTagCard: UITableViewCell, PlaceCardView {
         }
         
         tagsLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(nameLabel.snp.bottom).inset(2)
+            make.top.equalTo(nameLabel.snp.bottom).inset(0)
             make.left.right.equalTo(self).inset(leftRight)
             make.bottom.equalTo(self).inset(topBottom)
         }
@@ -119,16 +119,14 @@ class PlaceBasicBusinessHourCard: UITableViewCell, PlaceCardView {
         self.addSubview(hoursLabel)
         
         openingLabel.snp.makeConstraints { make in
+            make.top.equalTo(self).inset(topBottom)
             make.left.right.equalTo(self).inset(leftRight)
-            
-            make.top.equalTo(self)
             make.height.equalTo(20)
         }
         
         hoursLabel.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(leftRight)
-            
             make.top.equalTo(openingLabel.snp.bottom)
+            make.left.right.equalTo(self).inset(leftRight)
             make.bottom.equalTo(self).inset(topBottom)
         }
     }
@@ -203,6 +201,7 @@ class PlaceBasicBusinessHourCard: UITableViewCell, PlaceCardView {
 class PlaceBasicLocationCard: UITableViewCell, PlaceCardView {
     let lineOneLabel = UILabel()
     let lineTwoLabel = UILabel()
+    let mapView = MKMapView()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -216,20 +215,26 @@ class PlaceBasicLocationCard: UITableViewCell, PlaceCardView {
         lineTwoLabel.numberOfLines = 1
         self.addSubview(lineTwoLabel)
         
+        mapView.isUserInteractionEnabled = false
+        mapView.showsUserLocation = true
+        self.addSubview(mapView)
+        
         lineOneLabel.snp.makeConstraints { make in
-            make.height.equalTo(lineTwoLabel)
             make.top.equalTo(self).inset(topBottom)
-            make.bottom.equalTo(lineTwoLabel.snp.top)
-            
             make.left.right.equalTo(self).inset(leftRight)
         }
         
         lineTwoLabel.snp.makeConstraints { make in
-            make.height.equalTo(lineOneLabel)
             make.top.equalTo(lineOneLabel.snp.bottom)
+            make.left.right.equalTo(self).inset(leftRight)
+        }
+        
+        mapView.snp.makeConstraints { make in
+            make.top.equalTo(lineTwoLabel.snp.bottom).inset(-16)
+            make.left.right.equalTo(self)
             make.bottom.equalTo(self).inset(topBottom)
             
-            make.left.right.equalTo(self).inset(leftRight)
+            make.height.equalTo(280)
         }
     }
     
@@ -240,9 +245,44 @@ class PlaceBasicLocationCard: UITableViewCell, PlaceCardView {
     func render(card: PlaceCard) {
         render(lineOne: card)
         render(lineTwo: card)
+        render(location: card)
     }
     
     private func render(lineOne card: PlaceCard) {
+        let location = card["location"]
+        var line = [NSAttributedString]()
+        
+        if let street = location["street"].string {
+            line.append(street.set(style: .default {
+                $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.medium))
+            }))
+        }
+        
+        if let unitNumber = location["unitNumber"].string {
+            if unitNumber.hasPrefix("#") {
+                line.append(NSAttributedString(string: unitNumber))
+            } else {
+                line.append(NSAttributedString(string: "#\(unitNumber)"))
+            }
+        }
+        
+        if let city = location["city"].string, let postal = location["postal"].string {
+            line.append(NSAttributedString(string: "\(city) \(postal)"))
+        }
+        
+        if (line.isEmpty) {
+            lineOneLabel.text = card["location"]["address"].string
+        } else {
+            let attrString = NSMutableAttributedString(attributedString: line[0])
+            for string in line.dropFirst() {
+                attrString.append(NSAttributedString(string: ", "))
+                attrString.append(string)
+            }
+            lineOneLabel.attributedText = attrString
+        }
+    }
+    
+    private func render(lineTwo card: PlaceCard) {
         var line = [String]()
         
         if let latLng = card["location"]["latLng"].string, MunchLocation.isEnabled {
@@ -258,27 +298,19 @@ class PlaceBasicLocationCard: UITableViewCell, PlaceCardView {
         lineTwoLabel.text = line.joined(separator: " • ")
     }
     
-    private func render(lineTwo card: PlaceCard) {
-        let location = card["location"]
-        var line = [String]()
-        
-        if let street = location["street"].string {
-            line.append(street)
-        }
-        
-        if let unitNumber = location["unitNumber"].string {
-            line.append(unitNumber)
-        }
-        
-        if let city = location["city"].string, let postal = location["postal"].string {
-            line.append("\(city) \(postal)")
-        }
-        
-        if (line.isEmpty) {
-            let address = card["location"]["address"].string
-            lineOneLabel.text = address
-        } else {
-            lineOneLabel.text = line.joined(separator: ", ")
+    private func render(location card: PlaceCard) {
+        if let coordinate = CLLocation(latLng: card["location"]["latLng"].stringValue)?.coordinate {
+            var region = MKCoordinateRegion()
+            region.center.latitude = coordinate.latitude
+            region.center.longitude = coordinate.longitude
+            region.span.latitudeDelta = 0.004
+            region.span.longitudeDelta = 0.004
+            mapView.setRegion(region, animated: false)
+            
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = coordinate
+            annotation.title = card["name"].stringValue
+            mapView.addAnnotation(annotation)
         }
     }
     
