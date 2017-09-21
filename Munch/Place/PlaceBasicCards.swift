@@ -248,6 +248,44 @@ class PlaceBasicLocationCard: UITableViewCell, PlaceCardView {
         render(location: card)
     }
     
+    func didTap(card: PlaceCard) {
+        var line = [String]()
+        
+        if let street = card["location"]["street"].string {
+            line.append(street)
+        }
+        
+        if let unitNumber = card["location"]["unitNumber"].string {
+            if unitNumber.hasPrefix("#") {
+                line.append(unitNumber)
+            } else {
+                line.append("#\(unitNumber)")
+            }
+        }
+        
+        if let city = card["location"]["city"].string, let postal = card["location"]["postal"].string {
+            line.append("\(city) \(postal)")
+        }
+        
+        func openUrl(address: String) {
+            let address = address.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
+            
+            
+            // Monster Jobs uses comgooglemap url scheme, those fuckers
+            if (UIApplication.shared.canOpenURL(URL(string:"https://www.google.com/maps/")!)) {
+                UIApplication.shared.open(URL(string:"https://www.google.com/maps/?daddr=\(address)")!)
+            } else if (UIApplication.shared.canOpenURL(URL(string:"http://maps.apple.com/")!)){
+                UIApplication.shared.open(URL(string:"http://maps.apple.com/?daddr=\(address)")!)
+            }
+        }
+        
+        if (!line.isEmpty) {
+            openUrl(address: line.joined(separator: ", "))
+        } else if let address = card["location"]["address"].string {
+            openUrl(address: address)
+        }
+    }
+    
     private func render(lineOne card: PlaceCard) {
         let location = card["location"]
         var line = [NSAttributedString]()
@@ -255,7 +293,7 @@ class PlaceBasicLocationCard: UITableViewCell, PlaceCardView {
         if let street = location["street"].string {
             line.append(street.set(style: .default {
                 $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.medium))
-            }))
+                }))
         }
         
         if let unitNumber = location["unitNumber"].string {
@@ -270,15 +308,15 @@ class PlaceBasicLocationCard: UITableViewCell, PlaceCardView {
             line.append(NSAttributedString(string: "\(city) \(postal)"))
         }
         
-        if (line.isEmpty) {
-            lineOneLabel.text = card["location"]["address"].string
-        } else {
+        if (!line.isEmpty) {
             let attrString = NSMutableAttributedString(attributedString: line[0])
             for string in line.dropFirst() {
                 attrString.append(NSAttributedString(string: ", "))
                 attrString.append(string)
             }
             lineOneLabel.attributedText = attrString
+        } else if let address = card["location"]["address"].string {
+            lineOneLabel.text = address
         }
     }
     

@@ -21,7 +21,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         navigationController?.setNavigationBarHidden(false, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
-    
+        
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         setBarStyle(whiteBackground: false)
@@ -116,13 +116,16 @@ extension PlaceViewController {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // let placeCard = cards[indexPath.row]
-        // TODO: When cards have click features
+        let placeCard = cards[indexPath.row]
+        let cardView = tableView.cellForRow(at: indexPath) as! PlaceCardView
+        cardView.didTap(card: placeCard)
     }
 }
 
 protocol PlaceCardView {
     func render(card: PlaceCard)
+    
+    func didTap(card: PlaceCard)
     
     var leftRight: CGFloat { get }
     var topBottom: CGFloat { get }
@@ -138,4 +141,7 @@ extension PlaceCardView {
     var topBottom: CGFloat {
         return 10.0
     }
+    
+    // Optional
+    func didTap(card: PlaceCard) {}
 }
