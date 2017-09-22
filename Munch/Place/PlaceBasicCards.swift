@@ -13,16 +13,12 @@ import MapKit
 import SnapKit
 import SwiftRichString
 
-class PlaceBasicImageBannerCard: UITableViewCell, PlaceCardView {
+class PlaceBasicImageBannerCard: PlaceCardView {
     let imageGradientView = UIView()
     let imageBannerView = ShimmerImageView()
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-        
+    override func didLoad(card: PlaceCard) {
         self.addSubview(imageBannerView)
-        
         imageBannerView.snp.makeConstraints { make in
             make.height.equalTo(260).priority(999)
             make.edges.equalTo(self).inset(UIEdgeInsets(top: 0, left: 0, bottom: topBottom, right: 0))
@@ -41,37 +37,31 @@ class PlaceBasicImageBannerCard: UITableViewCell, PlaceCardView {
             make.left.equalTo(self)
             make.right.equalTo(self)
         }
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func render(card: PlaceCard) {
+        
         let imageMeta = card["images"][0]["imageMeta"]
         if (imageMeta.exists()) {
             imageBannerView.render(imageMeta: ImageMeta(json: imageMeta))
         }
     }
     
-    static var cardId: String {
+    override class var cardId: String? {
         return "basic_ImageBanner_15092017"
     }
 }
 
-class PlaceBasicNameTagCard: UITableViewCell, PlaceCardView {
+class PlaceBasicNameTagCard: PlaceCardView {
     let nameLabel = UILabel()
     let tagsLabel = UILabel()
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-        
+    override func didLoad(card: PlaceCard) {
+        nameLabel.text = card["name"].string
         nameLabel.font = UIFont.systemFont(ofSize: 27.0, weight: UIFont.Weight.medium)
         nameLabel.textColor = UIColor.black.withAlphaComponent(0.9)
         nameLabel.numberOfLines = 0
         self.addSubview(nameLabel)
         
+        let tags = card["tags"].arrayValue.map { $0.stringValue.capitalized }
+        tagsLabel.text = tags.joined(separator: ", ")
         tagsLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.regular)
         tagsLabel.textColor = UIColor.black.withAlphaComponent(0.75)
         tagsLabel.numberOfLines = 1
@@ -89,22 +79,12 @@ class PlaceBasicNameTagCard: UITableViewCell, PlaceCardView {
         }
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func render(card: PlaceCard) {
-        self.nameLabel.text = card["name"].string
-        let tags = card["tags"].arrayValue.map { $0.stringValue.capitalized }
-        self.tagsLabel.text = tags.joined(separator: ", ")
-    }
-    
-    static var cardId: String {
+    override class var cardId: String? {
         return "basic_NameTag_12092017"
     }
 }
 
-class PlaceBasicBusinessHourCard: UITableViewCell, PlaceCardView {
+class PlaceBasicBusinessHourCard: PlaceCardView {
     static let openStyle = Style("open", {
         $0.color = UIColor.secondary
     })
@@ -119,9 +99,8 @@ class PlaceBasicBusinessHourCard: UITableViewCell, PlaceCardView {
     var openHeightConstraint: Constraint!
     var dayHeightConstraint: Constraint!
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
+    override func didLoad(card: PlaceCard) {
+        let hours = BusinessHour(hours: card["hours"].flatMap { Place.Hour(json: $0.1) })
         
         self.addSubview(grid)
         grid.snp.makeConstraints { (make) in
@@ -129,6 +108,11 @@ class PlaceBasicBusinessHourCard: UITableViewCell, PlaceCardView {
             make.top.bottom.equalTo(self).inset(topBottom)
         }
         
+        if hours.isOpen() {
+            openLabel.attributedText = "Open Now\n".set(style: PlaceBasicBusinessHourCard.openStyle) + hours.today
+        } else {
+            openLabel.attributedText = "Closed Now\n".set(style: PlaceBasicBusinessHourCard.closeStyle) + hours.today
+        }
         grid.addSubview(openLabel)
         openLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.regular)
         openLabel.numberOfLines = 2
@@ -137,26 +121,12 @@ class PlaceBasicBusinessHourCard: UITableViewCell, PlaceCardView {
             make.left.right.equalTo(grid)
         }
         
-        grid.addSubview(dayView)
+        dayView.render(hours: hours)
         dayView.isHidden = true
+        grid.addSubview(dayView)
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func render(card: PlaceCard) {
-        let hours = BusinessHour(hours: card["hours"].flatMap { Place.Hour(json: $0.1) })
-        self.dayView.render(hours: hours)
-        
-        if hours.isOpen() {
-            openLabel.attributedText = "Open Now\n".set(style: PlaceBasicBusinessHourCard.openStyle) + hours.today
-        } else {
-            openLabel.attributedText = "Closed Now\n".set(style: PlaceBasicBusinessHourCard.closeStyle) + hours.today
-        }
-    }
-    
-    func didTap(card: PlaceCard) {
+    override func didTap() {
         dayView.isHidden = !dayView.isHidden
         openLabel.isHidden = !openLabel.isHidden
         
@@ -178,7 +148,7 @@ class PlaceBasicBusinessHourCard: UITableViewCell, PlaceCardView {
         }
     }
     
-    static var cardId: String {
+    override class var cardId: String? {
         return "basic_BusinessHour_07092017"
     }
     
@@ -272,15 +242,12 @@ class PlaceBasicBusinessHourCard: UITableViewCell, PlaceCardView {
     }
 }
 
-class PlaceBasicLocationCard: UITableViewCell, PlaceCardView {
+class PlaceBasicLocationCard: PlaceCardView {
     let lineOneLabel = UILabel()
     let lineTwoLabel = UILabel()
     let mapView = MKMapView()
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-        
+    override func didLoad(card: PlaceCard) {
         lineOneLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.regular)
         lineOneLabel.numberOfLines = 0
         self.addSubview(lineOneLabel)
@@ -308,15 +275,9 @@ class PlaceBasicLocationCard: UITableViewCell, PlaceCardView {
             make.left.right.equalTo(self)
             make.bottom.equalTo(self).inset(topBottom)
             
-            make.height.equalTo(280)
+            make.height.equalTo(230)
         }
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func render(card: PlaceCard) {
+        
         render(lineOne: card)
         render(lineTwo: card)
         render(location: card)
@@ -427,7 +388,7 @@ class PlaceBasicLocationCard: UITableViewCell, PlaceCardView {
         }
     }
     
-    static var cardId: String {
+    override class var cardId: String? {
         return "basic_Location_15092017"
     }
 }

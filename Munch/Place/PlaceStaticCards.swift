@@ -11,12 +11,9 @@ import UIKit
 import SnapKit
 import Shimmer
 
-class PlaceShimmerImageBannerCard: UITableViewCell, PlaceCardView {
+class PlaceShimmerImageBannerCard: PlaceCardView {
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-        
+    override func didLoad(card: PlaceCard) {
         let shimmerView = FBShimmeringView()
         let colorView = UIView()
         colorView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
@@ -29,25 +26,15 @@ class PlaceShimmerImageBannerCard: UITableViewCell, PlaceCardView {
             make.edges.equalTo(self).inset(UIEdgeInsets(top: 0, left: 0, bottom: topBottom, right: 0))
         }
     }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func render(card: PlaceCard) {
-    }
-    
-    static var cardId: String {
+
+    override class var cardId: String? {
         return "shimmer_PlaceShimmerImageBannerCard"
     }
 }
 
-class PlaceShimmerNameTagCard: UITableViewCell, PlaceCardView {
+class PlaceShimmerNameTagCard: PlaceCardView {
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-        
+    override func didLoad(card: PlaceCard) {
         let shimmerView = FBShimmeringView()
         let colorView = UIView()
         colorView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
@@ -61,22 +48,14 @@ class PlaceShimmerNameTagCard: UITableViewCell, PlaceCardView {
         }
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func render(card: PlaceCard) {
-    }
-    
-    static var cardId: String {
+    override class var cardId: String? {
         return "shimmer_PlaceShimmerNameTagCard"
     }
 }
 
-class PlaceStaticEmptyCard: UITableViewCell, PlaceCardView {
+class PlaceStaticEmptyCard: PlaceCardView {
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override func didLoad(card: PlaceCard) {
         self.backgroundColor = UIColor.clear
         
         let view = UIView()
@@ -87,14 +66,7 @@ class PlaceStaticEmptyCard: UITableViewCell, PlaceCardView {
         }
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func render(card: PlaceCard) {
-    }
-    
-    static var cardId: String {
+    override class var cardId: String? {
         return "static_PlaceStaticEmptyCard"
     }
 }

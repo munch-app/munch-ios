@@ -167,8 +167,8 @@ extension UIImageView {
             let size = frameSize()
             let images = imageMeta.imageList()
             
-            let fitting = images.filter { $0.0 >= size.0 && $0.1 >= size.1}
-                .sorted{ $0.0 * $0.1 < $1.0 * $1.1}
+            let fitting = images.filter { $0.0 >= size.0 && $0.1 >= size.1 }
+                .sorted{ $0.0 * $0.1 < $1.0 * $1.1 }
             
             if let fit = fitting.get(0) {
                 // Found the smallest fitting image
@@ -178,10 +178,12 @@ extension UIImageView {
                 let images = images.sorted { $0.0 * $0.1 > $1.0 * $1.1 }
                 if let image = images.get(0) {
                     kf.setImage(with: URL(string: image.2), completionHandler: completionHandler)
+                } else {
+                    kf.setImage(with: nil, completionHandler: completionHandler)
                 }
             }
         } else {
-            image = nil
+            kf.setImage(with: nil, completionHandler: completionHandler)
         }
     }
     

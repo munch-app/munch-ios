@@ -20,6 +20,7 @@ class ShimmerImageView: FBShimmeringView {
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        self.clipsToBounds = true
     }
     
     required init?(coder aDecoder: NSCoder) {

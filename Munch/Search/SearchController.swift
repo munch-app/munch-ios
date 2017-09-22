@@ -35,10 +35,10 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         super.viewDidAppear(animated)
         
         // Place Testing
-        let storyboard = UIStoryboard(name: "Place", bundle: nil)
-        let controller = storyboard.instantiateInitialViewController() as! PlaceViewController
-        controller.placeId = "f61a6a65-01b0-4e12-87ed-b8fdcf7efacf"
-        self.navigationController!.pushViewController(controller, animated: true)
+//        let storyboard = UIStoryboard(name: "Place", bundle: nil)
+//        let controller = storyboard.instantiateInitialViewController() as! PlaceViewController
+//        controller.placeId = "f61a6a65-01b0-4e12-87ed-b8fdcf7efacf"
+//        self.navigationController!.pushViewController(controller, animated: true)
     }
     
     override func viewDidLoad() {

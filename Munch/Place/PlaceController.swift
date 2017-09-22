@@ -11,7 +11,10 @@ import UIKit
 
 class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
     var placeId: String!
+    
     var cards = [PlaceCard]()
+    var cells = [Int: PlaceCardView]()
+    var cellTypes = [String: PlaceCardView.Type]()
     
     @IBOutlet weak var cardTableView: UITableView!
     
@@ -52,7 +55,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         // Top: -NavigationBar.height
         // Bottom: BottomBar.height
-        self.cardTableView.contentInset = UIEdgeInsets(top: -64, left: 0, bottom: 7, right: 0)
+        self.cardTableView.contentInset = UIEdgeInsets(top: -64, left: 0, bottom: 10, right: 0)
         
         registerCards()
         loadShimmerCards()
@@ -60,6 +63,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         MunchApi.places.cards(id: placeId) { meta, cards in
             if (meta.isOk()) {
                 self.cards = cards
+                self.cells.removeAll()
                 self.cardTableView.reloadData()
             } else {
                 self.present(meta.createAlert(), animated: true)
@@ -72,9 +76,6 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
 // CardType and tools
 extension PlaceViewController {
     func registerCards() {
-        // Register Static Cards
-        register(PlaceStaticEmptyCard.self)
-        
         // Register Shimmer Cards
         register(PlaceShimmerImageBannerCard.self)
         register(PlaceShimmerNameTagCard.self)
@@ -84,16 +85,19 @@ extension PlaceViewController {
         register(PlaceBasicImageBannerCard.self)
         register(PlaceBasicLocationCard.self)
         register(PlaceBasicBusinessHourCard.self)
+        
+        // Register Vendor Cards
+        register(PlaceVendorArticleGridCard.self)
     }
     
     func loadShimmerCards() {
-        cards.append(PlaceCard(cardId: PlaceShimmerImageBannerCard.cardId))
-        cards.append(PlaceCard(cardId: PlaceShimmerNameTagCard.cardId))
+        cards.append(PlaceCard(cardId: PlaceShimmerImageBannerCard.cardId!))
+        cards.append(PlaceCard(cardId: PlaceShimmerNameTagCard.cardId!))
         cardTableView.reloadData()
     }
     
     private func register(_ cellClass: PlaceCardView.Type) {
-        cardTableView.register(cellClass as? Swift.AnyClass, forCellReuseIdentifier: cellClass.cardId)
+        cellTypes[cellClass.cardId!] = cellClass
     }
 }
 
@@ -106,45 +110,45 @@ extension PlaceViewController {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let card = cards[indexPath.row]
         
-        if let cardView = cardTableView.dequeueReusableCell(withIdentifier: card.cardId) as? PlaceCardView {
-            cardView.render(card: card)
-            return cardView as! UITableViewCell
+        if let cell = cells[indexPath.row] {
+            return cell
+        } else {
+            let cell = cellTypes[card.cardId]?.init(card: card) ?? PlaceStaticEmptyCard(card: card)
+            cells[indexPath.row] = cell
+            return cell
         }
-        
-        // Static Empty CardView
-        return cardTableView.dequeueReusableCell(withIdentifier: PlaceStaticEmptyCard.cardId)!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let placeCard = cards[indexPath.row]
-        let cardView = tableView.cellForRow(at: indexPath) as! PlaceCardView
+        if let cell = cells[indexPath.row] {
+            tableView.beginUpdates()
+            cell.didTap()
+            tableView.endUpdates()
+        }
+    }
+}
+
+class PlaceCardView: UITableViewCell {
+    required init(card: PlaceCard) {
+        super.init(style: .default, reuseIdentifier: nil)
+        self.selectionStyle = .none
+        self.didLoad(card: card)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func didLoad(card: PlaceCard) {
         
-        tableView.beginUpdates()
-        cardView.didTap(card: placeCard)
-        tableView.endUpdates()
-    }
-}
-
-protocol PlaceCardView {
-    func render(card: PlaceCard)
-    
-    func didTap(card: PlaceCard)
-    
-    var leftRight: CGFloat { get }
-    var topBottom: CGFloat { get }
-    
-    static var cardId: String { get }
-}
-
-extension PlaceCardView {
-    var leftRight: CGFloat {
-        return 24.0
     }
     
-    var topBottom: CGFloat {
-        return 10.0
+    func didTap() {
+        
     }
     
-    // Optional
-    func didTap(card: PlaceCard) {}
+    let leftRight: CGFloat = 24.0
+    let topBottom: CGFloat = 10.0
+    
+    class var cardId: String? { return nil }
 }
