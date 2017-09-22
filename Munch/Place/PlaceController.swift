@@ -118,7 +118,10 @@ extension PlaceViewController {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let placeCard = cards[indexPath.row]
         let cardView = tableView.cellForRow(at: indexPath) as! PlaceCardView
+        
+        tableView.beginUpdates()
         cardView.didTap(card: placeCard)
+        tableView.endUpdates()
     }
 }
 

@@ -9,6 +9,8 @@
 import Foundation
 import UIKit
 import MapKit
+
+import SnapKit
 import SwiftRichString
 
 class PlaceBasicImageBannerCard: UITableViewCell, PlaceCardView {
@@ -103,32 +105,40 @@ class PlaceBasicNameTagCard: UITableViewCell, PlaceCardView {
 }
 
 class PlaceBasicBusinessHourCard: UITableViewCell, PlaceCardView {
-    let openingLabel = UILabel()
-    let hoursLabel = UILabel()
+    static let openStyle = Style("open", {
+        $0.color = UIColor.secondary
+    })
+    static let closeStyle = Style("close", {
+        $0.color = UIColor.primary
+    })
+    
+    let grid = UIView()
+    let openLabel = UILabel()
+    let dayView = DayView()
+    
+    var openHeightConstraint: Constraint!
+    var dayHeightConstraint: Constraint!
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         
-        openingLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.regular)
-        openingLabel.numberOfLines = 1
-        self.addSubview(openingLabel)
-        
-        hoursLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.regular)
-        hoursLabel.numberOfLines = 0
-        self.addSubview(hoursLabel)
-        
-        openingLabel.snp.makeConstraints { make in
-            make.top.equalTo(self).inset(topBottom)
+        self.addSubview(grid)
+        grid.snp.makeConstraints { (make) in
             make.left.right.equalTo(self).inset(leftRight)
-            make.height.equalTo(20)
+            make.top.bottom.equalTo(self).inset(topBottom)
         }
         
-        hoursLabel.snp.makeConstraints { make in
-            make.top.equalTo(openingLabel.snp.bottom)
-            make.left.right.equalTo(self).inset(leftRight)
-            make.bottom.equalTo(self).inset(topBottom)
+        grid.addSubview(openLabel)
+        openLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.regular)
+        openLabel.numberOfLines = 2
+        openLabel.snp.makeConstraints { (make) in
+            make.top.bottom.equalTo(grid)
+            make.left.right.equalTo(grid)
         }
+        
+        grid.addSubview(dayView)
+        dayView.isHidden = true
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -136,65 +146,129 @@ class PlaceBasicBusinessHourCard: UITableViewCell, PlaceCardView {
     }
     
     func render(card: PlaceCard) {
-        let hours = card["hours"].flatMap { Place.Hour(json: $0.1) }
-            .sorted(by: { $0.open > $1.open } )
+        let hours = BusinessHour(hours: card["hours"].flatMap { Place.Hour(json: $0.1) })
+        self.dayView.render(hours: hours)
         
-        if Place.Hour.Formatter.isOpen(hours: hours) ?? false {
-            openingLabel.attributedText = "Open Now:".set(style: Style.default {
-                $0.color = UIColor.secondary
-            })
+        if hours.isOpen() {
+            openLabel.attributedText = "Open Now\n".set(style: PlaceBasicBusinessHourCard.openStyle) + hours.today
         } else {
-            openingLabel.attributedText = "Closed Now:".set(style: Style.default {
-                $0.color = UIColor.primary
-            })
+            openLabel.attributedText = "Closed Now\n".set(style: PlaceBasicBusinessHourCard.closeStyle) + hours.today
         }
+    }
+    
+    func didTap(card: PlaceCard) {
+        dayView.isHidden = !dayView.isHidden
+        openLabel.isHidden = !openLabel.isHidden
         
-        var dayHours = [String: String]()
-        for hour in hours {
-            if let timeText = dayHours[hour.day] {
-                dayHours[hour.day] = timeText + ", " + hour.timeText()
-            } else {
-                dayHours[hour.day] = hour.timeText()
+        if (openLabel.isHidden) {
+            openLabel.snp.removeConstraints()
+            dayView.snp.makeConstraints { (make) in
+                make.top.bottom.equalTo(grid)
+                make.left.right.equalTo(grid)
+                make.height.equalTo(44 * 7)
             }
         }
         
-        let dayNow = Place.Hour.Formatter.dayNow().lowercased()
-        
-        func createLine(day: String, append: String = "\n", dayText: String? = nil) -> NSAttributedString {
-            let text: String
-            
-            if let time = dayHours[day] {
-                text = "\(dayText ?? day.uppercased()): \(time) \(append)"
-            } else {
-                text = "\(dayText ?? day.uppercased()): Closed \(append)"
+        if (dayView.isHidden){
+            dayView.snp.removeConstraints()
+            openLabel.snp.makeConstraints { (make) in
+                make.top.bottom.equalTo(grid)
+                make.left.right.equalTo(grid)
             }
-            
-            
-            if (day == dayNow) {
-                return text.set(style: Style.default {
-                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.semibold))
-                })
-            }
-            
-            return NSAttributedString(string: text)
         }
-        
-        let hourText = NSMutableAttributedString()
-        hourText.append(createLine(day: "mon"))
-        hourText.append(createLine(day: "tue"))
-        hourText.append(createLine(day: "wed"))
-        hourText.append(createLine(day: "thu"))
-        hourText.append(createLine(day: "fri"))
-        hourText.append(createLine(day: "sat"))
-        hourText.append(createLine(day: "sun"))
-        hourText.append(createLine(day: "ph", dayText: "PH"))
-        hourText.append(createLine(day: "evePh", append: "", dayText: "Eve of PH"))
-        
-        hoursLabel.attributedText = hourText
     }
     
     static var cardId: String {
         return "basic_BusinessHour_07092017"
+    }
+    
+    class DayView: UIView {
+        let dayLabels = [UILabel(), UILabel(), UILabel(), UILabel(), UILabel(), UILabel(), UILabel()]
+        
+        override init(frame: CGRect = CGRect.zero) {
+            super.init(frame: frame)
+            self.clipsToBounds = true
+            
+            for (index, label) in dayLabels.enumerated() {
+                label.font = UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.regular)
+                label.numberOfLines = 2
+                self.addSubview(label)
+
+                label.snp.makeConstraints { make in
+                    make.left.right.equalTo(self)
+                    make.height.equalTo(44)
+                    
+                    if index == 0 {
+                        make.top.equalTo(self)
+                    } else {
+                        make.top.equalTo(dayLabels[index-1].snp.bottom)
+                    }
+                }
+            }
+        }
+        
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+
+        func render(hours: BusinessHour) {
+            func createLine(day: String, dayText: String) -> NSAttributedString {
+                if hours.isToday(day: day) {
+                    if hours.isOpen() {
+                        return "\(dayText)\n" + hours[day].set(style: PlaceBasicBusinessHourCard.openStyle)
+                    } else {
+                        return "\(dayText)\n" + hours[day].set(style: PlaceBasicBusinessHourCard.closeStyle)
+                    }
+                } else {
+                    return NSAttributedString(string: "\(dayText)\n\(hours[day])")
+                }
+            }
+            
+            dayLabels[0].attributedText = createLine(day: "mon", dayText: "Monday")
+            dayLabels[1].attributedText = createLine(day: "tue", dayText: "Tuesday")
+            dayLabels[2].attributedText = createLine(day: "wed", dayText: "Wednesday")
+            dayLabels[3].attributedText = createLine(day: "thu", dayText: "Thursday")
+            dayLabels[4].attributedText = createLine(day: "fri", dayText: "Friday")
+            dayLabels[5].attributedText = createLine(day: "sat", dayText: "Saturday")
+            dayLabels[6].attributedText = createLine(day: "sun", dayText: "Sunday")
+        }
+    }
+    
+    class BusinessHour {
+        let hours: [Place.Hour]
+        let dayHours: [String: String]
+        
+        init(hours: [Place.Hour]) {
+            self.hours = hours
+            
+            var dayHours = [String: String]()
+            for hour in hours.sorted(by: { $0.open > $1.open } ) {
+                if let timeText = dayHours[hour.day] {
+                    dayHours[hour.day] = timeText + ", " + hour.timeText()
+                } else {
+                    dayHours[hour.day] = hour.timeText()
+                }
+            }
+            self.dayHours = dayHours
+        }
+        
+        subscript(day: String) -> String {
+            get {
+                return dayHours[day] ?? "Closed"
+            }
+        }
+        
+        func isToday(day: String) -> Bool {
+            return day == Place.Hour.Formatter.dayNow().lowercased()
+        }
+        
+        func isOpen() -> Bool {
+            return Place.Hour.Formatter.isOpen(hours: hours) ?? false
+        }
+        
+        var today: String {
+            return self[Place.Hour.Formatter.dayNow().lowercased()]
+        }
     }
 }
 
@@ -293,7 +367,8 @@ class PlaceBasicLocationCard: UITableViewCell, PlaceCardView {
         if let street = location["street"].string {
             line.append(street.set(style: .default {
                 $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.medium))
-                }))
+                }
+            ))
         }
         
         if let unitNumber = location["unitNumber"].string {
