@@ -28,17 +28,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
-        setBarStyle(whiteBackground: false)
-    }
-    
-    private func setBarStyle(whiteBackground: Bool) {
-        if (whiteBackground) {
-            navigationController?.navigationBar.barStyle = .default
-            navigationItem.leftBarButtonItem!.tintColor = UIColor.black
-        } else {
-            navigationController?.navigationBar.barStyle = .blackTranslucent
-            navigationItem.leftBarButtonItem!.tintColor = UIColor.white
-        }
+        updateNavigationBackground(y: self.cardTableView.contentOffset.y)
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -115,7 +105,7 @@ extension PlaceViewController {
         if let cell = cells[indexPath.row] {
             return cell
         } else {
-            let cell = cellTypes[card.cardId]?.init(card: card) ?? PlaceStaticEmptyCard(card: card)
+            let cell = cellTypes[card.cardId]?.init(card: card, controller: self) ?? PlaceStaticEmptyCard(card: card, controller: self)
             cells[indexPath.row] = cell
             return cell
         }
@@ -135,11 +125,12 @@ extension PlaceViewController {
         updateNavigationBackground(y: scrollView.contentOffset.y)
     }
     
-    private func updateNavigationBackground(y: CGFloat) {
+    func updateNavigationBackground(y: CGFloat) {
+        print(y)
         if (160 > y) {
             // Full Opacity
-            setBarStyle(whiteBackground: false)
             navigationBackground.isHidden = true
+            setBarStyle(whiteBackground: y < -16.0)
         } else if (180 < y) {
             // Full White
             navigationBackground.isHidden = false
@@ -152,11 +143,24 @@ extension PlaceViewController {
             setBarStyle(whiteBackground: progress > 0.5)
         }
     }
+    
+    private func setBarStyle(whiteBackground: Bool) {
+        if (whiteBackground) {
+            navigationController?.navigationBar.barStyle = .default
+            navigationItem.leftBarButtonItem!.tintColor = UIColor.black
+        } else {
+            navigationController?.navigationBar.barStyle = .blackTranslucent
+            navigationItem.leftBarButtonItem!.tintColor = UIColor.white
+        }
+    }
 }
 
 class PlaceCardView: UITableViewCell {
-    required init(card: PlaceCard) {
+    var controller: PlaceViewController!
+    
+    required init(card: PlaceCard, controller: PlaceViewController) {
         super.init(style: .default, reuseIdentifier: nil)
+        self.controller = controller
         self.selectionStyle = .none
         self.didLoad(card: card)
     }

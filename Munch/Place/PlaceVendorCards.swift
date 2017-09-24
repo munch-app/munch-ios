@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import SafariServices
 
 class PlaceVendorArticleGridCard: PlaceCardView {
     let titleLabel = UILabel()
@@ -28,8 +29,8 @@ class PlaceVendorArticleGridCard: PlaceCardView {
         // Hide Articles if not shown
         let articles = card["articles"].map { Article(json: $0.1) }
         super.addSubview(topRow)
-        topRow.left.render(article: articles.get(0))
-        topRow.right.render(article: articles.get(1))
+        topRow.left.render(article: articles.get(0), controller: controller)
+        topRow.right.render(article: articles.get(1), controller: controller)
         topRow.snp.makeConstraints { (make) in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(titleLabel.snp.bottom).inset(-10)
@@ -37,8 +38,8 @@ class PlaceVendorArticleGridCard: PlaceCardView {
         
         if (articles.count > 1) {
             super.addSubview(bottomRow)
-            bottomRow.left.render(article: articles.get(2))
-            bottomRow.right.render(article: articles.get(3))
+            bottomRow.left.render(article: articles.get(2), controller: controller)
+            bottomRow.right.render(article: articles.get(3), controller: controller)
             bottomRow.snp.makeConstraints { (make) in
                 make.left.right.equalTo(self).inset(leftRight)
                 make.top.equalTo(topRow.snp.bottom)
@@ -84,40 +85,58 @@ class PlaceVendorArticleGridCard: PlaceCardView {
         }
     }
     
-    class ArticleGridView: UIView {
-        let imageView = ShimmerImageView()
-        let titleLabel = UILabel()
+    class ArticleGridView: UIView, SFSafariViewControllerDelegate {
+        let articleImageView = ShimmerImageView()
+        let articleTitleLabel = UILabel()
+        
+        var article: Article!
+        var controller: PlaceViewController!
         
         override init(frame: CGRect) {
             super.init(frame: frame)
-            titleLabel.font = UIFont.systemFont(ofSize: 12.0, weight: UIFont.Weight.regular)
-            self.addSubview(imageView)
-            self.addSubview(titleLabel)
+            articleTitleLabel.font = UIFont.systemFont(ofSize: 12.0, weight: UIFont.Weight.regular)
+            self.addSubview(articleImageView)
+            self.addSubview(articleTitleLabel)
             
-            imageView.snp.makeConstraints { (make) in
-                make.height.equalTo(imageView.snp.width)
+            articleImageView.snp.makeConstraints { (make) in
+                make.height.equalTo(articleImageView.snp.width)
                 make.left.right.equalTo(self)
                 make.top.equalTo(self)
             }
             
-            titleLabel.numberOfLines = 2
-            titleLabel.snp.makeConstraints { (make) in
+            articleTitleLabel.numberOfLines = 2
+            articleTitleLabel.snp.makeConstraints { (make) in
                 make.left.right.equalTo(self)
-                make.top.equalTo(imageView.snp.bottom).inset(-6)
+                make.top.equalTo(articleImageView.snp.bottom).inset(-6)
                 make.bottom.equalTo(self)
             }
+            
+            let tap = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
+            self.addGestureRecognizer(tap)
+            self.isUserInteractionEnabled = true
         }
         
         required init?(coder aDecoder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
         
-        func render(article: Article?) {
+        func render(article: Article?, controller: PlaceViewController) {
+            self.article = article
+            self.controller = controller
+            
             if let article = article {
-                imageView.render(imageMeta: article.thumbnail)
-                titleLabel.text = article.title
+                articleImageView.render(imageMeta: article.thumbnail)
+                articleTitleLabel.text = article.title
             } else {
                 self.isHidden = true
+            }
+        }
+        
+        @objc func handleTap(_ sender: UITapGestureRecognizer) {
+            if let articleUrl = article.url, let url = URL(string: articleUrl) {
+                let safari = SFSafariViewController(url: url)
+                safari.delegate = self
+                controller.present(safari, animated: true, completion: nil)
             }
         }
     }

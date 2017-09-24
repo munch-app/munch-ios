@@ -340,6 +340,8 @@ class PlaceBasicAddressCard: PlaceCardView {
 
 class PlaceBasicLocationCard: PlaceCardView {
     let titleLabel = UILabel()
+    let directionLabel = UILabel()
+    
     let mapView = MKMapView()
     
     var address: String?
@@ -349,8 +351,17 @@ class PlaceBasicLocationCard: PlaceCardView {
         titleLabel.text = "Location"
         titleLabel.font = UIFont.systemFont(ofSize: 18.0, weight: UIFont.Weight.medium)
         titleLabel.snp.makeConstraints { (make) in
-            make.left.right.equalTo(self).inset(leftRight)
+            make.left.equalTo(self).inset(leftRight)
             make.top.equalTo(self).inset(topBottom)
+        }
+        
+        super.addSubview(directionLabel)
+        directionLabel.text = "Directions >"
+        directionLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.regular)
+        directionLabel.snp.makeConstraints { (make) in
+            make.right.equalTo(self).inset(leftRight)
+            make.top.equalTo(self).inset(topBottom)
+            make.height.equalTo(titleLabel.snp.height)
         }
         
         self.addSubview(mapView)

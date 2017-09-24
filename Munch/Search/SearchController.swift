@@ -77,6 +77,9 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         self.cardTableView.reloadData()
         self.scrollToTop()
     }
+    
+    @IBAction func unwindToSearch(segue:UIStoryboardSegue) { }
+
 }
 
 // CardType and tools
