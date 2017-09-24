@@ -126,7 +126,6 @@ extension PlaceViewController {
     }
     
     func updateNavigationBackground(y: CGFloat) {
-        print(y)
         if (160 > y) {
             // Full Opacity
             navigationBackground.isHidden = true
