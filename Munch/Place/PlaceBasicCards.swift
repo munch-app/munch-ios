@@ -26,7 +26,7 @@ class PlaceBasicImageBannerCard: PlaceCardView {
         
         let gradientLayer = CAGradientLayer()
         gradientLayer.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 64)
-        gradientLayer.colors = [UIColor.black.withAlphaComponent(0.4).cgColor, UIColor.clear.cgColor]
+        gradientLayer.colors = [UIColor.black.withAlphaComponent(0.5).cgColor, UIColor.clear.cgColor]
         imageGradientView.layer.insertSublayer(gradientLayer, at: 0)
         imageGradientView.backgroundColor = UIColor.clear
         self.addSubview(imageGradientView)
@@ -242,10 +242,10 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
     }
 }
 
-class PlaceBasicLocationCard: PlaceCardView {
+class PlaceBasicAddressCard: PlaceCardView {
     let lineOneLabel = UILabel()
     let lineTwoLabel = UILabel()
-    let mapView = MKMapView()
+    var address: String?
     
     override func didLoad(card: PlaceCard) {
         lineOneLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.regular)
@@ -256,10 +256,6 @@ class PlaceBasicLocationCard: PlaceCardView {
         lineTwoLabel.numberOfLines = 1
         self.addSubview(lineTwoLabel)
         
-        mapView.isUserInteractionEnabled = false
-        mapView.showsUserLocation = true
-        self.addSubview(mapView)
-        
         lineOneLabel.snp.makeConstraints { make in
             make.top.equalTo(self).inset(topBottom)
             make.left.right.equalTo(self).inset(leftRight)
@@ -268,44 +264,16 @@ class PlaceBasicLocationCard: PlaceCardView {
         lineTwoLabel.snp.makeConstraints { make in
             make.top.equalTo(lineOneLabel.snp.bottom)
             make.left.right.equalTo(self).inset(leftRight)
-        }
-        
-        mapView.snp.makeConstraints { make in
-            make.top.equalTo(lineTwoLabel.snp.bottom).inset(-16)
-            make.left.right.equalTo(self)
             make.bottom.equalTo(self).inset(topBottom)
-            
-            make.height.equalTo(230)
         }
         
+        self.address = card["address"].string
         render(lineOne: card)
         render(lineTwo: card)
-        render(location: card)
     }
     
-    func didTap(card: PlaceCard) {
-        var line = [String]()
-        
-        if let street = card["location"]["street"].string {
-            line.append(street)
-        }
-        
-        if let unitNumber = card["location"]["unitNumber"].string {
-            if unitNumber.hasPrefix("#") {
-                line.append(unitNumber)
-            } else {
-                line.append("#\(unitNumber)")
-            }
-        }
-        
-        if let city = card["location"]["city"].string, let postal = card["location"]["postal"].string {
-            line.append("\(city) \(postal)")
-        }
-        
-        func openUrl(address: String) {
-            let address = address.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
-            
-            
+    override func didTap() {
+        if let address = address?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
             // Monster Jobs uses comgooglemap url scheme, those fuckers
             if (UIApplication.shared.canOpenURL(URL(string:"https://www.google.com/maps/")!)) {
                 UIApplication.shared.open(URL(string:"https://www.google.com/maps/?daddr=\(address)")!)
@@ -313,26 +281,19 @@ class PlaceBasicLocationCard: PlaceCardView {
                 UIApplication.shared.open(URL(string:"http://maps.apple.com/?daddr=\(address)")!)
             }
         }
-        
-        if (!line.isEmpty) {
-            openUrl(address: line.joined(separator: ", "))
-        } else if let address = card["location"]["address"].string {
-            openUrl(address: address)
-        }
     }
     
     private func render(lineOne card: PlaceCard) {
-        let location = card["location"]
         var line = [NSAttributedString]()
         
-        if let street = location["street"].string {
+        if let street = card["street"].string {
             line.append(street.set(style: .default {
                 $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.medium))
                 }
             ))
         }
         
-        if let unitNumber = location["unitNumber"].string {
+        if let unitNumber = card["unitNumber"].string {
             if unitNumber.hasPrefix("#") {
                 line.append(NSAttributedString(string: unitNumber))
             } else {
@@ -340,7 +301,7 @@ class PlaceBasicLocationCard: PlaceCardView {
             }
         }
         
-        if let city = location["city"].string, let postal = location["postal"].string {
+        if let city = card["city"].string, let postal = card["postal"].string {
             line.append(NSAttributedString(string: "\(city) \(postal)"))
         }
         
@@ -351,7 +312,7 @@ class PlaceBasicLocationCard: PlaceCardView {
                 attrString.append(string)
             }
             lineOneLabel.attributedText = attrString
-        } else if let address = card["location"]["address"].string {
+        } else if let address = card["address"].string {
             lineOneLabel.text = address
         }
     }
@@ -359,21 +320,66 @@ class PlaceBasicLocationCard: PlaceCardView {
     private func render(lineTwo card: PlaceCard) {
         var line = [String]()
         
-        if let latLng = card["location"]["latLng"].string, MunchLocation.isEnabled {
+        if let latLng = card["latLng"].string, MunchLocation.isEnabled {
             if let distance = MunchLocation.distance(asMetric: latLng) {
                 line.append(distance)
             }
         }
         
-        if let nearestTrain = card["location"]["nearestTrain"].string {
+        if let nearestTrain = card["nearestTrain"].string {
             line.append(nearestTrain + " MRT")
         }
         
         lineTwoLabel.text = line.joined(separator: " • ")
     }
     
+    override class var cardId: String? {
+        return "basic_Address_24092017"
+    }
+}
+
+class PlaceBasicLocationCard: PlaceCardView {
+    let titleLabel = UILabel()
+    let mapView = MKMapView()
+    
+    var address: String?
+    
+    override func didLoad(card: PlaceCard) {
+        super.addSubview(titleLabel)
+        titleLabel.text = "Location"
+        titleLabel.font = UIFont.systemFont(ofSize: 18.0, weight: UIFont.Weight.medium)
+        titleLabel.snp.makeConstraints { (make) in
+            make.left.right.equalTo(self).inset(leftRight)
+            make.top.equalTo(self).inset(topBottom)
+        }
+        
+        self.addSubview(mapView)
+        mapView.isUserInteractionEnabled = false
+        mapView.showsUserLocation = true
+        mapView.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).inset(-10)
+            make.bottom.equalTo(self).inset(topBottom)
+            make.left.right.equalTo(self)
+            make.height.equalTo(230)
+        }
+        
+        self.address = card["address"].string
+        render(location: card)
+    }
+    
+    override func didTap() {
+        if let address = address?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
+            // Monster Jobs uses comgooglemap url scheme, those fuckers
+            if (UIApplication.shared.canOpenURL(URL(string:"https://www.google.com/maps/")!)) {
+                UIApplication.shared.open(URL(string:"https://www.google.com/maps/?daddr=\(address)")!)
+            } else if (UIApplication.shared.canOpenURL(URL(string:"http://maps.apple.com/")!)){
+                UIApplication.shared.open(URL(string:"http://maps.apple.com/?daddr=\(address)")!)
+            }
+        }
+    }
+    
     private func render(location card: PlaceCard) {
-        if let coordinate = CLLocation(latLng: card["location"]["latLng"].stringValue)?.coordinate {
+        if let coordinate = CLLocation(latLng: card["latLng"].stringValue)?.coordinate {
             var region = MKCoordinateRegion()
             region.center.latitude = coordinate.latitude
             region.center.longitude = coordinate.longitude
@@ -383,12 +389,12 @@ class PlaceBasicLocationCard: PlaceCardView {
             
             let annotation = MKPointAnnotation()
             annotation.coordinate = coordinate
-            annotation.title = card["name"].stringValue
+            annotation.title = card["placeName"].stringValue
             mapView.addAnnotation(annotation)
         }
     }
     
     override class var cardId: String? {
-        return "basic_Location_15092017"
+        return "basic_Location_24092017"
     }
 }

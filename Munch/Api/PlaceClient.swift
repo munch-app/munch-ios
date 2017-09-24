@@ -41,7 +41,7 @@ struct PlaceCard {
     }
     
     init(json: JSON) {
-        self.cardId = json["cardId"].stringValue
+        self.cardId = json["_cardId"].stringValue
         self.json = json
     }
     
@@ -298,7 +298,6 @@ struct Article {
     var title: String?
     var description: String?
     var thumbnail: ImageMeta?
-    
     
     init(json: JSON) {
         self.placeId = json["placeId"].string

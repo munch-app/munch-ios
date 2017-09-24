@@ -213,8 +213,8 @@ struct SearchCard: Equatable {
     }
     
     init(json: JSON) {
-        self.cardId = json["cardId"].stringValue
-        self.uniqueId = json["uniqueId"].string
+        self.cardId = json["_cardId"].stringValue
+        self.uniqueId = json["_uniqueId"].string
         self.json = json
     }
     

@@ -83,6 +83,7 @@ extension PlaceViewController {
         // Register Place Cards
         register(PlaceBasicNameTagCard.self)
         register(PlaceBasicImageBannerCard.self)
+        register(PlaceBasicAddressCard.self)
         register(PlaceBasicLocationCard.self)
         register(PlaceBasicBusinessHourCard.self)
         

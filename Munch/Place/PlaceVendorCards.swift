@@ -18,7 +18,7 @@ class PlaceVendorArticleGridCard: PlaceCardView {
     override func didLoad(card: PlaceCard) {
         super.addSubview(titleLabel)
         titleLabel.text = "Articles"
-        titleLabel.font = UIFont.systemFont(ofSize: 21.0, weight: UIFont.Weight.medium)
+        titleLabel.font = UIFont.systemFont(ofSize: 18.0, weight: UIFont.Weight.medium)
         titleLabel.snp.makeConstraints { (make) in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(self).inset(topBottom)
@@ -32,7 +32,7 @@ class PlaceVendorArticleGridCard: PlaceCardView {
         topRow.right.render(article: articles.get(1))
         topRow.snp.makeConstraints { (make) in
             make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(titleLabel.snp.bottom).inset(-6)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-10)
         }
         
         if (articles.count > 1) {
@@ -42,11 +42,11 @@ class PlaceVendorArticleGridCard: PlaceCardView {
             bottomRow.snp.makeConstraints { (make) in
                 make.left.right.equalTo(self).inset(leftRight)
                 make.top.equalTo(topRow.snp.bottom)
-                make.bottom.equalTo(self)
+                make.bottom.equalTo(self).inset(10)
             }
         } else {
             topRow.snp.makeConstraints({ (make) in
-                make.bottom.equalTo(self)
+                make.bottom.equalTo(self).inset(10)
             })
         }
     }
@@ -65,14 +65,14 @@ class PlaceVendorArticleGridCard: PlaceCardView {
             self.addSubview(right)
             
             left.snp.makeConstraints { (make) in
-                make.top.bottom.equalTo(self).inset(5)
+                make.top.bottom.equalTo(self)
                 make.left.equalTo(self)
                 make.right.equalTo(right.snp.left).inset(12)
                 make.width.equalTo(right.snp.width)
             }
             
             right.snp.makeConstraints { (make) in
-                make.top.bottom.equalTo(self).inset(5)
+                make.top.bottom.equalTo(self)
                 make.right.equalTo(self)
                 make.left.equalTo(left.snp.right).inset(12)
                 make.width.equalTo(left.snp.width)

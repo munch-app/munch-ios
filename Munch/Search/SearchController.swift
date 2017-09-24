@@ -37,7 +37,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         // Place Testing
 //        let storyboard = UIStoryboard(name: "Place", bundle: nil)
 //        let controller = storyboard.instantiateInitialViewController() as! PlaceViewController
-//        controller.placeId = "f61a6a65-01b0-4e12-87ed-b8fdcf7efacf"
+//        controller.placeId = "a717fe70-e4be-4eb3-b90a-16fb592525f9"
 //        self.navigationController!.pushViewController(controller, animated: true)
     }
     
