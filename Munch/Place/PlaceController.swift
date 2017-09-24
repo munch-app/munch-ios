@@ -17,6 +17,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
     var cellTypes = [String: PlaceCardView.Type]()
     
     @IBOutlet weak var cardTableView: UITableView!
+    @IBOutlet weak var navigationBackground: HairlineShadowView!
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -125,6 +126,30 @@ extension PlaceViewController {
             tableView.beginUpdates()
             cell.didTap()
             tableView.endUpdates()
+        }
+    }
+}
+
+extension PlaceViewController {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        updateNavigationBackground(y: scrollView.contentOffset.y)
+    }
+    
+    private func updateNavigationBackground(y: CGFloat) {
+        if (160 > y) {
+            // Full Opacity
+            setBarStyle(whiteBackground: false)
+            navigationBackground.isHidden = true
+        } else if (180 < y) {
+            // Full White
+            navigationBackground.isHidden = false
+            setBarStyle(whiteBackground: true)
+            navigationBackground.backgroundColor = UIColor.white
+        } else {
+            navigationBackground.isHidden = false
+            let progress = 1.0 - (180 - y)/20.0
+            navigationBackground.backgroundColor = UIColor.white.withAlphaComponent(progress)
+            setBarStyle(whiteBackground: progress > 0.5)
         }
     }
 }

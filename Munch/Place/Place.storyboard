@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Yey-iF-auP">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Yey-iF-auP">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -25,12 +25,27 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IVg-d6-Ddd" customClass="HairlineShadowView" customModule="Munch" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="64"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="64" id="KiD-Gq-t3T"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="hairlineShadowHeight">
+                                        <real key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="5yE-Q2-9C6" firstAttribute="top" secondItem="aHh-NI-mAX" secondAttribute="top" id="8YU-hE-IYE"/>
+                            <constraint firstItem="IVg-d6-Ddd" firstAttribute="top" secondItem="aHh-NI-mAX" secondAttribute="top" id="Jxc-yf-lJR"/>
                             <constraint firstItem="5yE-Q2-9C6" firstAttribute="leading" secondItem="aHh-NI-mAX" secondAttribute="leading" id="RKd-p6-Tfu"/>
+                            <constraint firstAttribute="trailing" secondItem="IVg-d6-Ddd" secondAttribute="trailing" id="hGb-cX-ovv"/>
                             <constraint firstItem="XP1-Fi-kDp" firstAttribute="top" secondItem="5yE-Q2-9C6" secondAttribute="bottom" id="hpn-SN-Vdq"/>
+                            <constraint firstItem="IVg-d6-Ddd" firstAttribute="leading" secondItem="aHh-NI-mAX" secondAttribute="leading" id="pod-PY-C3v"/>
                             <constraint firstAttribute="trailing" secondItem="5yE-Q2-9C6" secondAttribute="trailing" id="vkJ-YJ-vlF"/>
                         </constraints>
                     </view>
@@ -48,6 +63,7 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="cardTableView" destination="5yE-Q2-9C6" id="uRY-Lt-P7P"/>
+                        <outlet property="navigationBackground" destination="IVg-d6-Ddd" id="ihA-HI-3Eo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Kcd-WD-x06" userLabel="First Responder" sceneMemberID="firstResponder"/>
