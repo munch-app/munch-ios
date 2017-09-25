@@ -42,12 +42,12 @@ class PlaceVendorArticleGridCard: PlaceCardView {
             bottomRow.right.render(article: articles.get(3), controller: controller)
             bottomRow.snp.makeConstraints { (make) in
                 make.left.right.equalTo(self).inset(leftRight)
-                make.top.equalTo(topRow.snp.bottom)
-                make.bottom.equalTo(self).inset(10)
+                make.top.equalTo(topRow.snp.bottom).inset(-15)
+                make.bottom.equalTo(self).inset(topBottom)
             }
         } else {
             topRow.snp.makeConstraints({ (make) in
-                make.bottom.equalTo(self).inset(10)
+                make.bottom.equalTo(self).inset(topBottom)
             })
         }
     }
@@ -66,16 +66,16 @@ class PlaceVendorArticleGridCard: PlaceCardView {
             self.addSubview(right)
             
             left.snp.makeConstraints { (make) in
+                make.right.equalTo(right.snp.left).inset(-15)
                 make.top.bottom.equalTo(self)
                 make.left.equalTo(self)
-                make.right.equalTo(right.snp.left).inset(12)
                 make.width.equalTo(right.snp.width)
             }
             
             right.snp.makeConstraints { (make) in
+                make.left.equalTo(left.snp.right).inset(-15)
                 make.top.bottom.equalTo(self)
                 make.right.equalTo(self)
-                make.left.equalTo(left.snp.right).inset(12)
                 make.width.equalTo(left.snp.width)
             }
         }
