@@ -343,7 +343,6 @@ class PlaceBasicLocationCard: PlaceCardView {
     let directionLabel = UILabel()
     
     let mapView = MKMapView()
-    
     var address: String?
     
     override func didLoad(card: PlaceCard) {
@@ -366,7 +365,7 @@ class PlaceBasicLocationCard: PlaceCardView {
         
         self.addSubview(mapView)
         mapView.isUserInteractionEnabled = false
-        mapView.showsUserLocation = true
+        mapView.showsUserLocation = false
         mapView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).inset(-10)
             make.bottom.equalTo(self).inset(topBottom)

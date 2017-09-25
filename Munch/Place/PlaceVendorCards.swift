@@ -36,7 +36,7 @@ class PlaceVendorArticleGridCard: PlaceCardView {
             make.top.equalTo(titleLabel.snp.bottom).inset(-10)
         }
         
-        if (articles.count > 1) {
+        if (articles.count > 2) {
             super.addSubview(bottomRow)
             bottomRow.left.render(article: articles.get(2), controller: controller)
             bottomRow.right.render(article: articles.get(3), controller: controller)
