@@ -9,18 +9,28 @@
 import Foundation
 import Shimmer
 
-class ShimmerImageView: FBShimmeringView {
+class ShimmerImageView: UIView {
+    let shimmerView = ShimmerView()
     let imageView = UIImageView()
     
     override init(frame: CGRect = CGRect()) {
         super.init(frame: frame)
-        self.contentView = imageView
+        self.clipsToBounds = true
+        
+        self.addSubview(shimmerView)
+        shimmerView.snp.makeConstraints { (make) in
+            make.edges.equalTo(self)
+        }
         
         // Override default image setting
+        self.addSubview(imageView)
+        imageView.isHidden = true
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
-        self.clipsToBounds = true
+        imageView.snp.makeConstraints { (make) in
+            make.edges.equalTo(self)
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -32,12 +42,14 @@ class ShimmerImageView: FBShimmeringView {
     }
     
     func render(imageMeta: ImageMeta?) {
-        self.isShimmering = true
-        self.shimmeringSpeed = 230
+        self.imageView.isHidden = true
+        self.shimmerView.isHidden = false
+        self.shimmerView.isShimmering = true
         imageView.render(imageMeta: imageMeta) { _, error, _, _ in
             if (error == nil) {
-                self.shimmeringSpeed = CGFloat.greatestFiniteMagnitude
-                self.isShimmering = false
+                self.imageView.isHidden = false
+                self.shimmerView.isHidden = true
+                self.shimmerView.isShimmering = false
             }
         }
     }
