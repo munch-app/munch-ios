@@ -111,6 +111,7 @@ extension SearchLocationController {
         switch indexPath.section {
         case 0:
             searchQuery.latLng = MunchLocation.getLatLng()
+            searchQuery.location = nil
             break
         default:
             searchQuery.location = locations[indexPath.row]

@@ -36,7 +36,7 @@ class ShimmerImageView: FBShimmeringView {
         self.shimmeringSpeed = 230
         imageView.render(imageMeta: imageMeta) { _, error, _, _ in
             if (error == nil) {
-                self.shimmeringSpeed = 999999999999
+                self.shimmeringSpeed = CGFloat.greatestFiniteMagnitude
                 self.isShimmering = false
             }
         }

@@ -110,10 +110,10 @@ class SearchFilterHourCell: SearchFilterTagCell {
             applyView.searchQuery.filter.hour.day = Place.Hour.Formatter.dayNow()
             
             if (tagText == "Open Now") {
-                applyView.searchQuery.filter.hour.time = "01:00"
+                applyView.searchQuery.filter.hour.time = formatter.string(from: Date())
                 self.tagCollection.setTagAt(1, selected: false)
             } else if tagText == "After Midnight" {
-                applyView.searchQuery.filter.hour.time = formatter.string(from: Date())
+                applyView.searchQuery.filter.hour.time = "01:00"
                 self.tagCollection.setTagAt(0, selected: false)
             }
         } else {
