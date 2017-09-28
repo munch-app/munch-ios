@@ -19,17 +19,15 @@ enum InitialViewProvider {
      Main tab controllers for Munch App
      */
     static func main() -> TabBarController {
-        // Discover
+        let controllers = [searchController()]
+        return TabBarController(controllers: controllers)
+    }
+    
+    static func searchController() -> UIViewController {
         let searchStoryboard = UIStoryboard(name: "Search", bundle: nil)
         let searchController = searchStoryboard.instantiateInitialViewController()!
         searchController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "SEARCH", image: UIImage(named: "icons8-Search-35"))
-        
-        //        // Profile
-        //        let profileController = UIViewController()
-        //        profileController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "PROFILE", image: UIImage(named: "icons8-customer-35"))
-        
-        let controllers = [searchController]
-        return TabBarController(controllers: controllers)
+        return searchController
     }
 }
 
