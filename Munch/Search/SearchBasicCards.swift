@@ -10,9 +10,9 @@ import Foundation
 import UIKit
 import SwiftRichString
 
-class SearchPlaceCard: UITableViewCell, SearchCardView {
+class SearchPlaceImageCard: UITableViewCell, SearchCardView {
     let topImageView = ShimmerImageView()
-    let bottomView = BottomView()
+    let bottomView = PlaceCardBottomView()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -53,113 +53,148 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
     }
     
     static var cardId: String {
-        return "basic_Place_16092017"
+        return "basic_PlaceImage_06102017"
+    }
+}
+
+class SearchPlaceTitleCard: UITableViewCell, SearchCardView {
+    let bottomView = PlaceCardBottomView()
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        
+        let containerView = UIView()
+        containerView.addSubview(bottomView)
+        self.addSubview(containerView)
+        
+        bottomView.snp.makeConstraints { make in
+            make.edges.equalTo(containerView)
+            make.height.equalTo(73).priority(999)
+        }
+        
+        containerView.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(leftRight)
+            make.top.bottom.equalTo(self).inset(topBottom)
+        }
     }
     
-    class BottomView: UIView {
-        let nameLabel = UILabel()
-        let tagLabel = UILabel()
-        let locationLabel = UILabel()
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func render(card: SearchCard) {
+        bottomView.render(card: card)
+    }
+    
+    static var cardId: String {
+        return "basic_PlaceTitle_06102017"
+    }
+}
+
+class PlaceCardBottomView: UIView {
+    let nameLabel = UILabel()
+    let tagLabel = UILabel()
+    let locationLabel = UILabel()
+    
+    override init(frame: CGRect = CGRect()) {
+        super.init(frame: frame)
+        nameLabel.font = UIFont.systemFont(ofSize: 18, weight: UIFont.Weight.semibold)
+        nameLabel.textColor = UIColor.black.withAlphaComponent(0.8)
+        self.addSubview(nameLabel)
         
-        override init(frame: CGRect = CGRect()) {
-            super.init(frame: frame)
-            nameLabel.font = UIFont.systemFont(ofSize: 18, weight: UIFont.Weight.semibold)
-            nameLabel.textColor = UIColor.black.withAlphaComponent(0.8)
-            self.addSubview(nameLabel)
+        tagLabel.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.regular)
+        tagLabel.textColor = UIColor.black.withAlphaComponent(0.75)
+        self.addSubview(tagLabel)
+        
+        locationLabel.font = UIFont.systemFont(ofSize: 13, weight: UIFont.Weight.regular)
+        locationLabel.textColor = UIColor.black.withAlphaComponent(0.75)
+        self.addSubview(locationLabel)
+        
+        nameLabel.snp.makeConstraints { make in
+            make.height.equalTo(26)
+            make.left.right.equalTo(self)
+            make.bottom.equalTo(tagLabel.snp.top)
+        }
+        
+        tagLabel.snp.makeConstraints { make in
+            make.height.equalTo(19)
+            make.left.right.equalTo(self)
+            make.bottom.equalTo(locationLabel.snp.top)
+        }
+        
+        locationLabel.snp.makeConstraints { make in
+            make.height.equalTo(19)
+            make.left.right.equalTo(self)
+            make.bottom.equalTo(self)
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func render(card: SearchCard) {
+        nameLabel.text = card["name"].string
+        render(tag: card)
+        render(location: card)
+    }
+    
+    private func render(tag card: SearchCard) {
+        let line = NSMutableAttributedString()
+        
+        // Establishment
+        if let establishment = card["establishment"].string {
+            line.append(string: establishment, style: Style.default {
+                $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.semibold))
+            })
+        }
+        
+        let tags = card["tags"].flatMap { $0.1.string }
+        if !tags.isEmpty {
+            line.append(string: " • ", style: Style.default {
+                $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.ultraLight))
+            })
             
-            tagLabel.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.regular)
-            tagLabel.textColor = UIColor.black.withAlphaComponent(0.75)
-            self.addSubview(tagLabel)
-            
-            locationLabel.font = UIFont.systemFont(ofSize: 13, weight: UIFont.Weight.regular)
-            locationLabel.textColor = UIColor.black.withAlphaComponent(0.75)
-            self.addSubview(locationLabel)
-            
-            nameLabel.snp.makeConstraints { make in
-                make.height.equalTo(26)
-                make.left.right.equalTo(self)
-                make.bottom.equalTo(tagLabel.snp.top)
-            }
-            
-            tagLabel.snp.makeConstraints { make in
-                make.height.equalTo(19)
-                make.left.right.equalTo(self)
-                make.bottom.equalTo(locationLabel.snp.top)
-            }
-            
-            locationLabel.snp.makeConstraints { make in
-                make.height.equalTo(19)
-                make.left.right.equalTo(self)
-                make.bottom.equalTo(self)
+            let text = tags[0..<(tags.count < 2 ? tags.count : 2)].joined(separator: ", ")
+            line.append(string: text, style: Style.default {
+                $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular))
+            })
+        }
+        
+        self.tagLabel.attributedText = line
+    }
+    
+    private func render(location card: SearchCard) {
+        let line = NSMutableAttributedString()
+        
+        // Street
+        if let street = card["location"]["street"].string {
+            line.append(NSMutableAttributedString(string: street))
+        } else {
+            line.append(NSMutableAttributedString(string: "Singapore"))
+        }
+        
+        // Distance
+        if let latLng = card["location"]["latLng"].string, MunchLocation.isEnabled {
+            if let distance = MunchLocation.distance(asMetric: latLng) {
+                line.append(NSMutableAttributedString(string: " - \(distance)"))
             }
         }
         
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-        func render(card: SearchCard) {
-            nameLabel.text = card["name"].string
-            render(tag: card)
-            render(location: card)
-        }
-        
-        private func render(tag card: SearchCard) {
-            let line = NSMutableAttributedString()
-            
-            // Establishment
-            if let establishment = card["establishment"].string {
-                line.append(string: establishment, style: Style.default {
-                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.semibold))
-                })
-            }
-            
-            let tags = card["tags"].flatMap { $0.1.string }
-            if !tags.isEmpty {
-                line.append(string: " • ", style: Style.default {
-                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.ultraLight))
-                })
-                
-                let text = tags[0..<(tags.count < 2 ? tags.count : 2)].joined(separator: ", ")
-                line.append(string: text, style: Style.default {
-                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular))
-                })
-            }
-            
-            self.tagLabel.attributedText = line
-        }
-        
-        private func render(location card: SearchCard) {
-            let line = NSMutableAttributedString()
-            
-            // Street
-            if let street = card["location"]["street"].string {
-                line.append(NSMutableAttributedString(string: street))
+        // Open Now
+        let hours = card["hours"].flatMap { Place.Hour(json: $0.1) }
+        if let open  = Place.Hour.Formatter.isOpen(hours: hours) {
+            line.append(NSMutableAttributedString(string: " • ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.ultraLight)]))
+            if (open) {
+                let onFormat = [NSAttributedStringKey.foregroundColor: UIColor.secondary]
+                line.append(NSMutableAttributedString(string: "Open Now", attributes: onFormat))
             } else {
-                line.append(NSMutableAttributedString(string: "Singapore"))
+                let onFormat = [NSAttributedStringKey.foregroundColor: UIColor.primary]
+                line.append(NSMutableAttributedString(string: "Closed Now", attributes: onFormat))
             }
-            
-            // Distance
-            if let latLng = card["location"]["latLng"].string, MunchLocation.isEnabled {
-                if let distance = MunchLocation.distance(asMetric: latLng) {
-                    line.append(NSMutableAttributedString(string: " - \(distance)"))
-                }
-            }
-            
-            // Open Now
-            let hours = card["hours"].flatMap { Place.Hour(json: $0.1) }
-            if let open  = Place.Hour.Formatter.isOpen(hours: hours) {
-                line.append(NSMutableAttributedString(string: " • ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.ultraLight)]))
-                if (open) {
-                    let onFormat = [NSAttributedStringKey.foregroundColor: UIColor.secondary]
-                    line.append(NSMutableAttributedString(string: "Open Now", attributes: onFormat))
-                } else {
-                    let onFormat = [NSAttributedStringKey.foregroundColor: UIColor.primary]
-                    line.append(NSMutableAttributedString(string: "Closed Now", attributes: onFormat))
-                }
-            }
-            
-            self.locationLabel.attributedText = line
         }
+        
+        self.locationLabel.attributedText = line
     }
 }

@@ -28,7 +28,12 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
-        updateNavigationBackground(y: self.cardTableView.contentOffset.y)
+        
+//        if (cards.first?.cardId != PlaceBasicImageBannerCard.cardId) {
+//            updateNavigationBackground(whiteBackground: true)
+//        } else {
+//            updateNavigationBackground(whiteBackground: false)
+//        }
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -46,16 +51,21 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         // Top: -NavigationBar.height
         // Bottom: BottomBar.height
-        self.cardTableView.contentInset = UIEdgeInsets(top: -64, left: 0, bottom: 10, right: 0)
+        self.cardTableView.contentInset.top = -64
+        self.cardTableView.contentInset.bottom = 10
         
         registerCards()
         loadShimmerCards()
         
         MunchApi.places.cards(id: placeId) { meta, cards in
             if (meta.isOk()) {
+                if (cards.first?.cardId != PlaceBasicImageBannerCard.cardId) {
+                    self.cardTableView.contentInset.top = 0
+                }
                 self.cards = cards
                 self.cells.removeAll()
                 self.cardTableView.reloadData()
+                self.scrollViewDidScroll(self.cardTableView)
             } else {
                 self.present(meta.createAlert(), animated: true)
             }
@@ -122,7 +132,11 @@ extension PlaceViewController {
 
 extension PlaceViewController {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        updateNavigationBackground(y: scrollView.contentOffset.y)
+        if (cards.first?.cardId != PlaceBasicImageBannerCard.cardId) {
+            self.updateNavigationBackground(whiteBackground: true)
+        } else {
+            self.updateNavigationBackground(y: scrollView.contentOffset.y)
+        }
     }
     
     func updateNavigationBackground(y: CGFloat) {
@@ -143,12 +157,18 @@ extension PlaceViewController {
         }
     }
     
+    func updateNavigationBackground(whiteBackground: Bool) {
+        navigationBackground.backgroundColor = UIColor.white
+        navigationBackground.isHidden = !whiteBackground
+        setBarStyle(whiteBackground: whiteBackground)
+    }
+    
     private func setBarStyle(whiteBackground: Bool) {
         if (whiteBackground) {
-            navigationController?.navigationBar.barStyle = .default
+            navigationController?.navigationBar.barStyle = UIBarStyle.default
             navigationItem.leftBarButtonItem!.tintColor = UIColor.black
         } else {
-            navigationController?.navigationBar.barStyle = .blackTranslucent
+            navigationController?.navigationBar.barStyle = UIBarStyle.black
             navigationItem.leftBarButtonItem!.tintColor = UIColor.white
         }
     }

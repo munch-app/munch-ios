@@ -95,7 +95,8 @@ extension SearchController {
         register(SearchShimmerPlaceCard.self)
         
         // Register Search Cards
-        register(SearchPlaceCard.self)
+        register(SearchPlaceImageCard.self)
+        register(SearchPlaceTitleCard.self)
     }
 
     private func register(_ cellClass: SearchCardView.Type) {
@@ -124,7 +125,7 @@ extension SearchController {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let card = cards[indexPath.row]
         
-        if card.cardId == SearchPlaceCard.cardId, let placeId = card["placeId"].string {
+        if card.cardId == SearchPlaceImageCard.cardId || card.cardId == SearchPlaceTitleCard.cardId, let placeId = card["placeId"].string {
             // Place Card
             let storyboard = UIStoryboard(name: "Place", bundle: nil)
             let controller = storyboard.instantiateInitialViewController() as! PlaceViewController
