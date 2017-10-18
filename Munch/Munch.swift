@@ -152,7 +152,7 @@ extension UIImageView {
      Shimmer is set to true by default
      */
     func render(placeImage: Place.Image?, completionHandler: CompletionHandler? = nil) {
-        render(imageMeta: placeImage?.imageMeta, completionHandler: completionHandler)
+        render(images: placeImage?.images, completionHandler: completionHandler)
     }
     
     /**
@@ -162,11 +162,9 @@ extension UIImageView {
      If imageMeta is nil, image will be set to nil too
      Shimmer is set to true by default
      */
-    func render(imageMeta: ImageMeta?, completionHandler: CompletionHandler? = nil) {
-        if let imageMeta = imageMeta {
+    func render(images: [String: String]?, completionHandler: CompletionHandler? = nil) {
+        if let images = UIImageView.imageList(images: images) {
             let size = frameSize()
-            let images = imageMeta.imageList()
-            
             let fitting = images.filter { $0.0 >= size.0 && $0.1 >= size.1 }
                 .sorted{ $0.0 * $0.1 < $1.0 * $1.1 }
             
@@ -185,6 +183,21 @@ extension UIImageView {
         } else {
             kf.setImage(with: nil, completionHandler: completionHandler)
         }
+    }
+    
+    class func imageList(images: [String: String]?) -> [(Int, Int, String)]? {
+        if let images = images {
+            return images.map { key, value -> (Int, Int, String) in
+                let widthHeight = key.lowercased().components(separatedBy: "x")
+                if (widthHeight.count == 2) {
+                    if let width = Int(widthHeight[0]), let height = Int(widthHeight[1]) {
+                        return (width, height, value)
+                    }
+                }
+                return (0, 0, value)
+            }
+        }
+        return nil
     }
     
     /**

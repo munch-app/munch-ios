@@ -33,23 +33,23 @@ class PlaceClient {
  */
 struct PlaceCard {
     var cardId: String
-    private var json: JSON
+    private var data: JSON
     
     init(cardId: String) {
         self.cardId = cardId
-        self.json = JSON(parseJSON: "{}")
+        self.data = JSON(parseJSON: "{}")
     }
     
     init(json: JSON) {
         self.cardId = json["_cardId"].stringValue
-        self.json = json
+        self.data = json["data"]
     }
     
     /**
      Subscript to get data from json with its name
      */
     subscript(name: String) -> JSON {
-        return json[name]
+        return data[name]
     }
 }
 
@@ -67,10 +67,10 @@ struct Place: SearchResult, Equatable {
     
     // One
     var price: Price?
-    var location: Location?
+    var location: Location
+    var tag: Tag
     
     // Many
-    var tags: [String]?
     var hours: [Hour]?
     var images: [Image]?
     
@@ -84,14 +84,15 @@ struct Place: SearchResult, Equatable {
         
         self.price = Price(json: json["price"])
         self.location = Location(json: json["location"])
+        self.tag = Tag(json: json["tag"])
         
-        self.tags = json["tags"].map { $0.1.stringValue }
         self.hours = json["hours"].flatMap { Hour(json: $0.1) }
         self.images = json["images"].map { Image(json: $0.1) }
     }
     
     struct Price {
         var lowest: Double?
+        var middle: Double?
         var highest: Double?
         
         init() {
@@ -100,6 +101,7 @@ struct Place: SearchResult, Equatable {
         
         init(json: JSON){
             self.lowest = json["lowest"].double
+            self.middle = json["middle"].double
             self.highest = json["highest"].double
         }
     }
@@ -109,6 +111,7 @@ struct Place: SearchResult, Equatable {
         var address: String?
         var unitNumber: String?
         var building: String?
+        var nearestTrain: String?
         
         var city: String?
         var country: String?
@@ -125,6 +128,7 @@ struct Place: SearchResult, Equatable {
             self.address = json["address"].string
             self.unitNumber = json["unitNumber"].string
             self.building = json["building"].string
+            self.nearestTrain = json["nearestTrain"].string
             
             self.city = json["city"].string
             self.country = json["country"].string
@@ -134,16 +138,26 @@ struct Place: SearchResult, Equatable {
         }
     }
     
+    struct Tag {
+        var explicits: [String]
+        var implicits: [String]
+        
+        init(json: JSON) {
+            self.explicits = json["explicits"].map { $0.1.stringValue }
+            self.implicits = json["implicits"].map { $0.1.stringValue }
+        }
+    }
+    
     /**
      Place.Image from munch-core/munch-data
      */
     struct Image {
-        var source: String?
-        var imageMeta: ImageMeta?
+        var source: String
+        var images: [String: String]
         
         init(json: JSON) {
-            self.source = json["source"].string
-            self.imageMeta = ImageMeta(json: json["imageMeta"])
+            self.source = json["source"].stringValue
+            self.images = json["images"].dictionaryObject as! [String: String]
         }
     }
     
@@ -252,16 +266,14 @@ struct Place: SearchResult, Equatable {
 }
 
 /**
- Primary data type from munch-core/service-gallery
- it is a version of Instagram Media
+ Instagram Media
  */
-struct Media {
+struct InstagramMedia {
     var placeId: String?
     var mediaId: String?
     
     var profile: Profile?
     var caption: String?
-    var image: ImageMeta?
     
     init(json: JSON) {
         self.placeId = json["placeId"].string
@@ -269,7 +281,6 @@ struct Media {
         
         self.profile = Profile(json: json["profile"])
         self.caption = json["caption"].string
-        self.image = ImageMeta(json: json["image"])
     }
     
     struct Profile {
@@ -297,7 +308,6 @@ struct Article {
     
     var title: String?
     var description: String?
-    var thumbnail: ImageMeta?
     
     init(json: JSON) {
         self.placeId = json["placeId"].string
@@ -308,7 +318,6 @@ struct Article {
         
         self.title = json["title"].string
         self.description = json["description"].string
-        self.thumbnail = ImageMeta(json: json["thumbnail"])
     }
 }
 

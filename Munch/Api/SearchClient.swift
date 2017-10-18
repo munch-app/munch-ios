@@ -25,14 +25,8 @@ class SearchClient {
         }
     }
     
-    func collections(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ collections: [SearchCollection]) -> Void) {
-        MunchApi.restful.post("/search/collections", parameters: query.toParams()) { meta, json in
-            callback(meta, json["data"].map { SearchCollection(json: $0.1) })
-        }
-    }
-    
-    func collectionsSearch(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ results: [SearchCard]) -> Void) {
-        MunchApi.restful.post("/search/collections/search", parameters: query.toParams()) { meta, json in
+    func search(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ results: [SearchCard]) -> Void) {
+        MunchApi.restful.post("/search/search", parameters: query.toParams()) { meta, json in
             callback(meta, json["data"].map { SearchCard(json: $0.1) })
         }
     }
@@ -64,19 +58,16 @@ protocol SearchResult {}
 struct Tag: SearchResult {
     var id: String?
     var name: String?
-    var type: String?
     
     init(json: JSON) {
         self.id = json["id"].string
         self.name = json["name"].string
-        self.type = json["type"].string
     }
     
     func toParams() -> Parameters {
         var params = Parameters()
         params["id"] = id
         params["name"] = name
-        params["type"] = type
         return params
     }
 }
@@ -227,21 +218,5 @@ struct SearchCard: Equatable {
     
     static func == (lhs: SearchCard, rhs: SearchCard) -> Bool {
         return lhs.cardId == rhs.cardId && lhs.uniqueId == rhs.uniqueId
-    }
-}
-
-/**
- SearchCollection object from munch-core/munch-api
- used for containing a collection
- */
-struct SearchCollection {
-    let name: String
-    let query: SearchQuery
-    let cards: [SearchCard]
-    
-    init(json: JSON) {
-        self.name = json["name"].stringValue
-        self.query = SearchQuery(json: json["query"])
-        self.cards = json["cards"].map { SearchCard(json: $0.1) }
     }
 }

@@ -21,12 +21,6 @@ class LocationClient {
         }
     }
     
-    func reverse(lat: Double, lng: Double, callback: @escaping (_ meta: MetaJSON, _ location: Location?) -> Void) {
-        MunchApi.restful.get("/locations/reverse", parameters: ["latLng": "\(lat),\(lng)"]) { meta, json in
-            callback(meta, Location(json: json["data"]))
-        }
-    }
-    
     func suggest(text: String, callback: @escaping (_ meta: MetaJSON, _ locations: [Location]) -> Void) {
         MunchApi.restful.get("/locations/suggest", parameters: ["text": text]) { meta, json in
             callback(meta, json["data"].map { Location(json: $0.1)! })
@@ -44,7 +38,7 @@ struct Location: SearchResult {
     var city: String?
     var country: String?
     
-    var center: String?
+    var latLng: String?
     var points: [String]? // points is ["lat, lng"] String Array
     
     init?(json: JSON) {
@@ -55,7 +49,7 @@ struct Location: SearchResult {
         self.city = json["city"].string
         self.country = json["country"].string
         
-        self.center = json["center"].string
+        self.latLng = json["latLng"].string
         self.points = json["points"].map({$0.1.stringValue})
     }
     
@@ -66,7 +60,7 @@ struct Location: SearchResult {
         params["city"] = city
         params["country"] = country
         
-        params["center"] = center
+        params["latLng"] = latLng
         params["points"] = points
         return params
     }
