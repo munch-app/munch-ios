@@ -58,7 +58,7 @@ class SearchQueryController: UIViewController, UITableViewDataSource, UITableVie
         self.tableView.tableFooterView = footerView
         self.tableView.contentInset.top = 0
         
-        self.textField.text = self.headerView.mainSearchQuery.query
+        self.textField.text = self.headerView.searchQuery.query
         self.textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         self.textField.addTarget(self, action: #selector(textFieldShouldReturn(_:)), for: .editingDidEndOnExit)
         registerCell()
@@ -81,7 +81,7 @@ class SearchQueryController: UIViewController, UITableViewDataSource, UITableVie
     @objc func textFieldShouldReturn(_ sender: Any) -> Bool {
         if let text = textField.text {
             self.dismiss(animated: true) {
-                var query = self.headerView.mainSearchQuery
+                var query = self.headerView.searchQuery
                 query.query = text
                 self.headerView.onHeaderApply(action: .apply(query))
             }
@@ -152,13 +152,13 @@ extension SearchQueryController {
             self.navigationController!.pushViewController(controller, animated: true)
         } else if let location = item as? Location {
             self.dismiss(animated: true) {
-                var query = self.headerView.mainSearchQuery
+                var query = self.headerView.searchQuery
                 query.location = location
                 self.headerView.onHeaderApply(action: .apply(query))
             }
         } else if let tag = item as? Tag {
             self.dismiss(animated: true) {
-                var query = self.headerView.mainSearchQuery
+                var query = self.headerView.searchQuery
                 query.query = tag.name
                 self.headerView.onHeaderApply(action: .apply(query))
             }
@@ -205,6 +205,53 @@ class SearchQueryCell: UITableViewCell {
     
     class var id: String {
         return "SearchQueryCell"
+    }
+}
+
+class SearchLocationMyLocationCell: UITableViewCell {
+    let button = UIButton()
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.backgroundColor = UIColor(hex: "F1F1F1")
+        
+        button.isEnabled = false
+        button.backgroundColor = .white
+        button.contentHorizontalAlignment = .left
+        button.contentVerticalAlignment = .center
+        
+        // Setup Image
+        button.setImage(UIImage(named: "SC-Define Location-30"), for: .normal)
+        button.imageEdgeInsets.left = 10
+        button.imageEdgeInsets.right = 10
+        button.tintColor = UIColor.secondary
+        
+        // Setup Text
+        button.setTitle("Detect my current location", for: .normal)
+        button.setTitleColor(UIColor.secondary, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
+        button.titleEdgeInsets.left = 20
+        
+        // Set Button Layer
+        button.layer.cornerRadius = 4.0
+        button.layer.borderWidth = 1.0
+        button.layer.borderColor = UIColor.secondary.cgColor
+        self.addSubview(button)
+        
+        button.snp.makeConstraints { make in
+            make.height.equalTo(38)
+            make.left.right.equalTo(self).inset(24)
+            make.top.equalTo(self).inset(14)
+            make.bottom.equalTo(self).inset(8)
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    class var id: String {
+        return "SearchLocationMyLocationCell"
     }
 }
 

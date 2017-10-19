@@ -15,7 +15,7 @@ protocol SearchHeaderDelegate {
     /**
     When collectManager is nil means that the value is loading
      */
-    func headerView(render collectionManager: SearchCollectionManager?)
+    func headerView(render cardManager: SearchCardManager)
 }
 
 /**
@@ -28,30 +28,21 @@ class SearchHeaderView: UIView {
     let locationButton = SearchLocationButton()
     let queryLabel = SearchQueryLabel()
     let filterButton = SearchFilterButton()
-    let tabCollection = SearchTabCollection()
     var heightConstraint: Constraint! = nil
     
-    var mainSearchQuery = SearchQuery()
-    
-    var collectionManagers = [SearchCollectionManager]()
-    var selectedTab = 0
+    var searchQuery = SearchQuery()
     
     init(controller: SearchController) {
         super.init(frame: CGRect())
         self.controller = controller
-        
-        self.tabCollection.delegate = self
-        self.tabCollection.dataSource = self
         
         self.backgroundColor = UIColor.white
         
         self.addSubview(locationButton)
         self.addSubview(queryLabel)
         self.addSubview(filterButton)
-        self.addSubview(tabCollection)
         
         registerActions()
-        registerCell()
         
         let statusView = UIView()
         statusView.backgroundColor = UIColor.white
@@ -72,11 +63,12 @@ class SearchHeaderView: UIView {
             make.bottom.equalTo(queryLabel.snp.top)
         }
         
+        // TODO Bottom for queryLabel and filterButton
         queryLabel.snp.makeConstraints { make in
             make.left.equalTo(self).inset(24)
             make.right.equalTo(filterButton.snp.left)
             make.height.equalTo(32)
-            make.bottom.equalTo(tabCollection.snp.top).inset(-3)
+            make.bottom.equalTo(self).inset(10)
         }
         
         filterButton.imageEdgeInsets.right = 24
@@ -84,14 +76,9 @@ class SearchHeaderView: UIView {
             make.right.equalTo(self)
             make.width.equalTo(45 + 24)
             make.height.equalTo(32)
-            make.bottom.equalTo(tabCollection.snp.top).inset(-3)
+            make.bottom.equalTo(self).inset(10)
         }
-        
-        tabCollection.snp.makeConstraints { make in
-            make.bottom.left.right.equalTo(self)
-            make.height.equalTo(50)
-        }
-        
+
         // Query once loaded
         self.onHeaderApply(action: .apply(SearchQuery()))
     }
@@ -117,9 +104,7 @@ class SearchLocationButton: UIButton {
         self.setTitleColor(UIColor.black, for: .normal)
         self.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.semibold)
         
-        self.setImage(UIImage(named: "icons8-Expand Arrow-20"), for: .normal)
         self.tintColor = UIColor.black
-        self.semanticContentAttribute = .forceRightToLeft
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -169,139 +154,6 @@ class SearchFilterButton: UIButton {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class SearchTabCollection: UICollectionView {
-    init(frame: CGRect = CGRect()) {
-        let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: 150, height: 50)
-        layout.minimumLineSpacing = 0
-        layout.minimumInteritemSpacing = 0
-        layout.sectionInset.left = 24
-        layout.scrollDirection = .horizontal
-        super.init(frame: frame, collectionViewLayout: layout)
-        
-        self.showsVerticalScrollIndicator = false
-        self.showsHorizontalScrollIndicator = false
-        self.backgroundColor = UIColor.white
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class SearchTabNameCell: UICollectionViewCell {
-    static let titleFont = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.semibold)
-    
-    let label = UILabel()
-    let indicator = UIView()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.label.font = SearchTabNameCell.titleFont
-        self.addSubview(label)
-        self.addSubview(indicator)
-        
-        label.snp.makeConstraints { make in
-            make.top.bottom.left.equalTo(self)
-            make.right.equalTo(self).inset(24)
-        }
-        
-        indicator.snp.makeConstraints { make in
-            make.left.bottom.equalTo(self)
-            make.right.equalTo(self).inset(24)
-            make.height.equalTo(2)
-        }
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func render(title: String, selected: Bool) {
-        self.label.text = title.uppercased()
-        if selected {
-            label.textColor = UIColor.black.withAlphaComponent(0.85)
-            indicator.backgroundColor = .primary300
-        } else {
-            label.textColor = UIColor.black.withAlphaComponent(0.35)
-            indicator.backgroundColor = .white
-        }
-    }
-    
-    class func width(title: String) -> CGSize {
-        let width = UILabel.textWidth(font: titleFont, text: title.uppercased())
-        return CGSize(width: width + 24, height: 50)
-    }
-}
-
-class SearchTabShimmerCell: UICollectionViewCell {
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        let label = ShimmerView()
-        label.shimmeringSpeed = 80
-        self.addSubview(label)
-        
-        label.snp.makeConstraints { make in
-            make.left.equalTo(self)
-            make.right.equalTo(self).inset(24)
-            
-            make.topMargin.bottomMargin.equalTo(self).inset(14)
-        }
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    class func width() -> CGSize {
-        return CGSize(width: 90, height: 50)
-    }
-}
-
-extension SearchHeaderView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    func registerCell() {
-        tabCollection.register(SearchTabShimmerCell.self, forCellWithReuseIdentifier: "SearchTabShimmerCell")
-        tabCollection.register(SearchTabNameCell.self, forCellWithReuseIdentifier: "SearchTabNameCell")
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if (collectionManagers.isEmpty) {
-            return 5
-        } else {
-            return collectionManagers.count
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if (collectionManagers.isEmpty) {
-            return SearchTabShimmerCell.width()
-        } else {
-            let title = collectionManagers[indexPath.row].name
-            return SearchTabNameCell.width(title: title)
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if (collectionManagers.isEmpty) {
-            return collectionView.dequeueReusableCell(withReuseIdentifier: "SearchTabShimmerCell", for: indexPath)
-        } else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchTabNameCell", for: indexPath) as! SearchTabNameCell
-            let title = collectionManagers[indexPath.row].name
-            cell.render(title: title, selected: selectedTab == indexPath.row)
-            return cell
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if (!collectionManagers.isEmpty) {
-            self.selectedTab = indexPath.row
-            collectionView.reloadData()
-            self.controller.headerView(render: collectionManagers[indexPath.row])
-        }
     }
 }
 
@@ -357,16 +209,13 @@ enum SearchHeaderAction {
 // Render search query functions
 extension SearchHeaderView {
     func registerActions() {
-        locationButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
         queryLabel.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
         filterButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
     }
     
     @objc func onHeaderAction(for view: UIView) {
-        if view is SearchLocationButton {
-            // TODO Pass SearchQuery On
-            controller.performSegue(withIdentifier: "SearchHeaderView_location", sender: self)
-        } else if view is SearchQueryLabel {
+        // TODO Pass SearchQuery On
+        if view is SearchQueryLabel {
             controller.performSegue(withIdentifier: "SearchHeaderView_query", sender: self)
         } else if view is SearchFilterButton {
             controller.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
@@ -405,30 +254,11 @@ extension SearchHeaderView {
     }
     
     private func search(searchQuery: SearchQuery) {
-        // Change to shimmer view
-        self.collectionManagers = []
-        self.selectedTab = 0
-        self.tabCollection.reloadData()
-        self.controller.headerView(render: nil)
+        self.searchQuery = searchQuery
         
-        // Render update header view
+        // Render to headerView & searchController
         self.render(searchQuery: searchQuery)
-        
-        // Save reference & do search
-        self.mainSearchQuery = searchQuery
-        MunchApi.search.collections(query: self.mainSearchQuery) { meta, collections in
-            if (meta.isOk()) {
-                self.collectionManagers = collections.map { SearchCollectionManager(collection: $0) }
-                if !MunchLocation.isEnabled {
-                    self.collectionManagers.get(0)?.topCards.append(SearchStaticNoLocationCard.card)
-                }
-                
-                self.tabCollection.reloadData()
-                self.controller.headerView(render: self.collectionManagers.get(0))
-            } else {
-                self.controller.present(meta.createAlert(), animated: true)
-            }
-        }
+        self.controller.headerView(render: SearchCardManager(search: searchQuery))
     }
     
     private func render(searchQuery: SearchQuery) {
@@ -448,9 +278,7 @@ class HeaderViewSegue: UIStoryboardSegue {
     override func perform() {
         super.perform()
         let headerView = (source as! SearchController).headerView!
-        if let location = destination as? SearchLocationController {
-            location.headerView = headerView
-        } else if let navigation = destination as? UINavigationController {
+        if let navigation = destination as? UINavigationController {
             if let query = navigation.topViewController as? SearchQueryController {
                 query.headerView = headerView
             } else if let filter = navigation.topViewController as? SearchFilterController {

@@ -8,8 +8,7 @@
 
 import Foundation
 
-class SearchCollectionManager {
-    let name: String
+class SearchCardManager {
     var query: SearchQuery?
     
     var topCards: [SearchCard]
@@ -38,12 +37,23 @@ class SearchCollectionManager {
         return topCards + cardsList.reduce([], +) + [SearchStaticLoadingCard.card]
     }
     
-    convenience init(collection: SearchCollection, topCards: [SearchCard] = []) {
-        self.init(name: collection.name, query: collection.query, cards: collection.cards, topCards: topCards)
+    convenience init(search query: SearchQuery) {
+        let shimmerCard = SearchShimmerPlaceCard.card
+        self.init(query: query, cards: [], topCards: [shimmerCard, shimmerCard, shimmerCard])
+        
+        MunchApi.search.search(query: query) { (meta, cards) in
+            if (meta.isOk()) {
+                if !MunchLocation.isEnabled {
+                    self.topCards = [SearchStaticNoLocationCard.card]
+                }
+                // TODO Render in header
+            } else {
+                // TODO Error Card
+            }
+        }
     }
     
-    init(name: String, query: SearchQuery?, cards: [SearchCard], topCards: [SearchCard] = []) {
-        self.name = name
+    init(query: SearchQuery?, cards: [SearchCard], topCards: [SearchCard] = []) {
         self.query = query
         
         self.topCards = topCards
@@ -60,7 +70,7 @@ class SearchCollectionManager {
         }
     }
     
-    func append(content cards: [SearchCard]) {
+    private func append(content cards: [SearchCard]) {
         let existings = cardsList.reduce([], +)
         let filtered = cards.filter { !existings.contains($0) }
         self.cardsList.append(filtered)
@@ -70,7 +80,7 @@ class SearchCollectionManager {
         if (query == nil || self.loadingAppend) { return }
         self.loadingAppend = true
         
-        MunchApi.search.collectionsSearch(query: query!) { meta, cards in
+        MunchApi.search.search(query: query!) { meta, cards in
             if (meta.isOk()) {
                 // Update cards
                 self.append(content: cards)

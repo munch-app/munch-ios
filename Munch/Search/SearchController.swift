@@ -13,14 +13,14 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     @IBOutlet weak var cardTableView: UITableView!
     var headerView: SearchHeaderView!
     
-    var collectionManager: SearchCollectionManager?
+    var cardManager: SearchCardManager?
     
     var cards: [SearchCard] {
-        if let manager = collectionManager {
+        if let manager = cardManager {
             return manager.cards
         }
-        let searchCard = SearchCard(cardId: SearchShimmerPlaceCard.cardId)
-        return [searchCard, searchCard, searchCard]
+        let shimmerCard = SearchShimmerPlaceCard.card
+        return [shimmerCard, shimmerCard, shimmerCard]
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -72,8 +72,8 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     /**
      If collectionManager is nil means show shimmer cards?
      */
-    func headerView(render collectionManager: SearchCollectionManager?) {
-        self.collectionManager = collectionManager
+    func headerView(render cardManager: SearchCardManager) {
+        self.cardManager = cardManager
         self.cardTableView.reloadData()
         self.scrollToTop()
     }
@@ -149,11 +149,11 @@ extension SearchController {
     }
     
     func appendLoad() {
-        if let manager = self.collectionManager {
+        if let manager = self.cardManager {
             manager.append(load: { meta in
                 if (meta.isOk()) {
                     // Check reference is still the same
-                    if (manager === self.collectionManager) {
+                    if (manager === self.cardManager) {
                         self.cardTableView.reloadData()
                     }
                 } else {

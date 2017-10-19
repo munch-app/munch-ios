@@ -305,6 +305,7 @@ struct Article {
     
     var brand: String?
     var url: String?
+    var thumbnail: [String:String]?
     
     var title: String?
     var description: String?
@@ -315,6 +316,7 @@ struct Article {
         
         self.brand = json["brand"].string
         self.url = json["url"].string
+        self.thumbnail = json["thumbnail"].dictionaryObject as? [String: String]
         
         self.title = json["title"].string
         self.description = json["description"].string

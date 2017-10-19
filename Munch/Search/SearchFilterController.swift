@@ -26,7 +26,7 @@ class SearchFilterController: UIViewController, UITableViewDataSource, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.applyView = SearchFilterApplyView(controller: self, searchQuery: headerView.mainSearchQuery)
+        self.applyView = SearchFilterApplyView(controller: self, searchQuery: headerView.searchQuery)
         self.view.addSubview(applyView)
         applyView.snp.makeConstraints { (make) in
             make.left.right.bottom.equalTo(self.view)

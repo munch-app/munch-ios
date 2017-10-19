@@ -125,7 +125,7 @@ class PlaceVendorArticleGridCard: PlaceCardView {
             self.controller = controller
             
             if let article = article {
-                articleImageView.render(imageMeta: article.thumbnail)
+                articleImageView.render(images: article.thumbnail)
                 articleTitleLabel.text = article.title
             } else {
                 self.isHidden = true

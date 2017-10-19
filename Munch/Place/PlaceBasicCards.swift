@@ -38,10 +38,7 @@ class PlaceBasicImageBannerCard: PlaceCardView {
             make.right.equalTo(self)
         }
         
-        let imageMeta = card["images"][0]["imageMeta"]
-        if (imageMeta.exists()) {
-            imageBannerView.render(imageMeta: ImageMeta(json: imageMeta))
-        }
+        imageBannerView.render(images: card["images"][0]["images"])
     }
     
     override class var cardId: String? {
