@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import SafariServices
+import Cosmos
 
 class PlaceVendorArticleGridCard: PlaceCardView {
     let titleLabel = UILabel()
@@ -142,7 +143,81 @@ class PlaceVendorArticleGridCard: PlaceCardView {
     }
 }
 
-class PlaceVendorFacebookReviewCard: PlaceCardView {
+class PlaceHeaderReviewCard: PlaceCardView {
+    let titleLabel = UILabel()
+    
+    override func didLoad(card: PlaceCard) {
+        self.addSubview(titleLabel)
+        titleLabel.text = "Reviews"
+        titleLabel.font = UIFont.systemFont(ofSize: 18.0, weight: UIFont.Weight.medium)
+        titleLabel.snp.makeConstraints { (make) in
+            make.left.right.equalTo(self).inset(leftRight)
+            make.top.bottom.equalTo(self).inset(topBottom)
+        }
+    }
+    
+    override class var cardId: String? {
+        return "header_Review_20171020"
+    }
+}
+
+class PlaceVendorFacebookReviewCard: PlaceCardView, SFSafariViewControllerDelegate {
+    let titleLabel = UILabel()
+    let ratingView = CosmosView()
+    let countLabel = UILabel()
+    
+    var facebookReviewUrl: URL?
+    
+    override func didLoad(card: PlaceCard) {
+        self.addSubview(titleLabel)
+        self.addSubview(ratingView)
+        self.addSubview(countLabel)
+        
+        titleLabel.text = "Facebook"
+        titleLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.regular)
+        titleLabel.snp.makeConstraints { (make) in
+            make.left.equalTo(self).inset(leftRight)
+            make.top.equalTo(self)
+        }
+        
+        ratingView.rating = card["overallStarRating"].double ?? 5
+        ratingView.settings.filledColor = UIColor.init(hex: "#3B5998")
+        ratingView.settings.filledBorderColor = UIColor.init(hex: "#3B5998")
+        ratingView.settings.emptyBorderColor = UIColor.clear
+        ratingView.settings.emptyBorderColor = UIColor.init(hex: "#3B5998")
+        ratingView.settings.starSize = 18
+        ratingView.settings.starMargin = 0
+        ratingView.snp.makeConstraints { (make) in
+            make.right.equalTo(self).inset(leftRight)
+            make.top.equalTo(self)
+        }
+        
+        countLabel.text = "Based on \(card["ratingCount"].int ?? 0) reviews"
+        countLabel.font = UIFont.systemFont(ofSize: 11.0, weight: UIFont.Weight.regular)
+        countLabel.textAlignment = .center
+        countLabel.snp.makeConstraints { (make) in
+            make.left.right.equalToSuperview().inset(leftRight)
+            make.top.equalTo(ratingView.snp.bottom).inset(-5)
+            make.bottom.equalToSuperview().inset(topBottom)
+        }
+        
+        if let facebookPlaceId = card["placeId"].string {
+            self.facebookReviewUrl = URL.init(string: "https://www.facebook.com/\(facebookPlaceId)/reviews")
+        }
+    
+        let tap = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
+        self.addGestureRecognizer(tap)
+        self.isUserInteractionEnabled = true
+    }
+    
+    @objc func handleTap(_ sender: UITapGestureRecognizer) {
+        if let url = facebookReviewUrl {
+            let safari = SFSafariViewController(url: url)
+            safari.delegate = self
+            controller.present(safari, animated: true, completion: nil)
+        }
+    }
+    
     override class var cardId: String? {
         return "vendor_FacebookReview_20171017"
     }

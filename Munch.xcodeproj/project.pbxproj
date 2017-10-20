@@ -42,6 +42,7 @@
 		03E1A5A81F6D4FA4005A6E58 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1A5A71F6D4FA4005A6E58 /* TabBarController.swift */; };
 		03E1A5AA1F6D7BAB005A6E58 /* Shimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1A5A91F6D7BAB005A6E58 /* Shimmer.swift */; };
 		03E1A5AC1F6E7B58005A6E58 /* SearchCardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1A5AB1F6E7B58005A6E58 /* SearchCardManager.swift */; };
+		03F0BA5F1F99D6C30040B9C8 /* SearchInjectedCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0BA5E1F99D6C30040B9C8 /* SearchInjectedCards.swift */; };
 		12855D04BD7B4359954CC379 /* Pods_MunchTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30933A940AE4DF2E7F80A839 /* Pods_MunchTests.framework */; };
 		DB136C8B43E175A72028D87F /* Pods_MunchUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2CE8E9F738C2A64071DD8B3 /* Pods_MunchUITests.framework */; };
 		FFCBE8C721F3D06666C1DA69 /* Pods_Munch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE98581AD7B5040948A2CD79 /* Pods_Munch.framework */; };
@@ -128,6 +129,7 @@
 		03E1A5A91F6D7BAB005A6E58 /* Shimmer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Shimmer.swift; sourceTree = "<group>"; };
 		03E1A5AB1F6E7B58005A6E58 /* SearchCardManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchCardManager.swift; path = Search/SearchCardManager.swift; sourceTree = "<group>"; };
 		03EE235D1E83039A009AFBFC /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		03F0BA5E1F99D6C30040B9C8 /* SearchInjectedCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SearchInjectedCards.swift; path = Search/SearchInjectedCards.swift; sourceTree = "<group>"; };
 		19CC2B7B7A468F7A24511641 /* Pods-Munch.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Munch.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Munch/Pods-Munch.debug.xcconfig"; sourceTree = "<group>"; };
 		30933A940AE4DF2E7F80A839 /* Pods_MunchTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MunchTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		79CEEE458C385CB72EED1E4B /* Pods-Munch.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Munch.release.xcconfig"; path = "Pods/Target Support Files/Pods-Munch/Pods-Munch.release.xcconfig"; sourceTree = "<group>"; };
@@ -289,6 +291,7 @@
 				03B65F1B1F6C4A8C0030D12B /* SearchHeaderView.swift */,
 				03E1A5AB1F6E7B58005A6E58 /* SearchCardManager.swift */,
 				034FCF041F6C282E00D353F1 /* SearchBasicCards.swift */,
+				03F0BA5E1F99D6C30040B9C8 /* SearchInjectedCards.swift */,
 				034FCF061F6C282E00D353F1 /* SearchStaticCards.swift */,
 				03BB67F51F6FA9B500F17A1A /* SearchQueryController.swift */,
 				03BB67F71F6FA9C400F17A1A /* SearchFilterController.swift */,
@@ -573,6 +576,7 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Munch/Pods-Munch-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/Cosmos/Cosmos.framework",
 				"${BUILT_PRODUCTS_DIR}/ESTabBarController-swift/ESTabBarController_swift.framework",
 				"${BUILT_PRODUCTS_DIR}/Hero/Hero.framework",
 				"${BUILT_PRODUCTS_DIR}/KMNavigationBarTransition/KMNavigationBarTransition.framework",
@@ -591,6 +595,7 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cosmos.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ESTabBarController_swift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Hero.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KMNavigationBarTransition.framework",
@@ -681,6 +686,7 @@
 				03CD277E1F62BDEA003562A1 /* PlaceVendorCards.swift in Sources */,
 				034FCF0B1F6C282E00D353F1 /* SearchController.swift in Sources */,
 				03CD27741F62BD5C003562A1 /* PlaceStaticCards.swift in Sources */,
+				03F0BA5F1F99D6C30040B9C8 /* SearchInjectedCards.swift in Sources */,
 				03CD276D1F6286FC003562A1 /* PlaceBasicCards.swift in Sources */,
 				034FCF0A1F6C282E00D353F1 /* SearchBasicCards.swift in Sources */,
 				03BB67F61F6FA9B500F17A1A /* SearchQueryController.swift in Sources */,

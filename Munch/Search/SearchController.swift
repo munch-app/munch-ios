@@ -97,8 +97,7 @@ extension SearchController {
         
         // Register Search Cards
         register(SearchPlaceCard.self)
-        // Should not be static
-        register(SearchStaticNoLocationCard.self)
+        register(SearchNoLocationCard.self)
     }
 
     private func register(_ cellClass: SearchCardView.Type) {
