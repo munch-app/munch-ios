@@ -77,8 +77,8 @@ struct Tag: SearchResult {
  This is a input and output data
  */
 struct SearchQuery: Equatable {
-    var from: Int?
-    var size: Int?
+    var from: Int? = 0
+    var size: Int? = 20
     
     var query: String?
     var latLng: String?

@@ -11,11 +11,7 @@ import UIKit
 import SnapKit
 
 protocol SearchHeaderDelegate {
-    
-    /**
-    When collectManager is nil means that the value is loading
-     */
-    func headerView(render cardManager: SearchCardManager)
+    func headerView(render query: SearchQuery)
 }
 
 /**
@@ -159,8 +155,8 @@ class SearchFilterButton: UIButton {
 
 // Scroll operations
 extension SearchHeaderView {
-    var maxHeight: CGFloat { return 153 }
-    var minHeight: CGFloat { return 70 }
+    var maxHeight: CGFloat { return 108 }
+    var minHeight: CGFloat { return 75 }
     var centerHeight: CGFloat { return (maxHeight - minHeight)/2 + minHeight }
     
     func contentDidScroll(scrollView: UIScrollView) {
@@ -258,7 +254,7 @@ extension SearchHeaderView {
         
         // Render to headerView & searchController
         self.render(searchQuery: searchQuery)
-        self.controller.headerView(render: SearchCardManager(search: searchQuery))
+        self.controller.headerView(render: searchQuery)
     }
     
     private func render(searchQuery: SearchQuery) {

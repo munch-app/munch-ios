@@ -23,6 +23,7 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         containerView.addSubview(bottomView)
         self.addSubview(containerView)
         
+        topImageView.layer.cornerRadius = 2
         topImageView.snp.makeConstraints { make in
             make.left.right.top.equalTo(containerView)
             make.bottom.equalTo(bottomView.snp.top)
@@ -53,7 +54,7 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
     }
     
     static var cardId: String {
-        return "basic_Place_16092017"
+        return "basic_Place_20171018"
     }
     
     class BottomView: UIView {
@@ -105,23 +106,23 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         }
         
         private func render(tag card: SearchCard) {
+            let tags = card["tags"].flatMap({ $0.1.string?.capitalized })
             let line = NSMutableAttributedString()
             
-            // Establishment
-            if let establishment = card["establishment"].string {
-                line.append(string: establishment, style: Style.default {
+            // First tag
+            if let firstTag = tags.get(0) {
+                line.append(string: firstTag, style: Style.default {
                     $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.semibold))
                 })
             }
             
-            let tags = card["tags"].flatMap { $0.1.string }
-            if !tags.isEmpty {
+            let filteredTags = tags[1..<(tags.count < 3 ? tags.count : 3)]
+            if !filteredTags.isEmpty {
                 line.append(string: " • ", style: Style.default {
                     $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.ultraLight))
                 })
                 
-                let text = tags[0..<(tags.count < 2 ? tags.count : 2)].joined(separator: ", ")
-                line.append(string: text, style: Style.default {
+                line.append(string: filteredTags.joined(separator: ", "), style: Style.default {
                     $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular))
                 })
             }

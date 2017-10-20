@@ -7,59 +7,35 @@
 //
 
 import Foundation
+import UIKit
 
 class SearchCardManager {
     var query: SearchQuery?
     
-    var topCards: [SearchCard]
-    private var cardsList = [[SearchCard]]()
-    
+    private(set) var cards: [SearchCard]
     private var loadingAppend = false
     
-    var cards: [SearchCard] {
-        // No Content Loaded Already
-        if (cardsList.isEmpty) {
-            return topCards + [SearchStaticLoadingCard.card]
-        }
-        
-        // Last Card Contain No Result
-        if (cardsList.last!.isEmpty) {
-            // No Result returned by all card in list
-            if (!cardsList.contains(where: { !$0.isEmpty })) {
-                return topCards + [SearchStaticNoResultCard.card]
-            }
-            
-            // No More Results
-            return topCards + cardsList.reduce([], +)
-        }
-        
-        // Else still might contain results
-        return topCards + cardsList.reduce([], +) + [SearchStaticLoadingCard.card]
-    }
-    
-    convenience init(search query: SearchQuery) {
+    convenience init(search query: SearchQuery, completion: @escaping (_ meta: MetaJSON) -> Void) {
         let shimmerCard = SearchShimmerPlaceCard.card
-        self.init(query: query, cards: [], topCards: [shimmerCard, shimmerCard, shimmerCard])
+        self.init(query: query, cards: [shimmerCard, shimmerCard, shimmerCard])
         
         MunchApi.search.search(query: query) { (meta, cards) in
             if (meta.isOk()) {
-                if !MunchLocation.isEnabled {
-                    self.topCards = [SearchStaticNoLocationCard.card]
+                if (cards.isEmpty) {
+                    self.cards = [SearchStaticNoResultCard.card]
+                } else {
+                    self.cards = cards + [SearchStaticLoadingCard.card]
                 }
-                // TODO Render in header
             } else {
-                // TODO Error Card
+                // TODO Error Card??
             }
+            completion(meta)
         }
     }
     
-    init(query: SearchQuery?, cards: [SearchCard], topCards: [SearchCard] = []) {
+    init(query: SearchQuery?, cards: [SearchCard]) {
         self.query = query
-        
-        self.topCards = topCards
-        if !cards.isEmpty {
-            self.cardsList.append(cards)
-        }
+        self.cards = cards
         
         if (self.query != nil) {
             // Query default size is 20
@@ -70,10 +46,9 @@ class SearchCardManager {
         }
     }
     
-    private func append(content cards: [SearchCard]) {
-        let existings = cardsList.reduce([], +)
-        let filtered = cards.filter { !existings.contains($0) }
-        self.cardsList.append(filtered)
+    private func append(contents cards: [SearchCard]) {
+        let filtered = cards.filter { !cards.contains($0) }
+        self.cards.append(contentsOf: filtered)
     }
     
     func append(load completion: @escaping (_ meta: MetaJSON) -> Void) {
@@ -83,14 +58,41 @@ class SearchCardManager {
         MunchApi.search.search(query: query!) { meta, cards in
             if (meta.isOk()) {
                 // Update cards
-                self.append(content: cards)
-                self.query!.from = self.query!.from! + self.query!.size!
+                self.cards.removeLast()
+                if (!cards.isEmpty) {
+                    self.append(contents: cards)
+                    self.cards.append(SearchStaticLoadingCard.card)
+                }
                 
-                // Set false to false
                 self.loadingAppend = false
+                self.query!.from = self.query!.from! + self.query!.size!
+            } else {
+                // TODO Error Card??
             }
-            
             completion(meta)
         }
+    }
+}
+
+protocol SearchCardView {
+    func render(card: SearchCard)
+    
+    var leftRight: CGFloat { get }
+    var topBottom: CGFloat { get }
+    
+    static var cardId: String { get }
+}
+
+extension SearchCardView {
+    var leftRight: CGFloat {
+        return 24.0
+    }
+    
+    var topBottom: CGFloat {
+        return 16.0
+    }
+    
+    static var card: SearchCard {
+        return SearchCard(cardId: cardId)
     }
 }

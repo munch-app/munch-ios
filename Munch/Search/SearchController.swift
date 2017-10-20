@@ -72,14 +72,16 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     /**
      If collectionManager is nil means show shimmer cards?
      */
-    func headerView(render cardManager: SearchCardManager) {
-        self.cardManager = cardManager
+    func headerView(render query: SearchQuery) {
+        self.cardManager = SearchCardManager.init(search: query, completion: { (meta) in
+            self.cardTableView.reloadData()
+        })
         self.cardTableView.reloadData()
         self.scrollToTop()
     }
     
-    @IBAction func unwindToSearch(segue:UIStoryboardSegue) { }
-
+    @IBAction func unwindToSearch(segue: UIStoryboardSegue) { }
+    
 }
 
 // CardType and tools
@@ -88,6 +90,7 @@ extension SearchController {
         // Register Static Cards
         register(SearchStaticEmptyCard.self)
         register(SearchStaticNoResultCard.self)
+        // Should be non static
         register(SearchStaticNoLocationCard.self)
         register(SearchStaticLoadingCard.self)
         
@@ -186,28 +189,5 @@ extension SearchController {
             let point = CGPoint(x: 0, y: y)
             cardTableView.setContentOffset(point, animated: true)
         }
-    }
-}
-
-protocol SearchCardView {
-    func render(card: SearchCard)
-    
-    var leftRight: CGFloat { get }
-    var topBottom: CGFloat { get }
-    
-    static var cardId: String { get }
-}
-
-extension SearchCardView {
-    var leftRight: CGFloat {
-        return 24.0
-    }
-    
-    var topBottom: CGFloat {
-        return 16.0
-    }
-    
-    static var card: SearchCard {
-        return SearchCard(cardId: cardId)
     }
 }
