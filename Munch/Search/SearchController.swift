@@ -90,8 +90,6 @@ extension SearchController {
         // Register Static Cards
         register(SearchStaticEmptyCard.self)
         register(SearchStaticNoResultCard.self)
-        // Should be non static
-        register(SearchStaticNoLocationCard.self)
         register(SearchStaticLoadingCard.self)
         
         // Register Shimmer Cards
@@ -99,6 +97,8 @@ extension SearchController {
         
         // Register Search Cards
         register(SearchPlaceCard.self)
+        // Should not be static
+        register(SearchStaticNoLocationCard.self)
     }
 
     private func register(_ cellClass: SearchCardView.Type) {

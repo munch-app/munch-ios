@@ -189,7 +189,8 @@ class SearchStaticLoadingCard: UITableViewCell, SearchCardView {
         
         indicator.snp.makeConstraints { make in
             make.height.equalTo(50)
-            make.edges.equalTo(self)
+            make.left.right.top.equalTo(self)
+            make.bottom.equalTo(self).inset(10)
         }
     }
     

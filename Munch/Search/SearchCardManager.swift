@@ -25,6 +25,7 @@ class SearchCardManager {
                     self.cards = [SearchStaticNoResultCard.card]
                 } else {
                     self.cards = cards + [SearchStaticLoadingCard.card]
+                    self.query!.from = self.query!.from! + self.query!.size!
                 }
             } else {
                 // TODO Error Card??
@@ -47,7 +48,7 @@ class SearchCardManager {
     }
     
     private func append(contents cards: [SearchCard]) {
-        let filtered = cards.filter { !cards.contains($0) }
+        let filtered = cards.filter { !self.cards.contains($0) }
         self.cards.append(contentsOf: filtered)
     }
     
