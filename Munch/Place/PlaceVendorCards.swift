@@ -141,3 +141,9 @@ class PlaceVendorArticleGridCard: PlaceCardView {
         }
     }
 }
+
+class PlaceVendorFacebookReviewCard: PlaceCardView {
+    override class var cardId: String? {
+        return "vendor_FacebookReview_20171017"
+    }
+}

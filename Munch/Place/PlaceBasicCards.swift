@@ -42,7 +42,7 @@ class PlaceBasicImageBannerCard: PlaceCardView {
     }
     
     override class var cardId: String? {
-        return "basic_ImageBanner_15092017"
+        return "basic_ImageBanner_20170915"
     }
 }
 
@@ -77,7 +77,7 @@ class PlaceBasicNameTagCard: PlaceCardView {
     }
     
     override class var cardId: String? {
-        return "basic_NameTag_12092017"
+        return "basic_NameTag_20170912"
     }
 }
 
@@ -146,7 +146,7 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
     }
     
     override class var cardId: String? {
-        return "basic_BusinessHour_07092017"
+        return "basic_BusinessHour_20170907"
     }
     
     class DayView: UIView {
@@ -331,7 +331,7 @@ class PlaceBasicAddressCard: PlaceCardView {
     }
     
     override class var cardId: String? {
-        return "basic_Address_24092017"
+        return "basic_Address_20170924"
     }
 }
 
@@ -402,6 +402,6 @@ class PlaceBasicLocationCard: PlaceCardView {
     }
     
     override class var cardId: String? {
-        return "basic_Location_24092017"
+        return "basic_Location_20170924"
     }
 }
