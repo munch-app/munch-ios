@@ -19,7 +19,7 @@ enum InitialViewProvider {
      Main tab controllers for Munch App
      */
     static func main() -> TabBarController {
-        let controllers = [searchController()]
+        let controllers = [searchController(), profileController()]
         return TabBarController(controllers: controllers)
     }
     
@@ -31,7 +31,10 @@ enum InitialViewProvider {
     }
     
     static func profileController() -> UIViewController {
-        
+        let profileStoryboard = UIStoryboard(name: "Profile", bundle: nil)
+        let profileController = profileStoryboard.instantiateInitialViewController()!
+        profileController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), image: UIImage(named: "icons8-customer-35"))
+        return profileController
     }
 }
 

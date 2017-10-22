@@ -209,7 +209,7 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
             self.hours = hours
             
             var dayHours = [String: String]()
-            for hour in hours.sorted(by: { $0.open > $1.open } ) {
+            for hour in hours.sorted(by: { $0.open < $1.open } ) {
                 if let timeText = dayHours[hour.day] {
                     dayHours[hour.day] = timeText + ", " + hour.timeText()
                 } else {
