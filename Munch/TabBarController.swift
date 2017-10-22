@@ -26,8 +26,12 @@ enum InitialViewProvider {
     static func searchController() -> UIViewController {
         let searchStoryboard = UIStoryboard(name: "Search", bundle: nil)
         let searchController = searchStoryboard.instantiateInitialViewController()!
-        searchController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "SEARCH", image: UIImage(named: "icons8-Search-35"))
+        searchController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), image: UIImage(named: "icons8-Search-35"))
         return searchController
+    }
+    
+    static func profileController() -> UIViewController {
+        
     }
 }
 
@@ -41,9 +45,17 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
         tabBar.shadowImage = UIImage()
         tabBar.backgroundImage = UIImage()
         tabBar.hairlineShadow(height: -1.0)
+        tabBar.frame = tabBar.frame.offsetBy(dx: 0, dy: -10)
         
         self.delegate = self
         self.viewControllers = controllers
+    }
+    
+    override func viewWillLayoutSubviews() {
+        var tabFrame = self.tabBar.frame
+        tabFrame.size.height = 44
+        tabFrame.origin.y = self.view.frame.size.height - 44
+        self.tabBar.frame = tabFrame
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -69,15 +81,15 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
 class MunchTabBarContentView: ESTabBarItemContentView {
     override init(frame: CGRect) {
         super.init(frame: frame)
-        titleLabel.font = UIFont.systemFont(ofSize: 9, weight: UIFont.Weight.semibold)
+        titleLabel.font = UIFont.systemFont(ofSize: 9, weight: UIFont.Weight.regular)
         insets.bottom = 3
         insets.top = 3
         
         iconColor = UIColor.black.withAlphaComponent(0.75)
         textColor = UIColor.black.withAlphaComponent(0.75)
         
-        highlightIconColor = UIColor.primary
-        highlightTextColor = UIColor.primary
+        highlightIconColor = UIColor.black
+        highlightTextColor = UIColor.black
     }
     
     required init?(coder aDecoder: NSCoder) {

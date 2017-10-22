@@ -11,6 +11,9 @@ target 'Munch' do
   pod 'Kingfisher', '~> 4.1'
   pod 'SnapKit', '~> 4.0'
   pod 'SwiftRichString', '~> 1.0'
+  
+  # Authentication Library
+  pod 'AWSCognito', '~> 2.6'
 
   # Transition Library
   pod 'KMNavigationBarTransition', :git => 'https://github.com/Fuxingloh/KMNavigationBarTransition'

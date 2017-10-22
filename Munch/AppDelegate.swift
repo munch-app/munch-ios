@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         
         // Select initial view provider to use
-        self.window?.rootViewController = InitialViewProvider.searchController()
+        self.window?.rootViewController = InitialViewProvider.main()
         self.window?.makeKeyAndVisible()
         return true
     }
