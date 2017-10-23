@@ -16,7 +16,7 @@
 		032F89111E82DFA300AD3818 /* MunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F89101E82DFA300AD3818 /* MunchTests.swift */; };
 		032F891C1E82DFA300AD3818 /* MunchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F891B1E82DFA300AD3818 /* MunchUITests.swift */; };
 		033E62F81F1D381F00AE97FA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 033E62F71F1D381F00AE97FA /* Main.storyboard */; };
-		0348472A1F9D20C30049BDF7 /* Profile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 034847291F9D20C30049BDF7 /* Profile.storyboard */; };
+		0348472A1F9D20C30049BDF7 /* Account.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 034847291F9D20C30049BDF7 /* Account.storyboard */; };
 		034FCEFD1F6C24D000D353F1 /* VersionClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCEFC1F6C24D000D353F1 /* VersionClient.swift */; };
 		034FCF091F6C282E00D353F1 /* Search.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 034FCF031F6C282E00D353F1 /* Search.storyboard */; };
 		034FCF0A1F6C282E00D353F1 /* SearchBasicCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCF041F6C282E00D353F1 /* SearchBasicCards.swift */; };
@@ -35,6 +35,7 @@
 		03CD27741F62BD5C003562A1 /* PlaceStaticCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD27731F62BD5C003562A1 /* PlaceStaticCards.swift */; };
 		03CD277E1F62BDEA003562A1 /* PlaceVendorCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD277D1F62BDEA003562A1 /* PlaceVendorCards.swift */; };
 		03CF0AA41E97AA3C00A3FD1F /* MunchApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CF0AA11E97AA3C00A3FD1F /* MunchApi.swift */; };
+		03D2335C1F9D3851000F5F05 /* AccountController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2335B1F9D3851000F5F05 /* AccountController.swift */; };
 		03D3FEE21E8947D200ACFF50 /* MunchClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FEE01E8947D200ACFF50 /* MunchClientTests.swift */; };
 		03D3FEE41E89494300ACFF50 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89301E82EF8B00AD3818 /* Alamofire.framework */; };
 		03D3FEE51E89494600ACFF50 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89331E82F14A00AD3818 /* SwiftyJSON.framework */; };
@@ -90,7 +91,7 @@
 		033E62F71F1D381F00AE97FA /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		034820551E9CB3C400B0076A /* ImageViewer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageViewer.framework; path = Carthage/Build/iOS/ImageViewer.framework; sourceTree = "<group>"; };
 		034820571E9CB92A00B0076A /* SKPhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SKPhotoBrowser.framework; path = Carthage/Build/iOS/SKPhotoBrowser.framework; sourceTree = "<group>"; };
-		034847291F9D20C30049BDF7 /* Profile.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Profile.storyboard; sourceTree = "<group>"; };
+		034847291F9D20C30049BDF7 /* Account.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Account.storyboard; sourceTree = "<group>"; };
 		034FCEFC1F6C24D000D353F1 /* VersionClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VersionClient.swift; sourceTree = "<group>"; };
 		034FCF031F6C282E00D353F1 /* Search.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Search.storyboard; sourceTree = "<group>"; };
 		034FCF041F6C282E00D353F1 /* SearchBasicCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchBasicCards.swift; sourceTree = "<group>"; };
@@ -118,6 +119,7 @@
 		03CD277D1F62BDEA003562A1 /* PlaceVendorCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceVendorCards.swift; sourceTree = "<group>"; };
 		03CF0A9B1E96A7B100A3FD1F /* ESTabBarController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ESTabBarController.framework; path = Carthage/Build/iOS/ESTabBarController.framework; sourceTree = "<group>"; };
 		03CF0AA11E97AA3C00A3FD1F /* MunchApi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchApi.swift; sourceTree = "<group>"; };
+		03D2335B1F9D3851000F5F05 /* AccountController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountController.swift; sourceTree = "<group>"; };
 		03D3FEE01E8947D200ACFF50 /* MunchClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchClientTests.swift; sourceTree = "<group>"; };
 		03D3FEE61E89589B00ACFF50 /* HandyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HandyJSON.framework; path = Carthage/Build/iOS/HandyJSON.framework; sourceTree = "<group>"; };
 		03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftLocation.framework; path = Carthage/Build/iOS/SwiftLocation.framework; sourceTree = "<group>"; };
@@ -206,7 +208,7 @@
 				033E62F71F1D381F00AE97FA /* Main.storyboard */,
 				0348472E1F9D21A30049BDF7 /* Search */,
 				0348472C1F9D21520049BDF7 /* Place */,
-				034847271F9D20810049BDF7 /* Profile */,
+				034847271F9D20810049BDF7 /* Account */,
 				032F89021E82DFA300AD3818 /* Assets.xcassets */,
 				032F89041E82DFA300AD3818 /* LaunchScreen.storyboard */,
 				032F89071E82DFA300AD3818 /* Info.plist */,
@@ -274,12 +276,13 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		034847271F9D20810049BDF7 /* Profile */ = {
+		034847271F9D20810049BDF7 /* Account */ = {
 			isa = PBXGroup;
 			children = (
-				034847291F9D20C30049BDF7 /* Profile.storyboard */,
+				034847291F9D20C30049BDF7 /* Account.storyboard */,
+				03D2335B1F9D3851000F5F05 /* AccountController.swift */,
 			);
-			path = Profile;
+			path = Account;
 			sourceTree = "<group>";
 		};
 		0348472C1F9D21520049BDF7 /* Place */ = {
@@ -461,7 +464,7 @@
 				032F89031E82DFA300AD3818 /* Assets.xcassets in Resources */,
 				033E62F81F1D381F00AE97FA /* Main.storyboard in Resources */,
 				034FCF091F6C282E00D353F1 /* Search.storyboard in Resources */,
-				0348472A1F9D20C30049BDF7 /* Profile.storyboard in Resources */,
+				0348472A1F9D20C30049BDF7 /* Account.storyboard in Resources */,
 				03CD276C1F6286FC003562A1 /* Place.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -587,11 +590,17 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Munch/Pods-Munch-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/AWSCognito/AWSCognito.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSAuthCore/AWSAuthCore.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSAuthUI/AWSAuthUI.framework",
 				"${BUILT_PRODUCTS_DIR}/AWSCore/AWSCore.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSFacebookSignIn/AWSFacebookSignIn.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSPinpoint/AWSPinpoint.framework",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/Bolts/Bolts.framework",
 				"${BUILT_PRODUCTS_DIR}/Cosmos/Cosmos.framework",
 				"${BUILT_PRODUCTS_DIR}/ESTabBarController-swift/ESTabBarController_swift.framework",
+				"${BUILT_PRODUCTS_DIR}/FBSDKCoreKit/FBSDKCoreKit.framework",
+				"${BUILT_PRODUCTS_DIR}/FBSDKLoginKit/FBSDKLoginKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Hero/Hero.framework",
 				"${BUILT_PRODUCTS_DIR}/KMNavigationBarTransition/KMNavigationBarTransition.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
@@ -608,11 +617,17 @@
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCognito.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSAuthCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSAuthUI.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSFacebookSignIn.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSPinpoint.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bolts.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cosmos.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ESTabBarController_swift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKCoreKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKLoginKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Hero.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KMNavigationBarTransition.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
@@ -687,6 +702,7 @@
 				038275781F03B7A700C5954A /* Munch.swift in Sources */,
 				034FCF0C1F6C282E00D353F1 /* SearchStaticCards.swift in Sources */,
 				034FCEFD1F6C24D000D353F1 /* VersionClient.swift in Sources */,
+				03D2335C1F9D3851000F5F05 /* AccountController.swift in Sources */,
 				0314786A1F6A18CC00246BCD /* LocationClient.swift in Sources */,
 				03B65F1C1F6C4A8C0030D12B /* SearchHeaderView.swift in Sources */,
 				031478661F6A16F900246BCD /* SearchClient.swift in Sources */,

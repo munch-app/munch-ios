@@ -12,8 +12,11 @@ target 'Munch' do
   pod 'SnapKit', '~> 4.0'
   pod 'SwiftRichString', '~> 1.0'
   
-  # Authentication Library
-  pod 'AWSCognito', '~> 2.6'
+  # AWS Engine
+  pod 'AWSAuthCore', '~> 2.6.1'
+  pod 'AWSPinpoint', '~> 2.6.1'
+  pod 'AWSAuthUI', '~> 2.6.1'
+  pod 'AWSFacebookSignIn', '~> 2.6.1'
 
   # Transition Library
   pod 'KMNavigationBarTransition', :git => 'https://github.com/Fuxingloh/KMNavigationBarTransition'
