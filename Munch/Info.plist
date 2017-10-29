@@ -35,12 +35,12 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
         <key>NSExceptionDomains</key>
         <dict>
             <key>amazonaws.com</key>
             <dict>
+                <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+                <true/>
                 <key>NSIncludesSubdomains</key>
                 <true/>
                 <key>NSThirdPartyExceptionMinimumTLSVersion</key>
@@ -116,49 +116,5 @@
     <string>1834184803561011</string>
     <key>FacebookDisplayName</key>
     <string>MunchApp</string>
-    <key>AWS</key>
-    <dict>
-        <key>PinpointAnalytics</key>
-        <dict>
-            <key>Default</key>
-            <dict>
-                <key>AppId</key>
-                <string>7558fe38cd7d45b48c5325ad7522206e</string>
-                <key>Region</key>
-                <string>us-east-1</string>
-            </dict>
-        </dict>
-        <key>PinpointTargeting</key>
-        <dict>
-            <key>Default</key>
-            <dict>
-                <key>Region</key>
-                <string>us-east-1</string>
-            </dict>
-        </dict>
-        <key>IdentityManager</key>
-        <dict>
-            <key>Default</key>
-            <dict/>
-        </dict>
-        <key>CredentialsProvider</key>
-        <dict>
-            <key>CognitoIdentity</key>
-            <dict>
-                <key>Default</key>
-                <dict>
-                    <key>PoolId</key>
-                    <string>ap-southeast-1:4a62b0fc-5323-4edf-ab8d-0e393b8e6eef</string>
-                    <key>Region</key>
-                    <string>ap-southeast-1</string>
-                </dict>
-            </dict>
-        </dict>
-        <key>MobileHub</key>
-        <dict>
-            <key>ProjectClientId</key>
-            <string>MobileHub d98d5e75-b6e5-4a3c-8c99-8edc043a4df5 aws-my-sample-app-ios-swift-v0.19</string>
-        </dict>
-    </dict>
 </dict>
 </plist>

@@ -7,40 +7,22 @@
 //
 
 import UIKit
-import AWSAuthCore
-import AWSFacebookSignIn
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    
-    var isInitialized: Bool = false
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        // Register the sign in provider instances with their unique identifier
-        AWSFacebookSignInProvider.sharedInstance().setPermissions(["public_profile", "email"])
-        AWSSignInManager.sharedInstance().register(signInProvider: AWSFacebookSignInProvider.sharedInstance())
-        let didFinishLaunching = AWSSignInManager.sharedInstance().interceptApplication(application, didFinishLaunchingWithOptions: launchOptions)
-        if (!isInitialized) {
-            AWSSignInManager.sharedInstance().resumeSession(completionHandler: { (result: Any?, error: Error?) in
-                print("Result: \(String(describing: result)) \n Error:\(String(describing: error))")
-            })
-            isInitialized = true
-        }
         
         // Select initial view provider to use
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.rootViewController = InitialViewProvider.main()
         self.window?.makeKeyAndVisible()
-        return didFinishLaunching
+        return true
     }
     
     func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
-        // print("application application: \(application.description), openURL: \(url.absoluteURL), sourceApplication: \(sourceApplication)")
-        AWSSignInManager.sharedInstance().interceptApplication(application, open: url, sourceApplication: sourceApplication, annotation: annotation)
-        isInitialized = true
         return true
     }
 
