@@ -88,8 +88,8 @@ class MunchTabBarContentView: ESTabBarItemContentView {
         insets.bottom = 3
         insets.top = 3
         
-        iconColor = UIColor.black.withAlphaComponent(0.75)
-        textColor = UIColor.black.withAlphaComponent(0.75)
+        iconColor = UIColor.black.withAlphaComponent(0.70)
+        textColor = UIColor.black.withAlphaComponent(0.70)
         
         highlightIconColor = UIColor.black
         highlightTextColor = UIColor.black
