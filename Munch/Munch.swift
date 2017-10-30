@@ -193,7 +193,12 @@ extension UIImageView {
                     if let width = Int(widthHeight[0]), let height = Int(widthHeight[1]) {
                         return (width, height, value)
                     }
+                } else if key == "original" {
+                    // Original Image will be the max
+                    return (Int.max, Int.max, value)
                 }
+                
+                // AnyFormat that cannot be parsed will be 0,0
                 return (0, 0, value)
             }
         }
