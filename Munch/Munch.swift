@@ -195,7 +195,7 @@ extension UIImageView {
                     }
                 } else if key == "original" {
                     // Original Image will be the max
-                    return (Int.max, Int.max, value)
+                    return (10000, 10000, value)
                 }
                 
                 // AnyFormat that cannot be parsed will be 0,0

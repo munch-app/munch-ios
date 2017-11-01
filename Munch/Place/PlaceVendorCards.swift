@@ -28,7 +28,7 @@ class PlaceVendorArticleGridCard: PlaceCardView {
         
         // Hide See More if < 4
         // Hide Articles if not shown
-        let articles = card["articles"].map { Article(json: $0.1) }
+        let articles = card.data.map { Article(json: $0.1) }
         super.addSubview(topRow)
         topRow.left.render(article: articles.get(0), controller: controller)
         topRow.right.render(article: articles.get(1), controller: controller)
@@ -54,7 +54,7 @@ class PlaceVendorArticleGridCard: PlaceCardView {
     }
     
     override class var cardId: String? {
-        return "vendor_ArticleGrid_10092017"
+        return "vendor_Article_20171029"
     }
 
     class ArticleGridRowView: UIView {

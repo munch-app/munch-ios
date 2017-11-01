@@ -33,7 +33,7 @@ class PlaceClient {
  */
 struct PlaceCard {
     var cardId: String
-    private var data: JSON
+    private(set) var data: JSON
     
     init(cardId: String) {
         self.cardId = cardId
@@ -51,6 +51,8 @@ struct PlaceCard {
     subscript(name: String) -> JSON {
         return data[name]
     }
+    
+    
 }
 
 /**
@@ -300,26 +302,34 @@ struct InstagramMedia {
  Primary data type from munch-core/service-articles
  */
 struct Article {
-    var placeId: String?
     var articleId: String?
+    var articleListNo: String?
     
-    var brand: String?
+    var placeId: String?
+    var placeSort: String?
+    var placeName: String?
+    
     var url: String?
-    var thumbnail: [String:String]?
-    
+    var brand: String?
     var title: String?
     var description: String?
     
+    var thumbnail: [String:String]?
+    
     init(json: JSON) {
-        self.placeId = json["placeId"].string
         self.articleId = json["articleId"].string
+        self.articleListNo = json["articleListNo"].string
         
-        self.brand = json["brand"].string
+        self.placeId = json["placeId"].string
+        self.placeSort = json["placeSort"].string
+        self.placeName = json["placeName"].string
+        
         self.url = json["url"].string
-        self.thumbnail = json["thumbnail"].dictionaryObject as? [String: String]
-        
+        self.brand = json["brand"].string
         self.title = json["title"].string
         self.description = json["description"].string
+        
+        self.thumbnail = json["thumbnail"].dictionaryObject as? [String: String]
     }
 }
 
