@@ -21,7 +21,7 @@ class SearchQueryController: UIViewController, UITableViewDataSource, UITableVie
             return results
         }
         
-        // TODO Returns results from, Implement in 0.2.0 onwards
+        // TODO Returns results from local history, Implement in 0.3.0 onwards
         return []
     }
     
@@ -74,16 +74,13 @@ class SearchQueryController: UIViewController, UITableViewDataSource, UITableVie
     
     @objc func textFieldDidChange(_ sender: Any) {
         NSObject.cancelPreviousPerformRequests(withTarget: self)
-        self.perform(#selector(textFieldDidCommit(text:)), with: textField.text, afterDelay: 0.4)
+        self.perform(#selector(textFieldDidCommit(text:)), with: textField.text, afterDelay: 0.3)
     }
     
     @objc func textFieldShouldReturn(_ sender: Any) -> Bool {
         if let text = textField.text {
-            self.dismiss(animated: true) {
-                var query = self.searchQuery!
-                query.query = text
-                // TODO Action After
-            }
+            self.searchQuery.query = text
+            self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
         }
         return true
     }
@@ -150,19 +147,11 @@ extension SearchQueryController {
             controller.placeId = place.id
             self.navigationController!.pushViewController(controller, animated: true)
         } else if let location = item as? Location {
-            self.dismiss(animated: true) {
-                var query = self.searchQuery!
-                query.location = location
-
-                // TODO Action After
-            }
+            self.searchQuery.location = location
+            self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
         } else if let tag = item as? Tag {
-            self.dismiss(animated: true) {
-                var query = self.searchQuery!
-                query.query = tag.name
-
-                // TODO Action After
-            }
+            self.searchQuery.query = tag.name
+            self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
         }
     }
 }

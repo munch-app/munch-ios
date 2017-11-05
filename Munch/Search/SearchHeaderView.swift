@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import SnapKit
+import TTGTagCollectionView
 
 /**
  SearchHeader controls data managements query, update refresh
@@ -19,6 +20,8 @@ class SearchHeaderView: UIView {
 
     let textButton = SearchTextButton()
     let filterButton = SearchFilterButton()
+    let tagCollection = SearchFilterTagCollection()
+
     var heightConstraint: Constraint! = nil
 
     var searchQuery = SearchQuery()
@@ -28,16 +31,17 @@ class SearchHeaderView: UIView {
         super.init(frame: CGRect())
         self.backgroundColor = UIColor.white
 
-        registerActions()
-        initViews()
+        linkActions()
+        self.makeConstraints()
     }
 
-    private func initViews() {
+    private func makeConstraints() {
         let statusView = UIView()
 
-        self.addSubview(statusView)
+        self.addSubview(tagCollection)
         self.addSubview(filterButton)
         self.addSubview(textButton)
+        self.addSubview(statusView)
 
         statusView.backgroundColor = UIColor.white
         statusView.snp.makeConstraints { make in
@@ -60,9 +64,33 @@ class SearchHeaderView: UIView {
             make.top.equalTo(statusView.snp.bottom)
         }
 
+        tagCollection.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(24)
+            make.bottom.equalTo(self).inset(8)
+        }
+
         self.snp.makeConstraints { make in
             self.heightConstraint = make.height.equalTo(maxHeight).constraint
         }
+    }
+
+    private func linkActions() {
+        textButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
+        filterButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
+        // TODO Filter Tags
+    }
+
+    @objc func onHeaderAction(for view: UIView) {
+        if view is SearchTextButton {
+            controller.performSegue(withIdentifier: "SearchHeaderView_suggest", sender: self)
+        } else if view is SearchFilterButton {
+            controller.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
+        }
+    }
+
+    func render(query: SearchQuery) {
+        self.textButton.setTitle(query.query, for: .normal)
+        self.tagCollection.render(query: query)
     }
 
     override func layoutSubviews() {
@@ -122,10 +150,81 @@ class SearchFilterButton: UIButton {
     }
 }
 
+class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
+    let tagCollection = TTGTextTagCollectionView()
+
+    override init(frame: CGRect = CGRect()) {
+        super.init(frame: frame)
+        self.addSubview(tagCollection)
+
+        tagCollection.delegate = self
+        tagCollection.defaultConfig.tagTextFont = UIFont.systemFont(ofSize: 13.0, weight: .regular)
+        tagCollection.defaultConfig.tagTextColor = UIColor.black.withAlphaComponent(0.75)
+
+        tagCollection.defaultConfig.tagBackgroundColor = UIColor.white
+        tagCollection.defaultConfig.tagSelectedBackgroundColor = UIColor.white
+
+        tagCollection.defaultConfig.tagBorderWidth = 0.5
+        tagCollection.defaultConfig.tagBorderColor = UIColor.black.withAlphaComponent(0.25)
+        tagCollection.defaultConfig.tagShadowOffset = CGSize.zero
+        tagCollection.defaultConfig.tagShadowRadius = 0
+
+        tagCollection.defaultConfig.tagSelectedBorderWidth = 0
+        tagCollection.defaultConfig.tagExtraSpace = CGSize(width: 21, height: 13)
+
+        tagCollection.horizontalSpacing = 10
+        tagCollection.contentInset = UIEdgeInsets.init(topBottom: 2, leftRight: 0)
+
+        tagCollection.snp.makeConstraints { (make) in
+            make.edges.equalTo(self)
+        }
+    }
+
+    func render(query: SearchQuery) {
+        tagCollection.removeAllTags()
+
+        // FirstTag: Location Tag
+        if let location = query.location {
+            tagCollection.addTag(location.name)
+        } else if MunchLocation.isEnabled {
+            tagCollection.addTag("Nearby")
+        } else {
+            tagCollection.addTag("Singapore")
+        }
+
+        // Other Tags
+        for tag in query.filter.tag.positives {
+            tagCollection.addTag(tag)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class HeaderViewSegue: UIStoryboardSegue {
+    override func perform() {
+        super.perform()
+        let searchQuery = (source as! SearchController).searchQuery
+
+        if let navigation = destination as? UINavigationController {
+            let controller = navigation.topViewController
+            if let query = controller as? SearchQueryController {
+                query.searchQuery = searchQuery
+            } else if let filter = controller as? SearchFilterController {
+                filter.searchQuery = searchQuery
+            } else if let location = controller as? SearchLocationController {
+                location.searchQuery = searchQuery
+            }
+        }
+    }
+}
+
 // Header Scroll to Hide Functions
 extension SearchHeaderView {
     var maxHeight: CGFloat {
-        return 108
+        return 114
     }
     var minHeight: CGFloat {
         return 75
@@ -167,41 +266,6 @@ extension SearchHeaderView {
             return minHeight
         } else {
             return Swift.abs(y)
-        }
-    }
-}
-
-// Actions Functions Here
-extension SearchHeaderView {
-    func registerActions() {
-        textButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
-        filterButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
-        // TODO Filter Tags
-    }
-
-    @objc func onHeaderAction(for view: UIView) {
-        if view is SearchTextButton {
-            controller.performSegue(withIdentifier: "SearchHeaderView_suggest", sender: self)
-        } else if view is SearchFilterButton {
-            controller.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
-        }
-    }
-}
-
-class HeaderViewSegue: UIStoryboardSegue {
-    override func perform() {
-        super.perform()
-        let searchQuery = (source as! SearchController).headerView.searchQuery
-
-        if let navigation = destination as? UINavigationController {
-            let controller = navigation.topViewController
-            if let query = controller as? SearchQueryController {
-                query.searchQuery = searchQuery
-            } else if let filter = controller as? SearchFilterController {
-                filter.searchQuery = searchQuery
-            } else if let location = controller as? SearchLocationController {
-                location.searchQuery = searchQuery
-            }
         }
     }
 }

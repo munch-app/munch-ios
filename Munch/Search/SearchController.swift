@@ -14,7 +14,8 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     var headerView: SearchHeaderView!
     
     var cardManager: SearchCardManager?
-    
+
+    var searchQuery = SearchQuery()
     var cards: [SearchCard] {
         if let manager = cardManager {
             return manager.cards
@@ -64,8 +65,9 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         
         registerCards()
 
-        // Apply search
-        contentView(search: headerView.searchQuery)
+        // Render search results
+        contentView(search: searchQuery)
+        headerView.render(query: searchQuery)
     }
     
     func scrollToTop() {
@@ -73,9 +75,24 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     }
 
     @IBAction func unwindToSearch(segue: UIStoryboardSegue) {
-        // TODO Applied Search Query
-        // Returns Edited SearchQuery
-        // Apply too headerView & content view if query updated
+        func render(query: SearchQuery) {
+            if query != self.searchQuery {
+                self.searchQuery = query
+
+                // Render updated results
+                contentView(search: searchQuery)
+                headerView.render(query: searchQuery)
+            }
+        }
+
+        let controller = segue.source
+        if let query = controller as? SearchQueryController {
+            render(query: query.searchQuery)
+        } else if let filter = controller as? SearchFilterController {
+            render(query: filter.searchQuery)
+        } else if let location = controller as? SearchLocationController {
+            render(query: location.searchQuery)
+        }
     }
 
     private func contentView(search searchQuery: SearchQuery) {
