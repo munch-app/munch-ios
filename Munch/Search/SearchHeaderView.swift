@@ -89,7 +89,7 @@ class SearchHeaderView: UIView {
     }
 
     func render(query: SearchQuery) {
-        self.textButton.setTitle(query.query, for: .normal)
+        self.textButton.render(query: query)
         self.tagCollection.render(query: query)
     }
 
@@ -104,7 +104,7 @@ class SearchHeaderView: UIView {
 }
 
 class SearchTextButton: UIButton {
-    let field = SearchTextField()
+    private let field = SearchTextField()
 
     override init(frame: CGRect = CGRect()) {
         super.init(frame: frame)
@@ -129,6 +129,10 @@ class SearchTextButton: UIButton {
             make.left.right.equalTo(self)
             make.top.bottom.equalTo(self).inset(8)
         }
+    }
+
+    func render(query: SearchQuery) {
+        self.field.text = query.query
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -149,8 +149,8 @@ extension SearchQueryController {
         } else if let location = item as? Location {
             self.searchQuery.location = location
             self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
-        } else if let tag = item as? Tag {
-            self.searchQuery.query = tag.name
+        } else if let tagName = (item as? Tag)?.name {
+            self.searchQuery.filter.tag.positives.insert(tagName)
             self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
         }
     }
