@@ -1,29 +1,7 @@
 PODS:
   - Alamofire (4.5.1)
-  - AWSAuthCore (2.6.4):
-    - AWSCore (= 2.6.4)
-  - AWSAuthUI (2.6.4):
-    - AWSAuthCore (= 2.6.4)
-    - AWSCore (= 2.6.4)
-  - AWSCore (2.6.4)
-  - AWSFacebookSignIn (2.6.4):
-    - AWSAuthCore (= 2.6.4)
-    - FBSDKCoreKit (~> 4.0)
-    - FBSDKLoginKit (~> 4.0)
-  - AWSPinpoint (2.6.4):
-    - AWSCore (= 2.6.4)
-  - Bolts (1.8.4):
-    - Bolts/AppLinks (= 1.8.4)
-    - Bolts/Tasks (= 1.8.4)
-  - Bolts/AppLinks (1.8.4):
-    - Bolts/Tasks
-  - Bolts/Tasks (1.8.4)
   - Cosmos (12.0.1)
   - ESTabBarController-swift (2.5)
-  - FBSDKCoreKit (4.27.1):
-    - Bolts (~> 1.7)
-  - FBSDKLoginKit (4.27.1):
-    - FBSDKCoreKit
   - Hero (1.0.0-alpha.4)
   - Kingfisher (4.1.1)
   - KMNavigationBarTransition (1.0.0)
@@ -45,10 +23,6 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire (~> 4.5)
-  - AWSAuthCore (~> 2.6.1)
-  - AWSAuthUI (~> 2.6.1)
-  - AWSFacebookSignIn (~> 2.6.1)
-  - AWSPinpoint (~> 2.6.1)
   - Cosmos (~> 12.0)
   - ESTabBarController-swift (~> 2.5)
   - Hero (= 1.0.0-alpha.4)
@@ -75,16 +49,8 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
-  AWSAuthCore: 498900114b313b8d5e9263a02b67ccc67c806e1f
-  AWSAuthUI: ec286ce457b214f97a4b62b2f9c1c4fbc9fbd47e
-  AWSCore: f5611be1c3edc38dbf9d6da0a5d2b6c4841d1c05
-  AWSFacebookSignIn: 5c5a077755f39111e2f8db1c25ea6107acca8058
-  AWSPinpoint: b0717d727093579c67bcfb10b4a5703ab808bda6
-  Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
   Cosmos: 4a9f57998a08788a1062c7b8eefbc62d2b590f39
   ESTabBarController-swift: 8daa432f2a9be8ebd25101dc46c84472fd760512
-  FBSDKCoreKit: 03365dad5d790249196ffad8be4f6d8a2d98f932
-  FBSDKLoginKit: 66ff53b73cffd967ab773e32fac39e90a60e6d46
   Hero: 6ab58fdfb16c75ce9c6bfad48ef6abb54780b263
   Kingfisher: 6793a473357b5dbee42b0068ef203fe8325f259e
   KMNavigationBarTransition: b3fb8337f7a1e4542add07fd6c45fb9980794d59
@@ -99,6 +65,6 @@ SPEC CHECKSUMS:
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
   TTGTagCollectionView: ba35fb7dc284b368c86bf044bd889293a69114e8
 
-PODFILE CHECKSUM: 65c93a8cef2e390a6f835d9444df07c93f7657bb
+PODFILE CHECKSUM: 7ecb514ba6f576bd9d8d2cc447400152d83396c0
 
 COCOAPODS: 1.3.1

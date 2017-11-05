@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSource, SearchHeaderDelegate {
+class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var cardTableView: UITableView!
     var headerView: SearchHeaderView!
     
@@ -63,25 +63,47 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         self.cardTableView.contentInset = UIEdgeInsets(top: headerView.maxHeight - 20, left: 0, bottom: 0, right: 0)
         
         registerCards()
+
+        // Apply search
+        contentView(search: headerView.searchQuery)
     }
     
     func scrollToTop() {
         cardTableView.setContentOffset(CGPoint(x: 0, y: -headerView.maxHeight), animated: true)
     }
-    
-    /**
-     If collectionManager is nil means show shimmer cards?
-     */
-    func headerView(render query: SearchQuery) {
-        self.cardManager = SearchCardManager.init(search: query, completion: { (meta) in
-            self.cardTableView.reloadData()
-        })
-        self.cardTableView.reloadData()
-        self.scrollToTop()
+
+    @IBAction func unwindToSearch(segue: UIStoryboardSegue) {
+        // TODO Applied Search Query
+        // Returns Edited SearchQuery
+        // Apply too headerView & content view if query updated
     }
-    
-    @IBAction func unwindToSearch(segue: UIStoryboardSegue) { }
-    
+
+    private func contentView(search searchQuery: SearchQuery) {
+        func search(searchQuery: SearchQuery) {
+            self.cardManager = SearchCardManager.init(search: searchQuery, completion: { (meta) in
+                self.cardTableView.reloadData()
+            })
+            self.cardTableView.reloadData()
+            self.scrollToTop()
+        }
+
+        // Check if Location is Enabled
+        if MunchLocation.isEnabled {
+            MunchLocation.waitFor(completion: { latLng, error in
+                if let latLng = latLng {
+                    var updatedQuery = searchQuery
+                    updatedQuery.latLng = latLng
+                    search(searchQuery: updatedQuery)
+                } else if let error = error {
+                    self.alert(title: "Location Error", error: error)
+                } else {
+                    self.alert(title: "Location Error", message: "No Error or Location Data")
+                }
+            })
+        } else {
+            search(searchQuery: searchQuery)
+        }
+    }
 }
 
 // CardType and tools

@@ -1,5 +1,5 @@
 //
-//  SearchQueryController.swift
+//  SearchControllerSuggest.swift
 //  Munch
 //
 //  Created by Fuxing Loh on 18/9/17.
@@ -10,11 +10,10 @@ import Foundation
 import UIKit
 
 class SearchQueryController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    
+    var searchQuery: SearchQuery!
+
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var textField: SearchTextField!
-    
-    var headerView: SearchHeaderView!
     
     var results: [SearchResult]?
     var items: [Any] {
@@ -58,7 +57,7 @@ class SearchQueryController: UIViewController, UITableViewDataSource, UITableVie
         self.tableView.tableFooterView = footerView
         self.tableView.contentInset.top = 0
         
-        self.textField.text = self.headerView.searchQuery.query
+        self.textField.text = self.searchQuery.query
         self.textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         self.textField.addTarget(self, action: #selector(textFieldShouldReturn(_:)), for: .editingDidEndOnExit)
         registerCell()
@@ -81,16 +80,16 @@ class SearchQueryController: UIViewController, UITableViewDataSource, UITableVie
     @objc func textFieldShouldReturn(_ sender: Any) -> Bool {
         if let text = textField.text {
             self.dismiss(animated: true) {
-                var query = self.headerView.searchQuery
+                var query = self.searchQuery!
                 query.query = text
-                self.headerView.onHeaderApply(action: .apply(query))
+                // TODO Action After
             }
         }
         return true
     }
     
     @objc func textFieldDidCommit(text: String?) {
-        if let text = text, text.characters.count >= 3 {
+        if let text = text, text.count >= 3 {
             MunchApi.search.suggest(text: text, size: 20, callback: { (meta, results) in
                 self.results = results
                 self.tableView.reloadData()
@@ -152,15 +151,17 @@ extension SearchQueryController {
             self.navigationController!.pushViewController(controller, animated: true)
         } else if let location = item as? Location {
             self.dismiss(animated: true) {
-                var query = self.headerView.searchQuery
+                var query = self.searchQuery!
                 query.location = location
-                self.headerView.onHeaderApply(action: .apply(query))
+
+                // TODO Action After
             }
         } else if let tag = item as? Tag {
             self.dismiss(animated: true) {
-                var query = self.headerView.searchQuery
+                var query = self.searchQuery!
                 query.query = tag.name
-                self.headerView.onHeaderApply(action: .apply(query))
+
+                // TODO Action After
             }
         }
     }

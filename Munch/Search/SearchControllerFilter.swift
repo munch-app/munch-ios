@@ -1,5 +1,5 @@
 //
-//  SearchFilterController.swift
+//  SearchControllerFilter.swift
 //  Munch
 //
 //  Created by Fuxing Loh on 18/9/17.
@@ -11,9 +11,11 @@ import UIKit
 import TTGTagCollectionView
 
 class SearchFilterController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    @IBOutlet weak var tableView: UITableView!
+    var searchQuery: SearchQuery!
+
     var applyView: SearchFilterApplyView!
-    var headerView: SearchHeaderView!
+    @IBOutlet weak var tableView: UITableView!
+
     var filterCells: [SearchFilterTagCell]!
     
     override func viewWillAppear(_ animated: Bool) {
@@ -26,7 +28,7 @@ class SearchFilterController: UIViewController, UITableViewDataSource, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.applyView = SearchFilterApplyView(controller: self, searchQuery: headerView.searchQuery)
+        self.applyView = SearchFilterApplyView(controller: self, searchQuery: searchQuery)
         self.view.addSubview(applyView)
         applyView.snp.makeConstraints { (make) in
             make.left.right.bottom.equalTo(self.view)
@@ -66,7 +68,7 @@ class SearchFilterController: UIViewController, UITableViewDataSource, UITableVi
     
     @objc func actionApply(_ sender: Any) {
         self.dismiss(animated: true) {
-            self.headerView.onHeaderApply(action: .apply(self.applyView.searchQuery))
+            // TODO
         }
     }
 }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="YqE-BW-hta">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="YqE-BW-hta">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -40,7 +40,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zNc-hF-Sdr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2114" y="-1147"/>
+            <point key="canvasLocation" x="-415" y="-1925"/>
         </scene>
         <!--Search Query Controller-->
         <scene sceneID="0y6-w5-GiZ">
@@ -55,19 +55,19 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Lni-2Y-Oom">
-                                <rect key="frame" x="0.0" y="78" width="375" height="589"/>
+                                <rect key="frame" x="0.0" y="75" width="375" height="592"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <inset key="separatorInset" minX="24" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SearchHistoryCell" rowHeight="44" id="ViN-Oi-3EM" customClass="SearchHistoryCell" customModule="Munch" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ViN-Oi-3EM" id="ruA-ea-gTj">
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" tableViewCell="ViN-Oi-3EM" id="ruA-ea-gTj">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S7G-jD-p9f">
-                                                    <rect key="frame" x="24" y="11" width="338" height="21"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S7G-jD-p9f">
+                                                    <rect key="frame" x="31" y="11" width="324" height="21"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="21" id="M3j-P4-7sQ"/>
                                                     </constraints>
@@ -95,7 +95,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NzO-jZ-4hk">
-                                                    <rect key="frame" x="24" y="11" width="253" height="21"/>
+                                                    <rect key="frame" x="31" y="14.5" width="239" height="21"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="21" id="lre-Km-kVe"/>
                                                     </constraints>
@@ -104,7 +104,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="LOCATION" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mg7-Oj-7WA">
-                                                    <rect key="frame" x="285" y="11" width="66" height="21"/>
+                                                    <rect key="frame" x="278" y="14.5" width="66" height="21"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="66" id="hCw-3i-6RV"/>
                                                         <constraint firstAttribute="height" constant="21" id="ptb-5l-LUb"/>
@@ -132,15 +132,15 @@
                                 </prototypes>
                             </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zC0-Na-Tx9" customClass="HairlineShadowView" customModule="Munch" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="20" width="375" height="58"/>
+                                <rect key="frame" x="0.0" y="20" width="375" height="55"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cls-J0-hew">
-                                        <rect key="frame" x="289" y="15" width="86" height="34"/>
+                                        <rect key="frame" x="285" y="8" width="90" height="36"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="34" id="Z0x-VQ-mXu"/>
-                                            <constraint firstAttribute="width" constant="86" id="cdb-bM-Fff"/>
+                                            <constraint firstAttribute="height" constant="36" id="Z0x-VQ-mXu"/>
+                                            <constraint firstAttribute="width" constant="90" id="cdb-bM-Fff"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                         <inset key="titleEdgeInsets" minX="0.0" minY="0.0" maxX="24" maxY="0.0"/>
                                         <state key="normal" title="Cancel">
                                             <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -149,14 +149,14 @@
                                             <action selector="actionCancel:" destination="9UU-2X-uSb" eventType="touchUpInside" id="tEk-7D-0A9"/>
                                         </connections>
                                     </button>
-                                    <textField clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Search any cuisine or restaurant" minimumFontSize="14" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Jy9-iB-dyi" customClass="SearchTextField" customModule="Munch" customModuleProvider="target">
-                                        <rect key="frame" x="24" y="16" width="265" height="32"/>
+                                    <textField clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Search Anything" minimumFontSize="14" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Jy9-iB-dyi" customClass="SearchTextField" customModule="Munch" customModuleProvider="target">
+                                        <rect key="frame" x="24" y="8" width="261" height="36"/>
                                         <color key="backgroundColor" white="0.92000000000000004" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="32" id="RQc-Kv-dxK"/>
+                                            <constraint firstAttribute="height" constant="36" id="RQc-Kv-dxK"/>
                                         </constraints>
                                         <nil key="textColor"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                         <textInputTraits key="textInputTraits" autocorrectionType="no" returnKeyType="search"/>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="image" keyPath="leftImage" value="SC-Search-18"/>
@@ -164,7 +164,7 @@
                                                 <color key="value" white="0.17999999999999999" alpha="1" colorSpace="calibratedWhite"/>
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="number" keyPath="leftImagePadding">
-                                                <real key="value" value="1"/>
+                                                <real key="value" value="3"/>
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
                                                 <integer key="value" value="4"/>
@@ -173,19 +173,19 @@
                                                 <real key="value" value="32"/>
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="number" keyPath="leftImageSize">
-                                                <real key="value" value="20"/>
+                                                <real key="value" value="18"/>
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </textField>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="cls-J0-hew" secondAttribute="bottom" constant="9" id="72O-tZ-LxM"/>
+                                    <constraint firstItem="Jy9-iB-dyi" firstAttribute="top" secondItem="zC0-Na-Tx9" secondAttribute="top" constant="8" id="75E-nf-5oZ"/>
+                                    <constraint firstItem="cls-J0-hew" firstAttribute="top" secondItem="zC0-Na-Tx9" secondAttribute="top" constant="8" id="H3N-oa-Rqn"/>
                                     <constraint firstItem="cls-J0-hew" firstAttribute="leading" secondItem="Jy9-iB-dyi" secondAttribute="trailing" id="Qt9-w0-1cH"/>
                                     <constraint firstAttribute="trailing" secondItem="cls-J0-hew" secondAttribute="trailing" id="bcf-wM-egA"/>
                                     <constraint firstItem="Jy9-iB-dyi" firstAttribute="leading" secondItem="zC0-Na-Tx9" secondAttribute="leading" constant="24" id="ieA-8Q-qIi"/>
-                                    <constraint firstAttribute="bottom" secondItem="Jy9-iB-dyi" secondAttribute="bottom" constant="10" id="qIa-Nk-Orz"/>
-                                    <constraint firstAttribute="height" constant="58" id="rYi-uE-Kd4"/>
+                                    <constraint firstAttribute="height" constant="55" id="rYi-uE-Kd4"/>
                                 </constraints>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="hairlineShadowHeight">
@@ -214,7 +214,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="crT-r7-W0B" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1244" y="-1147"/>
+            <point key="canvasLocation" x="457" y="-1925"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="4q9-Ex-A4X">
@@ -230,7 +230,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="E1R-Ku-dfV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-337" y="-1147"/>
+            <point key="canvasLocation" x="-415" y="-1191"/>
         </scene>
         <!--Search Filter Controller-->
         <scene sceneID="Scl-kn-pvN">
@@ -245,11 +245,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="9sj-RZ-VjE">
-                                <rect key="frame" x="0.0" y="84" width="375" height="583"/>
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QS8-mJ-CuW" customClass="HairlineShadowView" customModule="Munch" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="40" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Filters" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X8C-PZ-k9m">
                                         <rect key="frame" x="163" y="11" width="50" height="22"/>
@@ -310,7 +310,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SAL-19-iD8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="533.60000000000002" y="-1147.3763118440781"/>
+            <point key="canvasLocation" x="457" y="-1191"/>
         </scene>
         <!--Search Controller-->
         <scene sceneID="d66-0w-G5h">
@@ -342,8 +342,8 @@
                     <connections>
                         <outlet property="cardTableView" destination="ddd-UH-ZV9" id="B5g-WE-wq6"/>
                         <segue destination="vsY-13-xWw" kind="showDetail" identifier="SearchHeaderView_location" customClass="HeaderViewSegue" customModule="Munch" customModuleProvider="target" id="C2m-xv-bgL"/>
-                        <segue destination="i4G-fI-vXk" kind="showDetail" identifier="SearchHeaderView_query" customClass="HeaderViewSegue" customModule="Munch" customModuleProvider="target" id="z0z-ht-BLH"/>
-                        <segue destination="iwC-vf-Bd2" kind="showDetail" identifier="SearchHeaderView_filter" customClass="HeaderViewSegue" customModule="Munch" customModuleProvider="target" id="jpe-ww-SAB"/>
+                        <segue destination="i4G-fI-vXk" kind="showDetail" identifier="SearchHeaderView_suggest" customClass="HeaderViewSegue" customModule="Munch" id="z0z-ht-BLH"/>
+                        <segue destination="iwC-vf-Bd2" kind="showDetail" identifier="SearchHeaderView_filter" customClass="HeaderViewSegue" customModule="Munch" id="jpe-ww-SAB"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Keu-5K-mEN" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -480,7 +480,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kiZ-Sb-m23" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="R1x-g6-BmZ" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-2956" y="-1147"/>
+            <point key="canvasLocation" x="-415" y="-2662"/>
         </scene>
     </scenes>
     <resources>

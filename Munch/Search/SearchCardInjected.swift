@@ -1,5 +1,5 @@
 //
-//  SearchInjectedCards.swift
+//  SearchCardInjected.swift
 //  Munch
 //
 //  Created by Fuxing Loh on 20/10/17.
