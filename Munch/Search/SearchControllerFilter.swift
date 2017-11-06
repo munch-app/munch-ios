@@ -80,6 +80,7 @@ class SearchFilterController: UIViewController, UITableViewDataSource, UITableVi
 
     private func linkActions() {
         self.headerView.cancelButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
+        self.headerView.resetButton.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
         self.applyView.applyBtn.addTarget(self, action: #selector(actionApply(_:)), for: .touchUpInside)
     }
 
@@ -87,6 +88,12 @@ class SearchFilterController: UIViewController, UITableViewDataSource, UITableVi
         super.viewDidAppear(animated)
         // To force auto layout
         self.tableView.reloadData()
+    }
+
+    @objc func actionReset(_ sender: Any) {
+        applyView.searchQuery?.filter.tag.positives = []
+        applyView.searchQuery?.filter.hour.day = nil
+        applyView.searchQuery?.filter.hour.time = nil
     }
 
     @objc func actionCancel(_ sender: Any) {
@@ -113,12 +120,13 @@ extension SearchFilterController {
 }
 
 class SearchFilterHeaderView: UIView {
-    let tagCollection = SearchFilterTagCollection()
-    let titleView = UILabel()
-    let cancelButton = UIButton()
+    fileprivate let resetButton = UIButton()
+    fileprivate let titleView = UILabel()
+    fileprivate let cancelButton = UIButton()
 
     init() {
         super.init(frame: CGRect.zero)
+        self.addSubview(resetButton)
         self.addSubview(titleView)
         self.addSubview(cancelButton)
 
@@ -127,15 +135,27 @@ class SearchFilterHeaderView: UIView {
 
     private func makeViews() {
         self.backgroundColor = .white
-        titleView.text = "Filter"
-        titleView.font = .systemFont(ofSize: 17, weight: .semibold)
+
+        resetButton.setTitle("RESET", for: .normal)
+        resetButton.setTitleColor(UIColor.black.withAlphaComponent(0.7), for: .normal)
+        resetButton.titleLabel?.font = .systemFont(ofSize: 12, weight: .medium)
+        resetButton.titleEdgeInsets.left = 24
+        resetButton.contentHorizontalAlignment = .left
+        resetButton.snp.makeConstraints { make in
+            make.width.equalTo(90)
+            make.top.bottom.equalTo(self)
+            make.left.equalTo(self)
+        }
+
+        titleView.text = "Filters"
+        titleView.font = .systemFont(ofSize: 17, weight: .regular)
         titleView.snp.makeConstraints { make in
             make.centerX.centerY.equalTo(self)
         }
 
-        cancelButton.setTitle("Cancel", for: .normal)
-        cancelButton.setTitleColor(.black, for: .normal)
-        cancelButton.titleLabel?.font = .systemFont(ofSize: 15)
+        cancelButton.setTitle("CANCEL", for: .normal)
+        cancelButton.setTitleColor(UIColor.black.withAlphaComponent(0.7), for: .normal)
+        cancelButton.titleLabel?.font = .systemFont(ofSize: 12, weight: .medium)
         cancelButton.titleEdgeInsets.right = 24
         cancelButton.contentHorizontalAlignment = .right
         cancelButton.snp.makeConstraints { make in
@@ -156,47 +176,31 @@ class SearchFilterHeaderView: UIView {
 }
 
 class SearchFilterApplyView: UIView {
-    let label = UILabel()
     let applyBtn = UIButton()
 
-    var searchQuery: SearchQuery? {
-        didSet {
-            render()
-        }
+    var searchQuery: SearchQuery?
+
+    override init(frame: CGRect = CGRect.zero) {
+        super.init(frame: frame)
+        initViews()
     }
 
-    init() {
-        super.init(frame: CGRect.zero)
+    private func initViews() {
         self.backgroundColor = UIColor.white
-        self.addSubview(label)
         self.addSubview(applyBtn)
 
-        label.font = UIFont.systemFont(ofSize: 16, weight: .light)
-
-        applyBtn.setTitle("Apply", for: .normal)
-        applyBtn.setTitleColor(UIColor.primary, for: .normal)
-        applyBtn.titleLabel!.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-        applyBtn.contentHorizontalAlignment = .right
-        applyBtn.titleEdgeInsets.right = 24
-
-        makeConstraints()
-    }
-
-    private func makeConstraints() {
-        label.snp.makeConstraints { (make) in
-            make.top.bottom.equalTo(self)
-            make.left.equalTo(self).inset(24)
-            make.right.equalTo(applyBtn.snp.left)
-        }
-
+        applyBtn.layer.cornerRadius = 3
+        applyBtn.backgroundColor = .primary
+        applyBtn.setTitle("See 100+ places", for: .normal)
+        applyBtn.setTitleColor(.white, for: .normal)
+        applyBtn.titleLabel!.font = UIFont.systemFont(ofSize: 15, weight: .medium)
         applyBtn.snp.makeConstraints { (make) in
-            make.top.bottom.equalTo(self)
-            make.right.equalTo(self)
-            make.width.equalTo(85)
+            make.top.bottom.equalTo(self).inset(12)
+            make.right.left.equalTo(self).inset(24)
         }
 
         self.snp.makeConstraints { (make) in
-            make.height.equalTo(54)
+            make.height.equalTo(70)
         }
     }
 
@@ -207,24 +211,6 @@ class SearchFilterApplyView: UIView {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    @objc func reset() {
-        searchQuery?.filter.tag.positives = []
-        searchQuery?.filter.hour.day = nil
-        searchQuery?.filter.hour.time = nil
-    }
-
-    private func render() {
-        if let searchQuery = searchQuery {
-            var count = searchQuery.filter.tag.positives.count
-            if searchQuery.filter.hour.day != nil {
-                count += 1
-            }
-            label.text = "\(count) Selected Filters"
-        } else {
-            label.text = "0 Selected Filters"
-        }
     }
 }
 

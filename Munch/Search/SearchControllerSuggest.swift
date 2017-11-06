@@ -9,21 +9,13 @@
 import Foundation
 import UIKit
 
-class SearchQueryController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class SearchQueryController: UIViewController {
     var searchQuery: SearchQuery!
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var textField: SearchTextField!
     
     var results: [SearchResult]?
-    var items: [Any] {
-        if let results = results {
-            return results
-        }
-        
-        // TODO Returns results from local history, Implement in 0.3.0 onwards
-        return []
-    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -98,7 +90,16 @@ class SearchQueryController: UIViewController, UITableViewDataSource, UITableVie
     }
 }
 
-extension SearchQueryController {
+extension SearchQueryController: UITableViewDataSource, UITableViewDelegate {
+    var items: [Any] {
+        if let results = results {
+            return results
+        }
+
+        // TODO Returns results from local history, Implement in 0.3.0 onwards
+        return []
+    }
+
     func registerCell() {
         tableView.register(SearchQueryCell.self, forCellReuseIdentifier: SearchQueryCell.id)
     }
@@ -195,105 +196,5 @@ class SearchQueryCell: UITableViewCell {
     
     class var id: String {
         return "SearchQueryCell"
-    }
-}
-
-class SearchLocationMyLocationCell: UITableViewCell {
-    let button = UIButton()
-    
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.backgroundColor = UIColor(hex: "F1F1F1")
-        
-        button.isEnabled = false
-        button.backgroundColor = .white
-        button.contentHorizontalAlignment = .left
-        button.contentVerticalAlignment = .center
-        
-        // Setup Image
-        button.setImage(UIImage(named: "SC-Define Location-30"), for: .normal)
-        button.imageEdgeInsets.left = 10
-        button.imageEdgeInsets.right = 10
-        button.tintColor = UIColor.secondary
-        
-        // Setup Text
-        button.setTitle("Detect my current location", for: .normal)
-        button.setTitleColor(UIColor.secondary, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
-        button.titleEdgeInsets.left = 20
-        
-        // Set Button Layer
-        button.layer.cornerRadius = 4.0
-        button.layer.borderWidth = 1.0
-        button.layer.borderColor = UIColor.secondary.cgColor
-        self.addSubview(button)
-        
-        button.snp.makeConstraints { make in
-            make.height.equalTo(38)
-            make.left.right.equalTo(self).inset(24)
-            make.top.equalTo(self).inset(14)
-            make.bottom.equalTo(self).inset(8)
-        }
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    class var id: String {
-        return "SearchLocationMyLocationCell"
-    }
-}
-
-/**
- Designable search field for Discovery page
- */
-@IBDesignable class SearchTextField: UITextField {
-    
-    // Provides left padding for images
-    override func leftViewRect(forBounds bounds: CGRect) -> CGRect {
-        var textRect = super.leftViewRect(forBounds: bounds)
-        textRect.origin.x += leftImagePadding
-        textRect.size.width = leftImageWidth
-        return textRect
-    }
-    
-    @IBInspectable var leftImagePadding: CGFloat = 0
-    @IBInspectable var leftImageWidth: CGFloat = 20
-    @IBInspectable var leftImageSize: CGFloat = 18 {
-        didSet {
-            updateView()
-        }
-    }
-    
-    
-    @IBInspectable var leftImage: UIImage? {
-        didSet {
-            updateView()
-        }
-    }
-    
-    @IBInspectable var color: UIColor = UIColor.lightGray {
-        didSet {
-            updateView()
-        }
-    }
-    
-    func updateView() {
-        if let image = leftImage {
-            leftViewMode = UITextFieldViewMode.always
-            let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: leftImageSize, height: leftImageSize))
-            imageView.contentMode = .scaleAspectFit
-            
-            imageView.image = image
-            imageView.tintColor = color
-            leftView = imageView
-        } else {
-            leftViewMode = UITextFieldViewMode.never
-            leftView = nil
-        }
-        
-        // Placeholder text color
-        attributedPlaceholder = NSAttributedString(string: placeholder != nil ?  placeholder! : "", attributes:[NSAttributedStringKey.foregroundColor: color])
     }
 }

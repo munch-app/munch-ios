@@ -15,11 +15,10 @@ import TTGTagCollectionView
  SearchHeader controls data managements query, update refresh
  SearchController only controls rendering of the data
  */
-class SearchHeaderView: UIView {
+class SearchHeaderView: UIView, SearchFilterTagDelegate {
     let controller: UIViewController
 
     let textButton = SearchTextButton()
-    let filterButton = SearchFilterButton()
     let tagCollection = SearchFilterTagCollection()
 
     var heightConstraint: Constraint! = nil
@@ -29,17 +28,15 @@ class SearchHeaderView: UIView {
     init(controller: UIViewController) {
         self.controller = controller
         super.init(frame: CGRect())
-        self.backgroundColor = UIColor.white
-
-        linkActions()
-        self.makeConstraints()
+        self.tagCollection.delegate = self
+        self.initViews()
     }
 
-    private func makeConstraints() {
+    private func initViews() {
+        self.backgroundColor = UIColor.white
         let statusView = UIView()
 
         self.addSubview(tagCollection)
-        self.addSubview(filterButton)
         self.addSubview(textButton)
         self.addSubview(statusView)
 
@@ -49,17 +46,9 @@ class SearchHeaderView: UIView {
             make.height.equalTo(20)
         }
 
+        textButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
         textButton.snp.makeConstraints { make in
-            make.left.equalTo(self).inset(24)
-            make.right.equalTo(filterButton.snp.left)
-            make.height.equalTo(52)
-            make.top.equalTo(statusView.snp.bottom)
-        }
-
-        filterButton.imageEdgeInsets.right = 24
-        filterButton.snp.makeConstraints { make in
-            make.right.equalTo(self)
-            make.width.equalTo(45 + 24)
+            make.left.right.equalTo(self).inset(24)
             make.height.equalTo(52)
             make.top.equalTo(statusView.snp.bottom)
         }
@@ -74,18 +63,22 @@ class SearchHeaderView: UIView {
         }
     }
 
-    private func linkActions() {
-        textButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
-        filterButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
-        // TODO Filter Tags
-    }
-
     @objc func onHeaderAction(for view: UIView) {
         if view is SearchTextButton {
             controller.performSegue(withIdentifier: "SearchHeaderView_suggest", sender: self)
-        } else if view is SearchFilterButton {
-            controller.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
         }
+    }
+
+    func tagCollection(selectedLocation tagCollection: SearchFilterTagCollection) {
+        controller.performSegue(withIdentifier: "SearchHeaderView_location", sender: self)
+    }
+
+    func tagCollection(selectedPlus tagCollection: SearchFilterTagCollection) {
+        controller.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
+    }
+
+    func tagCollection(selectedTag tagCollection: SearchFilterTagCollection, didTapTag tagText: String!) {
+        controller.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
     }
 
     func render(query: SearchQuery) {
@@ -119,7 +112,7 @@ class SearchTextButton: UIButton {
         field.leftImageWidth = 32
         field.leftImageSize = 18
 
-        field.placeholder = "Any restaurant or cuisine"
+        field.placeholder = "Search Anything"
         field.font = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
 
         field.isEnabled = false
@@ -156,26 +149,19 @@ class SearchFilterButton: UIButton {
 
 class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
     let tagCollection = TTGTextTagCollectionView()
+    let defaultTagConfig = DefaultTagConfig()
+    let plusTagConfig = DefaultTagConfig()
+
+    var delegate: SearchFilterTagDelegate?
 
     override init(frame: CGRect = CGRect()) {
         super.init(frame: frame)
         self.addSubview(tagCollection)
+        plusTagConfig.tagTextFont = UIFont.systemFont(ofSize: 17.0, weight: .light)
+        plusTagConfig.tagExtraSpace = CGSize(width: 13, height: 8)
 
         tagCollection.delegate = self
-        tagCollection.defaultConfig.tagTextFont = UIFont.systemFont(ofSize: 13.0, weight: .regular)
-        tagCollection.defaultConfig.tagTextColor = UIColor.black.withAlphaComponent(0.75)
-
-        tagCollection.defaultConfig.tagBackgroundColor = UIColor.white
-        tagCollection.defaultConfig.tagSelectedBackgroundColor = UIColor.white
-
-        tagCollection.defaultConfig.tagBorderWidth = 0.5
-        tagCollection.defaultConfig.tagBorderColor = UIColor.black.withAlphaComponent(0.25)
-        tagCollection.defaultConfig.tagShadowOffset = CGSize.zero
-        tagCollection.defaultConfig.tagShadowRadius = 0
-
-        tagCollection.defaultConfig.tagSelectedBorderWidth = 0
-        tagCollection.defaultConfig.tagExtraSpace = CGSize(width: 21, height: 13)
-
+        tagCollection.defaultConfig = defaultTagConfig
         tagCollection.horizontalSpacing = 10
         tagCollection.contentInset = UIEdgeInsets.init(topBottom: 2, leftRight: 0)
 
@@ -185,26 +171,80 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
     }
 
     func render(query: SearchQuery) {
-        tagCollection.removeAllTags()
+        var tags = [String]()
 
         // FirstTag: Location Tag
-        if let location = query.location {
-            tagCollection.addTag(location.name)
+        if let locationName = query.location?.name {
+            tags.append(locationName)
         } else if MunchLocation.isEnabled {
-            tagCollection.addTag("Nearby")
+            tags.append("Nearby")
         } else {
-            tagCollection.addTag("Singapore")
+            tags.append("Singapore")
         }
 
         // Other Tags
         for tag in query.filter.tag.positives {
-            tagCollection.addTag(tag)
+            tags.append(tag)
         }
+
+        render(tags: tags)
+    }
+
+    private func render(tags: [String]) {
+        tagCollection.removeAllTags()
+        tagCollection.addTags(tags)
+        tagCollection.addTag("＋", with: plusTagConfig)
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    class DefaultTagConfig: TTGTextTagConfig {
+        override init() {
+            super.init()
+
+            tagTextFont = UIFont.systemFont(ofSize: 13.0, weight: .regular)
+            tagShadowOffset = CGSize.zero
+            tagShadowRadius = 0
+
+            tagBorderWidth = 0.5
+            tagBorderColor = UIColor.black.withAlphaComponent(0.25)
+            tagTextColor = UIColor.black.withAlphaComponent(0.75)
+            tagBackgroundColor = UIColor.white
+
+            tagSelectedBorderWidth = 0.5
+            tagSelectedBorderColor = UIColor.black.withAlphaComponent(0.25)
+            tagSelectedTextColor = UIColor.black.withAlphaComponent(0.75)
+            tagSelectedBackgroundColor = UIColor.white
+
+            tagExtraSpace = CGSize(width: 21, height: 13)
+        }
+    }
+
+    func textTagCollectionView(_ textTagCollectionView: TTGTextTagCollectionView!, didTapTag tagText: String!, at index: UInt, selected: Bool) {
+        if (index == 0) {
+            // Location Selected
+            delegate?.tagCollection(selectedLocation: self)
+        } else if (tagText.hasPrefix("＋")) {
+            // Is ＋ button selected
+            delegate?.tagCollection(selectedPlus: self)
+        } else {
+            // Filter selected
+            delegate?.tagCollection(selectedTag: self, didTapTag: tagText)
+        }
+    }
+}
+
+/**
+ Delegate tool for SearchFilterTag
+ */
+protocol SearchFilterTagDelegate {
+    func tagCollection(selectedLocation tagCollection: SearchFilterTagCollection)
+
+    func tagCollection(selectedPlus tagCollection: SearchFilterTagCollection)
+
+    func tagCollection(selectedTag tagCollection: SearchFilterTagCollection, didTapTag tagText: String!)
 }
 
 class HeaderViewSegue: UIStoryboardSegue {
@@ -271,5 +311,58 @@ extension SearchHeaderView {
         } else {
             return Swift.abs(y)
         }
+    }
+}
+
+/**
+ Designable search field for Discovery page
+ */
+@IBDesignable class SearchTextField: UITextField {
+
+    // Provides left padding for images
+    override func leftViewRect(forBounds bounds: CGRect) -> CGRect {
+        var textRect = super.leftViewRect(forBounds: bounds)
+        textRect.origin.x += leftImagePadding
+        textRect.size.width = leftImageWidth
+        return textRect
+    }
+
+    @IBInspectable var leftImagePadding: CGFloat = 0
+    @IBInspectable var leftImageWidth: CGFloat = 20
+    @IBInspectable var leftImageSize: CGFloat = 18 {
+        didSet {
+            updateView()
+        }
+    }
+
+
+    @IBInspectable var leftImage: UIImage? {
+        didSet {
+            updateView()
+        }
+    }
+
+    @IBInspectable var color: UIColor = UIColor.lightGray {
+        didSet {
+            updateView()
+        }
+    }
+
+    func updateView() {
+        if let image = leftImage {
+            leftViewMode = UITextFieldViewMode.always
+            let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: leftImageSize, height: leftImageSize))
+            imageView.contentMode = .scaleAspectFit
+
+            imageView.image = image
+            imageView.tintColor = color
+            leftView = imageView
+        } else {
+            leftViewMode = UITextFieldViewMode.never
+            leftView = nil
+        }
+
+        // Placeholder text color
+        attributedPlaceholder = NSAttributedString(string: placeholder != nil ?  placeholder! : "", attributes:[NSAttributedStringKey.foregroundColor: color])
     }
 }
