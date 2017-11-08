@@ -82,9 +82,12 @@ class SearchLocationController: UIViewController {
 }
 
 extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
-    var items: [Any] {
+    private var items: [(String?, [Any])] {
         if let results = results {
-            return results
+            return [("SUGGESTIONS", results)]
+        } else {
+            // Popular Locations
+            // History Data
         }
 
         // TODO Popular Locations
@@ -92,20 +95,21 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
         return []
     }
 
-    func registerCell() {
+    private func registerCell() {
         tableView.register(SearchLocationNearbyCell.self, forCellReuseIdentifier: SearchLocationNearbyCell.id)
         tableView.register(SearchLocationCell.self, forCellReuseIdentifier: SearchLocationCell.id)
     }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return items.count
     }
 
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return items[section].1.count
+    }
+
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if results != nil {
-            return "SUGGESTIONS"
-        }
-        return "RECENT SEARCH"
+        return items[section].0
     }
 
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
@@ -116,8 +120,9 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let item = items[indexPath.section].1[indexPath.count]
+
         let cell = tableView.dequeueReusableCell(withIdentifier: SearchLocationCell.id) as! SearchLocationCell
-        let item = items[indexPath.row]
 
         if let location = item as? Location {
             cell.render(title: location.name)
@@ -128,7 +133,7 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let item = items[indexPath.row]
+        let item = items[indexPath.section].1[indexPath.count]
 
         if let location = item as? Location {
             self.searchQuery.location = location

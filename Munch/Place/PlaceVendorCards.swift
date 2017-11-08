@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import SafariServices
 import Cosmos
+import SnapKit
 
 class PlaceVendorArticleGridCard: PlaceCardView {
     let titleLabel = UILabel()
@@ -20,9 +21,10 @@ class PlaceVendorArticleGridCard: PlaceCardView {
     override func didLoad(card: PlaceCard) {
         super.addSubview(titleLabel)
         titleLabel.text = "Articles"
-        titleLabel.font = UIFont.systemFont(ofSize: 18.0, weight: UIFont.Weight.medium)
+        titleLabel.font = UIFont.systemFont(ofSize: 25.0, weight: UIFont.Weight.regular)
         titleLabel.snp.makeConstraints { (make) in
             make.left.right.equalTo(self).inset(leftRight)
+            make.height.equalTo(50)
             make.top.equalTo(self).inset(topBottom)
         }
         
@@ -34,7 +36,7 @@ class PlaceVendorArticleGridCard: PlaceCardView {
         topRow.right.render(article: articles.get(1), controller: controller)
         topRow.snp.makeConstraints { (make) in
             make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(titleLabel.snp.bottom).inset(-10)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-15)
         }
         
         if (articles.count > 2) {
