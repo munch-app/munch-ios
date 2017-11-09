@@ -87,9 +87,15 @@ extension PlaceViewController {
         register(PlaceBasicAddressCard.self)
         register(PlaceBasicLocationCard.self)
         register(PlaceBasicBusinessHourCard.self)
-        
+        register(PlaceBasicDescriptionCard.self)
+        register(PlaceBasicWebsiteCard.self)
+
         // Register Vendor Cards
         register(PlaceVendorArticleGridCard.self)
+        
+        // Register Review Cards
+        register(PlaceHeaderReviewCard.self)
+        register(PlaceVendorFacebookReviewCard.self)
     }
     
     func loadShimmerCards() {

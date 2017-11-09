@@ -9,18 +9,19 @@
 import Foundation
 import UIKit
 
-class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSource, SearchHeaderDelegate {
+class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var cardTableView: UITableView!
     var headerView: SearchHeaderView!
     
-    var collectionManager: SearchCollectionManager?
-    
+    var cardManager: SearchCardManager?
+
+    var searchQuery = SearchQuery()
     var cards: [SearchCard] {
-        if let manager = collectionManager {
+        if let manager = cardManager {
             return manager.cards
         }
-        let searchCard = SearchCard(cardId: SearchShimmerPlaceCard.cardId)
-        return [searchCard, searchCard, searchCard]
+        let shimmerCard = SearchShimmerPlaceCard.card
+        return [shimmerCard, shimmerCard, shimmerCard]
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -63,23 +64,63 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         self.cardTableView.contentInset = UIEdgeInsets(top: headerView.maxHeight - 20, left: 0, bottom: 0, right: 0)
         
         registerCards()
+
+        // Render search results
+        contentView(search: searchQuery)
+        headerView.render(query: searchQuery)
     }
     
     func scrollToTop() {
         cardTableView.setContentOffset(CGPoint(x: 0, y: -headerView.maxHeight), animated: true)
     }
-    
-    /**
-     If collectionManager is nil means show shimmer cards?
-     */
-    func headerView(render collectionManager: SearchCollectionManager?) {
-        self.collectionManager = collectionManager
-        self.cardTableView.reloadData()
-        self.scrollToTop()
-    }
-    
-    @IBAction func unwindToSearch(segue:UIStoryboardSegue) { }
 
+    @IBAction func unwindToSearch(segue: UIStoryboardSegue) {
+        func render(query: SearchQuery) {
+            if query != self.searchQuery {
+                self.searchQuery = query
+
+                // Render updated results
+                contentView(search: searchQuery)
+                headerView.render(query: searchQuery)
+            }
+        }
+
+        let controller = segue.source
+        if let query = controller as? SearchQueryController {
+            render(query: query.searchQuery)
+        } else if let filter = controller as? SearchFilterController {
+            render(query: filter.searchQuery)
+        } else if let location = controller as? SearchLocationController {
+            render(query: location.searchQuery)
+        }
+    }
+
+    private func contentView(search searchQuery: SearchQuery) {
+        func search(searchQuery: SearchQuery) {
+            self.cardManager = SearchCardManager.init(search: searchQuery, completion: { (meta) in
+                self.cardTableView.reloadData()
+            })
+            self.cardTableView.reloadData()
+            self.scrollToTop()
+        }
+
+        // Check if Location is Enabled
+        if MunchLocation.isEnabled {
+            MunchLocation.waitFor(completion: { latLng, error in
+                if let latLng = latLng {
+                    var updatedQuery = searchQuery
+                    updatedQuery.latLng = latLng
+                    search(searchQuery: updatedQuery)
+                } else if let error = error {
+                    self.alert(title: "Location Error", error: error)
+                } else {
+                    self.alert(title: "Location Error", message: "No Error or Location Data")
+                }
+            })
+        } else {
+            search(searchQuery: searchQuery)
+        }
+    }
 }
 
 // CardType and tools
@@ -88,15 +129,14 @@ extension SearchController {
         // Register Static Cards
         register(SearchStaticEmptyCard.self)
         register(SearchStaticNoResultCard.self)
-        register(SearchStaticNoLocationCard.self)
         register(SearchStaticLoadingCard.self)
         
         // Register Shimmer Cards
         register(SearchShimmerPlaceCard.self)
         
         // Register Search Cards
-        register(SearchPlaceImageCard.self)
-        register(SearchPlaceTitleCard.self)
+        register(SearchPlaceCard.self)
+        register(SearchNoLocationCard.self)
     }
 
     private func register(_ cellClass: SearchCardView.Type) {
@@ -125,7 +165,7 @@ extension SearchController {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let card = cards[indexPath.row]
         
-        if card.cardId == SearchPlaceImageCard.cardId || card.cardId == SearchPlaceTitleCard.cardId, let placeId = card["placeId"].string {
+        if card.cardId == SearchPlaceCard.cardId, let placeId = card["placeId"].string {
             // Place Card
             let storyboard = UIStoryboard(name: "Place", bundle: nil)
             let controller = storyboard.instantiateInitialViewController() as! PlaceViewController
@@ -150,11 +190,11 @@ extension SearchController {
     }
     
     func appendLoad() {
-        if let manager = self.collectionManager {
+        if let manager = self.cardManager {
             manager.append(load: { meta in
                 if (meta.isOk()) {
                     // Check reference is still the same
-                    if (manager === self.collectionManager) {
+                    if (manager === self.cardManager) {
                         self.cardTableView.reloadData()
                     }
                 } else {
@@ -187,28 +227,5 @@ extension SearchController {
             let point = CGPoint(x: 0, y: y)
             cardTableView.setContentOffset(point, animated: true)
         }
-    }
-}
-
-protocol SearchCardView {
-    func render(card: SearchCard)
-    
-    var leftRight: CGFloat { get }
-    var topBottom: CGFloat { get }
-    
-    static var cardId: String { get }
-}
-
-extension SearchCardView {
-    var leftRight: CGFloat {
-        return 24.0
-    }
-    
-    var topBottom: CGFloat {
-        return 16.0
-    }
-    
-    static var card: SearchCard {
-        return SearchCard(cardId: cardId)
     }
 }

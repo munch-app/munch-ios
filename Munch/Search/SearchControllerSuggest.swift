@@ -1,5 +1,5 @@
 //
-//  SearchQueryController.swift
+//  SearchControllerSuggest.swift
 //  Munch
 //
 //  Created by Fuxing Loh on 18/9/17.
@@ -9,22 +9,13 @@
 import Foundation
 import UIKit
 
-class SearchQueryController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    
+class SearchQueryController: UIViewController {
+    var searchQuery: SearchQuery!
+
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var textField: SearchTextField!
     
-    var headerView: SearchHeaderView!
-    
     var results: [SearchResult]?
-    var items: [Any] {
-        if let results = results {
-            return results
-        }
-        
-        // TODO Returns results from, Implement in 0.2.0 onwards
-        return []
-    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -58,7 +49,7 @@ class SearchQueryController: UIViewController, UITableViewDataSource, UITableVie
         self.tableView.tableFooterView = footerView
         self.tableView.contentInset.top = 0
         
-        self.textField.text = self.headerView.mainSearchQuery.query
+        self.textField.text = self.searchQuery.query
         self.textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         self.textField.addTarget(self, action: #selector(textFieldShouldReturn(_:)), for: .editingDidEndOnExit)
         registerCell()
@@ -75,22 +66,19 @@ class SearchQueryController: UIViewController, UITableViewDataSource, UITableVie
     
     @objc func textFieldDidChange(_ sender: Any) {
         NSObject.cancelPreviousPerformRequests(withTarget: self)
-        self.perform(#selector(textFieldDidCommit(text:)), with: textField.text, afterDelay: 0.4)
+        self.perform(#selector(textFieldDidCommit(text:)), with: textField.text, afterDelay: 0.3)
     }
     
     @objc func textFieldShouldReturn(_ sender: Any) -> Bool {
         if let text = textField.text {
-            self.dismiss(animated: true) {
-                var query = self.headerView.mainSearchQuery
-                query.query = text
-                self.headerView.onHeaderApply(action: .apply(query))
-            }
+            self.searchQuery.query = text
+            self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
         }
         return true
     }
     
     @objc func textFieldDidCommit(text: String?) {
-        if let text = text, text.characters.count >= 3 {
+        if let text = text, text.count >= 3 {
             MunchApi.search.suggest(text: text, size: 20, callback: { (meta, results) in
                 self.results = results
                 self.tableView.reloadData()
@@ -102,7 +90,16 @@ class SearchQueryController: UIViewController, UITableViewDataSource, UITableVie
     }
 }
 
-extension SearchQueryController {
+extension SearchQueryController: UITableViewDataSource, UITableViewDelegate {
+    var items: [Any] {
+        if let results = results {
+            return results
+        }
+
+        // TODO Returns results from local history, Implement in 0.3.0 onwards
+        return []
+    }
+
     func registerCell() {
         tableView.register(SearchQueryCell.self, forCellReuseIdentifier: SearchQueryCell.id)
     }
@@ -151,17 +148,11 @@ extension SearchQueryController {
             controller.placeId = place.id
             self.navigationController!.pushViewController(controller, animated: true)
         } else if let location = item as? Location {
-            self.dismiss(animated: true) {
-                var query = self.headerView.mainSearchQuery
-                query.location = location
-                self.headerView.onHeaderApply(action: .apply(query))
-            }
-        } else if let tag = item as? Tag {
-            self.dismiss(animated: true) {
-                var query = self.headerView.mainSearchQuery
-                query.query = tag.name
-                self.headerView.onHeaderApply(action: .apply(query))
-            }
+            self.searchQuery.location = location
+            self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
+        } else if let tagName = (item as? Tag)?.name {
+            self.searchQuery.filter.tag.positives.insert(tagName)
+            self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
         }
     }
 }
@@ -205,58 +196,5 @@ class SearchQueryCell: UITableViewCell {
     
     class var id: String {
         return "SearchQueryCell"
-    }
-}
-
-/**
- Designable search field for Discovery page
- */
-@IBDesignable class SearchTextField: UITextField {
-    
-    // Provides left padding for images
-    override func leftViewRect(forBounds bounds: CGRect) -> CGRect {
-        var textRect = super.leftViewRect(forBounds: bounds)
-        textRect.origin.x += leftImagePadding
-        textRect.size.width = leftImageWidth
-        return textRect
-    }
-    
-    @IBInspectable var leftImagePadding: CGFloat = 0
-    @IBInspectable var leftImageWidth: CGFloat = 20
-    @IBInspectable var leftImageSize: CGFloat = 18 {
-        didSet {
-            updateView()
-        }
-    }
-    
-    
-    @IBInspectable var leftImage: UIImage? {
-        didSet {
-            updateView()
-        }
-    }
-    
-    @IBInspectable var color: UIColor = UIColor.lightGray {
-        didSet {
-            updateView()
-        }
-    }
-    
-    func updateView() {
-        if let image = leftImage {
-            leftViewMode = UITextFieldViewMode.always
-            let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: leftImageSize, height: leftImageSize))
-            imageView.contentMode = .scaleAspectFit
-            
-            imageView.image = image
-            imageView.tintColor = color
-            leftView = imageView
-        } else {
-            leftViewMode = UITextFieldViewMode.never
-            leftView = nil
-        }
-        
-        // Placeholder text color
-        attributedPlaceholder = NSAttributedString(string: placeholder != nil ?  placeholder! : "", attributes:[NSAttributedStringKey.foregroundColor: color])
     }
 }

@@ -8,6 +8,7 @@
 
 import Foundation
 import Shimmer
+import SwiftyJSON
 
 class ShimmerImageView: UIView {
     let shimmerView = ShimmerView()
@@ -37,15 +38,19 @@ class ShimmerImageView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func render(placeImage: Place.Image?) {
-        render(imageMeta: placeImage?.imageMeta)
+    func render(images: JSON?) {
+        render(images: images?.dictionaryObject as? [String: String])
     }
     
-    func render(imageMeta: ImageMeta?) {
+    func render(placeImage: Place.Image?) {
+        render(images: placeImage?.images)
+    }
+    
+    func render(images: [String: String]?) {
         self.imageView.isHidden = true
         self.shimmerView.isHidden = false
         self.shimmerView.isShimmering = true
-        imageView.render(imageMeta: imageMeta) { _, error, _, _ in
+        imageView.render(images: images) { _, error, _, _ in
             if (error == nil) {
                 self.imageView.isHidden = false
                 self.shimmerView.isHidden = true

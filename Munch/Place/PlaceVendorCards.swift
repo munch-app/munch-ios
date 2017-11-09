@@ -9,6 +9,8 @@
 import Foundation
 import UIKit
 import SafariServices
+import Cosmos
+import SnapKit
 
 class PlaceVendorArticleGridCard: PlaceCardView {
     let titleLabel = UILabel()
@@ -19,21 +21,22 @@ class PlaceVendorArticleGridCard: PlaceCardView {
     override func didLoad(card: PlaceCard) {
         super.addSubview(titleLabel)
         titleLabel.text = "Articles"
-        titleLabel.font = UIFont.systemFont(ofSize: 18.0, weight: UIFont.Weight.medium)
+        titleLabel.font = UIFont.systemFont(ofSize: 25.0, weight: UIFont.Weight.regular)
         titleLabel.snp.makeConstraints { (make) in
             make.left.right.equalTo(self).inset(leftRight)
+            make.height.equalTo(50)
             make.top.equalTo(self).inset(topBottom)
         }
         
         // Hide See More if < 4
         // Hide Articles if not shown
-        let articles = card["articles"].map { Article(json: $0.1) }
+        let articles = card.data.map { Article(json: $0.1) }
         super.addSubview(topRow)
         topRow.left.render(article: articles.get(0), controller: controller)
         topRow.right.render(article: articles.get(1), controller: controller)
         topRow.snp.makeConstraints { (make) in
             make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(titleLabel.snp.bottom).inset(-10)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-15)
         }
         
         if (articles.count > 2) {
@@ -53,7 +56,7 @@ class PlaceVendorArticleGridCard: PlaceCardView {
     }
     
     override class var cardId: String? {
-        return "vendor_ArticleGrid_10092017"
+        return "vendor_Article_20171029"
     }
 
     class ArticleGridRowView: UIView {
@@ -125,7 +128,7 @@ class PlaceVendorArticleGridCard: PlaceCardView {
             self.controller = controller
             
             if let article = article {
-                articleImageView.render(imageMeta: article.thumbnail)
+                articleImageView.render(images: article.thumbnail)
                 articleTitleLabel.text = article.title
             } else {
                 self.isHidden = true
@@ -139,5 +142,82 @@ class PlaceVendorArticleGridCard: PlaceCardView {
                 controller.present(safari, animated: true, completion: nil)
             }
         }
+    }
+}
+
+class PlaceHeaderReviewCard: PlaceCardView {
+    let titleLabel = UILabel()
+    
+    override func didLoad(card: PlaceCard) {
+        self.addSubview(titleLabel)
+        titleLabel.text = "Reviews"
+        titleLabel.font = UIFont.systemFont(ofSize: 18.0, weight: UIFont.Weight.medium)
+        titleLabel.snp.makeConstraints { (make) in
+            make.left.right.equalTo(self).inset(leftRight)
+            make.top.bottom.equalTo(self).inset(topBottom)
+        }
+    }
+    
+    override class var cardId: String? {
+        return "header_Review_20171020"
+    }
+}
+
+class PlaceVendorFacebookReviewCard: PlaceCardView, SFSafariViewControllerDelegate {
+    let titleLabel = UILabel()
+    let ratingView = CosmosView()
+    let countLabel = UILabel()
+    
+    var facebookReviewUrl: URL?
+    
+    override func didLoad(card: PlaceCard) {
+        self.addSubview(titleLabel)
+        self.addSubview(ratingView)
+        self.addSubview(countLabel)
+        
+        titleLabel.text = "Facebook"
+        titleLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.regular)
+        titleLabel.snp.makeConstraints { (make) in
+            make.left.equalTo(self).inset(leftRight)
+            make.top.equalTo(self)
+        }
+        
+        ratingView.rating = card["overallStarRating"].double ?? 5
+        ratingView.settings.fillMode = .precise
+        ratingView.settings.filledColor = UIColor.init(hex: "#3B5998")
+        ratingView.settings.filledBorderColor = UIColor.init(hex: "#3B5998")
+        ratingView.settings.emptyBorderColor = UIColor.clear
+        ratingView.settings.emptyBorderColor = UIColor.init(hex: "#3B5998")
+        ratingView.settings.starSize = 18
+        ratingView.settings.starMargin = 0
+        ratingView.snp.makeConstraints { (make) in
+            make.right.equalTo(self).inset(leftRight)
+            make.top.equalTo(self)
+        }
+        
+        countLabel.text = "Based on \(card["ratingCount"].int ?? 0) reviews"
+        countLabel.font = UIFont.systemFont(ofSize: 11.0, weight: UIFont.Weight.regular)
+        countLabel.textAlignment = .center
+        countLabel.snp.makeConstraints { (make) in
+            make.left.right.equalToSuperview().inset(leftRight)
+            make.top.equalTo(ratingView.snp.bottom).inset(-5)
+            make.bottom.equalToSuperview().inset(topBottom)
+        }
+        
+        if let facebookPlaceId = card["placeId"].string {
+            self.facebookReviewUrl = URL.init(string: "https://www.facebook.com/\(facebookPlaceId)/reviews")
+        }
+    }
+
+    override func didTap() {
+        if let url = facebookReviewUrl {
+            let safari = SFSafariViewController(url: url)
+            safari.delegate = self
+            controller.present(safari, animated: true, completion: nil)
+        }
+    }
+
+    override class var cardId: String? {
+        return "vendor_FacebookReview_20171017"
     }
 }

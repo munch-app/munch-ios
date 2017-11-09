@@ -13,13 +13,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        self.window = UIWindow(frame: UIScreen.main.bounds)
         
         // Select initial view provider to use
-        self.window?.rootViewController = InitialViewProvider.searchController()
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        self.window?.rootViewController = InitialViewProvider.main()
         self.window?.makeKeyAndVisible()
+        return true
+    }
+    
+    func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
         return true
     }
 

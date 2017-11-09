@@ -7,6 +7,6 @@
 	<key>MunchApi-Url-Home</key>
 	<string>http://10.0.1.8:8800</string>
 	<key>MunchApi-Url</key>
-	<string>http://api.beta.munchapp.co</string>
+	<string>https://api.munchapp.co</string>
 </dict>
 </plist>
