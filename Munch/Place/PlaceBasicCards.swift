@@ -12,6 +12,7 @@ import MapKit
 
 import SnapKit
 import SwiftRichString
+import SafariServices
 
 class PlaceBasicImageBannerCard: PlaceCardView {
     let imageGradientView = UIView()
@@ -265,11 +266,14 @@ class PlaceBasicDescriptionCard: PlaceCardView {
     }
 }
 
-class PlaceBasicWebsiteCard: PlaceCardView {
+class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
     let websiteLabel = UILabel()
+    var websiteUrl: String?
 
     override func didLoad(card: PlaceCard) {
-        websiteLabel.text = card["website"].string
+        self.websiteUrl = card["website"].string
+
+        websiteLabel.text = websiteUrl
         websiteLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.regular)
         websiteLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         websiteLabel.numberOfLines = 1
@@ -278,6 +282,14 @@ class PlaceBasicWebsiteCard: PlaceCardView {
         websiteLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.bottom.equalTo(self).inset(topBottom)
+        }
+    }
+
+    override func didTap() {
+        if let websiteUrl = websiteUrl, let url = URL.init(string: websiteUrl) {
+            let safari = SFSafariViewController(url: url)
+            safari.delegate = self
+            controller.present(safari, animated: true, completion: nil)
         }
     }
 

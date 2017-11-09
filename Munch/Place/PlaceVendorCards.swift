@@ -207,20 +207,16 @@ class PlaceVendorFacebookReviewCard: PlaceCardView, SFSafariViewControllerDelega
         if let facebookPlaceId = card["placeId"].string {
             self.facebookReviewUrl = URL.init(string: "https://www.facebook.com/\(facebookPlaceId)/reviews")
         }
-    
-        let tap = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
-        self.addGestureRecognizer(tap)
-        self.isUserInteractionEnabled = true
     }
-    
-    @objc func handleTap(_ sender: UITapGestureRecognizer) {
+
+    override func didTap() {
         if let url = facebookReviewUrl {
             let safari = SFSafariViewController(url: url)
             safari.delegate = self
             controller.present(safari, animated: true, completion: nil)
         }
     }
-    
+
     override class var cardId: String? {
         return "vendor_FacebookReview_20171017"
     }
