@@ -6,13 +6,16 @@
 import Foundation
 import UIKit
 import SnapKit
+import SwiftyJSON
+import TPKeyboardAvoiding
 
 class SearchLocationController: UIViewController {
     var searchQuery: SearchQuery!
     let headerView = SearchLocationHeaderView()
-    let tableView = UITableView()
+    let tableView = TPKeyboardAvoidingTableView()
 
-    var results: [Location]?
+    var results: [LocationType]?
+    var popularLocations: [LocationType]!
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -24,9 +27,16 @@ class SearchLocationController: UIViewController {
         self.headerView.textField.becomeFirstResponder()
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.headerView.textField.resignFirstResponder()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.initViews()
+
+        self.popularLocations = readJson(forResource: "locations-popular")?.flatMap({ Location(json: $0.1) }).map({ LocationType.location($0) })
 
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -69,9 +79,9 @@ class SearchLocationController: UIViewController {
     }
 
     @objc func textFieldDidCommit(textField: UITextField) {
-        if let text = textField.text, text.count >= 3 {
+        if let text = textField.text, text.count >= 2 {
             MunchApi.locations.suggest(text: text, callback: { (meta, locations) in
-                self.results = locations
+                self.results = locations.map({ LocationType.location($0) })
                 self.tableView.reloadData()
             })
         } else {
@@ -79,20 +89,38 @@ class SearchLocationController: UIViewController {
             self.tableView.reloadData()
         }
     }
+
+    private func readJson(forResource resourceName: String) -> JSON? {
+        if let path = Bundle.main.path(forResource: resourceName, ofType: "json") {
+            do {
+                let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .alwaysMapped)
+                return try JSON(data: data)
+            } catch let error {
+                print("parse error: \(error.localizedDescription)")
+            }
+        }
+
+        print("Invalid json file/filename/path.")
+        return nil
+    }
 }
 
 extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
-    private var items: [(String?, [Any])] {
+    enum LocationType {
+        case nearby
+        case singapore
+        case location(Location)
+    }
+
+    private var items: [(String?, [LocationType])] {
         if let results = results {
             return [("SUGGESTIONS", results)]
         } else {
-            // Popular Locations
-            // History Data
+            return [
+                (nil, [LocationType.nearby, LocationType.singapore]),
+                ("POPULAR LOCATIONS", popularLocations ?? []),
+            ]
         }
-
-        // TODO Popular Locations
-        // TODO History
-        return []
     }
 
     private func registerCell() {
@@ -120,11 +148,15 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let item = items[indexPath.section].1[indexPath.count]
-
+        let item = items[indexPath.section].1[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: SearchLocationCell.id) as! SearchLocationCell
 
-        if let location = item as? Location {
+        switch item {
+        case .nearby:
+            cell.render(title: "Nearby")
+        case .singapore:
+            cell.render(title: "Singapore")
+        case let .location(location):
             cell.render(title: location.name)
         }
 
@@ -133,9 +165,22 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let item = items[indexPath.section].1[indexPath.count]
+        let item = items[indexPath.section].1[indexPath.row]
 
-        if let location = item as? Location {
+        switch item {
+        case .nearby:
+            self.searchQuery.location = nil
+            self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
+        case .singapore:
+            var singapore = Location()
+            singapore.name = "Singapore"
+            singapore.country = "singapore"
+            singapore.city = "singapore"
+            singapore.latLng = "1.290270, 103.851959"
+            singapore.points = ["1.26675774823,103.603134155", "1.32442122318,103.617553711", "1.38963424766,103.653259277", "1.41434608581,103.666305542", "1.42944763543,103.671798706", "1.43905766081,103.682785034", "1.44386265833,103.695831299", "1.45896401284,103.720550537", "1.45827758983,103.737716675", "1.44935407163,103.754196167", "1.45004049736,103.760375977", "1.47887018872,103.803634644", "1.4754381021,103.826980591", "1.45827758983,103.86680603", "1.43219336108,103.892211914", "1.4287612035,103.897018433", "1.42670190649,103.915557861", "1.43219336108,103.934783936", "1.42189687297,103.960189819", "1.42464260763,103.985595703", "1.42121043879,104.000701904", "1.43974408965,104.02130127", "1.44592193988,104.043960571", "1.42464260763,104.087219238", "1.39718511473,104.094772339", "1.35737118164,104.081039429", "1.29009788407,104.127044678", "1.277741368,104.127044678", "1.25371463932,103.982162476", "1.17545464492,103.812561035", "1.13014521522,103.736343384", "1.19055762617,103.653945923", "1.1960495989,103.565368652", "1.26675774823,103.603134155"]
+            self.searchQuery.location = singapore
+            self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
+        case let .location(location):
             self.searchQuery.location = location
             self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
         }
@@ -260,11 +305,11 @@ class SearchLocationCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.addSubview(titleLabel)
 
-        titleLabel.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.regular)
+        titleLabel.font = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
         titleLabel.textColor = .black
         titleLabel.snp.makeConstraints { (make) in
             make.left.right.equalTo(self).inset(24)
-            make.top.bottom.equalTo(self).inset(11)
+            make.top.bottom.equalTo(self).inset(16)
         }
     }
 

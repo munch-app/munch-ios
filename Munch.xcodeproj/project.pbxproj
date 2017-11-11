@@ -46,6 +46,7 @@
 		03E1A5AC1F6E7B58005A6E58 /* SearchCardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1A5AB1F6E7B58005A6E58 /* SearchCardManager.swift */; };
 		03F0BA5F1F99D6C30040B9C8 /* SearchCardInjected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0BA5E1F99D6C30040B9C8 /* SearchCardInjected.swift */; };
 		12855D04BD7B4359954CC379 /* Pods_MunchTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30933A940AE4DF2E7F80A839 /* Pods_MunchTests.framework */; };
+		B4B732371A580E8A5F7BB44B /* locations-popular.json in Resources */ = {isa = PBXBuildFile; fileRef = B4B738FC6C7F484B97FA825F /* locations-popular.json */; };
 		B4B7382DD1DAFD428F8CD49F /* SearchControllerLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73D8E2703243215F8AC5D /* SearchControllerLocation.swift */; };
 		B4B7385BBBEB7A119E93D402 /* AccountClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73924CDDEE30BE2E2AF8A /* AccountClient.swift */; };
 		DB136C8B43E175A72028D87F /* Pods_MunchUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2CE8E9F738C2A64071DD8B3 /* Pods_MunchUITests.framework */; };
@@ -141,6 +142,7 @@
 		79CEEE458C385CB72EED1E4B /* Pods-Munch.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Munch.release.xcconfig"; path = "Pods/Target Support Files/Pods-Munch/Pods-Munch.release.xcconfig"; sourceTree = "<group>"; };
 		A93EEFB98ADF9ED9EE8DF559 /* Pods-MunchUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MunchUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MunchUITests/Pods-MunchUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		ACE953A82302FD876F98E058 /* Pods-MunchTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MunchTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MunchTests/Pods-MunchTests.release.xcconfig"; sourceTree = "<group>"; };
+		B4B738FC6C7F484B97FA825F /* locations-popular.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "locations-popular.json"; sourceTree = "<group>"; };
 		B4B73924CDDEE30BE2E2AF8A /* AccountClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountClient.swift; sourceTree = "<group>"; };
 		B4B73D8E2703243215F8AC5D /* SearchControllerLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchControllerLocation.swift; sourceTree = "<group>"; };
 		D2CE8E9F738C2A64071DD8B3 /* Pods_MunchUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MunchUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -327,6 +329,7 @@
 				03BB67F51F6FA9B500F17A1A /* SearchControllerSuggest.swift */,
 				03BB67F71F6FA9C400F17A1A /* SearchControllerFilter.swift */,
 				B4B73D8E2703243215F8AC5D /* SearchControllerLocation.swift */,
+				B4B738FC6C7F484B97FA825F /* locations-popular.json */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -472,6 +475,7 @@
 				034FCF091F6C282E00D353F1 /* Search.storyboard in Resources */,
 				0348472A1F9D20C30049BDF7 /* Account.storyboard in Resources */,
 				03CD276C1F6286FC003562A1 /* Place.storyboard in Resources */,
+				B4B732371A580E8A5F7BB44B /* locations-popular.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -611,6 +615,7 @@
 				"${BUILT_PRODUCTS_DIR}/SwiftLocation/SwiftLocation.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftRichString/SwiftRichString.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
+				"${BUILT_PRODUCTS_DIR}/TPKeyboardAvoiding/TPKeyboardAvoiding.framework",
 				"${BUILT_PRODUCTS_DIR}/TTGTagCollectionView/TTGTagCollectionView.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -630,6 +635,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftLocation.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftRichString.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TPKeyboardAvoiding.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TTGTagCollectionView.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;

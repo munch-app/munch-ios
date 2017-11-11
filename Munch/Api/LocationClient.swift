@@ -40,7 +40,11 @@ struct Location: SearchResult {
     
     var latLng: String?
     var points: [String]? // points is ["lat, lng"] String Array
-    
+
+    init() {
+
+    }
+
     init?(json: JSON) {
         if (!json.exists()) { return nil }
         

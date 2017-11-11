@@ -18,8 +18,9 @@ PODS:
   - SnapKit (4.0.0)
   - SwiftLocation (2.0.7)
   - SwiftRichString (1.0.1)
-  - SwiftyJSON (3.1.4)
-  - TTGTagCollectionView (1.6.0)
+  - SwiftyJSON (4.0.0)
+  - TPKeyboardAvoiding (1.3.1)
+  - TTGTagCollectionView (1.7.0)
 
 DEPENDENCIES:
   - Alamofire (~> 4.5)
@@ -35,8 +36,9 @@ DEPENDENCIES:
   - SnapKit (~> 4.0)
   - SwiftLocation (~> 2.0)
   - SwiftRichString (~> 1.0)
-  - SwiftyJSON (~> 3.1)
-  - TTGTagCollectionView (~> 1.6)
+  - SwiftyJSON (~> 4.0)
+  - TPKeyboardAvoiding (~> 1.3)
+  - TTGTagCollectionView (~> 1.7)
 
 EXTERNAL SOURCES:
   KMNavigationBarTransition:
@@ -62,9 +64,10 @@ SPEC CHECKSUMS:
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
   SwiftLocation: 1fe2e15a5812e961496e82eeaca71d03e829e47a
   SwiftRichString: 2111627a29af277094a9e5d4d1bf6bfe0b8212ac
-  SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
-  TTGTagCollectionView: ba35fb7dc284b368c86bf044bd889293a69114e8
+  SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
+  TPKeyboardAvoiding: 0d6af20e95e2850f4c621841225b59ec7d8dd852
+  TTGTagCollectionView: 1a4d1e40ad4bef82a82c6753a0451985c124c744
 
-PODFILE CHECKSUM: 7ecb514ba6f576bd9d8d2cc447400152d83396c0
+PODFILE CHECKSUM: 83f46d5e8d1d6af176d6ef700c0ad5a4d539f9b1
 
 COCOAPODS: 1.3.1
