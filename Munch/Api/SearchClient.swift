@@ -187,7 +187,22 @@ struct SearchQuery: Equatable {
     }
     
     static func == (lhs: SearchQuery, rhs: SearchQuery) -> Bool {
-        return NSDictionary(dictionary: lhs.toParams()).isEqual(to: rhs.toParams())
+        guard (lhs.query == rhs.query) else {
+            return false
+        }
+
+        guard (lhs.location?.points ?? [] == rhs.location?.points ?? []) else {
+            return false
+        }
+
+        guard (NSDictionary(dictionary: lhs.filter.toParams()).isEqual(to: rhs.filter.toParams())) else {
+            return false
+        }
+
+        guard (NSDictionary(dictionary: lhs.sort.toParams()).isEqual(to: rhs.sort.toParams())) else {
+            return false
+        }
+        return true
     }
 }
 

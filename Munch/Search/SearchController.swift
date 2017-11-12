@@ -90,7 +90,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         }
     }
 
-    private func contentView(search searchQuery: SearchQuery) {
+    func contentView(search searchQuery: SearchQuery) {
         func search(searchQuery: SearchQuery) {
             // Save a copy locally, cannot remove
             self.searchQuery = searchQuery

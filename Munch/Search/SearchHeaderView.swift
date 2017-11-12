@@ -16,16 +16,17 @@ import TTGTagCollectionView
  SearchController only controls rendering of the data
  */
 class SearchHeaderView: UIView, SearchFilterTagDelegate {
-    let controller: UIViewController
+    let controller: SearchController
 
+    let backButton = SearchBackButton()
     let textButton = SearchTextButton()
     let tagCollection = SearchFilterTagCollection()
 
     var heightConstraint: Constraint! = nil
 
-    var searchQuery = SearchQuery()
+    var searchQueryHistories = [SearchQuery]()
 
-    init(controller: UIViewController) {
+    init(controller: SearchController) {
         self.controller = controller
         super.init(frame: CGRect())
         self.tagCollection.delegate = self
@@ -39,6 +40,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
         self.addSubview(tagCollection)
         self.addSubview(textButton)
         self.addSubview(statusView)
+        self.addSubview(backButton)
 
         statusView.backgroundColor = UIColor.white
         statusView.snp.makeConstraints { make in
@@ -58,6 +60,14 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
             make.bottom.equalTo(self).inset(8)
         }
 
+        backButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
+        backButton.snp.makeConstraints { make in
+            make.top.equalTo(statusView.snp.bottom)
+            make.left.equalTo(self)
+            make.width.equalTo(60)
+            make.height.equalTo(56)
+        }
+
         self.snp.makeConstraints { make in
             self.heightConstraint = make.height.equalTo(maxHeight).constraint
         }
@@ -66,6 +76,11 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
     @objc func onHeaderAction(for view: UIView) {
         if view is SearchTextButton {
             controller.performSegue(withIdentifier: "SearchHeaderView_suggest", sender: self)
+        } else if view is SearchBackButton {
+            if let _ = searchQueryHistories.popLast(), let last = searchQueryHistories.last {
+                controller.contentView(search: last)
+                render(query: last)
+            }
         }
     }
 
@@ -82,11 +97,22 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
     }
 
     func render(query: SearchQuery) {
-        // Save a copy here for navigation
-        // TODO Search Navigation Tracking
-        // Added to list if added
+        // Save a copy here if don't already exist for navigation
+        if (!searchQueryHistories.contains(query)) {
+            searchQueryHistories.append(query)
+        }
+
         self.textButton.render(query: query)
         self.tagCollection.render(query: query)
+        if (searchQueryHistories.count > 1) {
+            // Back Button
+            textButton.field.leftImage = UIImage(named: "SC-Back-18")
+            backButton.isHidden = false
+        } else {
+            // Search Button
+            textButton.field.leftImage = UIImage(named: "SC-Search-18")
+            backButton.isHidden = true
+        }
     }
 
     override func layoutSubviews() {
@@ -100,7 +126,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
 }
 
 class SearchTextButton: UIButton {
-    private let field = SearchTextField()
+    fileprivate let field = SearchTextField()
 
     override init(frame: CGRect = CGRect()) {
         super.init(frame: frame)
@@ -134,6 +160,10 @@ class SearchTextButton: UIButton {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+class SearchBackButton: UIButton {
+
 }
 
 class SearchFilterButton: UIButton {
