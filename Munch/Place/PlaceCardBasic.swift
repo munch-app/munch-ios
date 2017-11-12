@@ -294,9 +294,11 @@ class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
             make.top.bottom.equalTo(self).inset(topBottom)
         }
 
-        websiteLabel.text = websiteUrl
-        websiteLabel.font = UIFont.systemFont(ofSize: 14.0, weight: UIFont.Weight.regular)
-        websiteLabel.textColor = UIColor.black
+        websiteLabel.attributedText = websiteUrl?.set(style: .default { make in
+            make.underline = UnderlineAttribute(color: UIColor.black.withAlphaComponent(0.8), style: NSUnderlineStyle.styleSingle)
+            make.font = FontAttribute(font: UIFont.systemFont(ofSize: 14.0, weight: .regular))
+            make.color = .black
+        })
         websiteLabel.textAlignment = .left
         websiteLabel.numberOfLines = 1
         websiteLabel.snp.makeConstraints { make in

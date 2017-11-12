@@ -38,7 +38,7 @@ class PlaceVendorArticleGridCard: PlaceCardView {
             make.top.equalTo(self).inset(topBottom)
         }
 
-        if (articles.count > 2) {
+        if (articles.count > 3) {
             super.addSubview(bottomRow)
             bottomRow.left.render(article: articles.get(2), controller: controller)
             bottomRow.right.render(article: articles.get(3), controller: controller)
@@ -68,14 +68,14 @@ class PlaceVendorArticleGridCard: PlaceCardView {
             self.addSubview(right)
 
             left.snp.makeConstraints { (make) in
-                make.right.equalTo(right.snp.left).inset(-15)
+                make.right.equalTo(right.snp.left).inset(-20)
                 make.top.bottom.equalTo(self)
                 make.left.equalTo(self)
                 make.width.equalTo(right.snp.width)
             }
 
             right.snp.makeConstraints { (make) in
-                make.left.equalTo(left.snp.right).inset(-15)
+                make.left.equalTo(left.snp.right).inset(-20)
                 make.top.bottom.equalTo(self)
                 make.right.equalTo(self)
                 make.width.equalTo(left.snp.width)
@@ -96,20 +96,21 @@ class PlaceVendorArticleGridCard: PlaceCardView {
 
         override init(frame: CGRect) {
             super.init(frame: frame)
-            articleTitleLabel.font = UIFont.systemFont(ofSize: 12.0, weight: UIFont.Weight.regular)
             self.addSubview(articleImageView)
             self.addSubview(articleTitleLabel)
 
             articleImageView.snp.makeConstraints { (make) in
-                make.height.equalTo(articleImageView.snp.width)
                 make.left.right.equalTo(self)
+                make.height.equalTo(articleImageView.snp.width).dividedBy(1.23)
                 make.top.equalTo(self)
             }
 
             articleTitleLabel.numberOfLines = 2
+            articleTitleLabel.font = UIFont.systemFont(ofSize: 12.0, weight: .regular)
             articleTitleLabel.snp.makeConstraints { (make) in
                 make.left.right.equalTo(self)
-                make.top.equalTo(articleImageView.snp.bottom).inset(-6)
+                make.height.equalTo(30)
+                make.top.equalTo(articleImageView.snp.bottom).inset(-8)
                 make.bottom.equalTo(self)
             }
 
