@@ -300,6 +300,15 @@ struct Place: SearchResult, Equatable {
         return nil
     }
 
+    func toParams() -> Parameters {
+        // This is not completed
+        var params = Parameters()
+        params["id"] = id
+        params["name"] = name
+        params["dataType"] = "Place"
+        return params
+    }
+
     static func ==(lhs: Place, rhs: Place) -> Bool {
         if (lhs.id == nil || rhs.id == nil) {
             return false

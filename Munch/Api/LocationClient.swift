@@ -66,6 +66,7 @@ struct Location: SearchResult {
         
         params["latLng"] = latLng
         params["points"] = points
+        params["dataType"] = "Location"
         return params
     }
 }

@@ -30,6 +30,10 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
     
+    @IBAction func onBackButton(_ sender: Any) {
+        navigationController?.popViewController(animated: true)
+    }
+    
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }

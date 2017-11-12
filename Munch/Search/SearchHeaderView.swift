@@ -82,6 +82,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
     }
 
     func render(query: SearchQuery) {
+        // Save a copy here for navigation
         // TODO Search Navigation Tracking
         // Added to list if added
         self.textButton.render(query: query)
@@ -256,7 +257,7 @@ class HeaderViewSegue: UIStoryboardSegue {
 
         if let navigation = destination as? UINavigationController {
             let controller = navigation.topViewController
-            if let query = controller as? SearchQueryController {
+            if let query = controller as? SearchSuggestController {
                 query.searchQuery = searchQuery
             } else if let filter = controller as? SearchFilterController {
                 filter.searchQuery = searchQuery

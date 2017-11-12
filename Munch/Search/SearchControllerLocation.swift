@@ -5,6 +5,7 @@
 
 import Foundation
 import UIKit
+
 import SnapKit
 import SwiftyJSON
 import TPKeyboardAvoiding
@@ -14,7 +15,10 @@ class SearchLocationController: UIViewController {
     let headerView = SearchLocationHeaderView()
     let tableView = TPKeyboardAvoidingTableView()
 
+    let recentDatabase = RecentDatabase(name: "SearchLocation", maxItems: 3)
+
     var results: [LocationType]?
+    var recentLocations: [LocationType]!
     var popularLocations: [LocationType]!
 
     override func viewWillAppear(_ animated: Bool) {
@@ -37,6 +41,7 @@ class SearchLocationController: UIViewController {
         self.initViews()
 
         self.popularLocations = readJson(forResource: "locations-popular")?.flatMap({ Location(json: $0.1) }).map({ LocationType.location($0) })
+        self.recentLocations = recentDatabase.get().flatMap({ $1 }).flatMap({ Location(json: $0) }).map({ LocationType.recent($0) })
 
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -109,6 +114,7 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
     enum LocationType {
         case nearby
         case singapore
+        case recent(Location)
         case location(Location)
     }
 
@@ -117,7 +123,7 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
             return [("SUGGESTIONS", results)]
         } else {
             return [
-                (nil, [LocationType.nearby, LocationType.singapore]),
+                (nil, [LocationType.nearby, LocationType.singapore] + recentLocations),
                 ("POPULAR LOCATIONS", popularLocations ?? []),
             ]
         }
@@ -158,6 +164,8 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
             cell.render(title: "Singapore")
         case let .location(location):
             cell.render(title: location.name)
+        case let .recent(location):
+            cell.render(title: location.name, type: "RECENT")
         }
 
         return cell
@@ -181,6 +189,15 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
             self.searchQuery.location = singapore
             self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
         case let .location(location):
+            if let name = location.name {
+                recentDatabase.put(text: name, dictionary: location.toParams())
+            }
+            self.searchQuery.location = location
+            self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
+        case let .recent(location):
+            if let name = location.name {
+                recentDatabase.put(text: name, dictionary: location.toParams())
+            }
             self.searchQuery.location = location
             self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
         }
@@ -300,15 +317,26 @@ class SearchLocationNearbyCell: UITableViewCell {
 
 class SearchLocationCell: UITableViewCell {
     let titleLabel = UILabel()
+    let typeLabel = UILabel()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.addSubview(titleLabel)
+        self.addSubview(typeLabel)
 
         titleLabel.font = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
         titleLabel.textColor = .black
         titleLabel.snp.makeConstraints { (make) in
-            make.left.right.equalTo(self).inset(24)
+            make.top.bottom.equalTo(self).inset(16)
+            make.left.equalTo(self).inset(24)
+            make.right.equalTo(typeLabel.snp.left).inset(8)
+        }
+
+        typeLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.regular)
+        typeLabel.textColor = UIColor(hex: "686868")
+        typeLabel.textAlignment = .right
+        typeLabel.snp.makeConstraints { (make) in
+            make.right.equalTo(self).inset(24)
             make.top.bottom.equalTo(self).inset(16)
         }
     }
@@ -317,8 +345,9 @@ class SearchLocationCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func render(title: String?) {
+    func render(title: String?, type: String? = nil) {
         self.titleLabel.text = title
+        self.typeLabel.text = type
     }
 
     class var id: String {

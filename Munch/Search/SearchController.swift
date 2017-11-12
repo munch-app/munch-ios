@@ -76,12 +76,12 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
 
     @IBAction func unwindToSearch(segue: UIStoryboardSegue) {
         func render(query: SearchQuery) {
-            contentView(search: searchQuery)
-            headerView.render(query: searchQuery)
+            contentView(search: query)
+            headerView.render(query: query)
         }
 
         let controller = segue.source
-        if let query = controller as? SearchQueryController {
+        if let query = controller as? SearchSuggestController {
             render(query: query.searchQuery)
         } else if let filter = controller as? SearchFilterController {
             render(query: filter.searchQuery)
@@ -92,6 +92,8 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
 
     private func contentView(search searchQuery: SearchQuery) {
         func search(searchQuery: SearchQuery) {
+            // Save a copy locally, cannot remove
+            self.searchQuery = searchQuery
             self.cardManager = SearchCardManager.init(search: searchQuery, completion: { (meta) in
                 self.cardTableView.reloadData()
             })

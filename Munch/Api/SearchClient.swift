@@ -50,7 +50,8 @@ class SearchClient {
  - Location
  - Tag
  */
-protocol SearchResult {}
+protocol SearchResult {
+}
 
 /**
  Tag object from munch-core/munch-data
@@ -68,6 +69,7 @@ struct Tag: SearchResult {
         var params = Parameters()
         params["id"] = id
         params["name"] = name
+        params["dataType"] = "Tag"
         return params
     }
 }
