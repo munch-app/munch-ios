@@ -1,5 +1,5 @@
 //
-//  PlaceBasicCards.swift
+//  PlaceCardBasic.swift
 //  Munch
 //
 //  Created by Fuxing Loh on 8/9/17.
@@ -100,9 +100,7 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
     var dayHeightConstraint: Constraint!
 
     override func didLoad(card: PlaceCard) {
-        let hours = BusinessHour(hours: card["hours"].flatMap {
-            Place.Hour(json: $0.1)
-        })
+        let hours = BusinessHour(hours: card["hours"].flatMap({ Place.Hour(json: $0.1) }))
 
         self.addSubview(grid)
         grid.snp.makeConstraints { (make) in
@@ -244,13 +242,23 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
     }
 }
 
+class PlaceHeaderAboutCard: PlaceTitleCardView {
+    override func didLoad(card: PlaceCard) {
+        self.title = "About"
+    }
+
+    override class var cardId: String? {
+        return "header_About_20171112"
+    }
+}
+
 class PlaceBasicDescriptionCard: PlaceCardView {
     let descriptionLabel = UILabel()
 
     override func didLoad(card: PlaceCard) {
         descriptionLabel.text = card["description"].string
-        descriptionLabel.font = UIFont.systemFont(ofSize: 13.0, weight: UIFont.Weight.regular)
-        descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.7)
+        descriptionLabel.font = UIFont.systemFont(ofSize: 14.0, weight: UIFont.Weight.regular)
+        descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         descriptionLabel.numberOfLines = 0
         self.addSubview(descriptionLabel)
 
@@ -267,20 +275,33 @@ class PlaceBasicDescriptionCard: PlaceCardView {
 }
 
 class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
+    let websiteTitleLabel = UILabel()
     let websiteLabel = UILabel()
     var websiteUrl: String?
 
     override func didLoad(card: PlaceCard) {
         self.websiteUrl = card["website"].string
-
-        websiteLabel.text = websiteUrl
-        websiteLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.regular)
-        websiteLabel.textColor = UIColor.black.withAlphaComponent(0.8)
-        websiteLabel.numberOfLines = 1
+        self.addSubview(websiteTitleLabel)
         self.addSubview(websiteLabel)
 
+        websiteTitleLabel.text = "Website"
+        websiteTitleLabel.font = UIFont.systemFont(ofSize: 14.0, weight: UIFont.Weight.regular)
+        websiteTitleLabel.textColor = UIColor.primary
+        websiteTitleLabel.textAlignment = .right
+        websiteTitleLabel.numberOfLines = 1
+        websiteTitleLabel.snp.makeConstraints { make in
+            make.right.equalTo(self).inset(leftRight)
+            make.top.bottom.equalTo(self).inset(topBottom)
+        }
+
+        websiteLabel.text = websiteUrl
+        websiteLabel.font = UIFont.systemFont(ofSize: 14.0, weight: UIFont.Weight.regular)
+        websiteLabel.textColor = UIColor.black
+        websiteLabel.textAlignment = .left
+        websiteLabel.numberOfLines = 1
         websiteLabel.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(leftRight)
+            make.left.equalTo(self).inset(leftRight)
+            make.right.equalTo(websiteTitleLabel.snp.left).inset(10)
             make.top.bottom.equalTo(self).inset(topBottom)
         }
     }
@@ -299,33 +320,18 @@ class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
 }
 
 class PlaceBasicAddressCard: PlaceCardView {
-    let lineOneLabel = UILabel()
-    let lineTwoLabel = UILabel()
+    let addressLabel = AddressLabel()
     var address: String?
 
     override func didLoad(card: PlaceCard) {
-        lineOneLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.regular)
-        lineOneLabel.numberOfLines = 0
-        self.addSubview(lineOneLabel)
-
-        lineTwoLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.regular)
-        lineTwoLabel.numberOfLines = 1
-        self.addSubview(lineTwoLabel)
-
-        lineOneLabel.snp.makeConstraints { make in
-            make.top.equalTo(self).inset(topBottom)
-            make.left.right.equalTo(self).inset(leftRight)
-        }
-
-        lineTwoLabel.snp.makeConstraints { make in
-            make.top.equalTo(lineOneLabel.snp.bottom)
-            make.left.right.equalTo(self).inset(leftRight)
-            make.bottom.equalTo(self).inset(topBottom)
-        }
-
+        self.addSubview(addressLabel)
         self.address = card["address"].string
-        render(lineOne: card)
-        render(lineTwo: card)
+
+        addressLabel.render(card: card)
+        addressLabel.snp.makeConstraints { make in
+            make.top.bottom.equalTo(self).inset(topBottom)
+            make.left.right.equalTo(self).inset(leftRight)
+        }
     }
 
     override func didTap() {
@@ -337,6 +343,46 @@ class PlaceBasicAddressCard: PlaceCardView {
                 UIApplication.shared.open(URL(string: "http://maps.apple.com/?daddr=\(address)")!)
             }
         }
+    }
+
+    override class var cardId: String? {
+        return "basic_Address_20170924"
+    }
+}
+
+class AddressLabel: UIView {
+    let lineOneLabel = UILabel()
+    let lineTwoLabel = UILabel()
+
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        lineOneLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.regular)
+        lineOneLabel.numberOfLines = 0
+        self.addSubview(lineOneLabel)
+
+        lineTwoLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.regular)
+        lineTwoLabel.numberOfLines = 1
+        self.addSubview(lineTwoLabel)
+
+        lineOneLabel.snp.makeConstraints { make in
+            make.top.equalTo(self)
+            make.left.right.equalTo(self)
+        }
+
+        lineTwoLabel.snp.makeConstraints { make in
+            make.top.equalTo(lineOneLabel.snp.bottom)
+            make.left.right.equalTo(self)
+            make.bottom.equalTo(self)
+        }
+    }
+
+    func render(card: PlaceCard) {
+        render(lineOne: card)
+        render(lineTwo: card)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
 
     private func render(lineOne card: PlaceCard) {
@@ -388,48 +434,43 @@ class PlaceBasicAddressCard: PlaceCardView {
 
         lineTwoLabel.text = line.joined(separator: " • ")
     }
+}
+
+class PlaceHeaderLocationCard: PlaceTitleCardView {
+    override func didLoad(card: PlaceCard) {
+        self.title = "Location"
+    }
 
     override class var cardId: String? {
-        return "basic_Address_20170924"
+        return "header_Location_20171112"
     }
 }
 
 class PlaceBasicLocationCard: PlaceCardView {
-    let titleLabel = UILabel()
-    let directionLabel = UILabel()
-
+    let addressLabel = AddressLabel()
     let mapView = MKMapView()
     var address: String?
 
     override func didLoad(card: PlaceCard) {
-        super.addSubview(titleLabel)
-        titleLabel.text = "Location"
-        titleLabel.font = UIFont.systemFont(ofSize: 18.0, weight: UIFont.Weight.medium)
-        titleLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(self).inset(leftRight)
-            make.top.equalTo(self).inset(topBottom)
-        }
-
-        super.addSubview(directionLabel)
-        directionLabel.text = "Directions >"
-        directionLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.regular)
-        directionLabel.snp.makeConstraints { (make) in
-            make.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(self).inset(topBottom)
-            make.height.equalTo(titleLabel.snp.height)
-        }
-
+        self.addSubview(addressLabel)
         self.addSubview(mapView)
+        self.address = card["address"].string
+
+        addressLabel.render(card: card)
+        addressLabel.snp.makeConstraints { make in
+            make.top.equalTo(self).inset(topBottom)
+            make.left.right.equalTo(self).inset(leftRight)
+        }
+
         mapView.isUserInteractionEnabled = false
         mapView.showsUserLocation = false
         mapView.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).inset(-10)
+            make.top.equalTo(addressLabel.snp.bottom).inset(-25)
             make.bottom.equalTo(self).inset(topBottom)
             make.left.right.equalTo(self)
             make.height.equalTo(230)
         }
 
-        self.address = card["address"].string
         render(location: card)
     }
 
@@ -461,6 +502,6 @@ class PlaceBasicLocationCard: PlaceCardView {
     }
 
     override class var cardId: String? {
-        return "basic_Location_20170924"
+        return "basic_Location_20171112"
     }
 }

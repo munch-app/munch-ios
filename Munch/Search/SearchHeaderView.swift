@@ -82,6 +82,8 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
     }
 
     func render(query: SearchQuery) {
+        // TODO Search Navigation Tracking
+        // Added to list if added
         self.textButton.render(query: query)
         self.tagCollection.render(query: query)
     }
@@ -363,6 +365,6 @@ extension SearchHeaderView {
         }
 
         // Placeholder text color
-        attributedPlaceholder = NSAttributedString(string: placeholder != nil ?  placeholder! : "", attributes:[NSAttributedStringKey.foregroundColor: color])
+        attributedPlaceholder = NSAttributedString(string: placeholder != nil ? placeholder! : "", attributes: [NSAttributedStringKey.foregroundColor: color])
     }
 }

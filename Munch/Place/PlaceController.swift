@@ -12,7 +12,7 @@ import UIKit
 class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
     var placeId: String!
     
-    var cards = [PlaceCard]()
+    var cards = [PlaceShimmerImageBannerCard.card, PlaceShimmerNameTagCard.card]
     var cells = [Int: PlaceCardView]()
     var cellTypes = [String: PlaceCardView.Type]()
     
@@ -28,12 +28,6 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
-        
-//        if (cards.first?.cardId != PlaceBasicImageBannerCard.cardId) {
-//            updateNavigationBackground(whiteBackground: true)
-//        } else {
-//            updateNavigationBackground(whiteBackground: false)
-//        }
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -42,6 +36,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.registerCards()
         self.cardTableView.separatorStyle = .none
         self.cardTableView.delegate = self
         self.cardTableView.dataSource = self
@@ -54,14 +49,8 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.cardTableView.contentInset.top = -64
         self.cardTableView.contentInset.bottom = 10
         
-        registerCards()
-        loadShimmerCards()
-        
         MunchApi.places.cards(id: placeId) { meta, cards in
             if (meta.isOk()) {
-                if (cards.first?.cardId != PlaceBasicImageBannerCard.cardId) {
-                    self.cardTableView.contentInset.top = 0
-                }
                 self.cards = cards
                 self.cells.removeAll()
                 self.cardTableView.reloadData()
@@ -85,23 +74,24 @@ extension PlaceViewController {
         register(PlaceBasicNameTagCard.self)
         register(PlaceBasicImageBannerCard.self)
         register(PlaceBasicAddressCard.self)
-        register(PlaceBasicLocationCard.self)
         register(PlaceBasicBusinessHourCard.self)
-        register(PlaceBasicDescriptionCard.self)
-        register(PlaceBasicWebsiteCard.self)
 
-        // Register Vendor Cards
+        // Register Location Cards
+        register(PlaceHeaderLocationCard.self)
+        register(PlaceBasicLocationCard.self)
+
+        // Register Vendor Article Cards
+        register(PlaceHeaderArticleCard.self)
         register(PlaceVendorArticleGridCard.self)
         
         // Register Review Cards
         register(PlaceHeaderReviewCard.self)
         register(PlaceVendorFacebookReviewCard.self)
-    }
-    
-    func loadShimmerCards() {
-        cards.append(PlaceCard(cardId: PlaceShimmerImageBannerCard.cardId!))
-        cards.append(PlaceCard(cardId: PlaceShimmerNameTagCard.cardId!))
-        cardTableView.reloadData()
+
+        // Register About Cards
+        register(PlaceHeaderAboutCard.self)
+        register(PlaceBasicDescriptionCard.self)
+        register(PlaceBasicWebsiteCard.self)
     }
     
     private func register(_ cellClass: PlaceCardView.Type) {
@@ -136,15 +126,15 @@ extension PlaceViewController {
     }
 }
 
+/**
+ Scroll handler
+ With effect to the background
+ */
 extension PlaceViewController {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if (cards.first?.cardId != PlaceBasicImageBannerCard.cardId) {
-            self.updateNavigationBackground(whiteBackground: true)
-        } else {
-            self.updateNavigationBackground(y: scrollView.contentOffset.y)
-        }
+        updateNavigationBackground(y: scrollView.contentOffset.y)
     }
-    
+
     func updateNavigationBackground(y: CGFloat) {
         if (160 > y) {
             // Full Opacity
@@ -162,48 +152,16 @@ extension PlaceViewController {
             setBarStyle(whiteBackground: progress > 0.5)
         }
     }
-    
-    func updateNavigationBackground(whiteBackground: Bool) {
-        navigationBackground.backgroundColor = UIColor.white
-        navigationBackground.isHidden = !whiteBackground
-        setBarStyle(whiteBackground: whiteBackground)
-    }
-    
+
     private func setBarStyle(whiteBackground: Bool) {
         if (whiteBackground) {
-            navigationController?.navigationBar.barStyle = UIBarStyle.default
+            navigationController?.navigationBar.barStyle = .default
             navigationItem.leftBarButtonItem!.tintColor = UIColor.black
         } else {
-            navigationController?.navigationBar.barStyle = UIBarStyle.black
+            navigationController?.navigationBar.barStyle = .blackTranslucent
             navigationItem.leftBarButtonItem!.tintColor = UIColor.white
         }
     }
 }
 
-class PlaceCardView: UITableViewCell {
-    var controller: PlaceViewController!
-    
-    required init(card: PlaceCard, controller: PlaceViewController) {
-        super.init(style: .default, reuseIdentifier: nil)
-        self.controller = controller
-        self.selectionStyle = .none
-        self.didLoad(card: card)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func didLoad(card: PlaceCard) {
-        
-    }
-    
-    func didTap() {
-        
-    }
-    
-    let leftRight: CGFloat = 24.0
-    let topBottom: CGFloat = 10.0
-    
-    class var cardId: String? { return nil }
-}
+

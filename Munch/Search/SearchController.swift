@@ -76,13 +76,8 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
 
     @IBAction func unwindToSearch(segue: UIStoryboardSegue) {
         func render(query: SearchQuery) {
-            if query != self.searchQuery {
-                self.searchQuery = query
-
-                // Render updated results
-                contentView(search: searchQuery)
-                headerView.render(query: searchQuery)
-            }
+            contentView(search: searchQuery)
+            headerView.render(query: searchQuery)
         }
 
         let controller = segue.source
