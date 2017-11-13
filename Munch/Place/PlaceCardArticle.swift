@@ -99,6 +99,7 @@ class PlaceVendorArticleGridCard: PlaceCardView {
             self.addSubview(articleImageView)
             self.addSubview(articleTitleLabel)
 
+            articleImageView.layer.cornerRadius = 2
             articleImageView.snp.makeConstraints { (make) in
                 make.left.right.equalTo(self)
                 make.height.equalTo(articleImageView.snp.width).dividedBy(1.23)

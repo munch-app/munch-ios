@@ -130,7 +130,6 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
     }
 
     private func registerCell() {
-        tableView.register(SearchLocationNearbyCell.self, forCellReuseIdentifier: SearchLocationNearbyCell.id)
         tableView.register(SearchLocationCell.self, forCellReuseIdentifier: SearchLocationCell.id)
     }
 
@@ -268,53 +267,6 @@ class SearchLocationHeaderView: UIView {
     }
 }
 
-class SearchLocationNearbyCell: UITableViewCell {
-    let button = UIButton()
-
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.backgroundColor = UIColor(hex: "F1F1F1")
-
-        button.isEnabled = false
-        button.backgroundColor = .white
-        button.contentHorizontalAlignment = .left
-        button.contentVerticalAlignment = .center
-
-        // Setup Image
-        button.setImage(UIImage(named: "SC-Define Location-30"), for: .normal)
-        button.imageEdgeInsets.left = 10
-        button.imageEdgeInsets.right = 10
-        button.tintColor = UIColor.secondary
-
-        // Setup Text
-        button.setTitle("Detect my current location", for: .normal)
-        button.setTitleColor(UIColor.secondary, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
-        button.titleEdgeInsets.left = 20
-
-        // Set Button Layer
-        button.layer.cornerRadius = 4.0
-        button.layer.borderWidth = 1.0
-        button.layer.borderColor = UIColor.secondary.cgColor
-        self.addSubview(button)
-
-        button.snp.makeConstraints { make in
-            make.height.equalTo(38)
-            make.left.right.equalTo(self).inset(24)
-            make.top.equalTo(self).inset(14)
-            make.bottom.equalTo(self).inset(8)
-        }
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    class var id: String {
-        return "SearchLocationNearbyCell"
-    }
-}
-
 class SearchLocationCell: UITableViewCell {
     let titleLabel = UILabel()
     let typeLabel = UILabel()
@@ -329,7 +281,7 @@ class SearchLocationCell: UITableViewCell {
         titleLabel.snp.makeConstraints { (make) in
             make.top.bottom.equalTo(self).inset(16)
             make.left.equalTo(self).inset(24)
-            make.right.equalTo(typeLabel.snp.left).inset(8)
+            make.right.equalTo(typeLabel.snp.left).inset(-8)
         }
 
         typeLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.regular)

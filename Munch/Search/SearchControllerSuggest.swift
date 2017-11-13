@@ -289,7 +289,7 @@ class SearchQueryCell: UITableViewCell {
         titleLabel.snp.makeConstraints { (make) in
             make.top.bottom.equalTo(self).inset(16)
             make.left.equalTo(self).inset(24)
-            make.right.equalTo(typeLabel.snp.left).inset(8)
+            make.right.equalTo(typeLabel.snp.left).inset(-8)
         }
 
         typeLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.regular)

@@ -30,7 +30,13 @@ class SearchClient {
             callback(meta, json["data"].map { SearchCard(json: $0.1) })
         }
     }
-    
+
+    func count(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ count: Int?) -> Void) {
+        MunchApi.restful.post("/search/count", parameters: query.toParams()) { meta, json in
+            callback(meta, json["data"].int)
+        }
+    }
+
     /**
      Method to parse search result type
      */
