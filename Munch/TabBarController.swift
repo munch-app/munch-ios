@@ -40,6 +40,7 @@ enum InitialViewProvider {
 
 class TabBarController: ESTabBarController, UITabBarControllerDelegate {
     var previousController: UIViewController?
+    var sameTabCounter = 0
     
     init(controllers: [UIViewController]) {
         super.init(nibName: nil, bundle: nil)
@@ -67,11 +68,17 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
     
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         if (self.previousController == viewController) {
-            if let navigation = viewController as? UINavigationController {
-                if let controller = navigation.topViewController as? SearchController {
-                    controller.scrollsToTop(animated: true)
+            sameTabCounter += 1
+
+            if (sameTabCounter >= 2) {
+                if let navigation = viewController as? UINavigationController {
+                    if let controller = navigation.topViewController as? SearchController {
+                        controller.scrollsToTop(animated: true)
+                    }
                 }
             }
+        } else {
+            sameTabCounter = 0
         }
         self.previousController = viewController
         return true

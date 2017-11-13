@@ -197,8 +197,9 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
         tagCollection.delegate = self
         tagCollection.defaultConfig = defaultTagConfig
         tagCollection.horizontalSpacing = 10
+        tagCollection.numberOfLines = 1
+        tagCollection.alignment = .left
         tagCollection.contentInset = UIEdgeInsets.init(topBottom: 2, leftRight: 0)
-
         tagCollection.snp.makeConstraints { (make) in
             make.edges.equalTo(self)
         }
@@ -228,6 +229,8 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
         tagCollection.removeAllTags()
         tagCollection.addTags(tags)
         tagCollection.addTag("＋", with: plusTagConfig)
+
+        // If all tags don't get rendered checks and remove last and fit (ellipsis & ＋)
     }
 
     required init?(coder aDecoder: NSCoder) {
