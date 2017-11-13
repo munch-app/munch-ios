@@ -69,7 +69,7 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
         if (self.previousController == viewController) {
             if let navigation = viewController as? UINavigationController {
                 if let controller = navigation.topViewController as? SearchController {
-                    controller.scrollToTop()
+                    controller.scrollsToTop(animated: true)
                 }
             }
         }

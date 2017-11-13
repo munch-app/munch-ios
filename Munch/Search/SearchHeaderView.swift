@@ -77,8 +77,9 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
         if view is SearchTextButton {
             controller.performSegue(withIdentifier: "SearchHeaderView_suggest", sender: self)
         } else if view is SearchBackButton {
+            // When back button is clicked
             if let _ = searchQueryHistories.popLast(), let last = searchQueryHistories.last {
-                controller.contentView(search: last)
+                controller.contentView(search: last, animated: false)
                 render(query: last)
             }
         }

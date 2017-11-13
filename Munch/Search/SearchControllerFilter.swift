@@ -394,7 +394,7 @@ fileprivate class SearchFilterApplyView: UIView {
                 } else if count <= 10 {
                     self.applyBtn.setTitle("See \(count) places", for: .normal)
                 } else {
-                    let rounded = count % 10 * 10
+                    let rounded = count / 10 * 10
                     self.applyBtn.setTitle("See \(rounded)+ places", for: .normal)
                 }
             }

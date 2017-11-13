@@ -59,7 +59,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         self.cardTableView.dataSource = self
 
         self.cardTableView.rowHeight = UITableViewAutomaticDimension
-        self.cardTableView.estimatedRowHeight = 50
+        self.cardTableView.estimatedRowHeight = 1000
 
         // Fix insets so that contents appear below
         self.cardTableView.contentInset = UIEdgeInsets(top: headerView.maxHeight - 20, left: 0, bottom: 0, right: 0)
@@ -71,8 +71,8 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         headerView.render(query: searchQuery)
     }
 
-    func scrollToTop() {
-        cardTableView.setContentOffset(CGPoint(x: 0, y: -headerView.maxHeight), animated: true)
+    func scrollsToTop(animated: Bool = true) {
+        cardTableView.scrollToRow(at: .init(row: 0, section: 0), at: .top, animated: animated)
     }
 
     @IBAction func unwindToSearch(segue: UIStoryboardSegue) {
@@ -91,15 +91,18 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         }
     }
 
-    func contentView(search searchQuery: SearchQuery) {
+    func contentView(search searchQuery: SearchQuery, animated: Bool = true) {
         func search(searchQuery: SearchQuery) {
             // Save a copy locally, cannot remove
             self.searchQuery = searchQuery
+            self.cardManager = nil
+            self.cardTableView.reloadData()
+            self.scrollsToTop(animated: animated)
+
             self.cardManager = SearchCardManager.init(search: searchQuery, completion: { (meta) in
                 self.cardTableView.reloadData()
+                self.scrollsToTop(animated: animated)
             })
-            self.cardTableView.reloadData()
-            self.scrollToTop()
         }
 
         // Check if Location is Enabled
