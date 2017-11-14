@@ -12,9 +12,11 @@ target 'Munch' do
   pod 'SnapKit', '~> 4.0'
   pod 'SwiftRichString', '~> 1.0'
 
+  # Service Library
+  pod 'Auth0', '~> 1.9'
+
   # Transition Library
-  pod 'KMNavigationBarTransition', :git => 'https://github.com/Fuxingloh/KMNavigationBarTransition'
-  pod 'Hero', '~> 1.0'
+  pod 'KMNavigationBarTransition', '~> 1.1'
 
   # UI Components Library
   pod 'TPKeyboardAvoiding', '~> 1.3'

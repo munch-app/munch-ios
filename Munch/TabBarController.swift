@@ -19,7 +19,7 @@ enum InitialViewProvider {
      Main tab controllers for Munch App
      */
     static func main() -> TabBarController {
-        let controllers = [searchController(), accountProfile()]
+        let controllers = [accountProfile()]
         return TabBarController(controllers: controllers)
     }
     
@@ -31,10 +31,9 @@ enum InitialViewProvider {
     }
     
     static func accountProfile() -> UIViewController {
-        let profileStoryboard = UIStoryboard(name: "Account", bundle: nil)
-        let profileController = profileStoryboard.instantiateInitialViewController()!
-        profileController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), image: UIImage(named: "TabBar-Account"))
-        return profileController
+        let controller = AccountController(rootViewController: AccountProfileController())
+        controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), image: UIImage(named: "TabBar-Account"))
+        return controller
     }
 }
 
@@ -95,8 +94,8 @@ class MunchTabBarContentView: ESTabBarItemContentView {
         insets.bottom = 3
         insets.top = 3
         
-        iconColor = UIColor.black.withAlphaComponent(0.70)
-        textColor = UIColor.black.withAlphaComponent(0.70)
+        iconColor = UIColor.black.withAlphaComponent(0.68)
+        textColor = UIColor.black.withAlphaComponent(0.68)
         
         highlightIconColor = UIColor.black
         highlightTextColor = UIColor.black
