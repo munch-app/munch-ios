@@ -177,8 +177,6 @@ struct Place: SearchResult, Equatable {
      Hour data type from munch-core/service-places
      Day can be either of these: mon, tue, wed, thu, fri, sat, sun, ph, evePh
      open, close time is in HH:mm format
-     
-     TODO improve with enum type for day
      */
     struct Hour {
         let day: String

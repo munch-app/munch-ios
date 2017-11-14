@@ -489,7 +489,7 @@ fileprivate class SearchFilterTagMoreCell: UITableViewCell {
     }
 }
 
-fileprivate class SearchFilterMoreController: UIViewController {
+fileprivate class SearchFilterMoreController: UIViewController, UIGestureRecognizerDelegate {
     var searchQuery: SearchQuery!
     var seeMore: (String, [String])!
 
@@ -503,6 +503,9 @@ fileprivate class SearchFilterMoreController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
+
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
 
     override func viewDidLoad() {
@@ -573,6 +576,10 @@ fileprivate class SearchFilterMoreController: UIViewController {
             filter.searchQuery = self.searchQuery
         }
         self.navigationController?.popViewController(animated: true)
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
     }
 }
 
