@@ -47,10 +47,6 @@ class AccountProfileController: UIViewController {
 
         self.tableView.delegate = self
         self.tableView.dataSource = self
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
 
         // Check if user is logged in, push to AccountAuthenticateController if not
         let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
@@ -59,7 +55,6 @@ class AccountProfileController: UIViewController {
         } else {
             navigationController?.pushViewController(AccountBoardingController(), animated: false)
         }
-
     }
 
     private func reloadProfile() {
@@ -77,13 +72,22 @@ class AccountProfileController: UIViewController {
                     .start { result in
                         switch (result) {
                         case .success(let userInfo):
-                            self.userInfo = userInfo
-                            self.tableView.reloadData()
+                            DispatchQueue.main.async{
+                                self.userInfo = userInfo
+                                self.tableView.reloadData()
+                            }
                         case .failure(let error):
                             self.alert(title: "Fetch Profile Error", error: error)
                         }
                     }
         }
+    }
+
+    private func logout() {
+        self.userInfo = nil
+        let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
+        credentialsManager.clear()
+        navigationController?.pushViewController(AccountBoardingController(), animated: false)
     }
 
     private func initViews() {
@@ -133,9 +137,8 @@ extension AccountProfileController: UITableViewDataSource, UITableViewDelegate {
     }
 
     private var items: [(String?, [AccountCellType])] {
-        // TODO Loading items
         let settingItems: [(String?, [AccountCellType])] = [
-            ("Content Partner", [AccountCellType.instagramConnect]),
+//            ("Content Partner", [AccountCellType.instagramConnect]),
             ("Account", [AccountCellType.logout])
         ]
 
@@ -193,9 +196,7 @@ extension AccountProfileController: UITableViewDataSource, UITableViewDelegate {
         let item = items[indexPath.section].1[indexPath.row]
         switch item {
         case .logout:
-            let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
-            credentialsManager.clear()
-            self.viewDidAppear(true)
+            self.logout()
         default:
             return
         }
@@ -253,8 +254,9 @@ fileprivate class ProfileInfoCell: UITableViewCell {
 //        self.addSubview(editButton)
 
         profileImageView.snp.makeConstraints { make in
-            make.height.width.equalTo(100)
-            make.top.left.bottom.equalTo(self).inset(24)
+            make.height.width.equalTo(100).priority(999)
+            make.top.bottom.equalTo(self).inset(24).priority(999)
+            make.left.equalTo(self).inset(24)
         }
 
         nameLabel.text = "Name"
@@ -277,6 +279,8 @@ fileprivate class ProfileInfoCell: UITableViewCell {
             make.height.equalTo(20)
         }
 
+        self.setNeedsLayout()
+        self.layoutIfNeeded()
 //        editButton.setTitle("Edit Profile", for: .normal)
 //        editButton.setTitleColor(UIColor.black.withAlphaComponent(0.8), for: .normal)
 //        editButton.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)

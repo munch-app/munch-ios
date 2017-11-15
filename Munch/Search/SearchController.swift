@@ -97,11 +97,17 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
             self.searchQuery = searchQuery
             self.cardManager = nil
             self.cardTableView.reloadData()
+            self.cardTableView.isScrollEnabled = false
             self.scrollsToTop(animated: animated)
 
             self.cardManager = SearchCardManager.init(search: searchQuery, completion: { (meta) in
-                self.cardTableView.reloadData()
-                self.scrollsToTop(animated: animated)
+                if (meta.isOk()) {
+                    self.cardTableView.reloadData()
+                    self.cardTableView.isScrollEnabled = true
+                    self.scrollsToTop(animated: animated)
+                } else  {
+                    self.present(meta.createAlert(), animated: true)
+                }
             })
         }
 
