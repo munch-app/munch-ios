@@ -29,8 +29,8 @@ public class MunchLocation {
      Check if location service is enabled
      */
     public class var isEnabled: Bool {
-        switch (SwiftLocation.LocAuth.status) {
-        case .alwaysAuthorized, .inUseAuthorized:
+        switch (Locator.state) {
+        case .available:
             return true
         default:
             return false
@@ -50,16 +50,16 @@ public class MunchLocation {
             completion(latLng, nil)
         } else {
             // Location already expiried, query again
-            SwiftLocation.Location.getLocation(accuracy: .block, frequency: .oneShot, success: { request, location in
+            Locator.currentPosition(accuracy: .block, onSuccess: { (location) -> (Void) in
                 let coord = location.coordinate
                 MunchLocation.lastLatLng = "\(coord.latitude),\(coord.longitude)"
                 MunchLocation.lastLocation = location
                 
                 locationExpiry = Date().addingTimeInterval(expiryIncrement)
                 completion(lastLatLng, nil)
-            }, error: { _, _, err in
-                completion(lastLatLng, err)
-            })
+            }) { (error, location) -> (Void) in
+                completion(lastLatLng, error)
+            }
         }
     }
     
@@ -82,15 +82,15 @@ public class MunchLocation {
      This method update lastLocation to lastLatLng
      */
     public class func scheduleOnce() {
-        SwiftLocation.Location.getLocation(accuracy: .block, frequency: .oneShot, success: { request, location in
+        Locator.currentPosition(accuracy: .block, onSuccess: { (location) -> (Void) in
             let coord = location.coordinate
             MunchLocation.lastLatLng = "\(coord.latitude),\(coord.longitude)"
             MunchLocation.lastLocation = location
             
             locationExpiry = Date().addingTimeInterval(expiryIncrement)
-        }, error: { _, _, err in
-            print(err)
-        })
+        }) { (error, location) -> (Void) in
+            print(error)
+        }
     }
     
     /**

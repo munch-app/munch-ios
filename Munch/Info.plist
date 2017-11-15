@@ -21,21 +21,18 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>None</string>
 			<key>CFBundleURLName</key>
-			<string>${PRODUCT_BUNDLE_IDENTIFIER}</string>
+			<string>auth0</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>munchapp</string>
-				<string>fb1834184803561011</string>
+				<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>38</string>
-	<key>FacebookAppID</key>
-	<string>1834184803561011</string>
-	<key>FacebookDisplayName</key>
-	<string>MunchApp</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSApplicationQueriesSchemes</key>

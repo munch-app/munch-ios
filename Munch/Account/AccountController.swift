@@ -11,21 +11,26 @@ import UIKit
 
 import SnapKit
 import Auth0
+import Lock
+
+import NVActivityIndicatorView
 
 class AccountController: UINavigationController {
-}
 
-class AccountLoginController: UIViewController {
-    // Auth0 Implementation
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    required init() {
+        super.init(nibName: nil, bundle: nil)
+        self.viewControllers = [AccountProfileController()]
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
 class AccountProfileController: UIViewController {
     private let headerView = AccountProfileHeader()
     private let tableView = UITableView()
-    private let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
+    private var userInfo: UserInfo?
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -42,11 +47,42 @@ class AccountProfileController: UIViewController {
 
         self.tableView.delegate = self
         self.tableView.dataSource = self
+    }
 
-        // Check if user is logged in, push to AccountLoginController if not
-        guard credentialsManager.hasValid() else {
-            navigationController?.pushViewController(AccountLoginController(), animated: false)
-            return
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        // Check if user is logged in, push to AccountAuthenticateController if not
+        let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
+        if credentialsManager.hasValid() {
+            self.reloadProfile()
+        } else {
+            navigationController?.pushViewController(AccountBoardingController(), animated: false)
+        }
+
+    }
+
+    private func reloadProfile() {
+        self.userInfo = nil
+        self.tableView.reloadData()
+
+        let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
+        credentialsManager.credentials { error, credentials in
+            guard let accessToken = credentials?.accessToken else {
+                return
+            }
+
+            Auth0.authentication()
+                    .userInfo(withAccessToken: accessToken)
+                    .start { result in
+                        switch (result) {
+                        case .success(let userInfo):
+                            self.userInfo = userInfo
+                            self.tableView.reloadData()
+                        case .failure(let error):
+                            self.alert(title: "Fetch Profile Error", error: error)
+                        }
+                    }
         }
     }
 
@@ -73,11 +109,13 @@ class AccountProfileController: UIViewController {
             make.height.equalTo(64)
         }
     }
+
 }
 
 fileprivate enum AccountCellType {
     // Profile: Images, Person Name
-    case profile(String, [String: String])
+    case loading
+    case profile(UserInfo)
     case instagramConnect
     case logout
 }
@@ -88,17 +126,24 @@ extension AccountProfileController: UITableViewDataSource, UITableViewDelegate {
             tableView.register(cellClass, forCellReuseIdentifier: String(describing: cellClass))
         }
 
+        register(cellClass: AccountLoadingCell.self)
         register(cellClass: ProfileInfoCell.self)
         register(cellClass: SettingInstagramCell.self)
         register(cellClass: SettingLogoutCell.self)
     }
 
     private var items: [(String?, [AccountCellType])] {
-        return [
-            (nil, [AccountCellType.profile("Person Name", ["200x200": "https://www.gravatar.com/avatar/802ff8ce7495fbcaaebab1c8b06c243d?s=200&d=identicon&r=PG"])]),
+        // TODO Loading items
+        let settingItems: [(String?, [AccountCellType])] = [
             ("Content Partner", [AccountCellType.instagramConnect]),
             ("Account", [AccountCellType.logout])
         ]
+
+        if let userInfo = self.userInfo {
+            return [(nil, [AccountCellType.profile(userInfo)])] + settingItems
+        } else {
+            return [(nil, [AccountCellType.loading])]
+        }
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -129,9 +174,11 @@ extension AccountProfileController: UITableViewDataSource, UITableViewDelegate {
         let item = items[indexPath.section].1[indexPath.row]
 
         switch item {
-        case let .profile(name, images):
+        case .loading:
+            return dequeue(cellClass: AccountLoadingCell.self)
+        case .profile(let userInfo):
             let cell = dequeue(cellClass: ProfileInfoCell.self) as! ProfileInfoCell
-            cell.render(name: name, images: images)
+            cell.render(userInfo: userInfo)
             return cell
         case .instagramConnect:
             return dequeue(cellClass: SettingInstagramCell.self)
@@ -143,7 +190,15 @@ extension AccountProfileController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        // TODO
+        let item = items[indexPath.section].1[indexPath.row]
+        switch item {
+        case .logout:
+            let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
+            credentialsManager.clear()
+            self.viewDidAppear(true)
+        default:
+            return
+        }
     }
 }
 
@@ -182,7 +237,9 @@ fileprivate class AccountProfileHeader: UIView {
 fileprivate class ProfileInfoCell: UITableViewCell {
     let profileImageView = UIImageView()
     let nameLabel = UILabel()
-    let editButton = UIButton()
+    let emailLabel = UILabel()
+
+//    let editButton = UIButton()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -192,37 +249,53 @@ fileprivate class ProfileInfoCell: UITableViewCell {
     private func initViews() {
         self.addSubview(profileImageView)
         self.addSubview(nameLabel)
-        self.addSubview(editButton)
+        self.addSubview(emailLabel)
+//        self.addSubview(editButton)
 
         profileImageView.snp.makeConstraints { make in
             make.height.width.equalTo(100)
             make.top.left.bottom.equalTo(self).inset(24)
         }
 
+        nameLabel.text = "Name"
         nameLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
         nameLabel.textColor = .black
         nameLabel.snp.makeConstraints { make in
             make.left.equalTo(profileImageView.snp.right).inset(-24)
-            make.top.right.equalTo(self).inset(24)
-            make.height.equalTo(33)
+            make.right.equalTo(self).inset(24)
+            make.top.equalTo(self).inset(24)
+            make.height.equalTo(34)
         }
 
-        editButton.setTitle("Edit Profile", for: .normal)
-        editButton.setTitleColor(UIColor.black.withAlphaComponent(0.8), for: .normal)
-        editButton.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        editButton.layer.cornerRadius = 3
-        editButton.layer.borderWidth = 1.0
-        editButton.layer.borderColor = UIColor.black.withAlphaComponent(0.45).cgColor
-        editButton.snp.makeConstraints { make in
+        emailLabel.text = "Email"
+        emailLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        emailLabel.textColor = .black
+        emailLabel.snp.makeConstraints { make in
             make.left.equalTo(profileImageView.snp.right).inset(-24)
             make.right.equalTo(self).inset(24)
-            make.top.equalTo(nameLabel.snp.bottom).inset(-5)
+            make.top.equalTo(nameLabel.snp.bottom)
+            make.height.equalTo(20)
         }
+
+//        editButton.setTitle("Edit Profile", for: .normal)
+//        editButton.setTitleColor(UIColor.black.withAlphaComponent(0.8), for: .normal)
+//        editButton.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+//        editButton.layer.cornerRadius = 3
+//        editButton.layer.borderWidth = 1.0
+//        editButton.layer.borderColor = UIColor.black.withAlphaComponent(0.45).cgColor
+//        editButton.snp.makeConstraints { make in
+//            make.left.equalTo(profileImageView.snp.right).inset(-24)
+//            make.right.equalTo(self).inset(24)
+//            make.top.equalTo(emailLabel.snp.bottom).inset(-5)
+//        }
     }
 
-    func render(name: String, images: [String: String]) {
-        profileImageView.render(images: images)
-        nameLabel.text = name
+    func render(userInfo: UserInfo) {
+        if let profileImage = userInfo.picture?.absoluteString {
+            profileImageView.render(images: ["original": profileImage])
+        }
+        nameLabel.text = userInfo.name
+        emailLabel.text = userInfo.email
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -254,6 +327,8 @@ fileprivate class SettingInstagramCell: UITableViewCell {
             make.right.equalTo(self).inset(24)
             make.top.bottom.equalTo(self).inset(12)
         }
+
+        // TODO Instagram Card
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -274,6 +349,26 @@ fileprivate class SettingLogoutCell: UITableViewCell {
         titleView.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
             make.top.bottom.equalTo(self).inset(12)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+fileprivate class AccountLoadingCell: UITableViewCell {
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+
+        let indicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 100, height: 35), type: .ballBeat, color: .primary, padding: 0)
+        indicator.startAnimating()
+        self.addSubview(indicator)
+
+        indicator.snp.makeConstraints { make in
+            make.top.bottom.equalTo(self).inset(24)
+            make.centerX.equalTo(self)
         }
     }
 
