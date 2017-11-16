@@ -57,11 +57,21 @@ class AccountProfileController: UIViewController {
         }
     }
 
-    private func reloadProfile() {
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if userInfo == nil {
+            let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
+            if (credentialsManager.hasValid()) {
+                self.reloadProfile(credentialsManager: credentialsManager)
+            }
+        }
+    }
+
+    private func reloadProfile(credentialsManager: CredentialsManager = CredentialsManager(authentication: Auth0.authentication())) {
         self.userInfo = nil
         self.tableView.reloadData()
 
-        let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
         credentialsManager.credentials { error, credentials in
             guard let accessToken = credentials?.accessToken else {
                 return
