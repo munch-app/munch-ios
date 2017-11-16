@@ -72,7 +72,7 @@ class AccountProfileController: UIViewController {
                     .start { result in
                         switch (result) {
                         case .success(let userInfo):
-                            DispatchQueue.main.async{
+                            DispatchQueue.main.async {
                                 self.userInfo = userInfo
                                 self.tableView.reloadData()
                             }
@@ -197,6 +197,8 @@ extension AccountProfileController: UITableViewDataSource, UITableViewDelegate {
         switch item {
         case .logout:
             self.logout()
+        case .instagramConnect:
+            print("TODO")
         default:
             return
         }

@@ -89,11 +89,16 @@ class AccountBoardingController: UIViewController {
 
     private func lock(screen: DatabaseScreen) -> Lock {
         return Lock.classic()
+                .withConnections { connections in
+                    connections.database(name: "Username-Password-Authentication", requiresUsername: false)
+                    connections.social(name: "facebook", style: .Facebook)
+                }
                 .withOptions {
                     $0.initialScreen = screen
                     $0.closable = true
                     $0.oidcConformant = true
                     $0.scope = "openid profile email"
+
                 }
                 .withStyle {
                     $0.headerColor = .white
@@ -103,9 +108,6 @@ class AccountBoardingController: UIViewController {
                     $0.primaryColor = .primary
                 }
                 .onAuth { credentials in
-                    guard let accessToken = credentials.accessToken else {
-                        return
-                    }
                     let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
                     credentialsManager.store(credentials: credentials)
                     self.navigationController?.popViewController(animated: false)

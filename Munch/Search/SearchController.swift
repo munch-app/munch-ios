@@ -9,6 +9,8 @@
 import Foundation
 import UIKit
 
+import SnapKit
+
 class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var cardTableView: UITableView!
     var headerView: SearchHeaderView!
@@ -92,25 +94,32 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     }
 
     func contentView(search searchQuery: SearchQuery, animated: Bool = true) {
-        func search(searchQuery: SearchQuery) {
-            // Save a copy locally, cannot remove
-            self.searchQuery = searchQuery
+        func reset() {
             self.cardManager = nil
             self.cardTableView.reloadData()
             self.cardTableView.isScrollEnabled = false
             self.scrollsToTop(animated: animated)
+        }
+
+        func search(searchQuery: SearchQuery) {
+            // Save a copy locally, cannot remove
+            self.searchQuery = searchQuery
+            // Reset ContentView first
+            reset()
 
             self.cardManager = SearchCardManager.init(search: searchQuery, completion: { (meta) in
                 if (meta.isOk()) {
                     self.cardTableView.reloadData()
                     self.cardTableView.isScrollEnabled = true
                     self.scrollsToTop(animated: animated)
-                } else  {
+                } else {
                     self.present(meta.createAlert(), animated: true)
                 }
             })
         }
 
+        // Reset ContentView first
+        reset()
         // Check if Location is Enabled
         if MunchLocation.isEnabled {
             MunchLocation.waitFor(completion: { latLng, error in
