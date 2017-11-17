@@ -313,12 +313,7 @@ class PlaceBasicPhoneCard: PlaceCardView, SFSafariViewControllerDelegate {
     override func didTap() {
         if let phone = self.phone {
             if let url = URL(string: "tel://\(phone)"), UIApplication.shared.canOpenURL(url) {
-                let alert = UIAlertController(title: nil, message: "Call \(phone)", preferredStyle: .alert)
-                alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel))
-                alert.addAction(UIAlertAction(title: "Call", style: .default) { alert in
-                    UIApplication.shared.open(url)
-                })
-                controller.present(alert, animated: true, completion: nil)
+                UIApplication.shared.open(url)
             }
         }
     }
