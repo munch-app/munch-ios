@@ -60,6 +60,7 @@ class AccountBoardingController: UIViewController {
         }
 
         titleView.text = "Some text for on boarding."
+        titleView.numberOfLines = 0
         titleView.textAlignment = .center
         titleView.snp.makeConstraints { make in
             make.left.right.equalTo(boxView)

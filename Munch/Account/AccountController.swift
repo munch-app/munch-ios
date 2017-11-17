@@ -96,7 +96,9 @@ class AccountProfileController: UIViewController {
     private func logout() {
         self.userInfo = nil
         let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
-        credentialsManager.clear()
+        if (credentialsManager.clear()) {
+            print("Removed Credentials")
+        }
         navigationController?.pushViewController(AccountBoardingController(), animated: false)
     }
 
@@ -148,7 +150,7 @@ extension AccountProfileController: UITableViewDataSource, UITableViewDelegate {
 
     private var items: [(String?, [AccountCellType])] {
         let settingItems: [(String?, [AccountCellType])] = [
-//            ("Content Partner", [AccountCellType.instagramConnect]),
+            ("Content Partner", [AccountCellType.instagramConnect]),
             ("Account", [AccountCellType.logout])
         ]
 
@@ -208,7 +210,9 @@ extension AccountProfileController: UITableViewDataSource, UITableViewDelegate {
         case .logout:
             self.logout()
         case .instagramConnect:
-            print("TODO")
+            let controller = InstagramManageController()
+            controller.userInfo = self.userInfo
+            navigationController?.pushViewController(controller, animated: true)
         default:
             return
         }
@@ -336,15 +340,13 @@ fileprivate class SettingInstagramCell: UITableViewCell {
             make.top.bottom.equalTo(self).inset(12)
         }
 
-        connectLabel.text = "Connect"
+        connectLabel.text = "Manage"
         connectLabel.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         connectLabel.textColor = .primary
         connectLabel.snp.makeConstraints { make in
             make.right.equalTo(self).inset(24)
             make.top.bottom.equalTo(self).inset(12)
         }
-
-        // TODO Instagram Card
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -373,7 +375,7 @@ fileprivate class SettingLogoutCell: UITableViewCell {
     }
 }
 
-fileprivate class AccountLoadingCell: UITableViewCell {
+class AccountLoadingCell: UITableViewCell {
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -382,8 +384,9 @@ fileprivate class AccountLoadingCell: UITableViewCell {
         indicator.startAnimating()
         self.addSubview(indicator)
 
+        let margin = (UIScreen.main.bounds.height / 2.0) - 64.0
         indicator.snp.makeConstraints { make in
-            make.top.bottom.equalTo(self).inset(24)
+            make.top.bottom.equalTo(self).inset(margin)
             make.centerX.equalTo(self)
         }
     }
