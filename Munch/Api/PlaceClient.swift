@@ -73,6 +73,7 @@ struct Place: SearchResult, Equatable {
     // One
     var price: Price?
     var location: Location
+    var review: Review
     var tag: Tag
 
     // Many
@@ -93,6 +94,7 @@ struct Place: SearchResult, Equatable {
 
         self.price = Price(json: json["price"])
         self.location = Location(json: json["location"])
+        self.review = Review(json: json["review"])
         self.tag = Tag(json: json["tag"])
 
         self.hours = json["hours"].flatMap {
@@ -148,6 +150,16 @@ struct Place: SearchResult, Equatable {
 
             self.postal = json["postal"].string
             self.latLng = json["latLng"].string
+        }
+    }
+
+    struct Review {
+        var total: Int
+        var average: Double
+
+        init(json: JSON) {
+            self.total = json["total"].int ?? 0
+            self.average = json["average"].double ?? 0
         }
     }
 

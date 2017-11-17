@@ -14,6 +14,7 @@ import SnapKit
 class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var cardTableView: UITableView!
     var headerView: SearchHeaderView!
+    let refreshControl = UIRefreshControl()
 
     var cardManager: SearchCardManager?
 
@@ -46,31 +47,40 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.initViews()
+        self.registerCards()
+
+        self.cardTableView.delegate = self
+        self.cardTableView.dataSource = self
+
+        // Render search results
+        contentView(search: searchQuery)
+        headerView.render(query: searchQuery)
+    }
+
+    private func initViews() {
         self.headerView = SearchHeaderView(controller: self)
         self.view.addSubview(headerView)
         headerView.snp.makeConstraints { make in
             make.top.left.right.equalTo(self.view)
         }
 
-        // Setup Card Table View
         self.cardTableView.separatorStyle = .none
         self.cardTableView.showsVerticalScrollIndicator = false
         self.cardTableView.showsHorizontalScrollIndicator = false
-        self.cardTableView.delegate = self
-        self.cardTableView.dataSource = self
 
         self.cardTableView.rowHeight = UITableViewAutomaticDimension
         self.cardTableView.estimatedRowHeight = 1000
 
         // Fix insets so that contents appear below
-        self.cardTableView.contentInset = UIEdgeInsets(top: headerView.maxHeight - 20, left: 0, bottom: 0, right: 0)
+        self.cardTableView.contentInset.top = headerView.maxHeight - 20
 
-        registerCards()
 
-        // Render search results
-        contentView(search: searchQuery)
-        headerView.render(query: searchQuery)
+        refreshControl.addTarget(self, action: #selector(handleRefresh(_:)), for: .valueChanged)
+        refreshControl.tintColor = UIColor.black.withAlphaComponent(0.7)
+        self.cardTableView.addSubview(refreshControl)
     }
+
 
     func scrollsToTop(animated: Bool = true) {
         cardTableView.scrollToRow(at: .init(row: 0, section: 0), at: .top, animated: animated)
@@ -135,6 +145,11 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         } else {
             search(searchQuery: searchQuery)
         }
+    }
+
+    @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
+        self.contentView(search: self.searchQuery)
+        refreshControl.endRefreshing()
     }
 }
 
