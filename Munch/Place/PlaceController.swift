@@ -49,6 +49,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
 
         self.cardTableView.delegate = self
         self.cardTableView.dataSource = self
+        self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
 
         MunchApi.places.cards(id: placeId) { meta, place, cards in
             if (meta.isOk()) {
