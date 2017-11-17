@@ -110,8 +110,11 @@ class AccountBoardingController: UIViewController {
                 }
                 .onAuth { credentials in
                     let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
-                    credentialsManager.store(credentials: credentials)
-                    self.navigationController?.popViewController(animated: false)
+                    if (credentialsManager.store(credentials: credentials)) {
+                        self.navigationController?.popViewController(animated: false)
+                    } else {
+                        self.alert(title: "Login Failure", message: "Unable to store the user credentials.")
+                    }
                 }
     }
 

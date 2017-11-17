@@ -20,11 +20,12 @@ class PlaceClient {
         }
     }
 
-    func cards(id: String, callback: @escaping (_ meta: MetaJSON, _ cards: [PlaceCard]) -> Void) {
+    func cards(id: String, callback: @escaping (_ meta: MetaJSON, _ place: Place?, _ cards: [PlaceCard]) -> Void) {
         MunchApi.restful.get("/places/\(id)/cards") { meta, json in
-            callback(meta, json["data"].map {
-                PlaceCard(json: $0.1)
-            })
+            callback(meta,
+                    Place(json: json["data"]["place"]),
+                    json["data"]["cards"].map({ PlaceCard(json: $0.1) })
+            )
         }
     }
 }
@@ -78,7 +79,11 @@ struct Place: SearchResult, Equatable {
     var hours: [Hour]?
     var images: [Image]?
 
-    init(json: JSON) {
+    init?(json: JSON) {
+        guard json.exists() else {
+            return nil
+        }
+
         self.id = json["id"].string
 
         self.name = json["name"].string

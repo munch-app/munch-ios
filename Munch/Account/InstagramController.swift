@@ -171,7 +171,7 @@ class InstagramManageController: UIViewController, UIGestureRecognizerDelegate {
 
             backButton.setImage(UIImage(named: "Back-34"), for: .normal)
             backButton.tintColor = .black
-            backButton.imageEdgeInsets.left = 15
+            backButton.imageEdgeInsets.left = 18
             backButton.contentHorizontalAlignment = .left
             backButton.snp.makeConstraints { make in
                 make.top.equalTo(self).inset(20)

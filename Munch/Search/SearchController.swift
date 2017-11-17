@@ -37,12 +37,11 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        // Filter Testing
         // self.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
         // Place Testing
-//        let storyboard = UIStoryboard(name: "Place", bundle: nil)
-//        let controller = storyboard.instantiateInitialViewController() as! PlaceViewController
-//        controller.placeId = "6f213bc4-cc00-4d89-9249-93f6c193939d"
-//        self.navigationController!.pushViewController(controller, animated: true)
+//         let controller = PlaceViewController(placeId: "8759e8cb-a52e-40e4-b75c-a65c9b089f23")
+//         self.navigationController!.pushViewController(controller, animated: true)
     }
 
     override func viewDidLoad() {
@@ -139,9 +138,13 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     }
 }
 
-// CardType and tools
+// Card CollectionView
 extension SearchController {
-    func registerCards() {
+    private func registerCards() {
+        func register(_ cellClass: SearchCardView.Type) {
+            cardTableView.register(cellClass as? Swift.AnyClass, forCellReuseIdentifier: cellClass.cardId)
+        }
+
         // Register Static Cards
         register(SearchStaticEmptyCard.self)
         register(SearchStaticNoResultCard.self)
@@ -155,13 +158,6 @@ extension SearchController {
         register(SearchNoLocationCard.self)
     }
 
-    private func register(_ cellClass: SearchCardView.Type) {
-        cardTableView.register(cellClass as? Swift.AnyClass, forCellReuseIdentifier: cellClass.cardId)
-    }
-}
-
-// Card CollectionView
-extension SearchController {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return cards.count
     }
@@ -183,10 +179,7 @@ extension SearchController {
 
         if card.cardId == SearchPlaceCard.cardId, let placeId = card["placeId"].string {
             // Place Card
-            let storyboard = UIStoryboard(name: "Place", bundle: nil)
-            let controller = storyboard.instantiateInitialViewController() as! PlaceViewController
-            controller.placeId = placeId
-
+            let controller = PlaceViewController(placeId: placeId)
             self.navigationController!.pushViewController(controller, animated: true)
         }
     }

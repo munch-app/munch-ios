@@ -28,7 +28,6 @@
 		03B65F1C1F6C4A8C0030D12B /* SearchHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B65F1B1F6C4A8C0030D12B /* SearchHeaderView.swift */; };
 		03BB67F61F6FA9B500F17A1A /* SearchControllerSuggest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BB67F51F6FA9B500F17A1A /* SearchControllerSuggest.swift */; };
 		03BB67F81F6FA9C400F17A1A /* SearchControllerFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BB67F71F6FA9C400F17A1A /* SearchControllerFilter.swift */; };
-		03CD276C1F6286FC003562A1 /* Place.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 03CD27691F6286FC003562A1 /* Place.storyboard */; };
 		03CD276D1F6286FC003562A1 /* PlaceCardBasic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD276A1F6286FC003562A1 /* PlaceCardBasic.swift */; };
 		03CD276E1F6286FC003562A1 /* PlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD276B1F6286FC003562A1 /* PlaceController.swift */; };
 		03CD27741F62BD5C003562A1 /* PlaceCardStatic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD27731F62BD5C003562A1 /* PlaceCardStatic.swift */; };
@@ -119,7 +118,6 @@
 		03B65F1B1F6C4A8C0030D12B /* SearchHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchHeaderView.swift; sourceTree = "<group>"; };
 		03BB67F51F6FA9B500F17A1A /* SearchControllerSuggest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchControllerSuggest.swift; sourceTree = "<group>"; };
 		03BB67F71F6FA9C400F17A1A /* SearchControllerFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchControllerFilter.swift; sourceTree = "<group>"; };
-		03CD27691F6286FC003562A1 /* Place.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Place.storyboard; sourceTree = "<group>"; };
 		03CD276A1F6286FC003562A1 /* PlaceCardBasic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardBasic.swift; sourceTree = "<group>"; };
 		03CD276B1F6286FC003562A1 /* PlaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceController.swift; sourceTree = "<group>"; };
 		03CD27731F62BD5C003562A1 /* PlaceCardStatic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardStatic.swift; sourceTree = "<group>"; };
@@ -307,7 +305,6 @@
 		0348472C1F9D21520049BDF7 /* Place */ = {
 			isa = PBXGroup;
 			children = (
-				03CD27691F6286FC003562A1 /* Place.storyboard */,
 				03CD276B1F6286FC003562A1 /* PlaceController.swift */,
 				B4B733DCA665CD29B03D26BB /* PlaceCard.swift */,
 				03CD27731F62BD5C003562A1 /* PlaceCardStatic.swift */,
@@ -487,7 +484,6 @@
 				032F89031E82DFA300AD3818 /* Assets.xcassets in Resources */,
 				033E62F81F1D381F00AE97FA /* Main.storyboard in Resources */,
 				034FCF091F6C282E00D353F1 /* Search.storyboard in Resources */,
-				03CD276C1F6286FC003562A1 /* Place.storyboard in Resources */,
 				B4B732371A580E8A5F7BB44B /* locations-popular.json in Resources */,
 				B4B7321A7BF0F1FDE9D9A007 /* Auth0.plist in Resources */,
 			);

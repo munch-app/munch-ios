@@ -9,53 +9,52 @@
 import Foundation
 import UIKit
 
+import SnapKit
+
 class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
-    var placeId: String!
-    
+    let placeId: String
+    var place: Place?
     var cards = [PlaceShimmerImageBannerCard.card, PlaceShimmerNameTagCard.card]
-    var cells = [Int: PlaceCardView]()
-    var cellTypes = [String: PlaceCardView.Type]()
-    
-    @IBOutlet weak var cardTableView: UITableView!
-    @IBOutlet weak var navigationBackground: HairlineShadowView!
-    
+
+    private var cells = [Int: PlaceCardView]()
+    private var cellTypes = [String: PlaceCardView.Type]()
+
+    private let cardTableView = UITableView()
+    private let headerView = PlaceHeaderView()
+
+    init(placeId: String) {
+        self.placeId = placeId
+        super.init(nibName: nil, bundle: nil)
+
+        self.hidesBottomBarWhenPushed = true
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         // Make navigation bar transparent, bar must be hidden
-        navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
-        
+
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
-    
-    @IBAction func onBackButton(_ sender: Any) {
-        navigationController?.popViewController(animated: true)
-    }
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
-    }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.registerCards()
-        self.cardTableView.separatorStyle = .none
+        self.initViews()
+
         self.cardTableView.delegate = self
         self.cardTableView.dataSource = self
-        
-        self.cardTableView.rowHeight = UITableViewAutomaticDimension
-        self.cardTableView.estimatedRowHeight = 50
-        
-        // Top: -NavigationBar.height
-        // Bottom: BottomBar.height
-        self.cardTableView.contentInset.top = -64
-        self.cardTableView.contentInset.bottom = 10
-        
-        MunchApi.places.cards(id: placeId) { meta, cards in
+
+        MunchApi.places.cards(id: placeId) { meta, place, cards in
             if (meta.isOk()) {
+                self.place = place
                 self.cards = cards
+
+                // TODO Render bottom card
+
                 self.cells.removeAll()
                 self.cardTableView.reloadData()
                 self.scrollViewDidScroll(self.cardTableView)
@@ -64,12 +63,96 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
             }
         }
     }
+
+    private func initViews() {
+        self.view.addSubview(cardTableView)
+        self.view.addSubview(headerView)
+
+        self.cardTableView.separatorStyle = .none
+        self.cardTableView.rowHeight = UITableViewAutomaticDimension
+        self.cardTableView.estimatedRowHeight = 50
+
+        // Top: -NavigationBar.height
+        // Bottom: BottomBar.height
+//        self.cardTableView.scrollIndicatorInsets.top = -64
+//        self.cardTableView.contentInset.top = -64
+        self.cardTableView.contentInset.bottom = 10
+
+        cardTableView.snp.makeConstraints { make in
+            make.left.right.equalTo(self.view)
+            make.top.equalTo(self.view).inset(-20)
+            make.bottom.equalTo(self.view)
+        }
+
+        headerView.snp.makeConstraints { make in
+            make.top.left.right.equalTo(self.view)
+            make.height.equalTo(64)
+        }
+    }
+
+    @objc func onBackButton(_ sender: Any) {
+        navigationController?.popViewController(animated: true)
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
+fileprivate class PlaceHeaderView: UIView {
+    let backButton = UIButton()
+    let backgroundView = UIView()
 
-// CardType and tools
+    override init(frame: CGRect = CGRect.zero) {
+        super.init(frame: frame)
+        self.initViews()
+    }
+
+    private func initViews() {
+        self.backgroundColor = .clear
+        self.addSubview(backgroundView)
+        self.addSubview(backButton)
+
+        backButton.setImage(UIImage(named: "Back-34"), for: .normal)
+        backButton.tintColor = .white
+        backButton.imageEdgeInsets.left = 18
+        backButton.contentHorizontalAlignment = .left
+        backButton.snp.makeConstraints { make in
+            make.top.equalTo(self).inset(20)
+            make.left.equalTo(self)
+            make.bottom.equalTo(self)
+            make.width.equalTo(64)
+        }
+
+        backgroundView.backgroundColor = .clear
+        backgroundView.snp.makeConstraints { make in
+            make.edges.equalTo(self)
+        }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        backgroundView.hairlineShadow(height: 1.0)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+fileprivate class PlaceBottomView: UIView {
+
+}
+
+/**
+ Card TableView & Rendering
+ */
 extension PlaceViewController {
-    func registerCards() {
+    private func registerCards() {
         func register(_ cellClass: PlaceCardView.Type) {
             cellTypes[cellClass.cardId!] = cellClass
         }
@@ -77,7 +160,7 @@ extension PlaceViewController {
         // Register Shimmer Cards
         register(PlaceShimmerImageBannerCard.self)
         register(PlaceShimmerNameTagCard.self)
-        
+
         // Register Place Cards
         register(PlaceBasicNameTagCard.self)
         register(PlaceBasicImageBannerCard.self)
@@ -91,7 +174,7 @@ extension PlaceViewController {
         // Register Vendor Article Cards
         register(PlaceHeaderArticleCard.self)
         register(PlaceVendorArticleGridCard.self)
-        
+
         // Register Review Cards
         register(PlaceHeaderReviewCard.self)
         register(PlaceVendorFacebookReviewCard.self)
@@ -102,17 +185,14 @@ extension PlaceViewController {
         register(PlaceBasicPhoneCard.self)
         register(PlaceBasicWebsiteCard.self)
     }
-}
 
-// Card CollectionView
-extension PlaceViewController {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return cards.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let card = cards[indexPath.row]
-        
+
         if let cell = cells[indexPath.row] {
             return cell
         } else {
@@ -121,7 +201,7 @@ extension PlaceViewController {
             return cell
         }
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if let cell = cells[indexPath.row] {
@@ -142,30 +222,37 @@ extension PlaceViewController {
     }
 
     func updateNavigationBackground(y: CGFloat) {
-        if (160 > y) {
+        // Stars from - 20
+        if (155 > y) {
             // Full Opacity
-            navigationBackground.isHidden = true
-            setBarStyle(whiteBackground: y < -16.0)
-        } else if (180 < y) {
+            // -20 is the status bar height, another -16 is the height where it update the status bar color
+            headerView.backgroundView.isHidden = true
+            headerView.backButton.tintColor = y < -36.0 ? .black : .white
+        } else if (175 < y) {
             // Full White
-            navigationBackground.isHidden = false
-            setBarStyle(whiteBackground: true)
-            navigationBackground.backgroundColor = UIColor.white
+            headerView.backgroundView.isHidden = false
+            headerView.backgroundView.backgroundColor = .white
+            headerView.backButton.tintColor = .black
         } else {
-            navigationBackground.isHidden = false
-            let progress = 1.0 - (180 - y)/20.0
-            navigationBackground.backgroundColor = UIColor.white.withAlphaComponent(progress)
-            setBarStyle(whiteBackground: progress > 0.5)
+            let progress = 1.0 - (175 - y) / 20.0
+            headerView.backgroundView.isHidden = false
+            headerView.backgroundView.backgroundColor = UIColor.white.withAlphaComponent(progress)
+            headerView.backButton.tintColor = progress > 0.5 ? .black : .white
         }
+        self.setNeedsStatusBarAppearanceUpdate()
     }
 
-    private func setBarStyle(whiteBackground: Bool) {
-        if (whiteBackground) {
-            navigationController?.navigationBar.barStyle = .default
-            navigationItem.leftBarButtonItem!.tintColor = UIColor.black
+    override open var preferredStatusBarStyle: UIStatusBarStyle {
+        // LightContent is white, Default is Black
+        // See updateNavigationBackground for reference
+        let y = self.cardTableView.contentOffset.y
+        if (155 > y) {
+            return y < -36.0 ? .default : .lightContent
+        } else if (175 < y) {
+            return .default
         } else {
-            navigationController?.navigationBar.barStyle = .blackTranslucent
-            navigationItem.leftBarButtonItem!.tintColor = UIColor.white
+            let progress = (1.0 - (175 - y) / 20.0)
+            return progress > 0.5 ? .default : .lightContent
         }
     }
 }

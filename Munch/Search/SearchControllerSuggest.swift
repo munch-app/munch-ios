@@ -192,9 +192,7 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
         case let .place(place):
             if let placeId = place.id {
                 recentDatabase.put(text: placeId, dictionary: place.toParams())
-                let storyboard = UIStoryboard(name: "Place", bundle: nil)
-                let controller = storyboard.instantiateInitialViewController() as! PlaceViewController
-                controller.placeId = placeId
+                let controller = PlaceViewController(placeId: placeId)
                 self.navigationController!.pushViewController(controller, animated: true)
             }
         case let .location(location):

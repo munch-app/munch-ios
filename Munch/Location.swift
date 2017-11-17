@@ -14,17 +14,17 @@ import CoreLocation
  Delegated Munch App User Location tracker
  */
 public class MunchLocation {
-    
+
     /**
      Last latLng of userLocation, can be nil
      */
     private static var lastLatLng: String?
     private static var lastLocation: CLLocation?
-    
+
     // Expiry every 200 seconds
     private static var expiryIncrement: TimeInterval = 200
     private static var locationExpiry = Date().addingTimeInterval(expiryIncrement)
-    
+
     /**
      Check if location service is enabled
      */
@@ -36,7 +36,7 @@ public class MunchLocation {
             return false
         }
     }
-    
+
     /**
      Wait util an accurate location is available
      Will return nil latLng if not found
@@ -54,7 +54,7 @@ public class MunchLocation {
                 let coord = location.coordinate
                 MunchLocation.lastLatLng = "\(coord.latitude),\(coord.longitude)"
                 MunchLocation.lastLocation = location
-                
+
                 locationExpiry = Date().addingTimeInterval(expiryIncrement)
                 completion(lastLatLng, nil)
             }) { (error, location) -> (Void) in
@@ -62,7 +62,7 @@ public class MunchLocation {
             }
         }
     }
-    
+
     /**
      Get latLng immediately
      And schedule a load once
@@ -76,7 +76,7 @@ public class MunchLocation {
         }
         return nil
     }
-    
+
     /**
      Start location monitoring
      This method update lastLocation to lastLatLng
@@ -86,13 +86,14 @@ public class MunchLocation {
             let coord = location.coordinate
             MunchLocation.lastLatLng = "\(coord.latitude),\(coord.longitude)"
             MunchLocation.lastLocation = location
-            
+
             locationExpiry = Date().addingTimeInterval(expiryIncrement)
         }) { (error, location) -> (Void) in
+            // Failed to schedule once, no feedback required for this.
             print(error)
         }
     }
-    
+
     /**
      Distance from current location in metres
      */
@@ -102,7 +103,7 @@ public class MunchLocation {
         }
         return nil
     }
-    
+
     /**
      For < 1km format metres in multiple of 50s
      For < 100km format with 1 precision floating double
@@ -111,14 +112,16 @@ public class MunchLocation {
     public class func distance(asMetric latLng: String) -> String? {
         if let distance = distance(latLng: latLng) {
             if (distance < 1000) {
-                let m = (Int(distance/50) * 50)
-                if (m == 1000) { return "1.0km" }
+                let m = (Int(distance / 50) * 50)
+                if (m == 1000) {
+                    return "1.0km"
+                }
                 return "\(m)m"
             } else if (distance < 100000) {
-                let demical = (distance/1000).roundTo(places: 1)
+                let demical = (distance / 1000).roundTo(places: 1)
                 return "\(demical)km"
             } else {
-                return "\(Int(distance/1000))km"
+                return "\(Int(distance / 1000))km"
             }
         }
         return nil
@@ -126,7 +129,7 @@ public class MunchLocation {
 }
 
 extension CLLocation {
-    
+
     convenience init?(latLng: String) {
         let ll = latLng.components(separatedBy: ",")
         if let lat = ll.get(0), let lng = ll.get(1) {
@@ -137,5 +140,5 @@ extension CLLocation {
         }
         return nil
     }
-    
+
 }
