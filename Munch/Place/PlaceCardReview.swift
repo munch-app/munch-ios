@@ -45,7 +45,7 @@ class PlaceVendorFacebookReviewCard: PlaceCardView, SFSafariViewControllerDelega
         ratingView.settings.fillMode = .precise
         ratingView.settings.filledColor = UIColor.init(hex: "#3B5998")
         ratingView.settings.filledBorderColor = UIColor.init(hex: "#3B5998")
-        ratingView.settings.emptyBorderColor = UIColor.clear
+        ratingView.settings.emptyColor = UIColor.clear
         ratingView.settings.emptyBorderColor = UIColor.init(hex: "#3B5998")
         ratingView.settings.starSize = 18
         ratingView.settings.starMargin = 0

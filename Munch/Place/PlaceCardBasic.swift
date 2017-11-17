@@ -238,7 +238,10 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
         }
 
         var today: String {
-            return self[Place.Hour.Formatter.dayNow().lowercased()]
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat  = "EEEE"
+            let dayInWeek = dateFormatter.string(from: Date())
+            return dayInWeek.capitalized + ": " + self[Place.Hour.Formatter.dayNow().lowercased()]
         }
     }
 }
@@ -517,8 +520,8 @@ class PlaceBasicLocationCard: PlaceCardView {
         mapView.isUserInteractionEnabled = false
         mapView.showsUserLocation = false
         mapView.snp.makeConstraints { make in
-            make.top.equalTo(addressLabel.snp.bottom).inset(-25)
-            make.bottom.equalTo(self).inset(topBottom)
+            make.top.equalTo(addressLabel.snp.bottom).inset(-24)
+            make.bottom.equalTo(self)
             make.left.right.equalTo(self)
             make.height.equalTo(230)
         }

@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 
 import SnapKit
+import Cosmos
 
 class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
     let placeId: String
@@ -21,6 +22,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
 
     private let cardTableView = UITableView()
     private let headerView = PlaceHeaderView()
+    private let bottomView = PlaceBottomView()
 
     init(placeId: String) {
         self.placeId = placeId
@@ -67,26 +69,28 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
     private func initViews() {
         self.view.addSubview(cardTableView)
         self.view.addSubview(headerView)
+        self.view.addSubview(bottomView)
 
         self.cardTableView.separatorStyle = .none
         self.cardTableView.rowHeight = UITableViewAutomaticDimension
         self.cardTableView.estimatedRowHeight = 50
-
-        // Top: -NavigationBar.height
-        // Bottom: BottomBar.height
-//        self.cardTableView.scrollIndicatorInsets.top = -64
-//        self.cardTableView.contentInset.top = -64
-        self.cardTableView.contentInset.bottom = 10
+        self.cardTableView.contentInset.top = 0
+        self.cardTableView.contentInset.bottom = 0
 
         cardTableView.snp.makeConstraints { make in
             make.left.right.equalTo(self.view)
             make.top.equalTo(self.view).inset(-20)
-            make.bottom.equalTo(self.view)
+            make.bottom.equalTo(self.bottomView.snp.top)
         }
 
         headerView.snp.makeConstraints { make in
             make.top.left.right.equalTo(self.view)
             make.height.equalTo(64)
+        }
+
+        bottomView.snp.makeConstraints { make in
+            make.bottom.left.right.equalTo(self.view)
+            make.height.equalTo(60)
         }
     }
 
@@ -145,7 +149,85 @@ fileprivate class PlaceHeaderView: UIView {
 }
 
 fileprivate class PlaceBottomView: UIView {
+    let mainButton = UIButton()
+    let ratingView = CosmosView()
+    let ratingLabel = UILabel()
+    let openingHours = UILabel()
 
+    override init(frame: CGRect = CGRect.zero) {
+        super.init(frame: frame)
+        self.initViews()
+    }
+
+    private func initViews() {
+        self.backgroundColor = .white
+        self.addSubview(ratingView)
+        self.addSubview(ratingLabel)
+        self.addSubview(openingHours)
+        self.addSubview(mainButton)
+
+//        mainButton.addTarget(self, action: #selector(actionContinue(_:)), for: .touchUpInside)
+        mainButton.setTitle("CALL", for: .normal)
+        mainButton.setTitleColor(.white, for: .normal)
+        mainButton.backgroundColor = .primary
+        mainButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        mainButton.layer.cornerRadius = 3
+        mainButton.layer.borderWidth = 1.0
+        mainButton.layer.borderColor = UIColor.primary.cgColor
+        mainButton.snp.makeConstraints { make in
+            make.right.equalTo(self).inset(24)
+            make.top.bottom.equalTo(self).inset(10)
+            make.width.equalTo(110)
+        }
+
+        ratingView.rating = 0
+        ratingView.isUserInteractionEnabled = false
+        ratingView.settings.fillMode = .precise
+        ratingView.settings.filledColor = UIColor.init(hex: "#3B5998")
+        ratingView.settings.filledBorderColor = UIColor.init(hex: "#3B5998")
+        ratingView.settings.emptyColor = UIColor.clear
+        ratingView.settings.emptyBorderColor = UIColor.black
+        ratingView.settings.starSize = 18
+        ratingView.settings.starMargin = 0
+        ratingView.snp.makeConstraints { (make) in
+            make.left.equalTo(self).inset(23)
+            make.top.equalTo(self).inset(10)
+            make.width.equalTo(87)
+            make.height.equalTo(20)
+        }
+
+        ratingLabel.text = "0 Reviews"
+        ratingLabel.font = UIFont.systemFont(ofSize: 12.0, weight: .regular)
+        ratingLabel.textColor = UIColor.black.withAlphaComponent(0.75)
+        ratingLabel.textAlignment = .left
+        ratingLabel.snp.makeConstraints { (make) in
+            make.left.equalTo(ratingView.snp.right).inset(-10)
+            make.right.equalTo(mainButton.snp.left).inset(-12)
+            make.top.equalTo(self).inset(11)
+        }
+
+        openingHours.text = "No Opening Hour"
+        openingHours.font = UIFont.systemFont(ofSize: 13.0, weight: .regular)
+        openingHours.snp.makeConstraints { make in
+            make.left.equalTo(self).inset(24)
+            make.right.equalTo(mainButton.snp.left).inset(-12)
+            make.bottom.equalTo(self).inset(10)
+            make.height.equalTo(20)
+        }
+    }
+
+    func render(place: Place) {
+
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.hairlineShadow(height: -1.0)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
 /**

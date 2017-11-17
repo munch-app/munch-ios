@@ -23,7 +23,7 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         containerView.addSubview(bottomView)
         self.addSubview(containerView)
         
-        topImageView.layer.cornerRadius = 2
+        topImageView.layer.cornerRadius = 3
         topImageView.snp.makeConstraints { make in
             make.left.right.top.equalTo(containerView)
             make.bottom.equalTo(bottomView.snp.top)
