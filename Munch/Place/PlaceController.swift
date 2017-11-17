@@ -70,6 +70,10 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
 // CardType and tools
 extension PlaceViewController {
     func registerCards() {
+        func register(_ cellClass: PlaceCardView.Type) {
+            cellTypes[cellClass.cardId!] = cellClass
+        }
+
         // Register Shimmer Cards
         register(PlaceShimmerImageBannerCard.self)
         register(PlaceShimmerNameTagCard.self)
@@ -95,11 +99,8 @@ extension PlaceViewController {
         // Register About Cards
         register(PlaceHeaderAboutCard.self)
         register(PlaceBasicDescriptionCard.self)
+        register(PlaceBasicPhoneCard.self)
         register(PlaceBasicWebsiteCard.self)
-    }
-    
-    private func register(_ cellClass: PlaceCardView.Type) {
-        cellTypes[cellClass.cardId!] = cellClass
     }
 }
 

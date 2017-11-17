@@ -100,6 +100,7 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
     var dayHeightConstraint: Constraint!
 
     override func didLoad(card: PlaceCard) {
+        self.selectionStyle = .default
         let hours = BusinessHour(hours: card["hours"].flatMap({ Place.Hour(json: $0.1) }))
 
         self.addSubview(grid)
@@ -274,19 +275,73 @@ class PlaceBasicDescriptionCard: PlaceCardView {
     }
 }
 
-class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
-    let websiteTitleLabel = UILabel()
-    let websiteLabel = UILabel()
-    var websiteUrl: String?
+class PlaceBasicPhoneCard: PlaceCardView, SFSafariViewControllerDelegate {
+    private let phoneTitleLabel = UILabel()
+    private let phoneLabel = UILabel()
+    private var phone: String?
 
     override func didLoad(card: PlaceCard) {
+        self.selectionStyle = .default
+        self.phone = card["phone"].string
+        self.addSubview(phoneTitleLabel)
+        self.addSubview(phoneLabel)
+
+        phoneTitleLabel.text = "Phone"
+        phoneTitleLabel.font = UIFont.systemFont(ofSize: 14.0, weight: .medium)
+        phoneTitleLabel.textColor = .primary600
+        phoneTitleLabel.textAlignment = .right
+        phoneTitleLabel.numberOfLines = 1
+        phoneTitleLabel.snp.makeConstraints { make in
+            make.right.equalTo(self).inset(leftRight)
+            make.top.bottom.equalTo(self).inset(topBottom)
+        }
+
+        phoneLabel.attributedText = phone?.set(style: .default { make in
+            make.underline = UnderlineAttribute(color: UIColor.black.withAlphaComponent(0.4), style: NSUnderlineStyle.styleSingle)
+            make.font = FontAttribute(font: UIFont.systemFont(ofSize: 14.0, weight: .regular))
+            make.color = .black
+        })
+        phoneLabel.textAlignment = .left
+        phoneLabel.numberOfLines = 1
+        phoneLabel.snp.makeConstraints { make in
+            make.left.equalTo(self).inset(leftRight)
+            make.right.equalTo(phoneTitleLabel.snp.left).inset(10)
+            make.top.bottom.equalTo(self).inset(topBottom)
+        }
+    }
+
+    override func didTap() {
+        if let phone = self.phone {
+            if let url = URL(string: "tel://\(phone)"), UIApplication.shared.canOpenURL(url) {
+                let alert = UIAlertController(title: nil, message: "Call \(phone)", preferredStyle: .alert)
+                alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel))
+                alert.addAction(UIAlertAction(title: "Call", style: .default) { alert in
+                    UIApplication.shared.open(url)
+                })
+                controller.present(alert, animated: true, completion: nil)
+            }
+        }
+    }
+
+    override class var cardId: String? {
+        return "basic_Phone_20171117"
+    }
+}
+
+class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
+    private let websiteTitleLabel = UILabel()
+    private let websiteLabel = UILabel()
+    private var websiteUrl: String?
+
+    override func didLoad(card: PlaceCard) {
+        self.selectionStyle = .default
         self.websiteUrl = card["website"].string
         self.addSubview(websiteTitleLabel)
         self.addSubview(websiteLabel)
 
         websiteTitleLabel.text = "Website"
-        websiteTitleLabel.font = UIFont.systemFont(ofSize: 14.0, weight: UIFont.Weight.regular)
-        websiteTitleLabel.textColor = UIColor.primary
+        websiteTitleLabel.font = UIFont.systemFont(ofSize: 14.0, weight: .medium)
+        websiteTitleLabel.textColor = .primary600
         websiteTitleLabel.textAlignment = .right
         websiteTitleLabel.numberOfLines = 1
         websiteTitleLabel.snp.makeConstraints { make in
@@ -295,7 +350,7 @@ class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
         }
 
         websiteLabel.attributedText = websiteUrl?.set(style: .default { make in
-            make.underline = UnderlineAttribute(color: UIColor.black.withAlphaComponent(0.8), style: NSUnderlineStyle.styleSingle)
+            make.underline = UnderlineAttribute(color: UIColor.black.withAlphaComponent(0.4), style: NSUnderlineStyle.styleSingle)
             make.font = FontAttribute(font: UIFont.systemFont(ofSize: 14.0, weight: .regular))
             make.color = .black
         })
@@ -322,8 +377,8 @@ class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
 }
 
 class PlaceBasicAddressCard: PlaceCardView {
-    let addressLabel = AddressLabel()
-    var address: String?
+    private let addressLabel = AddressLabel()
+    private var address: String?
 
     override func didLoad(card: PlaceCard) {
         self.addSubview(addressLabel)
@@ -352,7 +407,7 @@ class PlaceBasicAddressCard: PlaceCardView {
     }
 }
 
-class AddressLabel: UIView {
+fileprivate class AddressLabel: UIView {
     let lineOneLabel = UILabel()
     let lineTwoLabel = UILabel()
 
@@ -449,9 +504,9 @@ class PlaceHeaderLocationCard: PlaceTitleCardView {
 }
 
 class PlaceBasicLocationCard: PlaceCardView {
-    let addressLabel = AddressLabel()
-    let mapView = MKMapView()
-    var address: String?
+    private let addressLabel = AddressLabel()
+    private let mapView = MKMapView()
+    private var address: String?
 
     override func didLoad(card: PlaceCard) {
         self.addSubview(addressLabel)

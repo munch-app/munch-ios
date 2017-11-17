@@ -28,6 +28,7 @@ class PlaceVendorFacebookReviewCard: PlaceCardView, SFSafariViewControllerDelega
     var facebookReviewUrl: URL?
 
     override func didLoad(card: PlaceCard) {
+        self.selectionStyle = .default
         self.addSubview(titleLabel)
         self.addSubview(ratingView)
         self.addSubview(countLabel)
@@ -36,7 +37,7 @@ class PlaceVendorFacebookReviewCard: PlaceCardView, SFSafariViewControllerDelega
         titleLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.regular)
         titleLabel.snp.makeConstraints { (make) in
             make.left.equalTo(self).inset(leftRight)
-            make.top.equalTo(self).inset(topBottom-2)
+            make.top.equalTo(self).inset(topBottom - 2)
         }
 
         ratingView.rating = card["overallStarRating"].double ?? 5
@@ -49,7 +50,7 @@ class PlaceVendorFacebookReviewCard: PlaceCardView, SFSafariViewControllerDelega
         ratingView.settings.starMargin = 0
         ratingView.snp.makeConstraints { (make) in
             make.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(self).inset(topBottom-2)
+            make.top.equalTo(self).inset(topBottom - 2)
         }
 
         countLabel.text = "Based on \(card["ratingCount"].int ?? 0) reviews"
