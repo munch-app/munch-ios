@@ -194,10 +194,10 @@ fileprivate class PlaceBottomView: UIView {
         ratingView.rating = 0
         ratingView.isUserInteractionEnabled = false
         ratingView.settings.fillMode = .precise
-        ratingView.settings.filledColor = UIColor.secondary200
-        ratingView.settings.filledBorderColor = UIColor.secondary200
+        ratingView.settings.filledColor = UIColor.secondary700
+        ratingView.settings.filledBorderColor = UIColor.secondary700
         ratingView.settings.emptyColor = UIColor.clear
-        ratingView.settings.emptyBorderColor = UIColor.secondary200
+        ratingView.settings.emptyBorderColor = UIColor.secondary700
         ratingView.settings.starSize = 18
         ratingView.settings.starMargin = 0
         ratingView.snp.makeConstraints { (make) in
@@ -209,7 +209,7 @@ fileprivate class PlaceBottomView: UIView {
 
         ratingLabel.text = "0 Reviews"
         ratingLabel.font = UIFont.systemFont(ofSize: 11.0, weight: .regular)
-        ratingLabel.textColor = UIColor.black.withAlphaComponent(0.75)
+        ratingLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         ratingLabel.textAlignment = .left
         ratingLabel.snp.makeConstraints { (make) in
             make.left.equalTo(ratingView.snp.right).inset(-10)
