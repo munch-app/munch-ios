@@ -12,19 +12,19 @@ import SwiftyJSON
 
 class ShimmerImageView: UIView {
     let shimmerView = ShimmerView()
-    let imageView = UIImageView()
+    let imageView = MunchImageView()
     
     override init(frame: CGRect = CGRect()) {
         super.init(frame: frame)
         self.clipsToBounds = true
-        
         self.addSubview(shimmerView)
+        self.addSubview(imageView)
+
         shimmerView.snp.makeConstraints { (make) in
             make.edges.equalTo(self)
         }
         
         // Override default image setting
-        self.addSubview(imageView)
         imageView.isHidden = true
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true

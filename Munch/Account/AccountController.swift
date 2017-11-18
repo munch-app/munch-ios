@@ -252,7 +252,7 @@ fileprivate class AccountProfileHeader: UIView {
 }
 
 fileprivate class ProfileInfoCell: UITableViewCell {
-    let profileImageView = UIImageView()
+    let profileImageView = ShimmerImageView()
     let nameLabel = UILabel()
     let emailLabel = UILabel()
 

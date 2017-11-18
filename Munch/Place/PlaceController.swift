@@ -16,9 +16,9 @@ import SwiftRichString
 class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
     let placeId: String
     var place: Place?
-    var cards = [PlaceShimmerImageBannerCard.card, PlaceShimmerNameTagCard.card]
 
-    private var cells = [Int: PlaceCardView]()
+    private var cards = [PlaceShimmerImageBannerCard.card, PlaceShimmerNameTagCard.card]
+    private var cells = [PlaceCardView]()
     private var cellTypes = [String: PlaceCardView.Type]()
 
     private let cardTableView = UITableView()
@@ -30,6 +30,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         super.init(nibName: nil, bundle: nil)
 
         self.hidesBottomBarWhenPushed = true
+        self.cells = [PlaceShimmerImageBannerCard.create(controller: self), PlaceShimmerNameTagCard.create(controller: self)]
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -53,14 +54,12 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
 
         MunchApi.places.cards(id: placeId) { meta, place, cards in
-            if (meta.isOk()) {
-                self.place = place
+            if let place = place, meta.isOk() {
                 self.cards = cards
-                if let place = place {
-                    self.bottomView.render(place: place)
-                }
+                self.place = place
+                self.bottomView.render(place: place)
 
-                self.cells.removeAll()
+                self.cells = self.create(cards: cards)
                 self.cardTableView.reloadData()
                 self.scrollViewDidScroll(self.cardTableView)
             } else {
@@ -79,6 +78,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.cardTableView.estimatedRowHeight = 50
         self.cardTableView.contentInset.top = 0
         self.cardTableView.contentInset.bottom = 0
+        self.cardTableView.scrollIndicatorInsets.top = 20
 
         cardTableView.snp.makeConstraints { make in
             make.left.right.equalTo(self.view)
@@ -336,23 +336,23 @@ extension PlaceViewController {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let card = cards[indexPath.row]
-
-        if let cell = cells[indexPath.row] {
-            return cell
-        } else {
-            let cell = cellTypes[card.cardId]?.init(card: card, controller: self) ?? PlaceStaticEmptyCard(card: card, controller: self)
-            cells[indexPath.row] = cell
-            return cell
-        }
+        return cells[indexPath.row]
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if let cell = cells[indexPath.row] {
-            tableView.beginUpdates()
-            cell.didTap()
-            tableView.endUpdates()
+
+        tableView.beginUpdates()
+        cells[indexPath.row].didTap()
+        tableView.endUpdates()
+    }
+
+    private func create(cards: [PlaceCard]) -> [PlaceCardView] {
+        return cards.map { card in
+            if let cell = cellTypes[card.cardId]?.init(card: card, controller: self) {
+                return cell
+            }
+            return PlaceStaticEmptyCard(card: card, controller: self)
         }
     }
 }

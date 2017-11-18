@@ -84,4 +84,8 @@ extension PlaceCardView {
     class var card: PlaceCard {
         return PlaceCard(cardId: self.cardId!)
     }
+
+    class func create(controller: PlaceViewController) -> PlaceCardView {
+        return self.init(card: self.card, controller: controller)
+    }
 }

@@ -35,7 +35,7 @@ class PlaceVendorArticleGridCard: PlaceCardView {
         topRow.right.render(article: articles.get(1), controller: controller)
         topRow.snp.makeConstraints { (make) in
             make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(self).inset(topBottom)
+            make.top.equalTo(self).inset(topBottom).priority(999)
         }
 
         if (articles.count > 3) {
@@ -44,12 +44,12 @@ class PlaceVendorArticleGridCard: PlaceCardView {
             bottomRow.right.render(article: articles.get(3), controller: controller)
             bottomRow.snp.makeConstraints { (make) in
                 make.left.right.equalTo(self).inset(leftRight)
-                make.top.equalTo(topRow.snp.bottom).inset(-15)
-                make.bottom.equalTo(self).inset(topBottom)
+                make.top.equalTo(topRow.snp.bottom).inset(-15).priority(999)
+                make.bottom.equalTo(self).inset(topBottom).priority(999)
             }
         } else {
             topRow.snp.makeConstraints({ (make) in
-                make.bottom.equalTo(self).inset(topBottom)
+                make.bottom.equalTo(self).inset(topBottom).priority(999)
             })
         }
     }
@@ -68,17 +68,17 @@ class PlaceVendorArticleGridCard: PlaceCardView {
             self.addSubview(right)
 
             left.snp.makeConstraints { (make) in
-                make.right.equalTo(right.snp.left).inset(-20)
-                make.top.bottom.equalTo(self)
-                make.left.equalTo(self)
-                make.width.equalTo(right.snp.width)
+                make.top.bottom.equalTo(self).priority(999)
+                make.right.equalTo(right.snp.left).inset(-20).priority(999)
+                make.left.equalTo(self).priority(999)
+                make.width.equalTo(right.snp.width).priority(999)
             }
 
             right.snp.makeConstraints { (make) in
-                make.left.equalTo(left.snp.right).inset(-20)
-                make.top.bottom.equalTo(self)
-                make.right.equalTo(self)
-                make.width.equalTo(left.snp.width)
+                make.top.bottom.equalTo(self).priority(999)
+                make.left.equalTo(left.snp.right).inset(-20).priority(999)
+                make.right.equalTo(self).priority(999)
+                make.width.equalTo(left.snp.width).priority(999)
             }
         }
 
@@ -102,16 +102,16 @@ class PlaceVendorArticleGridCard: PlaceCardView {
             articleImageView.layer.cornerRadius = 2
             articleImageView.snp.makeConstraints { (make) in
                 make.left.right.equalTo(self)
-                make.height.equalTo(articleImageView.snp.width).dividedBy(1.23)
                 make.top.equalTo(self)
+                make.width.equalTo(articleImageView.snp.height).dividedBy(0.8).priority(999)
+                make.bottom.equalTo(articleTitleLabel.snp.top).inset(-8)
             }
 
             articleTitleLabel.numberOfLines = 2
             articleTitleLabel.font = UIFont.systemFont(ofSize: 12.0, weight: .regular)
             articleTitleLabel.snp.makeConstraints { (make) in
                 make.left.right.equalTo(self)
-                make.height.equalTo(30)
-                make.top.equalTo(articleImageView.snp.bottom).inset(-8)
+                make.height.equalTo(30).priority(999)
                 make.bottom.equalTo(self)
             }
 

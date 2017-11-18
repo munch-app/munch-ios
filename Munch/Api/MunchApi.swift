@@ -122,7 +122,7 @@ public struct MetaJSON {
      */
     public func createAlert() -> UIAlertController {
         let type = error?.type ?? "Unknown Error"
-        let message = error?.message ?? "An unknown error has occured."
+        let message = error?.message ?? "An unknown error has occurred."
         let alert = UIAlertController(title: type, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
         return alert
