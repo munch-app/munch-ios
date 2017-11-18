@@ -46,16 +46,16 @@ public class MunchLocation {
             // If not enabled, just return nil latLng
             completion(nil, nil)
         } else if let latLng = lastLatLng, locationExpiry > Date() {
-            // Already have latLng, and not yet expiried
+            // Already have latLng, and not yet expired
             completion(latLng, nil)
         } else {
-            // Location already expiried, query again
-            Locator.currentPosition(accuracy: .block, onSuccess: { (location) -> (Void) in
+            // Location already expired, query again
+            Locator.currentPosition(accuracy: .any, timeout: .after(10), onSuccess: { (location) -> (Void) in
                 let coord = location.coordinate
+                MunchLocation.locationExpiry = Date().addingTimeInterval(expiryIncrement)
                 MunchLocation.lastLatLng = "\(coord.latitude),\(coord.longitude)"
                 MunchLocation.lastLocation = location
 
-                locationExpiry = Date().addingTimeInterval(expiryIncrement)
                 completion(lastLatLng, nil)
             }) { (error, location) -> (Void) in
                 completion(lastLatLng, error)
@@ -82,13 +82,13 @@ public class MunchLocation {
      This method update lastLocation to lastLatLng
      */
     public class func scheduleOnce() {
-        Locator.currentPosition(accuracy: .block, onSuccess: { (location) -> (Void) in
+        Locator.currentPosition(accuracy: .any, onSuccess: { (location) -> (Void) in
             let coord = location.coordinate
             MunchLocation.lastLatLng = "\(coord.latitude),\(coord.longitude)"
             MunchLocation.lastLocation = location
 
             locationExpiry = Date().addingTimeInterval(expiryIncrement)
-        }) { (error, location) -> (Void) in
+        }) { (error, location) in
             // Failed to schedule once, no feedback required for this.
             print(error)
         }
@@ -118,8 +118,8 @@ public class MunchLocation {
                 }
                 return "\(m)m"
             } else if (distance < 100000) {
-                let demical = (distance / 1000).roundTo(places: 1)
-                return "\(demical)km"
+                let decimal = (distance / 1000).roundTo(places: 1)
+                return "\(decimal)km"
             } else {
                 return "\(Int(distance / 1000))km"
             }
