@@ -333,6 +333,53 @@ struct Place: SearchResult, Equatable {
 }
 
 /**
+ BusinessHour
+ */
+class BusinessHour {
+    let hours: [Place.Hour]
+    let dayHours: [String: String]
+
+    init(hours: [Place.Hour]) {
+        self.hours = hours
+
+        var dayHours = [String: String]()
+        for hour in hours.sorted(by: { $0.open < $1.open }) {
+            if let timeText = dayHours[hour.day] {
+                dayHours[hour.day] = timeText + ", " + hour.timeText()
+            } else {
+                dayHours[hour.day] = hour.timeText()
+            }
+        }
+        self.dayHours = dayHours
+    }
+
+    subscript(day: String) -> String {
+        get {
+            return dayHours[day] ?? "Closed"
+        }
+    }
+
+    func isToday(day: String) -> Bool {
+        return day == Place.Hour.Formatter.dayNow().lowercased()
+    }
+
+    func isOpen() -> Bool {
+        return Place.Hour.Formatter.isOpen(hours: hours) ?? false
+    }
+
+    var today: String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEEE"
+        let dayInWeek = dateFormatter.string(from: Date())
+        return dayInWeek.capitalized + ": " + self.todayTime
+    }
+
+    var todayTime: String {
+        return self[Place.Hour.Formatter.dayNow().lowercased()]
+    }
+}
+
+/**
  Instagram Media
  */
 struct InstagramMedia {

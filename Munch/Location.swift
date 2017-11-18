@@ -50,7 +50,8 @@ public class MunchLocation {
             completion(latLng, nil)
         } else {
             // Location already expired, query again
-            Locator.currentPosition(accuracy: .any, timeout: .after(10), onSuccess: { (location) -> (Void) in
+            // TODO: Timeout bugged, , timeout: .delayed(10)
+            Locator.currentPosition(accuracy: .city, onSuccess: { (location) -> (Void) in
                 let coord = location.coordinate
                 MunchLocation.locationExpiry = Date().addingTimeInterval(expiryIncrement)
                 MunchLocation.lastLatLng = "\(coord.latitude),\(coord.longitude)"
@@ -82,7 +83,7 @@ public class MunchLocation {
      This method update lastLocation to lastLatLng
      */
     public class func scheduleOnce() {
-        Locator.currentPosition(accuracy: .any, onSuccess: { (location) -> (Void) in
+        Locator.currentPosition(accuracy: .city, onSuccess: { (location) -> (Void) in
             let coord = location.coordinate
             MunchLocation.lastLatLng = "\(coord.latitude),\(coord.longitude)"
             MunchLocation.lastLocation = location

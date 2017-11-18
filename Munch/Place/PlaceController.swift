@@ -11,6 +11,7 @@ import UIKit
 
 import SnapKit
 import Cosmos
+import SwiftRichString
 
 class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
     let placeId: String
@@ -55,8 +56,9 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
             if (meta.isOk()) {
                 self.place = place
                 self.cards = cards
-
-                // TODO Render bottom card
+                if let place = place {
+                    self.bottomView.render(place: place)
+                }
 
                 self.cells.removeAll()
                 self.cardTableView.reloadData()
@@ -155,9 +157,19 @@ fileprivate class PlaceBottomView: UIView {
     let ratingLabel = UILabel()
     let openingHours = UILabel()
 
+    var place: Place?
+
+    static let openStyle = Style("open", {
+        $0.color = UIColor.secondary
+    })
+    static let closeStyle = Style("close", {
+        $0.color = UIColor.primary
+    })
+
     override init(frame: CGRect = CGRect.zero) {
         super.init(frame: frame)
         self.initViews()
+        self.setHidden(isHidden: true)
     }
 
     private func initViews() {
@@ -167,27 +179,25 @@ fileprivate class PlaceBottomView: UIView {
         self.addSubview(openingHours)
         self.addSubview(mainButton)
 
-//        mainButton.addTarget(self, action: #selector(actionContinue(_:)), for: .touchUpInside)
-        mainButton.setTitle("CALL", for: .normal)
+        mainButton.setTitle("ACTION", for: .normal)
         mainButton.setTitleColor(.white, for: .normal)
         mainButton.backgroundColor = .primary
-        mainButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        mainButton.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         mainButton.layer.cornerRadius = 3
         mainButton.layer.borderWidth = 1.0
         mainButton.layer.borderColor = UIColor.primary.cgColor
         mainButton.snp.makeConstraints { make in
             make.right.equalTo(self).inset(24)
             make.top.bottom.equalTo(self).inset(10)
-            make.width.equalTo(110)
         }
 
         ratingView.rating = 0
         ratingView.isUserInteractionEnabled = false
         ratingView.settings.fillMode = .precise
-        ratingView.settings.filledColor = UIColor.init(hex: "#3B5998")
-        ratingView.settings.filledBorderColor = UIColor.init(hex: "#3B5998")
+        ratingView.settings.filledColor = UIColor.secondary200
+        ratingView.settings.filledBorderColor = UIColor.secondary200
         ratingView.settings.emptyColor = UIColor.clear
-        ratingView.settings.emptyBorderColor = UIColor.black
+        ratingView.settings.emptyBorderColor = UIColor.secondary200
         ratingView.settings.starSize = 18
         ratingView.settings.starMargin = 0
         ratingView.snp.makeConstraints { (make) in
@@ -198,13 +208,13 @@ fileprivate class PlaceBottomView: UIView {
         }
 
         ratingLabel.text = "0 Reviews"
-        ratingLabel.font = UIFont.systemFont(ofSize: 12.0, weight: .regular)
+        ratingLabel.font = UIFont.systemFont(ofSize: 11.0, weight: .regular)
         ratingLabel.textColor = UIColor.black.withAlphaComponent(0.75)
         ratingLabel.textAlignment = .left
         ratingLabel.snp.makeConstraints { (make) in
             make.left.equalTo(ratingView.snp.right).inset(-10)
             make.right.equalTo(mainButton.snp.left).inset(-12)
-            make.top.equalTo(self).inset(11)
+            make.top.equalTo(self).inset(12)
         }
 
         openingHours.text = "No Opening Hour"
@@ -217,8 +227,60 @@ fileprivate class PlaceBottomView: UIView {
         }
     }
 
-    func render(place: Place) {
+    private func setHidden(isHidden: Bool) {
+        self.mainButton.isHidden = isHidden
+        self.ratingView.isHidden = isHidden
+        self.ratingLabel.isHidden = isHidden
+        self.openingHours.isHidden = isHidden
+    }
 
+    func render(place: Place) {
+        self.setHidden(isHidden: false)
+        self.place = place
+        self.ratingView.rating = place.review.average
+        self.ratingLabel.text = "\(place.review.total) Reviews"
+
+        if let hours = place.hours {
+            let businessHours = BusinessHour(hours: hours)
+            if businessHours.isOpen() {
+                openingHours.attributedText = "Open: ".set(style: PlaceBottomView.openStyle) + businessHours.todayTime
+            } else {
+                openingHours.attributedText = "Closed Now".set(style: PlaceBottomView.closeStyle)
+            }
+        }
+
+        if place.phone != nil {
+            mainButton.setTitle("CALL", for: .normal)
+            mainButton.addTarget(self, action: #selector(actionCall(_:)), for: .touchUpInside)
+            mainButton.snp.makeConstraints { make in
+                make.width.equalTo(110)
+            }
+        } else if place.location.address != nil {
+            mainButton.setTitle("DIRECTIONS", for: .normal)
+            mainButton.addTarget(self, action: #selector(actionDirection(_:)), for: .touchUpInside)
+            mainButton.snp.makeConstraints { make in
+                make.width.equalTo(145)
+            }
+        }
+    }
+
+    @objc func actionCall(_ sender: Any) {
+        if let phone = place?.phone {
+            if let url = URL(string: "tel://\(phone)"), UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+            }
+        }
+    }
+
+    @objc func actionDirection(_ sender: Any) {
+        if let address = place?.location.address?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
+            // Monster Jobs uses comgooglemap url scheme, those fuckers
+            if (UIApplication.shared.canOpenURL(URL(string: "https://www.google.com/maps/")!)) {
+                UIApplication.shared.open(URL(string: "https://www.google.com/maps/?daddr=\(address)")!)
+            } else if (UIApplication.shared.canOpenURL(URL(string: "http://maps.apple.com/")!)) {
+                UIApplication.shared.open(URL(string: "http://maps.apple.com/?daddr=\(address)")!)
+            }
+        }
     }
 
     override func layoutSubviews() {
