@@ -46,6 +46,7 @@
 		12855D04BD7B4359954CC379 /* Pods_MunchTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30933A940AE4DF2E7F80A839 /* Pods_MunchTests.framework */; };
 		B4B7321A7BF0F1FDE9D9A007 /* Auth0.plist in Resources */ = {isa = PBXBuildFile; fileRef = B4B73D105B16A6AD87C50DAA /* Auth0.plist */; };
 		B4B732371A580E8A5F7BB44B /* locations-popular.json in Resources */ = {isa = PBXBuildFile; fileRef = B4B738FC6C7F484B97FA825F /* locations-popular.json */; };
+		B4B732DD92904EA6B71DC806 /* SettingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73CEBAA298AA8928EA653 /* SettingController.swift */; };
 		B4B7382DD1DAFD428F8CD49F /* SearchControllerLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73D8E2703243215F8AC5D /* SearchControllerLocation.swift */; };
 		B4B7385BBBEB7A119E93D402 /* AccountClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73924CDDEE30BE2E2AF8A /* AccountClient.swift */; };
 		B4B738A7A9FED6C3EAB68353 /* RecentDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73C04AEC75362CDFAC648 /* RecentDatabase.swift */; };
@@ -151,6 +152,7 @@
 		B4B738FC6C7F484B97FA825F /* locations-popular.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "locations-popular.json"; sourceTree = "<group>"; };
 		B4B73924CDDEE30BE2E2AF8A /* AccountClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountClient.swift; sourceTree = "<group>"; };
 		B4B73C04AEC75362CDFAC648 /* RecentDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentDatabase.swift; sourceTree = "<group>"; };
+		B4B73CEBAA298AA8928EA653 /* SettingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingController.swift; sourceTree = "<group>"; };
 		B4B73D105B16A6AD87C50DAA /* Auth0.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Auth0.plist; sourceTree = "<group>"; };
 		B4B73D8E2703243215F8AC5D /* SearchControllerLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchControllerLocation.swift; sourceTree = "<group>"; };
 		D2CE8E9F738C2A64071DD8B3 /* Pods_MunchUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MunchUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -298,6 +300,7 @@
 				03D2335B1F9D3851000F5F05 /* AccountController.swift */,
 				B4B7369B5EC3F7037A1D9F8E /* InstagramController.swift */,
 				B4B730E3D2F989A8CA95B67F /* BoardingController.swift */,
+				B4B73CEBAA298AA8928EA653 /* SettingController.swift */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -729,6 +732,7 @@
 				B4B738A7A9FED6C3EAB68353 /* RecentDatabase.swift in Sources */,
 				B4B73C872A5419CA47A5E95D /* InstagramController.swift in Sources */,
 				B4B73FE5E010EDBC83209A55 /* BoardingController.swift in Sources */,
+				B4B732DD92904EA6B71DC806 /* SettingController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

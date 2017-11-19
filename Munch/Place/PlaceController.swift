@@ -128,7 +128,7 @@ fileprivate class PlaceHeaderView: UIView {
         self.addSubview(backgroundView)
         self.addSubview(backButton)
 
-        backButton.setImage(UIImage(named: "Back-34"), for: .normal)
+        backButton.setImage(UIImage(named: "NavigationBar-Back"), for: .normal)
         backButton.tintColor = .white
         backButton.imageEdgeInsets.left = 18
         backButton.contentHorizontalAlignment = .left

@@ -28,7 +28,7 @@ class AccountController: UINavigationController {
 }
 
 class AccountProfileController: UIViewController {
-    private let headerView = AccountProfileHeader()
+    private let headerView = HeaderView()
     private let tableView = UITableView()
     private var userInfo: UserInfo?
 
@@ -38,23 +38,6 @@ class AccountProfileController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.initViews()
-        self.registerCell()
-
-        self.tableView.delegate = self
-        self.tableView.dataSource = self
-
-        // Check if user is logged in, push to AccountAuthenticateController if not
-        let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
-        if credentialsManager.hasValid() {
-            self.reloadProfile()
-        } else {
-            navigationController?.pushViewController(AccountBoardingController(), animated: false)
-        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -68,7 +51,34 @@ class AccountProfileController: UIViewController {
         }
     }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.initViews()
+        self.registerCell()
+
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
+
+        self.headerView.settingButton.addTarget(self, action: #selector(actionSetting(_:)), for: .touchUpInside)
+        self.headerView.settingButton.isHidden = true
+
+        // Check if user is logged in, push to AccountAuthenticateController if not
+        let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
+        if credentialsManager.hasValid() {
+            self.reloadProfile()
+        } else {
+            navigationController?.pushViewController(AccountBoardingController(), animated: false)
+        }
+    }
+
+    @objc func actionSetting(_ sender: Any) {
+        let controller = AccountSettingController()
+        controller.userInfo = self.userInfo
+        navigationController?.pushViewController(controller, animated: true)
+    }
+
     private func reloadProfile(credentialsManager: CredentialsManager = CredentialsManager(authentication: Auth0.authentication())) {
+        self.headerView.settingButton.isHidden = true
         self.userInfo = nil
         self.tableView.reloadData()
 
@@ -83,6 +93,7 @@ class AccountProfileController: UIViewController {
                         switch (result) {
                         case .success(let userInfo):
                             DispatchQueue.main.async {
+                                self.headerView.settingButton.isHidden = false
                                 self.userInfo = userInfo
                                 self.tableView.reloadData()
                             }
@@ -91,15 +102,6 @@ class AccountProfileController: UIViewController {
                         }
                     }
         }
-    }
-
-    private func logout() {
-        self.userInfo = nil
-        let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
-        if (credentialsManager.clear()) {
-            print("Removed Credentials")
-        }
-        navigationController?.pushViewController(AccountBoardingController(), animated: false)
     }
 
     private func initViews() {
@@ -126,14 +128,56 @@ class AccountProfileController: UIViewController {
         }
     }
 
+    private class HeaderView: UIView {
+        let titleView = UILabel()
+        let settingButton = UIButton()
+
+        override init(frame: CGRect = CGRect.zero) {
+            super.init(frame: frame)
+            self.initViews()
+        }
+
+        private func initViews() {
+            self.backgroundColor = .white
+            self.addSubview(titleView)
+            self.addSubview(settingButton)
+
+            titleView.text = "Profile"
+            titleView.font = .systemFont(ofSize: 17, weight: .regular)
+            titleView.textAlignment = .center
+            titleView.snp.makeConstraints { make in
+                make.centerX.equalTo(self)
+                make.top.equalTo(self).inset(20)
+                make.bottom.equalTo(self)
+            }
+
+            settingButton.setImage(UIImage(named: "NavigationBar-Setting"), for: .normal)
+            settingButton.tintColor = .black
+            settingButton.contentHorizontalAlignment = .right
+            settingButton.imageEdgeInsets.right = 24
+            settingButton.snp.makeConstraints { make in
+                make.right.equalTo(self)
+                make.top.equalTo(self).inset(20)
+                make.bottom.equalTo(self)
+                make.width.equalTo(64)
+            }
+        }
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            self.hairlineShadow(height: 1.0)
+        }
+
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
 }
 
 fileprivate enum AccountCellType {
     // Profile: Images, Person Name
     case loading
     case profile(UserInfo)
-    case instagramConnect
-    case logout
 }
 
 extension AccountProfileController: UITableViewDataSource, UITableViewDelegate {
@@ -144,18 +188,11 @@ extension AccountProfileController: UITableViewDataSource, UITableViewDelegate {
 
         register(cellClass: AccountLoadingCell.self)
         register(cellClass: ProfileInfoCell.self)
-        register(cellClass: SettingInstagramCell.self)
-        register(cellClass: SettingLogoutCell.self)
     }
 
     private var items: [(String?, [AccountCellType])] {
-        let settingItems: [(String?, [AccountCellType])] = [
-            ("Content Partner", [AccountCellType.instagramConnect]),
-            ("Account", [AccountCellType.logout])
-        ]
-
         if let userInfo = self.userInfo {
-            return [(nil, [AccountCellType.profile(userInfo)])] + settingItems
+            return [(nil, [AccountCellType.profile(userInfo)])]
         } else {
             return [(nil, [AccountCellType.loading])]
         }
@@ -195,10 +232,6 @@ extension AccountProfileController: UITableViewDataSource, UITableViewDelegate {
             let cell = dequeue(cellClass: ProfileInfoCell.self) as! ProfileInfoCell
             cell.render(userInfo: userInfo)
             return cell
-        case .instagramConnect:
-            return dequeue(cellClass: SettingInstagramCell.self)
-        case .logout:
-            return dequeue(cellClass: SettingLogoutCell.self)
         }
     }
 
@@ -207,47 +240,9 @@ extension AccountProfileController: UITableViewDataSource, UITableViewDelegate {
 
         let item = items[indexPath.section].1[indexPath.row]
         switch item {
-        case .logout:
-            self.logout()
-        case .instagramConnect:
-            let controller = InstagramManageController()
-            controller.userInfo = self.userInfo
-            navigationController?.pushViewController(controller, animated: true)
         default:
             return
         }
-    }
-}
-
-fileprivate class AccountProfileHeader: UIView {
-    let titleView = UILabel()
-
-    override init(frame: CGRect = CGRect.zero) {
-        super.init(frame: frame)
-        self.initViews()
-    }
-
-    private func initViews() {
-        self.backgroundColor = .white
-        self.addSubview(titleView)
-
-        titleView.text = "Profile"
-        titleView.font = .systemFont(ofSize: 17, weight: .regular)
-        titleView.textAlignment = .center
-        titleView.snp.makeConstraints { make in
-            make.top.equalTo(self).inset(20)
-            make.left.right.equalTo(self)
-            make.bottom.equalTo(self)
-        }
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        self.hairlineShadow(height: 1.0)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -316,58 +311,6 @@ fileprivate class ProfileInfoCell: UITableViewCell {
         }
         nameLabel.text = userInfo.name
         emailLabel.text = userInfo.email
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-fileprivate class SettingInstagramCell: UITableViewCell {
-    let titleView = UILabel()
-    let connectLabel = UILabel()
-
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.addSubview(titleView)
-        self.addSubview(connectLabel)
-
-        titleView.text = "Instagram Account"
-        titleView.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-        titleView.textColor = .black
-        titleView.snp.makeConstraints { make in
-            make.left.equalTo(self).inset(24)
-            make.top.bottom.equalTo(self).inset(12)
-        }
-
-        connectLabel.text = "Manage"
-        connectLabel.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-        connectLabel.textColor = .primary
-        connectLabel.snp.makeConstraints { make in
-            make.right.equalTo(self).inset(24)
-            make.top.bottom.equalTo(self).inset(12)
-        }
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-fileprivate class SettingLogoutCell: UITableViewCell {
-    let titleView = UILabel()
-
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.addSubview(titleView)
-
-        titleView.text = "Logout"
-        titleView.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-        titleView.textColor = .black
-        titleView.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(24)
-            make.top.bottom.equalTo(self).inset(12)
-        }
     }
 
     required init?(coder aDecoder: NSCoder) {
