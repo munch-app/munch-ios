@@ -138,10 +138,12 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
         }
 
         indicator.setImage(UIImage(named: "Expand-20"), for: .normal)
+        indicator.contentHorizontalAlignment = .right
         indicator.tintColor = .black
         indicator.snp.makeConstraints { make in
             make.right.equalTo(self).inset(leftRight)
             make.top.bottom.equalTo(self).inset(topBottom)
+            make.width.equalTo(25)
         }
 
         openLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.regular)
@@ -181,7 +183,8 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
             dayView.snp.removeConstraints()
             openLabel.snp.makeConstraints { (make) in
                 make.top.bottom.equalTo(grid)
-                make.left.right.equalTo(grid)
+                make.left.equalTo(grid)
+                make.right.equalTo(indicator.snp.left)
             }
         }
     }
