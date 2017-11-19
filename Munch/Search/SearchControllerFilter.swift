@@ -442,15 +442,16 @@ fileprivate class SearchFilterTagCell: UITableViewCell {
 
     func render(title: String, selected: Bool) {
         titleLabel.text = title
-        checkButton.on = selected
+        checkButton.setOn(selected, animated: false)
     }
 
     /**
      Flip the switch on check button
      */
     func flip() -> Bool {
-        checkButton.on = !checkButton.on
-        return checkButton.on
+        let flip = !checkButton.on
+        checkButton.setOn(flip, animated: true)
+        return flip
     }
 
     required init?(coder aDecoder: NSCoder) {

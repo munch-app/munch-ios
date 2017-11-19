@@ -10,6 +10,8 @@ import SnapKit
 import Auth0
 import Lock
 
+import BEMCheckBox
+
 class InstagramManageController: UIViewController, UIGestureRecognizerDelegate {
     private let headerView = HeaderView()
     private let tableView = UITableView()
@@ -35,6 +37,7 @@ class InstagramManageController: UIViewController, UIGestureRecognizerDelegate {
         self.registerCell()
 
         self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
+        self.headerView.settingButton.addTarget(self, action: #selector(onSettingButton(_:)), for: .touchUpInside)
         self.tableView.delegate = self
         self.tableView.dataSource = self
 
@@ -139,6 +142,11 @@ class InstagramManageController: UIViewController, UIGestureRecognizerDelegate {
         navigationController?.popViewController(animated: true)
     }
 
+    @objc func onSettingButton(_ sender: Any) {
+        let controller = InstagramAccountSettingController()
+        navigationController?.pushViewController(controller, animated: true)
+    }
+
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
@@ -146,6 +154,7 @@ class InstagramManageController: UIViewController, UIGestureRecognizerDelegate {
     private class HeaderView: UIView {
         let backButton = UIButton()
         let titleView = UILabel()
+        let settingButton = UIButton()
 
         override init(frame: CGRect = CGRect.zero) {
             super.init(frame: frame)
@@ -156,6 +165,7 @@ class InstagramManageController: UIViewController, UIGestureRecognizerDelegate {
             self.backgroundColor = .white
             self.addSubview(titleView)
             self.addSubview(backButton)
+            self.addSubview(settingButton)
 
             titleView.text = "Manage Instagram"
             titleView.font = .systemFont(ofSize: 17, weight: .regular)
@@ -173,6 +183,17 @@ class InstagramManageController: UIViewController, UIGestureRecognizerDelegate {
             backButton.snp.makeConstraints { make in
                 make.top.equalTo(self).inset(20)
                 make.left.equalTo(self)
+                make.bottom.equalTo(self)
+                make.width.equalTo(64)
+            }
+
+            settingButton.setImage(UIImage(named: "NavigationBar-Setting"), for: .normal)
+            settingButton.tintColor = .black
+            settingButton.contentHorizontalAlignment = .right
+            settingButton.imageEdgeInsets.right = 24
+            settingButton.snp.makeConstraints { make in
+                make.right.equalTo(self)
+                make.top.equalTo(self).inset(20)
                 make.bottom.equalTo(self)
                 make.width.equalTo(64)
             }
@@ -198,7 +219,7 @@ fileprivate enum InstagramAccountStatus {
 fileprivate enum InstagramCellType {
     case loading
     case boarding
-    case setting
+    case temporary
 }
 
 extension InstagramManageController: UITableViewDataSource, UITableViewDelegate {
@@ -209,7 +230,6 @@ extension InstagramManageController: UITableViewDataSource, UITableViewDelegate 
 
         register(cellClass: AccountLoadingCell.self)
         register(cellClass: InstagramConnectCell.self)
-        register(cellClass: InstagramAccountSettingCell.self)
     }
 
     private var items: [(String?, [InstagramCellType])] {
@@ -217,7 +237,7 @@ extension InstagramManageController: UITableViewDataSource, UITableViewDelegate 
         case .loading:
             return [(nil, [InstagramCellType.loading])]
         case .connected:
-            return [(nil, [InstagramCellType.setting])]
+            return [(nil, [InstagramCellType.temporary])]
         case .notConnected:
             return [(nil, [InstagramCellType.boarding])]
         }
@@ -255,8 +275,10 @@ extension InstagramManageController: UITableViewDataSource, UITableViewDelegate 
             return dequeue(cellClass: AccountLoadingCell.self)
         case .boarding:
             return dequeue(cellClass: InstagramConnectCell.self)
-        case .setting:
-            return dequeue(cellClass: InstagramAccountSettingCell.self)
+        case .temporary:
+            let cell = UITableViewCell()
+            cell.textLabel?.text = "Connected (Temp Message)"
+            return cell
         }
     }
 
@@ -273,7 +295,7 @@ extension InstagramManageController: UITableViewDataSource, UITableViewDelegate 
     }
 }
 
-class InstagramConnectCell: UITableViewCell {
+fileprivate class InstagramConnectCell: UITableViewCell {
     let appImageView = UIImageView()
     let titleView = UILabel()
     let continueButton = UIButton()
@@ -334,9 +356,181 @@ class InstagramConnectCell: UITableViewCell {
     }
 }
 
-class InstagramAccountSettingCell: UITableViewCell {
+fileprivate class InstagramAccountSettingController: UIViewController, UIGestureRecognizerDelegate {
+    private let headerView = HeaderView()
+    private let tableView = UITableView()
+
+    var userInfo: UserInfo! // User Main UserInfo
+    var idToken: String! // User Main Id Token
+    private var instagramAccountStatus = InstagramAccountStatus.loading
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Make navigation bar transparent, bar must be hidden
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.shadowImage = UIImage()
+
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.initViews()
+        self.registerCell()
+
+        self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
+    }
+
+    private func initViews() {
+        self.view.backgroundColor = .white
+        self.view.addSubview(tableView)
+        self.view.addSubview(headerView)
+
+        headerView.snp.makeConstraints { make in
+            make.top.left.right.equalTo(self.view)
+            make.height.equalTo(64)
+        }
+
+        tableView.separatorStyle = .none
+        tableView.separatorInset.left = 24
+        tableView.allowsSelection = true
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.sectionHeaderHeight = 40
+        tableView.estimatedRowHeight = 50
+
+        tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 10))
+        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 10))
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(headerView.snp.bottom)
+            make.bottom.left.right.equalTo(self.view)
+        }
+    }
+
+    @objc func onBackButton(_ sender: Any) {
+        navigationController?.popViewController(animated: true)
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+
+    private class HeaderView: UIView {
+        let backButton = UIButton()
+        let titleView = UILabel()
+
+        override init(frame: CGRect = CGRect.zero) {
+            super.init(frame: frame)
+            self.initViews()
+        }
+
+        private func initViews() {
+            self.backgroundColor = .white
+            self.addSubview(titleView)
+            self.addSubview(backButton)
+
+            titleView.text = "Instagram Setting"
+            titleView.font = .systemFont(ofSize: 17, weight: .regular)
+            titleView.textAlignment = .center
+            titleView.snp.makeConstraints { make in
+                make.top.equalTo(self).inset(20)
+                make.centerX.equalTo(self)
+                make.bottom.equalTo(self)
+            }
+
+            backButton.setImage(UIImage(named: "NavigationBar-Back"), for: .normal)
+            backButton.tintColor = .black
+            backButton.imageEdgeInsets.left = 18
+            backButton.contentHorizontalAlignment = .left
+            backButton.snp.makeConstraints { make in
+                make.top.equalTo(self).inset(20)
+                make.left.equalTo(self)
+                make.bottom.equalTo(self)
+                make.width.equalTo(64)
+            }
+        }
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            self.hairlineShadow(height: 1.0)
+        }
+
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+}
+
+extension InstagramAccountSettingController: UITableViewDataSource, UITableViewDelegate {
+    func registerCell() {
+        func register(cellClass: UITableViewCell.Type) {
+            tableView.register(cellClass, forCellReuseIdentifier: String(describing: cellClass))
+        }
+
+        register(cellClass: InstagramAccountAllowContentCell.self)
+    }
+
+    private var items: [(String?, [InstagramSettingCellType])] {
+        return [(nil, [InstagramSettingCellType.allowContent])]
+    }
+
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return items.count
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return items[section].1.count
+    }
+
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return items[section].0
+    }
+
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        let header = view as! UITableViewHeaderFooterView
+        header.tintColor = .white
+        header.textLabel!.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.medium)
+        header.textLabel!.textColor = UIColor.black.withAlphaComponent(0.85)
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        func dequeue(cellClass: UITableViewCell.Type) -> UITableViewCell {
+            let identifier = String(describing: cellClass)
+            return tableView.dequeueReusableCell(withIdentifier: identifier)!
+        }
+
+        let item = items[indexPath.section].1[indexPath.row]
+
+        switch item {
+        case .allowContent:
+            return dequeue(cellClass: InstagramAccountAllowContentCell.self)
+        }
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+
+        let item = items[indexPath.section].1[indexPath.row]
+        switch item {
+        case .allowContent:
+            let cell = tableView.cellForRow(at: indexPath) as! InstagramAccountAllowContentCell
+            cell.onTap()
+        default:
+            return
+        }
+    }
+}
+
+fileprivate enum InstagramSettingCellType {
+    case allowContent
+}
+
+fileprivate class InstagramAccountAllowContentCell: UITableViewCell {
     let titleView = UILabel()
-    let buttonView = UISwitch()
+    let checkButton = BEMCheckBox(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -345,21 +539,32 @@ class InstagramAccountSettingCell: UITableViewCell {
 
     private func initViews() {
         self.addSubview(titleView)
-        self.addSubview(buttonView)
+        self.addSubview(checkButton)
 
-        titleView.text = "Allow Content"
+        titleView.text = "Show Media on Munch"
         titleView.snp.makeConstraints { make in
             make.left.equalTo(self).inset(24)
             make.top.bottom.equalTo(self).inset(12)
-            make.right.equalTo(buttonView.snp.left).inset(24)
         }
 
-        buttonView.tintColor = .primary
-        buttonView.setOn(true, animated: false)
-        buttonView.snp.makeConstraints { make in
+        checkButton.snp.makeConstraints { make in
+            make.top.bottom.equalTo(self).inset(9)
             make.right.equalTo(self).inset(24)
-            make.top.bottom.equalTo(self).inset(12)
         }
+        checkButton.lineWidth = 1.5
+        checkButton.tintColor = UIColor.black.withAlphaComponent(0.6)
+        checkButton.onFillColor = .white
+        checkButton.onCheckColor = .primary
+        checkButton.onTintColor = .primary
+        checkButton.animationDuration = 0.25
+        checkButton.isEnabled = false
+        checkButton.on = true
+    }
+
+    func onTap() -> Bool {
+        let flip = !checkButton.on
+        checkButton.setOn(flip, animated: true)
+        return flip
     }
 
     required init?(coder aDecoder: NSCoder) {
