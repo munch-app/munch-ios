@@ -57,17 +57,17 @@ class PlaceTitleCardView: PlaceCardView {
 
         separatorLine.backgroundColor = UIColor(hex: "d5d4d8")
         separatorLine.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(self).inset(16)
+            make.left.right.equalTo(self)
+            make.top.equalTo(self).inset(15)
             make.height.equalTo(1.0 / UIScreen.main.scale)
         }
 
-        titleLabel.font = UIFont.systemFont(ofSize: 21.0, weight: .medium)
-        titleLabel.textColor = UIColor.black.withAlphaComponent(0.8)
+        titleLabel.font = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
+        titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
         titleLabel.snp.makeConstraints { (make) in
             make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(separatorLine.snp.bottom).inset(-18)
-            make.bottom.equalTo(self).inset(10)
+            make.top.equalTo(separatorLine.snp.bottom).inset(-20)
+            make.bottom.equalTo(self).inset(11)
         }
     }
 
@@ -85,6 +85,9 @@ extension PlaceCardView {
         return PlaceCard(cardId: self.cardId!)
     }
 
+    /**
+     Create PlaceCardView from controller
+     */
     class func create(controller: PlaceViewController) -> PlaceCardView {
         return self.init(card: self.card, controller: controller)
     }
