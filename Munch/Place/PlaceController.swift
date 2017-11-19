@@ -60,6 +60,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
                 self.bottomView.render(place: place)
 
                 self.cells = self.create(cards: cards)
+                self.cardTableView.isScrollEnabled = true
                 self.cardTableView.reloadData()
                 self.scrollViewDidScroll(self.cardTableView)
             } else {
@@ -73,6 +74,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.view.addSubview(headerView)
         self.view.addSubview(bottomView)
 
+        self.cardTableView.isScrollEnabled = false
         self.cardTableView.separatorStyle = .none
         self.cardTableView.rowHeight = UITableViewAutomaticDimension
         self.cardTableView.estimatedRowHeight = 50
@@ -113,6 +115,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
 fileprivate class PlaceHeaderView: UIView {
     let backButton = UIButton()
     let backgroundView = UIView()
+    let shadowView = UIView()
 
     override init(frame: CGRect = CGRect.zero) {
         super.init(frame: frame)
@@ -121,6 +124,7 @@ fileprivate class PlaceHeaderView: UIView {
 
     private func initViews() {
         self.backgroundColor = .clear
+        self.addSubview(shadowView)
         self.addSubview(backgroundView)
         self.addSubview(backButton)
 
@@ -139,11 +143,15 @@ fileprivate class PlaceHeaderView: UIView {
         backgroundView.snp.makeConstraints { make in
             make.edges.equalTo(self)
         }
+
+        shadowView.snp.makeConstraints { make in
+            make.edges.equalTo(self)
+        }
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        backgroundView.hairlineShadow(height: 1.0)
+        shadowView.hairlineShadow(height: 1.0)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -194,10 +202,10 @@ fileprivate class PlaceBottomView: UIView {
         ratingView.rating = 0
         ratingView.isUserInteractionEnabled = false
         ratingView.settings.fillMode = .precise
-        ratingView.settings.filledColor = UIColor.secondary700
-        ratingView.settings.filledBorderColor = UIColor.secondary700
+        ratingView.settings.filledColor = UIColor.init(hex: "#3B5998")
+        ratingView.settings.filledBorderColor = UIColor.init(hex: "#3B5998")
         ratingView.settings.emptyColor = UIColor.clear
-        ratingView.settings.emptyBorderColor = UIColor.secondary700
+        ratingView.settings.emptyBorderColor = UIColor.init(hex: "#3B5998")
         ratingView.settings.starSize = 18
         ratingView.settings.starMargin = 0
         ratingView.snp.makeConstraints { (make) in
@@ -242,11 +250,7 @@ fileprivate class PlaceBottomView: UIView {
 
         if let hours = place.hours {
             let businessHours = BusinessHour(hours: hours)
-            if businessHours.isOpen() {
-                openingHours.attributedText = "Open: ".set(style: PlaceBottomView.openStyle) + businessHours.todayTime
-            } else {
-                openingHours.attributedText = "Closed Now".set(style: PlaceBottomView.closeStyle)
-            }
+            openingHours.text = businessHours.todayTime
         }
 
         if place.phone != nil {
@@ -367,22 +371,28 @@ extension PlaceViewController {
     }
 
     func updateNavigationBackground(y: CGFloat) {
-        // Stars from - 20
-        if (155 > y) {
-            // Full Opacity
+        // Starts from - 20
+        if (y < -36.0) {
             // -20 is the status bar height, another -16 is the height where it update the status bar color
+            headerView.backButton.tintColor = .black
             headerView.backgroundView.isHidden = true
-            headerView.backButton.tintColor = y < -36.0 ? .black : .white
+            headerView.shadowView.isHidden = true
+        } else if (155 > y) {
+            // Full Opacity
+            headerView.backButton.tintColor = .white
+            headerView.backgroundView.isHidden = true
+            headerView.shadowView.isHidden = true
         } else if (175 < y) {
             // Full White
+            headerView.backButton.tintColor = .black
             headerView.backgroundView.isHidden = false
             headerView.backgroundView.backgroundColor = .white
-            headerView.backButton.tintColor = .black
+            headerView.shadowView.isHidden = false
         } else {
             let progress = 1.0 - (175 - y) / 20.0
+            headerView.backButton.tintColor = progress > 0.5 ? .black : .white
             headerView.backgroundView.isHidden = false
             headerView.backgroundView.backgroundColor = UIColor.white.withAlphaComponent(progress)
-            headerView.backButton.tintColor = progress > 0.5 ? .black : .white
         }
         self.setNeedsStatusBarAppearanceUpdate()
     }
@@ -391,8 +401,10 @@ extension PlaceViewController {
         // LightContent is white, Default is Black
         // See updateNavigationBackground for reference
         let y = self.cardTableView.contentOffset.y
-        if (155 > y) {
-            return y < -36.0 ? .default : .lightContent
+        if (y < -36.0) {
+            return .default
+        } else if (155 > y) {
+            return .lightContent
         } else if (175 < y) {
             return .default
         } else {

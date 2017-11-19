@@ -93,6 +93,7 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
     })
 
     let grid = UIView()
+    let indicator = UIButton()
     let openLabel = UILabel()
     let dayView = DayView()
 
@@ -101,42 +102,53 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
 
     override func didLoad(card: PlaceCard) {
         self.selectionStyle = .default
-        let hours = BusinessHour(hours: card["hours"].flatMap({ Place.Hour(json: $0.1) }))
-
         self.addSubview(grid)
+        grid.addSubview(indicator)
+        grid.addSubview(openLabel)
+        grid.addSubview(dayView)
+
         grid.snp.makeConstraints { (make) in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.bottom.equalTo(self).inset(topBottom)
         }
+
+        indicator.setImage(UIImage(named: "Expand-20"), for: .normal)
+        indicator.tintColor = .black
+        indicator.snp.makeConstraints { make in
+            make.right.equalTo(self).inset(leftRight)
+            make.top.bottom.equalTo(self).inset(topBottom)
+        }
+
+        openLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.regular)
+        openLabel.numberOfLines = 2
+        openLabel.snp.makeConstraints { (make) in
+            make.top.bottom.equalTo(grid)
+            make.left.equalTo(grid)
+            make.right.equalTo(indicator.snp.left)
+        }
+
+        let hours = BusinessHour(hours: card["hours"].flatMap({ Place.Hour(json: $0.1) }))
+        dayView.render(hours: hours)
+        dayView.isHidden = true
 
         if hours.isOpen() {
             openLabel.attributedText = "Open Now\n".set(style: PlaceBasicBusinessHourCard.openStyle) + hours.today
         } else {
             openLabel.attributedText = "Closed Now\n".set(style: PlaceBasicBusinessHourCard.closeStyle) + hours.today
         }
-        grid.addSubview(openLabel)
-        openLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.regular)
-        openLabel.numberOfLines = 2
-        openLabel.snp.makeConstraints { (make) in
-            make.top.bottom.equalTo(grid)
-            make.left.right.equalTo(grid)
-        }
-
-        dayView.render(hours: hours)
-        dayView.isHidden = true
-        grid.addSubview(dayView)
     }
 
     override func didTap() {
         dayView.isHidden = !dayView.isHidden
         openLabel.isHidden = !openLabel.isHidden
+        indicator.isHidden = !indicator.isHidden
 
         if (openLabel.isHidden) {
             openLabel.snp.removeConstraints()
             dayView.snp.makeConstraints { (make) in
                 make.top.bottom.equalTo(grid)
                 make.left.right.equalTo(grid)
-                make.height.equalTo(44 * 7)
+                make.height.equalTo(44 * 7).priority(999)
             }
         }
 
@@ -167,7 +179,7 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
 
                 label.snp.makeConstraints { make in
                     make.left.right.equalTo(self)
-                    make.height.equalTo(44)
+                    make.height.equalTo(44).priority(998)
 
                     if index == 0 {
                         make.top.equalTo(self)
@@ -221,9 +233,10 @@ class PlaceBasicDescriptionCard: PlaceCardView {
 
     override func didLoad(card: PlaceCard) {
         descriptionLabel.text = card["description"].string
-        descriptionLabel.font = UIFont.systemFont(ofSize: 14.0, weight: UIFont.Weight.regular)
+        descriptionLabel.font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
         descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         descriptionLabel.numberOfLines = 0
+        descriptionLabel.textAlignment = .justified
         self.addSubview(descriptionLabel)
 
 
@@ -250,25 +263,25 @@ class PlaceBasicPhoneCard: PlaceCardView, SFSafariViewControllerDelegate {
         self.addSubview(phoneLabel)
 
         phoneTitleLabel.text = "Phone"
-        phoneTitleLabel.font = UIFont.systemFont(ofSize: 14.0, weight: .medium)
-        phoneTitleLabel.textColor = .primary600
-        phoneTitleLabel.textAlignment = .right
+        phoneTitleLabel.font = UIFont.systemFont(ofSize: 15.0, weight: .medium)
+        phoneTitleLabel.textColor = .black
+        phoneTitleLabel.textAlignment = .left
         phoneTitleLabel.numberOfLines = 1
         phoneTitleLabel.snp.makeConstraints { make in
-            make.right.equalTo(self).inset(leftRight)
+            make.left.equalTo(self).inset(leftRight)
             make.top.bottom.equalTo(self).inset(topBottom)
         }
 
         phoneLabel.attributedText = phone?.set(style: .default { make in
-            make.underline = UnderlineAttribute(color: UIColor.black.withAlphaComponent(0.4), style: NSUnderlineStyle.styleSingle)
-            make.font = FontAttribute(font: UIFont.systemFont(ofSize: 14.0, weight: .regular))
-            make.color = .black
+//            make.underline = UnderlineAttribute(color: UIColor.black.withAlphaComponent(0.4), style: NSUnderlineStyle.styleSingle)
+            make.font = FontAttribute(font: UIFont.systemFont(ofSize: 15.0, weight: .regular))
+            make.color = UIColor.black.withAlphaComponent(0.8)
         })
-        phoneLabel.textAlignment = .left
+        phoneLabel.textAlignment = .right
         phoneLabel.numberOfLines = 1
         phoneLabel.snp.makeConstraints { make in
-            make.left.equalTo(self).inset(leftRight)
-            make.right.equalTo(phoneTitleLabel.snp.left).inset(10)
+            make.right.equalTo(self).inset(leftRight)
+            make.left.equalTo(phoneTitleLabel.snp.right).inset(10)
             make.top.bottom.equalTo(self).inset(topBottom)
         }
     }
@@ -298,25 +311,25 @@ class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
         self.addSubview(websiteLabel)
 
         websiteTitleLabel.text = "Website"
-        websiteTitleLabel.font = UIFont.systemFont(ofSize: 14.0, weight: .medium)
-        websiteTitleLabel.textColor = .primary600
-        websiteTitleLabel.textAlignment = .right
+        websiteTitleLabel.font = UIFont.systemFont(ofSize: 15.0, weight: .medium)
+        websiteTitleLabel.textColor = .black
+        websiteTitleLabel.textAlignment = .left
         websiteTitleLabel.numberOfLines = 1
         websiteTitleLabel.snp.makeConstraints { make in
-            make.right.equalTo(self).inset(leftRight)
+            make.left.equalTo(self).inset(leftRight)
             make.top.bottom.equalTo(self).inset(topBottom)
         }
 
         websiteLabel.attributedText = websiteUrl?.set(style: .default { make in
-            make.underline = UnderlineAttribute(color: UIColor.black.withAlphaComponent(0.4), style: NSUnderlineStyle.styleSingle)
-            make.font = FontAttribute(font: UIFont.systemFont(ofSize: 14.0, weight: .regular))
-            make.color = .black
+//            make.underline = UnderlineAttribute(color: UIColor.black.withAlphaComponent(0.4), style: NSUnderlineStyle.styleSingle)
+            make.font = FontAttribute(font: UIFont.systemFont(ofSize: 15.0, weight: .regular))
+            make.color = UIColor.black.withAlphaComponent(0.8)
         })
-        websiteLabel.textAlignment = .left
+        websiteLabel.textAlignment = .right
         websiteLabel.numberOfLines = 1
         websiteLabel.snp.makeConstraints { make in
-            make.left.equalTo(self).inset(leftRight)
-            make.right.equalTo(websiteTitleLabel.snp.left).inset(10)
+            make.right.equalTo(self).inset(leftRight)
+            make.left.equalTo(websiteTitleLabel.snp.right).inset(10)
             make.top.bottom.equalTo(self).inset(topBottom)
         }
     }
