@@ -248,7 +248,7 @@ fileprivate class PlaceBottomView: UIView {
         self.ratingView.rating = place.review.average
         self.ratingLabel.text = "\(place.review.total) Reviews"
 
-        if let hours = place.hours {
+        if let hours = place.hours, !hours.isEmpty {
             let businessHours = BusinessHour(hours: hours)
             openingHours.text = businessHours.todayTime
         }

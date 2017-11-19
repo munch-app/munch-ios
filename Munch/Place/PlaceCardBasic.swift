@@ -13,6 +13,7 @@ import MapKit
 import SnapKit
 import SwiftRichString
 import SafariServices
+import TTGTagCollectionView
 
 class PlaceBasicImageBannerCard: PlaceCardView {
     let imageGradientView = UIView()
@@ -49,38 +50,62 @@ class PlaceBasicImageBannerCard: PlaceCardView {
 
 class PlaceBasicNameTagCard: PlaceCardView {
     let nameLabel = UILabel()
-    let tagsLabel = UILabel()
+    let tagCollection = TTGTextTagCollectionView()
 
     override func didLoad(card: PlaceCard) {
+        self.addSubview(nameLabel)
+        self.addSubview(tagCollection)
+
         nameLabel.text = card["name"].string
         nameLabel.font = UIFont.systemFont(ofSize: 27.0, weight: UIFont.Weight.medium)
         nameLabel.textColor = UIColor.black.withAlphaComponent(0.9)
         nameLabel.numberOfLines = 0
-        self.addSubview(nameLabel)
-
-        let tags = card["tags"].arrayValue.map {
-            $0.stringValue.capitalized
-        }
-        tagsLabel.text = tags.joined(separator: ", ")
-        tagsLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.regular)
-        tagsLabel.textColor = UIColor.black.withAlphaComponent(0.75)
-        tagsLabel.numberOfLines = 1
-        self.addSubview(tagsLabel)
-
         nameLabel.snp.makeConstraints { make in
             make.top.equalTo(self).inset(topBottom)
             make.left.right.equalTo(self).inset(leftRight)
         }
 
-        tagsLabel.snp.makeConstraints { (make) in
+        tagCollection.defaultConfig = DefaultTagConfig()
+        tagCollection.horizontalSpacing = 6
+        tagCollection.numberOfLines = 0
+        tagCollection.alignment = .left
+        tagCollection.scrollDirection = .horizontal
+        tagCollection.contentInset = UIEdgeInsets(top: 4, left: 0, bottom: 3, right: 0)
+        tagCollection.snp.makeConstraints { (make) in
             make.top.equalTo(nameLabel.snp.bottom).inset(0)
             make.left.right.equalTo(self).inset(leftRight)
             make.bottom.equalTo(self).inset(topBottom)
         }
+
+        let tags = card["tags"].arrayValue.map({ $0.stringValue.capitalized })
+        tagCollection.addTags(tags)
+        tagCollection.reload()
     }
 
     override class var cardId: String? {
         return "basic_NameTag_20170912"
+    }
+
+    class DefaultTagConfig: TTGTextTagConfig {
+        override init() {
+            super.init()
+
+            tagTextFont = UIFont.systemFont(ofSize: 15.0, weight: .regular)
+            tagShadowOffset = CGSize.zero
+            tagShadowRadius = 0
+
+            tagBorderWidth = 0.5
+            tagBorderColor = UIColor.black.withAlphaComponent(0.25)
+            tagTextColor = UIColor.black.withAlphaComponent(0.75)
+            tagBackgroundColor = UIColor.white
+
+            tagSelectedBorderWidth = 0.5
+            tagSelectedBorderColor = UIColor.black.withAlphaComponent(0.25)
+            tagSelectedTextColor = UIColor.black.withAlphaComponent(0.75)
+            tagSelectedBackgroundColor = UIColor.white
+
+            tagExtraSpace = CGSize(width: 15, height: 8)
+        }
     }
 }
 

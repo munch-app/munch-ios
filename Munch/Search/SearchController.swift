@@ -75,7 +75,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         // Fix insets so that contents appear below
         self.cardTableView.contentInset.top = headerView.maxHeight - 20
 
-
+        // Add RefreshControl to CardTableView
         refreshControl.addTarget(self, action: #selector(handleRefresh(_:)), for: .valueChanged)
         refreshControl.tintColor = UIColor.black.withAlphaComponent(0.7)
         self.cardTableView.addSubview(refreshControl)
