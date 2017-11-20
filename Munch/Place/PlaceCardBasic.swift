@@ -309,6 +309,7 @@ class PlaceBasicPhoneCard: PlaceCardView, SFSafariViewControllerDelegate {
         phoneTitleLabel.snp.makeConstraints { make in
             make.left.equalTo(self).inset(leftRight)
             make.top.bottom.equalTo(self).inset(topBottom)
+            make.width.equalTo(70)
         }
 
         phoneLabel.attributedText = phone?.set(style: .default { make in
@@ -320,7 +321,7 @@ class PlaceBasicPhoneCard: PlaceCardView, SFSafariViewControllerDelegate {
         phoneLabel.numberOfLines = 1
         phoneLabel.snp.makeConstraints { make in
             make.right.equalTo(self).inset(leftRight)
-            make.left.equalTo(phoneTitleLabel.snp.right).inset(10)
+            make.left.equalTo(phoneTitleLabel.snp.right).inset(-10)
             make.top.bottom.equalTo(self).inset(topBottom)
         }
     }
@@ -357,6 +358,7 @@ class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
         websiteTitleLabel.snp.makeConstraints { make in
             make.left.equalTo(self).inset(leftRight)
             make.top.bottom.equalTo(self).inset(topBottom)
+            make.width.equalTo(70)
         }
 
         websiteLabel.attributedText = websiteUrl?.set(style: .default { make in
@@ -368,7 +370,7 @@ class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
         websiteLabel.numberOfLines = 1
         websiteLabel.snp.makeConstraints { make in
             make.right.equalTo(self).inset(leftRight)
-            make.left.equalTo(websiteTitleLabel.snp.right).inset(10)
+            make.left.equalTo(websiteTitleLabel.snp.right).inset(-10)
             make.top.bottom.equalTo(self).inset(topBottom)
         }
     }
