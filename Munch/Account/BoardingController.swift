@@ -98,7 +98,7 @@ class AccountBoardingController: UIViewController {
                     $0.initialScreen = screen
                     $0.closable = true
                     $0.oidcConformant = true
-                    $0.scope = "openid profile email"
+                    $0.scope = "openid profile email offline_access"
 
                 }
                 .withStyle {
