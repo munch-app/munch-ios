@@ -509,9 +509,6 @@ fileprivate class SearchFilterMoreController: UIViewController, UIGestureRecogni
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
-
-        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
-        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
 
     override func viewDidLoad() {
@@ -520,8 +517,12 @@ fileprivate class SearchFilterMoreController: UIViewController, UIGestureRecogni
         self.linkActions()
         self.registerCell()
 
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+
         self.tableView.delegate = self
         self.tableView.dataSource = self
+
         self.applyView.render(searchQuery: searchQuery)
         self.headerView.titleView.text = seeMore.0
     }

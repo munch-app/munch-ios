@@ -260,18 +260,29 @@ class PlaceBasicDescriptionCard: PlaceCardView {
     let descriptionLabel = UILabel()
 
     override func didLoad(card: PlaceCard) {
-        descriptionLabel.text = card["description"].string
-        descriptionLabel.font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
-        descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
-        descriptionLabel.numberOfLines = 0
-        descriptionLabel.textAlignment = .justified
         self.addSubview(descriptionLabel)
-
-
         descriptionLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.bottom.equalTo(self).inset(topBottom)
         }
+
+        descriptionLabel.text = card["description"].string
+        descriptionLabel.font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
+        descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
+        descriptionLabel.numberOfLines = 0
+        if (countLines(label: descriptionLabel) > 2) {
+            descriptionLabel.textAlignment = .justified
+        }
+    }
+
+    func countLines(label: UILabel) -> Int {
+        self.layoutIfNeeded()
+        let myText = label.text! as NSString
+
+        let rect = CGSize(width: label.bounds.width, height: CGFloat.greatestFiniteMagnitude)
+        let labelSize = myText.boundingRect(with: rect, options: .usesLineFragmentOrigin, attributes: [NSAttributedStringKey.font: label.font], context: nil)
+
+        return Int(ceil(CGFloat(labelSize.height) / label.font.lineHeight))
     }
 
     override class var cardId: String? {

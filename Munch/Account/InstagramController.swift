@@ -26,9 +26,6 @@ class InstagramManageController: UIViewController, UIGestureRecognizerDelegate {
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
-
-        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
-        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
 
     override func viewDidLoad() {
@@ -36,8 +33,12 @@ class InstagramManageController: UIViewController, UIGestureRecognizerDelegate {
         self.initViews()
         self.registerCell()
 
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+
         self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
         self.headerView.settingButton.addTarget(self, action: #selector(onSettingButton(_:)), for: .touchUpInside)
+
         self.tableView.delegate = self
         self.tableView.dataSource = self
 
@@ -370,9 +371,6 @@ fileprivate class InstagramAccountSettingController: UIViewController, UIGesture
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
-
-        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
-        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
 
     override func viewDidLoad() {
@@ -380,9 +378,13 @@ fileprivate class InstagramAccountSettingController: UIViewController, UIGesture
         self.initViews()
         self.registerCell()
 
-        self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+
         self.tableView.delegate = self
         self.tableView.dataSource = self
+
+        self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
     }
 
     private func initViews() {

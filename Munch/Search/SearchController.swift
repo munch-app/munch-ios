@@ -35,16 +35,6 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         navigationController?.navigationBar.shadowImage = UIImage()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        // Filter Testing
-        // self.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
-        // Place Testing
-//         let controller = PlaceViewController(placeId: "8759e8cb-a52e-40e4-b75c-a65c9b089f23")
-//         self.navigationController!.pushViewController(controller, animated: true)
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         self.initViews()
@@ -56,6 +46,12 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         // Render search results
         contentView(search: searchQuery)
         headerView.render(query: searchQuery)
+
+        // Filter Testing
+        // self.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
+        // Place Testing
+//         let controller = PlaceViewController(placeId: "8759e8cb-a52e-40e4-b75c-a65c9b089f23")
+//         self.navigationController!.pushViewController(controller, animated: true)
     }
 
     private func initViews() {
