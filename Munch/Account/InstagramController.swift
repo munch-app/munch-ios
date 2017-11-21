@@ -466,6 +466,10 @@ fileprivate class InstagramAccountSettingController: UIViewController, UIGesture
     }
 }
 
+fileprivate enum InstagramSettingCellType {
+    case allowContent
+}
+
 extension InstagramAccountSettingController: UITableViewDataSource, UITableViewDelegate {
     func registerCell() {
         func register(cellClass: UITableViewCell.Type) {
@@ -524,10 +528,6 @@ extension InstagramAccountSettingController: UITableViewDataSource, UITableViewD
             return
         }
     }
-}
-
-fileprivate enum InstagramSettingCellType {
-    case allowContent
 }
 
 fileprivate class InstagramAccountAllowContentCell: UITableViewCell {
