@@ -215,6 +215,7 @@ extension SearchController {
                 if (meta.isOk()) {
                     // Check reference is still the same
                     if (manager === self.cardManager) {
+                        // TODO too little results get scrolled
                         self.cardTableView.reloadData()
                     }
                 } else {

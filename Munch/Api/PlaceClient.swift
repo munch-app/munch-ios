@@ -238,6 +238,10 @@ struct Place: SearchResult, Equatable {
             }
 
             class func parse(time: String) -> String {
+                // 24:00 problem
+                if (time == "24:00" || time == "23:59") {
+                    return "Midnight"
+                }
                 let date = instance.inFormatter.date(from: time)
                 return instance.outFormatter.string(from: date!)
             }
