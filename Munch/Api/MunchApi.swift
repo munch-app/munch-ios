@@ -48,6 +48,13 @@ public class RestfulClient {
     }
 
     /**
+     Params Encoding is json
+     */
+    func put(_ path: String, parameters: Parameters = [:], callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
+        request(method: .put, path: path, parameters: parameters, encoding: JSONEncoding.default, callback: callback)
+    }
+
+    /**
      method: HttpMethod
      path: After domain
      paramters: json or query string both supported

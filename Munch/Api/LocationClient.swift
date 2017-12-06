@@ -26,6 +26,12 @@ class LocationClient {
             callback(meta, json["data"].map { Location(json: $0.1)! })
         }
     }
+
+    func search(text: String, callback: @escaping (_ meta: MetaJSON, _ locations: [Location]) -> Void) {
+        MunchApi.restful.get("/locations/search", parameters: ["text": text]) { meta, json in
+            callback(meta, json["data"].map { Location(json: $0.1)! })
+        }
+    }
 }
 
 /**

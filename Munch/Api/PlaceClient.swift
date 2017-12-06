@@ -380,37 +380,6 @@ class BusinessHour {
 }
 
 /**
- Instagram Media
- */
-struct InstagramMedia {
-    var placeId: String?
-    var mediaId: String?
-
-    var profile: Profile?
-    var caption: String?
-
-    init(json: JSON) {
-        self.placeId = json["placeId"].string
-        self.mediaId = json["mediaId"].string
-
-        self.profile = Profile(json: json["profile"])
-        self.caption = json["caption"].string
-    }
-
-    struct Profile {
-        var userId: String?
-        var username: String?
-        var pictureUrl: String?
-
-        init(json: JSON) {
-            self.userId = json["userId"].string
-            self.username = json["username"].string
-            self.pictureUrl = json["pictureUrl"].string
-        }
-    }
-}
-
-/**
  Primary data type from munch-core/service-articles
  */
 struct Article {

@@ -5,12 +5,13 @@
 
 import Foundation
 import UIKit
+import SafariServices
 
 import SnapKit
 import Auth0
 import Lock
 
-class AccountSettingController: UIViewController, UIGestureRecognizerDelegate {
+class AccountSettingController: UIViewController, UIGestureRecognizerDelegate, SFSafariViewControllerDelegate {
     private let headerView = HeaderView()
     private let tableView = UITableView()
     var userInfo: UserInfo!
@@ -194,9 +195,10 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
         case .logout:
             self.logout()
         case .instagramConnect:
-            let controller = InstagramManageController()
-            controller.userInfo = self.userInfo
-            navigationController?.pushViewController(controller, animated: true)
+            // Safari http://partner.munchapp.co
+            let safari = SFSafariViewController(url: URL(string: "http://partner.munchapp.co")!)
+            safari.delegate = self
+            present(safari, animated: true, completion: nil)
         default:
             return
         }

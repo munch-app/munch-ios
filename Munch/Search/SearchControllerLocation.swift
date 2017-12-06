@@ -221,6 +221,7 @@ class SearchLocationHeaderView: UIView {
             make.height.equalTo(55)
         }
 
+        textField.clearButtonMode = .whileEditing
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
         textField.returnKeyType = .search
