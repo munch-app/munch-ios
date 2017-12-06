@@ -96,7 +96,6 @@ class AccountBoardingController: UIViewController {
                 }
                 .withOptions {
                     $0.initialScreen = screen
-                    $0.logLevel = .all
                     $0.closable = true
                     $0.oidcConformant = true
                     $0.scope = "openid profile email offline_access"
