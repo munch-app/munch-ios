@@ -80,22 +80,20 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.cardTableView.estimatedRowHeight = 50
         self.cardTableView.contentInset.top = 0
         self.cardTableView.contentInset.bottom = 0
-        self.cardTableView.scrollIndicatorInsets.top = 20
+        self.cardTableView.contentInsetAdjustmentBehavior = .never
 
         cardTableView.snp.makeConstraints { make in
             make.left.right.equalTo(self.view)
-            make.top.equalTo(self.view).inset(-20)
+            make.top.equalTo(self.view)
             make.bottom.equalTo(self.bottomView.snp.top)
         }
 
         headerView.snp.makeConstraints { make in
             make.top.left.right.equalTo(self.view)
-            make.height.equalTo(64)
         }
 
         bottomView.snp.makeConstraints { make in
             make.bottom.left.right.equalTo(self.view)
-            make.height.equalTo(60)
         }
     }
 
@@ -133,10 +131,11 @@ fileprivate class PlaceHeaderView: UIView {
         backButton.imageEdgeInsets.left = 18
         backButton.contentHorizontalAlignment = .left
         backButton.snp.makeConstraints { make in
-            make.top.equalTo(self).inset(20)
+            make.top.equalTo(self.safeArea.top)
             make.left.equalTo(self)
             make.bottom.equalTo(self)
             make.width.equalTo(64)
+            make.height.equalTo(44)
         }
 
         backgroundView.backgroundColor = .clear
@@ -196,7 +195,9 @@ fileprivate class PlaceBottomView: UIView {
         mainButton.layer.borderColor = UIColor.primary.cgColor
         mainButton.snp.makeConstraints { make in
             make.right.equalTo(self).inset(24)
-            make.top.bottom.equalTo(self).inset(10)
+            make.top.equalTo(self).inset(10)
+            make.bottom.equalTo(self.safeArea.bottom).inset(10)
+            make.height.equalTo(40)
         }
 
         ratingView.rating = 0
@@ -230,7 +231,7 @@ fileprivate class PlaceBottomView: UIView {
         openingHours.snp.makeConstraints { make in
             make.left.equalTo(self).inset(24)
             make.right.equalTo(mainButton.snp.left).inset(-12)
-            make.bottom.equalTo(self).inset(10)
+            make.bottom.equalTo(self.safeArea.bottom).inset(10)
             make.height.equalTo(20)
         }
     }

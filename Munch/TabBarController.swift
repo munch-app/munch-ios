@@ -54,12 +54,13 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
         self.viewControllers = controllers
     }
     
-    override func viewWillLayoutSubviews() {
-        var tabFrame = self.tabBar.frame
-        tabFrame.size.height = 44
-        tabFrame.origin.y = self.view.frame.size.height - 44
-        self.tabBar.frame = tabFrame
-    }
+//    override func viewWillLayoutSubviews() {
+//        Might need to optimize for iPhone X
+//        var tabFrame = self.tabBar.frame
+//        tabFrame.size.height = 44
+//        tabFrame.origin.y = self.view.frame.size.height - 44
+//        self.tabBar.frame = tabFrame
+//    }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

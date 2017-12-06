@@ -52,7 +52,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
         textButton.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
             make.height.equalTo(52)
-            make.top.equalTo(statusView.snp.bottom)
+            make.top.equalTo(self.safeArea.top)
         }
 
         tagCollection.snp.makeConstraints { make in
@@ -62,7 +62,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
 
         backButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
         backButton.snp.makeConstraints { make in
-            make.top.equalTo(statusView.snp.bottom)
+            make.top.equalTo(self.safeArea.top)
             make.left.equalTo(self)
             make.width.equalTo(60)
             make.height.equalTo(56)
