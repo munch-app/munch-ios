@@ -77,9 +77,9 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         self.cardTableView.addSubview(refreshControl)
     }
 
-
     func scrollsToTop(animated: Bool = true) {
-        cardTableView.scrollToRow(at: .init(row: 0, section: 0), at: .top, animated: animated)
+        // Scroll to content view
+        cardTableView.scrollToRow(at: .init(row: 0, section: 1), at: .top, animated: animated)
     }
 
     @IBAction func unwindToSearch(segue: UIStoryboardSegue) {
@@ -112,7 +112,12 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
             // Reset ContentView first
             reset()
 
-            self.cardManager = SearchCardManager.init(search: searchQuery, completion: { (meta) in
+            self.cardManager = SearchCardManager(search: searchQuery, completion: { meta, manager in
+                guard manager === self.cardManager else {
+                    return // Card manager is not in context anymore
+                }
+
+                // TODO Check is still current
                 if (meta.isOk()) {
                     self.cardTableView.reloadData()
                     self.cardTableView.isScrollEnabled = true
@@ -169,16 +174,40 @@ extension SearchController {
         register(SearchNoLocationCard.self)
     }
 
+    func numberOfSections(in tableView: UITableView) -> Int {
+        // 1. Header:
+        // 2. Content: Actual Cards
+        // 3. Bottom: Loading Card
+        return 3
+    }
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cards.count
+        switch section {
+        case 0: return 0
+        case 1: return cards.count
+        case 2: return 1
+        default: return 0
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let card = cards[indexPath.row]
-
-        if let cardView = cardTableView.dequeueReusableCell(withIdentifier: card.cardId) as? SearchCardView {
-            cardView.render(card: card)
-            return cardView as! UITableViewCell
+        switch indexPath.section {
+        case 1:
+            let card = cards[indexPath.row]
+            if let cardView = cardTableView.dequeueReusableCell(withIdentifier: card.cardId) as? SearchCardView {
+                cardView.render(card: card)
+                return cardView as! UITableViewCell
+            }
+        case 2: // Loading card
+            if let cardView = cardTableView.dequeueReusableCell(withIdentifier: SearchStaticLoadingCard.cardId) as? SearchStaticLoadingCard {
+                if self.cardManager?.more ?? false {
+                    cardView.startAnimating()
+                } else {
+                    cardView.stopAnimating()
+                }
+                return cardView
+            }
+        default: break
         }
 
         // Else Static Empty CardView
@@ -186,13 +215,17 @@ extension SearchController {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let card = cards[indexPath.row]
-
-        if card.cardId == SearchPlaceCard.cardId, let placeId = card["placeId"].string {
-            // Place Card
-            let controller = PlaceViewController(placeId: placeId)
-            self.navigationController!.pushViewController(controller, animated: true)
+        switch indexPath.section {
+        case 1:
+            let card = cards[indexPath.row]
+            if card.cardId == SearchPlaceCard.cardId, let placeId = card["placeId"].string {
+                // Place Card
+                let controller = PlaceViewController(placeId: placeId)
+                self.navigationController!.pushViewController(controller, animated: true)
+            }
+        default: break
         }
+
     }
 }
 
@@ -200,26 +233,26 @@ extension SearchController {
 extension SearchController {
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let card = cards[indexPath.row]
-
-        if card.cardId == SearchStaticLoadingCard.cardId {
-            DispatchQueue.main.async {
-                self.appendLoad()
-            }
+        switch indexPath {
+        case [2, 0]:
+            self.appendLoad()
+        default: break
         }
     }
 
     func appendLoad() {
-        if let manager = self.cardManager {
-            manager.append(load: { meta in
-                if (meta.isOk()) {
-                    // Check reference is still the same
-                    if (manager === self.cardManager) {
-                        // TODO too little results get scrolled
+        if let manager = self.cardManager, manager.more {
+            manager.append(load: { meta, manager in
+                guard manager === self.cardManager else {
+                    return // Card manager is not in context anymore
+                }
+
+                DispatchQueue.main.async {
+                    if (meta.isOk()) {
                         self.cardTableView.reloadData()
+                    } else {
+                        self.present(meta.createAlert(), animated: true)
                     }
-                } else {
-                    self.present(meta.createAlert(), animated: true)
                 }
             })
         }

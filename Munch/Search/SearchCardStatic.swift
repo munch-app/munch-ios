@@ -57,21 +57,24 @@ class SearchShimmerPlaceCard: UITableViewCell, SearchCardView {
             self.addSubview(nameLabel)
             self.addSubview(tagLabel)
             self.addSubview(locationLabel)
-            
+
+            nameLabel.isShimmering = false
             nameLabel.snp.makeConstraints { make in
                 make.height.equalTo(18)
                 make.width.equalTo(200)
                 make.left.equalTo(self)
                 make.bottom.equalTo(tagLabel.snp.top).inset(-7)
             }
-            
+
+            tagLabel.isShimmering = false
             tagLabel.snp.makeConstraints { make in
                 make.height.equalTo(15)
-                make.width.equalTo(140)
+                make.width.equalTo(160)
                 make.left.equalTo(self)
                 make.bottom.equalTo(locationLabel.snp.top).inset(-7)
             }
-            
+
+            locationLabel.isShimmering = false
             locationLabel.snp.makeConstraints { make in
                 make.height.equalTo(15)
                 make.width.equalTo(265)
@@ -125,13 +128,14 @@ class SearchStaticNoResultCard: UITableViewCell, SearchCardView {
 }
 
 class SearchStaticLoadingCard: UITableViewCell, SearchCardView {
+    private var indicator: NVActivityIndicatorView!
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         
         let frame = CGRect(origin: CGPoint.zero, size: CGSize(width: UIScreen.main.bounds.width, height: 50))
-        let indicator = NVActivityIndicatorView(frame: frame, type: .ballBeat, color: .primary700, padding: 10)
+        self.indicator = NVActivityIndicatorView(frame: frame, type: .ballBeat, color: .primary700, padding: 10)
         indicator.startAnimating()
         self.addSubview(indicator)
         
@@ -148,7 +152,15 @@ class SearchStaticLoadingCard: UITableViewCell, SearchCardView {
     
     func render(card: SearchCard) {
     }
-    
+
+    func startAnimating(){
+        self.indicator.startAnimating()
+    }
+
+    func stopAnimating() {
+        self.indicator.stopAnimating()
+    }
+
     static var cardId: String {
         return "static_SearchStaticLoadingCard"
     }

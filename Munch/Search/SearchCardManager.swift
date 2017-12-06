@@ -11,76 +11,78 @@ import UIKit
 
 class SearchCardManager {
     var query: SearchQuery?
-    
+
     private(set) var cards: [SearchCard]
-    private var loadingAppend = false
-    
-    convenience init(search query: SearchQuery, completion: @escaping (_ meta: MetaJSON) -> Void) {
+    // Whether this card manager is currently loading more content
+    private var loading = false
+    // Whether this card manager still contains more content to be loaded
+    private(set) var more = true
+
+    convenience init(search query: SearchQuery, completion: @escaping (_ meta: MetaJSON, _ manager: SearchCardManager) -> Void) {
         let shimmerCard = SearchShimmerPlaceCard.card
         self.init(query: query, cards: [shimmerCard, shimmerCard, shimmerCard])
-        
+
         MunchApi.search.search(query: query) { (meta, cards) in
             if (meta.isOk()) {
                 if (cards.isEmpty) {
                     self.cards = [SearchStaticNoResultCard.card]
                 } else {
-                    self.cards = cards + [SearchStaticLoadingCard.card]
+                    self.cards = cards
                     self.query!.from = self.query!.from! + self.query!.size!
                 }
             } else {
                 // TODO Error Card??
             }
-            completion(meta)
+            completion(meta, self)
         }
     }
-    
+
     init(query: SearchQuery?, cards: [SearchCard]) {
         self.query = query
         self.cards = cards
-        
+
         if (self.query != nil) {
             // Query default size is 20
             self.query!.size = 20
-            
+
             // If from is nil, set to 0
             self.query!.from = self.query!.from ?? 0
         }
     }
-    
+
     private func append(contents cards: [SearchCard]) {
-        let filtered = cards.filter { !self.cards.contains($0) }
+        let filtered = cards.filter {
+            !self.cards.contains($0)
+        }
         self.cards.append(contentsOf: filtered)
     }
-    
-    func append(load completion: @escaping (_ meta: MetaJSON) -> Void) {
-        if (query == nil || self.loadingAppend) { return }
-        self.loadingAppend = true
-        
+
+    func append(load completion: @escaping (_ meta: MetaJSON, _ manager: SearchCardManager) -> Void) {
+        if (query == nil || self.loading) {
+            return
+        }
+        self.loading = true
+
         MunchApi.search.search(query: query!) { meta, cards in
             if (meta.isOk()) {
-                // Update cards
-                self.cards.removeLast()
-                if (!cards.isEmpty) {
-                    self.append(contents: cards)
-                    self.cards.append(SearchStaticLoadingCard.card)
-                }
-                
-                self.loadingAppend = false
+                self.append(contents: cards)
+                self.more = !cards.isEmpty
+                self.loading = false
                 self.query!.from = self.query!.from! + self.query!.size!
             } else {
                 // TODO Error Card??
             }
-            completion(meta)
+            completion(meta, self)
         }
     }
 }
 
 protocol SearchCardView {
     func render(card: SearchCard)
-    
+
     var leftRight: CGFloat { get }
     var topBottom: CGFloat { get }
-    
+
     static var cardId: String { get }
 }
 
@@ -88,11 +90,11 @@ extension SearchCardView {
     var leftRight: CGFloat {
         return 24.0
     }
-    
+
     var topBottom: CGFloat {
         return 16.0
     }
-    
+
     static var card: SearchCard {
         return SearchCard(cardId: cardId)
     }
