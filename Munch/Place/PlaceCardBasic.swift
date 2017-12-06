@@ -137,6 +137,7 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
             make.top.bottom.equalTo(self).inset(topBottom)
         }
 
+        indicator.isUserInteractionEnabled = false
         indicator.setImage(UIImage(named: "Expand-20"), for: .normal)
         indicator.contentHorizontalAlignment = .right
         indicator.tintColor = .black

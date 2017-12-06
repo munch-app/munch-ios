@@ -53,7 +53,6 @@ class SearchFilterController: UIViewController {
         headerView.snp.makeConstraints { (make) in
             make.top.equalTo(self.view)
             make.left.right.equalTo(self.view)
-            make.height.equalTo(64)
         }
 
         tableView.separatorStyle = .none
@@ -316,7 +315,7 @@ fileprivate class SearchFilterHeaderView: UIView {
         resetButton.titleEdgeInsets.left = 24
         resetButton.contentHorizontalAlignment = .left
         resetButton.snp.makeConstraints { make in
-            make.top.equalTo(self).inset(20)
+            make.top.equalTo(self.safeArea.top)
             make.bottom.equalTo(self)
             make.width.equalTo(90)
             make.left.equalTo(self)
@@ -326,7 +325,8 @@ fileprivate class SearchFilterHeaderView: UIView {
         titleView.font = .systemFont(ofSize: 17, weight: .regular)
         titleView.textAlignment = .center
         titleView.snp.makeConstraints { make in
-            make.top.equalTo(self).inset(20)
+            make.top.equalTo(self.safeArea.top)
+            make.height.equalTo(44)
             make.bottom.equalTo(self)
             make.left.equalTo(resetButton.snp.right)
             make.right.equalTo(cancelButton.snp.left)
@@ -338,7 +338,7 @@ fileprivate class SearchFilterHeaderView: UIView {
         cancelButton.titleEdgeInsets.right = 24
         cancelButton.contentHorizontalAlignment = .right
         cancelButton.snp.makeConstraints { make in
-            make.top.equalTo(self).inset(20)
+            make.top.equalTo(self.safeArea.top)
             make.bottom.equalTo(self)
             make.width.equalTo(90)
             make.right.equalTo(self)
@@ -374,12 +374,10 @@ fileprivate class SearchFilterApplyView: UIView {
         applyBtn.setTitleColor(.white, for: .normal)
         applyBtn.titleLabel!.font = UIFont.systemFont(ofSize: 15, weight: .medium)
         applyBtn.snp.makeConstraints { (make) in
-            make.top.bottom.equalTo(self).inset(12)
+            make.top.equalTo(self).inset(12)
+            make.bottom.equalTo(self.safeArea.bottom).inset(12)
             make.right.left.equalTo(self).inset(24)
-        }
-
-        self.snp.makeConstraints { (make) in
-            make.height.equalTo(70)
+            make.height.equalTo(46)
         }
     }
 
@@ -535,7 +533,6 @@ fileprivate class SearchFilterMoreController: UIViewController, UIGestureRecogni
         headerView.snp.makeConstraints { (make) in
             make.top.equalTo(self.view)
             make.left.right.equalTo(self.view)
-            make.height.equalTo(64)
         }
 
         tableView.separatorStyle = .none

@@ -223,9 +223,6 @@ class SearchSuggestHeaderView: UIView {
 
     private func makeViews() {
         self.backgroundColor = .white
-        self.snp.makeConstraints { make in
-            make.height.equalTo(55)
-        }
 
         textField.clearButtonMode = .whileEditing
         textField.autocapitalizationType = .none
@@ -245,7 +242,8 @@ class SearchSuggestHeaderView: UIView {
         textField.font = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
 
         textField.snp.makeConstraints { make in
-            make.top.equalTo(self).inset(8)
+            make.top.equalTo(self.safeArea.top).inset(8)
+            make.bottom.equalTo(self).inset(11)
             make.left.equalTo(self).inset(24)
             make.right.equalTo(cancelButton.snp.left)
             make.height.equalTo(36)
@@ -258,7 +256,7 @@ class SearchSuggestHeaderView: UIView {
         cancelButton.contentHorizontalAlignment = .right
         cancelButton.snp.makeConstraints { make in
             make.width.equalTo(90)
-            make.top.equalTo(self).inset(8)
+            make.top.equalTo(self.safeArea.top).inset(8)
             make.right.equalTo(self)
             make.height.equalTo(36)
         }
