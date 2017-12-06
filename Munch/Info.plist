@@ -93,10 +93,10 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Message Location Always</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Message: Location Always</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Message Location In Use</string>
+	<string>Message: Location In Use</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
