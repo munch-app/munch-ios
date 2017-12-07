@@ -42,7 +42,6 @@ class AccountBoardingController: UIViewController {
 
         headerView.snp.makeConstraints { make in
             make.top.left.right.equalTo(self.view)
-            make.height.equalTo(64)
         }
 
         boxView.snp.makeConstraints { make in
@@ -134,9 +133,10 @@ class AccountBoardingController: UIViewController {
             titleView.font = .systemFont(ofSize: 17, weight: .regular)
             titleView.textAlignment = .center
             titleView.snp.makeConstraints { make in
-                make.top.equalTo(self).inset(20)
                 make.left.right.equalTo(self)
+                make.top.equalTo(self.safeArea.top)
                 make.bottom.equalTo(self)
+                make.height.equalTo(44)
             }
         }
 

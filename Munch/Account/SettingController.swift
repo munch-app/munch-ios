@@ -58,7 +58,6 @@ class AccountSettingController: UIViewController, UIGestureRecognizerDelegate, S
 
         headerView.snp.makeConstraints { make in
             make.top.left.right.equalTo(self.view)
-            make.height.equalTo(64)
         }
     }
 
@@ -98,8 +97,9 @@ class AccountSettingController: UIViewController, UIGestureRecognizerDelegate, S
             titleView.textAlignment = .center
             titleView.snp.makeConstraints { make in
                 make.centerX.equalTo(self)
-                make.top.equalTo(self).inset(20)
+                make.top.equalTo(self.safeArea.top)
                 make.bottom.equalTo(self)
+                make.height.equalTo(44)
             }
 
             backButton.setImage(UIImage(named: "NavigationBar-Back"), for: .normal)
@@ -107,7 +107,7 @@ class AccountSettingController: UIViewController, UIGestureRecognizerDelegate, S
             backButton.imageEdgeInsets.left = 18
             backButton.contentHorizontalAlignment = .left
             backButton.snp.makeConstraints { make in
-                make.top.equalTo(self).inset(20)
+                make.top.equalTo(self.safeArea.top)
                 make.left.equalTo(self)
                 make.bottom.equalTo(self)
                 make.width.equalTo(64)

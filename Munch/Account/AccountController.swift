@@ -124,7 +124,6 @@ class AccountProfileController: UIViewController {
 
         headerView.snp.makeConstraints { make in
             make.top.left.right.equalTo(self.view)
-            make.height.equalTo(64)
         }
     }
 
@@ -147,8 +146,9 @@ class AccountProfileController: UIViewController {
             titleView.textAlignment = .center
             titleView.snp.makeConstraints { make in
                 make.centerX.equalTo(self)
-                make.top.equalTo(self).inset(20)
+                make.top.equalTo(self.safeArea.top)
                 make.bottom.equalTo(self)
+                make.height.equalTo(44)
             }
 
             settingButton.setImage(UIImage(named: "NavigationBar-Setting"), for: .normal)
@@ -157,7 +157,7 @@ class AccountProfileController: UIViewController {
             settingButton.imageEdgeInsets.right = 24
             settingButton.snp.makeConstraints { make in
                 make.right.equalTo(self)
-                make.top.equalTo(self).inset(20)
+                make.top.equalTo(self.safeArea.top)
                 make.bottom.equalTo(self)
                 make.width.equalTo(64)
             }
