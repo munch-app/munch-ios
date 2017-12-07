@@ -20,6 +20,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
 
     let backButton = SearchBackButton()
     let textButton = SearchTextButton()
+    let filterButton = SearchFilterButton()
     let tagCollection = SearchFilterTagCollection()
 
     var topConstraint: Constraint! = nil
@@ -38,11 +39,21 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
 
         self.addSubview(tagCollection)
         self.addSubview(textButton)
+        self.addSubview(filterButton)
         self.addSubview(backButton)
+
+        filterButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
+        filterButton.snp.makeConstraints { make in
+            make.width.equalTo(46)
+            make.right.equalTo(self).inset(24)
+            make.height.equalTo(52)
+            make.top.equalTo(self.safeArea.top)
+        }
 
         textButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
         textButton.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(24)
+            make.left.equalTo(self).inset(24)
+            make.right.equalTo(filterButton.snp.left)
             make.height.equalTo(52)
             make.top.equalTo(self.safeArea.top)
         }
@@ -72,6 +83,8 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
                 controller.contentView(search: last, animated: false)
                 render(query: last)
             }
+        } else if view is SearchFilterButton {
+            controller.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
         }
     }
 
@@ -109,6 +122,20 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
     override func layoutSubviews() {
         super.layoutSubviews()
         self.hairlineShadow(height: 1.0)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class SearchFilterButton: UIButton {
+    override init(frame: CGRect = CGRect()) {
+        super.init(frame: frame)
+
+        setImage(UIImage(named: "Search-Filter"), for: .normal)
+        tintColor = UIColor.black.withAlphaComponent(0.7)
+        contentHorizontalAlignment = .right
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -155,20 +182,6 @@ class SearchTextButton: UIButton {
 
 class SearchBackButton: UIButton {
 
-}
-
-class SearchFilterButton: UIButton {
-    override init(frame: CGRect = CGRect()) {
-        super.init(frame: frame)
-
-        self.setImage(UIImage(named: "icons8-Horizontal Settings Mixer-30"), for: .normal)
-        self.tintColor = UIColor.black
-        self.contentHorizontalAlignment = .right
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }
 
 class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
@@ -308,7 +321,6 @@ extension SearchHeaderView {
         let height = calculateHeight(scrollView: scrollView)
         let inset = 38 - height
         self.topConstraint.update(inset: inset)
-        print("\(height) \(inset)")
     }
 
     /**
@@ -325,7 +337,7 @@ extension SearchHeaderView {
 
         if (height < 22) {
             // To close
-            return -maxHeight+39
+            return -maxHeight + 39
         } else {
             // To open
             return -maxHeight
