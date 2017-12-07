@@ -39,6 +39,8 @@ public class MunchLocation {
 
     public class func requestLocation() {
         switch Locator.state {
+        case .notDetermined:
+            MunchLocation.scheduleOnce()
         case .disabled:
             if let url = URL(string: "App-Prefs:root=Privacy&path=LOCATION") {
                 UIApplication.shared.open(url)
