@@ -96,7 +96,6 @@ class SearchNoResultCard: UITableViewCell, SearchCardView {
         self.addSubview(titleImage)
         self.addSubview(titleLabel)
         self.addSubview(descriptionLabel)
-        self.addSubview(actionButton)
 
         titleLabel.text = "No Results"
         titleLabel.font = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
@@ -106,36 +105,15 @@ class SearchNoResultCard: UITableViewCell, SearchCardView {
             make.top.equalTo(self).inset(24)
         }
 
-        descriptionLabel.text = "We couldn't find anything. Try removing all filters?"
+        descriptionLabel.text = "We couldn't find anything. Try searching something else?"
         descriptionLabel.font = UIFont.systemFont(ofSize: 17.0, weight: .regular)
         descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         descriptionLabel.numberOfLines = 0
         descriptionLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(titleLabel.snp.bottom).inset(-16)
-        }
-
-        actionButton.layer.cornerRadius = 3
-        actionButton.backgroundColor = .primary
-        actionButton.setTitle("Remove Filters", for: .normal)
-        actionButton.contentEdgeInsets.left = 30
-        actionButton.contentEdgeInsets.right = 30
-        actionButton.setTitleColor(.white, for: .normal)
-        actionButton.titleLabel!.font = UIFont.systemFont(ofSize: 17, weight: .medium)
-        actionButton.snp.makeConstraints { (make) in
-            make.left.equalTo(self).inset(leftRight)
-            make.top.equalTo(descriptionLabel.snp.bottom).inset(-16)
-            make.height.equalTo(46)
             make.bottom.equalTo(self).inset(24)
         }
-        actionButton.addTarget(self, action: #selector(onAction(button:)), for: .touchUpInside)
-    }
-
-    @objc func onAction(button: UIButton) {
-        // Remove all filter and search
-        var query = controller.searchQuery
-        query.filter = SearchQuery.Filter()
-        controller.render(searchQuery: query)
     }
 
     required init?(coder aDecoder: NSCoder) {
