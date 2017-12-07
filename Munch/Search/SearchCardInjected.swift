@@ -9,54 +9,212 @@
 import Foundation
 import UIKit
 
+import SnapKit
+
 class SearchNoLocationCard: UITableViewCell, SearchCardView {
-    
+    private let titleImage = UIImageView()
+    private let titleLabel = UILabel()
+    private let descriptionLabel = UILabel()
+    private let actionButton = UIButton()
+
+    private var controller: SearchController!
+
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
-        
-        let label = UILabel()
-        label.text = "No Location"
-        label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 18.0, weight: UIFont.Weight.regular)
-        self.addSubview(label)
-        
-        let button = UIButton()
-        button.setTitle("Enable Location", for: .normal)
-        button.setTitleColor(.primary300, for: .normal)
-        button.titleLabel?.textAlignment = .center
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 18.0, weight: UIFont.Weight.regular)
-        button.addTarget(self, action: #selector(enableLocation(button:)), for: .touchUpInside)
-        self.addSubview(button)
-        
-        label.snp.makeConstraints { make in
+        self.addSubview(titleImage)
+        self.addSubview(titleLabel)
+        self.addSubview(descriptionLabel)
+        self.addSubview(actionButton)
+
+        titleLabel.text = "No Location"
+        titleLabel.font = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
+        titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
+        titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
-            
-            make.top.equalTo(self).inset(topBottom)
-            make.height.equalTo(40)
+            make.top.equalTo(self).inset(24)
         }
-        
-        button.snp.makeConstraints { make in
+
+        descriptionLabel.text = "You have turned off your location service. Turn it on for better suggestion?"
+        descriptionLabel.font = UIFont.systemFont(ofSize: 17.0, weight: .regular)
+        descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
-            
-            make.top.equalTo(label.snp.bottom)
-            make.height.equalTo(40)
-            make.bottom.equalTo(self).inset(topBottom)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-16)
         }
+
+        actionButton.layer.cornerRadius = 3
+        actionButton.backgroundColor = .primary
+        actionButton.setTitle("Enable Location", for: .normal)
+        actionButton.contentEdgeInsets.left = 30
+        actionButton.contentEdgeInsets.right = 30
+        actionButton.setTitleColor(.white, for: .normal)
+        actionButton.titleLabel!.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+        actionButton.snp.makeConstraints { (make) in
+            make.left.equalTo(self).inset(leftRight)
+            make.top.equalTo(descriptionLabel.snp.bottom).inset(-16)
+            make.height.equalTo(46)
+            make.bottom.equalTo(self).inset(24)
+        }
+        actionButton.addTarget(self, action: #selector(enableLocation(button:)), for: .touchUpInside)
     }
     
     @objc func enableLocation(button: UIButton) {
-        MunchLocation.scheduleOnce()
+        if MunchLocation.isEnabled {
+            controller.render(searchQuery: controller.searchQuery)
+        } else {
+            MunchLocation.requestLocation()
+            actionButton.setTitle("Refresh Search", for: .normal)
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func render(card: SearchCard) {
+    func render(card: SearchCard, controller: SearchController) {
+        self.controller = controller
     }
     
     static var cardId: String {
         return "injected_NoLocation_20171020"
+    }
+}
+
+class SearchNoResultCard: UITableViewCell, SearchCardView {
+    private let titleImage = UIImageView()
+    private let titleLabel = UILabel()
+    private let descriptionLabel = UILabel()
+    private let actionButton = UIButton()
+
+    private var controller: SearchController!
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(titleImage)
+        self.addSubview(titleLabel)
+        self.addSubview(descriptionLabel)
+        self.addSubview(actionButton)
+
+        titleLabel.text = "No Results"
+        titleLabel.font = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
+        titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
+        titleLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(leftRight)
+            make.top.equalTo(self).inset(24)
+        }
+
+        descriptionLabel.text = "We couldn't find anything. Try removing all filters?"
+        descriptionLabel.font = UIFont.systemFont(ofSize: 17.0, weight: .regular)
+        descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(leftRight)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-16)
+        }
+
+        actionButton.layer.cornerRadius = 3
+        actionButton.backgroundColor = .primary
+        actionButton.setTitle("Remove Filters", for: .normal)
+        actionButton.contentEdgeInsets.left = 30
+        actionButton.contentEdgeInsets.right = 30
+        actionButton.setTitleColor(.white, for: .normal)
+        actionButton.titleLabel!.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+        actionButton.snp.makeConstraints { (make) in
+            make.left.equalTo(self).inset(leftRight)
+            make.top.equalTo(descriptionLabel.snp.bottom).inset(-16)
+            make.height.equalTo(46)
+            make.bottom.equalTo(self).inset(24)
+        }
+        actionButton.addTarget(self, action: #selector(onAction(button:)), for: .touchUpInside)
+    }
+
+    @objc func onAction(button: UIButton) {
+        // Remove all filter and search
+        var query = controller.searchQuery
+        query.filter = SearchQuery.Filter()
+        controller.render(searchQuery: query)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func render(card: SearchCard, controller: SearchController) {
+        self.controller = controller
+    }
+
+    static var cardId: String {
+        return "injected_NoResult_20171208"
+    }
+}
+
+class SearchNoResultAnywhereCard: UITableViewCell, SearchCardView {
+    private let titleImage = UIImageView()
+    private let titleLabel = UILabel()
+    private let descriptionLabel = UILabel()
+    private let actionButton = UIButton()
+
+    private var searchQuery: SearchQuery!
+    private var controller: SearchController!
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(titleImage)
+        self.addSubview(titleLabel)
+        self.addSubview(descriptionLabel)
+        self.addSubview(actionButton)
+
+        titleLabel.text = "No Results"
+        titleLabel.font = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
+        titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
+        titleLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(leftRight)
+            make.top.equalTo(self).inset(24)
+        }
+
+        descriptionLabel.text = "We couldn't find anything in that location. Try searching anywhere?"
+        descriptionLabel.font = UIFont.systemFont(ofSize: 17.0, weight: .regular)
+        descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(leftRight)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-16)
+        }
+
+        actionButton.layer.cornerRadius = 3
+        actionButton.backgroundColor = .primary
+        actionButton.setTitle("Search Anywhere", for: .normal)
+        actionButton.contentEdgeInsets.left = 30
+        actionButton.contentEdgeInsets.right = 30
+        actionButton.setTitleColor(.white, for: .normal)
+        actionButton.titleLabel!.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+        actionButton.snp.makeConstraints { (make) in
+            make.left.equalTo(self).inset(leftRight)
+            make.top.equalTo(descriptionLabel.snp.bottom).inset(-16)
+            make.height.equalTo(46)
+            make.bottom.equalTo(self).inset(24)
+        }
+        actionButton.addTarget(self, action: #selector(onAction(button:)), for: .touchUpInside)
+    }
+
+    @objc func onAction(button: UIButton) {
+        controller.render(searchQuery: self.searchQuery)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func render(card: SearchCard, controller: SearchController) {
+        self.searchQuery = SearchQuery(json: card["query"])
+        self.controller = controller
+    }
+
+    static var cardId: String {
+        return "injected_NoResultAnywhere_20171208"
     }
 }

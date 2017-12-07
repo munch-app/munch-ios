@@ -87,8 +87,9 @@ class SearchShimmerPlaceCard: UITableViewCell, SearchCardView {
             fatalError("init(coder:) has not been implemented")
         }
     }
-    
-    func render(card: SearchCard) {}
+
+    func render(card: SearchCard, controller: SearchController) {
+    }
     
     static var cardId: String {
         return "shimmer_DiscoverShimmerPlaceCard"
@@ -118,8 +119,8 @@ class SearchStaticNoResultCard: UITableViewCell, SearchCardView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    func render(card: SearchCard) {
+
+    func render(card: SearchCard, controller: SearchController) {
     }
     
     static var cardId: String {
@@ -149,8 +150,8 @@ class SearchStaticLoadingCard: UITableViewCell, SearchCardView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    func render(card: SearchCard) {
+
+    func render(card: SearchCard, controller: SearchController) {
     }
 
     func startAnimating(){
@@ -183,8 +184,8 @@ class SearchStaticEmptyCard: UITableViewCell, SearchCardView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    func render(card: SearchCard) {
+
+    func render(card: SearchCard, controller: SearchController) {
     }
     
     static var cardId: String {

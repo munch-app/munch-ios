@@ -37,6 +37,20 @@ public class MunchLocation {
         }
     }
 
+    public class func requestLocation() {
+        switch Locator.state {
+        case .disabled:
+            if let url = URL(string: "App-Prefs:root=Privacy&path=LOCATION") {
+                UIApplication.shared.open(url)
+            }
+        case .denied:
+            if let url = URL(string: "App-Prefs:root=Privacy&path=LOCATION/co.munch.MunchApp") {
+                UIApplication.shared.open(url)
+            }
+        default: break
+        }
+    }
+
     /**
      Wait util an accurate location is available
      Will return nil latLng if not found

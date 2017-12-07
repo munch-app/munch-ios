@@ -268,7 +268,7 @@ class PlaceBasicDescriptionCard: PlaceCardView {
         }
 
         descriptionLabel.text = card["description"].string
-        descriptionLabel.font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
+        descriptionLabel.font = UIFont.systemFont(ofSize: 14.0, weight: .regular)
         descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         descriptionLabel.numberOfLines = 0
     }

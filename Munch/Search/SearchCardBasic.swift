@@ -45,8 +45,8 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    func render(card: SearchCard) {
+
+    func render(card: SearchCard, controller: SearchController) {
         let images = card["images"].flatMap {  Place.Image(json: $0.1) }
         
         topImageView.render(placeImage: images.get(0))

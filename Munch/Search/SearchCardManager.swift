@@ -78,7 +78,7 @@ class SearchCardManager {
 }
 
 protocol SearchCardView {
-    func render(card: SearchCard)
+    func render(card: SearchCard, controller: SearchController)
 
     var leftRight: CGFloat { get }
     var topBottom: CGFloat { get }

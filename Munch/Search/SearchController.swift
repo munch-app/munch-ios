@@ -84,18 +84,13 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     }
 
     @IBAction func unwindToSearch(segue: UIStoryboardSegue) {
-        func render(query: SearchQuery) {
-            contentView(search: query)
-            headerView.render(query: query)
-        }
-
         let controller = segue.source
         if let query = controller as? SearchSuggestController {
-            render(query: query.searchQuery)
+            render(searchQuery: query.searchQuery)
         } else if let filter = controller as? SearchFilterController {
-            render(query: filter.searchQuery)
+            render(searchQuery: filter.searchQuery)
         } else if let location = controller as? SearchLocationController {
-            render(query: location.searchQuery)
+            render(searchQuery: location.searchQuery)
         }
     }
 
@@ -118,13 +113,14 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
                     return // Card manager is not in context anymore
                 }
 
-                // TODO Check is still current
-                if (meta.isOk()) {
-                    self.cardTableView.reloadData()
-                    self.cardTableView.isScrollEnabled = true
-                    self.scrollsToTop(animated: animated)
-                } else {
-                    self.present(meta.createAlert(), animated: true)
+                DispatchQueue.main.async {
+                    if (meta.isOk()) {
+                        self.cardTableView.isScrollEnabled = true
+                        self.scrollsToTop(animated: animated)
+                        self.cardTableView.reloadData()
+                    } else {
+                        self.present(meta.createAlert(), animated: true)
+                    }
                 }
             })
         }
@@ -153,6 +149,11 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         self.contentView(search: self.searchQuery)
         refreshControl.endRefreshing()
     }
+
+    func render(searchQuery: SearchQuery) {
+        self.contentView(search: searchQuery)
+        self.headerView.render(query: searchQuery)
+    }
 }
 
 // Card CollectionView
@@ -172,7 +173,10 @@ extension SearchController {
 
         // Register Search Cards
         register(SearchPlaceCard.self)
+
         register(SearchNoLocationCard.self)
+        register(SearchNoResultCard.self)
+        register(SearchNoResultAnywhereCard.self)
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -196,7 +200,7 @@ extension SearchController {
         case 1:
             let card = cards[indexPath.row]
             if let cardView = cardTableView.dequeueReusableCell(withIdentifier: card.cardId) as? SearchCardView {
-                cardView.render(card: card)
+                cardView.render(card: card, controller: self)
                 return cardView as! UITableViewCell
             }
         case 2: // Loading card
