@@ -271,9 +271,6 @@ class PlaceBasicDescriptionCard: PlaceCardView {
         descriptionLabel.font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
         descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         descriptionLabel.numberOfLines = 0
-        if (countLines(label: descriptionLabel) > 2) {
-            descriptionLabel.textAlignment = .justified
-        }
     }
 
     func countLines(label: UILabel) -> Int {

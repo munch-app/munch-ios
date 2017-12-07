@@ -69,7 +69,8 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         self.cardTableView.estimatedRowHeight = 1000
 
         // Fix insets so that contents appear below
-        self.cardTableView.contentInset.top = headerView.maxHeight - 20
+        self.cardTableView.contentInset.top = self.headerView.contentHeight
+        self.cardTableView.contentInsetAdjustmentBehavior = .always
 
         // Add RefreshControl to CardTableView
         refreshControl.addTarget(self, action: #selector(handleRefresh(_:)), for: .valueChanged)

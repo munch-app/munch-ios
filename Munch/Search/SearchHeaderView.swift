@@ -22,7 +22,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
     let textButton = SearchTextButton()
     let tagCollection = SearchFilterTagCollection()
 
-    var heightConstraint: Constraint! = nil
+    var topConstraint: Constraint! = nil
 
     var searchQueryHistories = [SearchQuery]()
 
@@ -35,29 +35,16 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
 
     private func initViews() {
         self.backgroundColor = UIColor.white
-        let statusView = UIView()
 
         self.addSubview(tagCollection)
         self.addSubview(textButton)
-        self.addSubview(statusView)
         self.addSubview(backButton)
-
-        statusView.backgroundColor = UIColor.white
-        statusView.snp.makeConstraints { make in
-            make.top.left.right.equalTo(self)
-            make.height.equalTo(20)
-        }
 
         textButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
         textButton.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
             make.height.equalTo(52)
             make.top.equalTo(self.safeArea.top)
-        }
-
-        tagCollection.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(24)
-            make.bottom.equalTo(self).inset(8)
         }
 
         backButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
@@ -68,8 +55,11 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
             make.height.equalTo(56)
         }
 
-        self.snp.makeConstraints { make in
-            self.heightConstraint = make.height.equalTo(maxHeight).constraint
+        tagCollection.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(24)
+            self.topConstraint = make.top.equalTo(textButton.snp.bottom).inset(-1).constraint
+            make.bottom.equalTo(self).inset(8)
+            make.height.equalTo(33)
         }
     }
 
@@ -305,19 +295,20 @@ class HeaderViewSegue: UIStoryboardSegue {
 
 // Header Scroll to Hide Functions
 extension SearchHeaderView {
+    var contentHeight: CGFloat {
+        return 94
+    }
+
     var maxHeight: CGFloat {
-        return 114
-    }
-    var minHeight: CGFloat {
-        return 75
-    }
-    var centerHeight: CGFloat {
-        return minHeight + 23
+        // contentHeight + safeArea.top
+        return self.safeAreaInsets.top + contentHeight
     }
 
     func contentDidScroll(scrollView: UIScrollView) {
         let height = calculateHeight(scrollView: scrollView)
-        self.heightConstraint.layoutConstraints[0].constant = height
+        let inset = 38 - height
+        self.topConstraint.update(inset: inset)
+        print("\(height) \(inset)")
     }
 
     /**
@@ -327,13 +318,14 @@ extension SearchHeaderView {
         let height = calculateHeight(scrollView: scrollView)
 
         // Already fully closed or opened
-        if (height == maxHeight || height == minHeight) {
+        if (height == 39.0 || height == 0.0) {
             return nil
         }
 
-        if (height < centerHeight) {
+
+        if (height < 22) {
             // To close
-            return -minHeight
+            return -maxHeight+39
         } else {
             // To open
             return -maxHeight
@@ -342,12 +334,13 @@ extension SearchHeaderView {
 
     private func calculateHeight(scrollView: UIScrollView) -> CGFloat {
         let y = scrollView.contentOffset.y
+
         if y <= -maxHeight {
-            return maxHeight
-        } else if y >= -minHeight {
-            return minHeight
+            return 39
+        } else if y >= -maxHeight + 39 {
+            return 0
         } else {
-            return Swift.abs(y)
+            return 39 - (maxHeight + y)
         }
     }
 }
