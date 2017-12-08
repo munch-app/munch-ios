@@ -76,14 +76,29 @@ public class RestfulClient {
                 .responseJSON { response in
                     switch response.result {
                     case .success(let value):
-                        // Need to handle gateway error
                         let json = JSON(value)
                         callback(MetaJSON(metaJson: json["meta"]), json)
                     case .failure(let error):
-                        let errorMessage = error.localizedDescription
-                        let dictionary: [String: Any] = ["meta": ["code": 503, "error": errorMessage]]
-                        let json = JSON(dictionary)
-                        callback(MetaJSON(metaJson: json["meta"]), json)
+                        switch response.response?.statusCode ?? 500 {
+                        case 502:
+                            let json = JSON(["meta": ["code": 502, "error": [
+                                "type": "BadGateway",
+                                "message": "Gateway error, try again later."
+                            ]]])
+                            callback(MetaJSON(metaJson: json["meta"]), json)
+                        case 503:
+                            let json = JSON(["meta": ["code": 502, "error": [
+                                "type": "ServiceUnavailable",
+                                "message": "Server temporary down, try again later."
+                            ]]])
+                            callback(MetaJSON(metaJson: json["meta"]), json)
+                        default:
+                            let json = JSON(["meta": ["code": 500, "error": [
+                                "type": "Unknown Error",
+                                "message": error.localizedDescription
+                            ]]])
+                            callback(MetaJSON(metaJson: json["meta"]), json)
+                        }
                     }
                 }
     }
