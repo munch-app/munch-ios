@@ -28,7 +28,7 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
         self.addSubview(actionButton)
 
         titleLabel.text = "No Location"
-        titleLabel.font = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
+        titleLabel.font = UIFont.systemFont(ofSize: 24.0, weight: .semibold)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
@@ -41,20 +41,20 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
         descriptionLabel.numberOfLines = 0
         descriptionLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(titleLabel.snp.bottom).inset(-16)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-22)
         }
 
         actionButton.layer.cornerRadius = 3
         actionButton.backgroundColor = .primary
         actionButton.setTitle("Enable Location", for: .normal)
-        actionButton.contentEdgeInsets.left = 30
-        actionButton.contentEdgeInsets.right = 30
+        actionButton.contentEdgeInsets.left = 32
+        actionButton.contentEdgeInsets.right = 32
         actionButton.setTitleColor(.white, for: .normal)
-        actionButton.titleLabel!.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+        actionButton.titleLabel!.font = UIFont.systemFont(ofSize: 18, weight: .medium)
         actionButton.snp.makeConstraints { (make) in
             make.left.equalTo(self).inset(leftRight)
-            make.top.equalTo(descriptionLabel.snp.bottom).inset(-16)
-            make.height.equalTo(46)
+            make.top.equalTo(descriptionLabel.snp.bottom).inset(-26)
+            make.height.equalTo(48)
             make.bottom.equalTo(self).inset(24)
         }
         actionButton.addTarget(self, action: #selector(enableLocation(button:)), for: .touchUpInside)
@@ -98,7 +98,7 @@ class SearchNoResultCard: UITableViewCell, SearchCardView {
         self.addSubview(descriptionLabel)
 
         titleLabel.text = "No Results"
-        titleLabel.font = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
+        titleLabel.font = UIFont.systemFont(ofSize: 24.0, weight: .semibold)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
@@ -111,7 +111,7 @@ class SearchNoResultCard: UITableViewCell, SearchCardView {
         descriptionLabel.numberOfLines = 0
         descriptionLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(titleLabel.snp.bottom).inset(-16)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-22)
             make.bottom.equalTo(self).inset(24)
         }
     }
@@ -147,7 +147,7 @@ class SearchNoResultAnywhereCard: UITableViewCell, SearchCardView {
         self.addSubview(actionButton)
 
         titleLabel.text = "No Results"
-        titleLabel.font = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
+        titleLabel.font = UIFont.systemFont(ofSize: 24.0, weight: .semibold)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
@@ -160,20 +160,20 @@ class SearchNoResultAnywhereCard: UITableViewCell, SearchCardView {
         descriptionLabel.numberOfLines = 0
         descriptionLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(titleLabel.snp.bottom).inset(-16)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-22)
         }
 
         actionButton.layer.cornerRadius = 3
         actionButton.backgroundColor = .primary
         actionButton.setTitle("Search Anywhere", for: .normal)
-        actionButton.contentEdgeInsets.left = 30
-        actionButton.contentEdgeInsets.right = 30
+        actionButton.contentEdgeInsets.left = 32
+        actionButton.contentEdgeInsets.right = 32
         actionButton.setTitleColor(.white, for: .normal)
-        actionButton.titleLabel!.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+        actionButton.titleLabel!.font = UIFont.systemFont(ofSize: 18, weight: .medium)
         actionButton.snp.makeConstraints { (make) in
             make.left.equalTo(self).inset(leftRight)
-            make.top.equalTo(descriptionLabel.snp.bottom).inset(-16)
-            make.height.equalTo(46)
+            make.top.equalTo(descriptionLabel.snp.bottom).inset(-26)
+            make.height.equalTo(48)
             make.bottom.equalTo(self).inset(24)
         }
         actionButton.addTarget(self, action: #selector(onAction(button:)), for: .touchUpInside)
