@@ -180,6 +180,7 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
             self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
         case .singapore:
             var singapore = Location()
+            singapore.id = "singapore"
             singapore.name = "Singapore"
             singapore.country = "singapore"
             singapore.city = "singapore"

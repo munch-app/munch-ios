@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 
 import SnapKit
+import SwiftyJSON
 
 class SearchNoLocationCard: UITableViewCell, SearchCardView {
     private let titleImage = UIImageView()
@@ -28,11 +29,11 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
         self.addSubview(actionButton)
 
         titleLabel.text = "No Location"
-        titleLabel.font = UIFont.systemFont(ofSize: 24.0, weight: .semibold)
+        titleLabel.font = UIFont.systemFont(ofSize: 26.0, weight: .semibold)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(self).inset(24)
+            make.top.equalTo(self).inset(26)
         }
 
         descriptionLabel.text = "You have turned off your location service. Turn it on for better suggestion?"
@@ -41,7 +42,7 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
         descriptionLabel.numberOfLines = 0
         descriptionLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(titleLabel.snp.bottom).inset(-22)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-20)
         }
 
         actionButton.layer.cornerRadius = 3
@@ -98,20 +99,21 @@ class SearchNoResultCard: UITableViewCell, SearchCardView {
         self.addSubview(descriptionLabel)
 
         titleLabel.text = "No Results"
-        titleLabel.font = UIFont.systemFont(ofSize: 24.0, weight: .semibold)
+        titleLabel.font = UIFont.systemFont(ofSize: 26.0, weight: .semibold)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
+        titleLabel.numberOfLines = 0
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(self).inset(24)
+            make.top.equalTo(self).inset(26)
         }
 
-        descriptionLabel.text = "We couldn't find anything. Try searching something else?"
+        descriptionLabel.text = "We couldn't find anything. Try broadening your search?"
         descriptionLabel.font = UIFont.systemFont(ofSize: 17.0, weight: .regular)
         descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         descriptionLabel.numberOfLines = 0
         descriptionLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(titleLabel.snp.bottom).inset(-22)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-20)
             make.bottom.equalTo(self).inset(24)
         }
     }
@@ -129,7 +131,7 @@ class SearchNoResultCard: UITableViewCell, SearchCardView {
     }
 }
 
-class SearchNoResultAnywhereCard: UITableViewCell, SearchCardView {
+class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
     private let titleImage = UIImageView()
     private let titleLabel = UILabel()
     private let descriptionLabel = UILabel()
@@ -147,20 +149,20 @@ class SearchNoResultAnywhereCard: UITableViewCell, SearchCardView {
         self.addSubview(actionButton)
 
         titleLabel.text = "No Results"
-        titleLabel.font = UIFont.systemFont(ofSize: 24.0, weight: .semibold)
+        titleLabel.font = UIFont.systemFont(ofSize: 26.0, weight: .semibold)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(self).inset(24)
+            make.top.equalTo(self).inset(26)
         }
 
-        descriptionLabel.text = "We couldn't find anything in that location. Try searching anywhere?"
+        descriptionLabel.text = "We couldn't find anything in that location. Try searching anywhere instead?"
         descriptionLabel.font = UIFont.systemFont(ofSize: 17.0, weight: .regular)
         descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         descriptionLabel.numberOfLines = 0
         descriptionLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(titleLabel.snp.bottom).inset(-22)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-20)
         }
 
         actionButton.layer.cornerRadius = 3
@@ -188,11 +190,20 @@ class SearchNoResultAnywhereCard: UITableViewCell, SearchCardView {
     }
 
     func render(card: SearchCard, controller: SearchController) {
-        self.searchQuery = SearchQuery(json: card["query"])
+        self.searchQuery = SearchQuery(json: card["searchQuery"])
         self.controller = controller
+
+        let locationName = card["locationName"].string ?? "Location"
+        if (locationName == "Nearby") {
+            titleLabel.text = "No Results found Nearby"
+            descriptionLabel.text = "We couldn't find anything near you. Try searching anywhere instead?"
+        } else {
+            titleLabel.text = "No Results in \(locationName)"
+            descriptionLabel.text = "We couldn't find anything in \(locationName). Try searching anywhere instead?"
+        }
     }
 
     static var cardId: String {
-        return "injected_NoResultAnywhere_20171208"
+        return "injected_NoResultLocation_20171208"
     }
 }

@@ -176,7 +176,7 @@ extension SearchController {
 
         register(SearchNoLocationCard.self)
         register(SearchNoResultCard.self)
-        register(SearchNoResultAnywhereCard.self)
+        register(SearchNoResultLocationCard.self)
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {

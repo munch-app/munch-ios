@@ -76,6 +76,7 @@ public class RestfulClient {
                 .responseJSON { response in
                     switch response.result {
                     case .success(let value):
+                        // Need to handle gateway error
                         let json = JSON(value)
                         callback(MetaJSON(metaJson: json["meta"]), json)
                     case .failure(let error):
