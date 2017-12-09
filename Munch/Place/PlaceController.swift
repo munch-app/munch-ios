@@ -77,7 +77,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.cardTableView.isScrollEnabled = false
         self.cardTableView.separatorStyle = .none
         self.cardTableView.rowHeight = UITableViewAutomaticDimension
-        self.cardTableView.estimatedRowHeight = 50
+        self.cardTableView.estimatedRowHeight = 1000
         self.cardTableView.contentInset.top = 0
         self.cardTableView.contentInset.bottom = 0
         self.cardTableView.contentInsetAdjustmentBehavior = .never
@@ -324,6 +324,10 @@ extension PlaceViewController {
         // Register Vendor Article Cards
         register(PlaceHeaderArticleCard.self)
         register(PlaceVendorArticleGridCard.self)
+
+        // Register Vendor Instagram Cards
+        register(PlaceHeaderInstagramCard.self)
+        register(PlaceVendorInstagramGridCard.self)
 
         // Register Review Cards
         register(PlaceHeaderReviewCard.self)

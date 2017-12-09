@@ -1,9 +1,6 @@
 //
-//  PlaceCardArticle.swift
-//  Munch
-//
-//  Created by Fuxing Loh on 8/9/17.
-//  Copyright © 2017 Munch Technologies. All rights reserved.
+// Created by Fuxing Loh on 9/12/17.
+// Copyright (c) 2017 Munch Technologies. All rights reserved.
 //
 
 import Foundation
@@ -13,39 +10,37 @@ import SafariServices
 import SnapKit
 import SwiftyJSON
 
-class PlaceHeaderArticleCard: PlaceTitleCardView {
+class PlaceHeaderInstagramCard: PlaceTitleCardView {
     override func didLoad(card: PlaceCard) {
-        self.title = "Articles"
+        self.title = "Instagram"
     }
 
     override class var cardId: String? {
-        return "header_Article_20171112"
+        return "header_Instagram_20171208"
     }
 }
 
-class PlaceVendorArticleGridCard: PlaceCardView {
+class PlaceVendorInstagramGridCard: PlaceCardView {
     let topRow = RowView()
     let bottomRow = RowView()
 
     override func didLoad(card: PlaceCard) {
         // Hide See More if < 4
-        // Hide Articles if not shown
-        let articles = card.data.map({ Article(json: $0.1) })
+        let medias = card.data.map({ InstagramMedia(json: $0.1) })
         super.addSubview(topRow)
 
-        topRow.render(left: articles.get(0), right: articles.get(1), controller: controller)
+        topRow.render(left: medias.get(0), right: medias.get(1), controller: controller)
         topRow.snp.makeConstraints { (make) in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(self).inset(topBottom).priority(999)
         }
 
-        if (articles.count > 3) {
+        if (medias.count > 3) {
             super.addSubview(bottomRow)
-
-            bottomRow.render(left: articles.get(2), right: articles.get(3), controller: controller)
+            bottomRow.render(left: medias.get(2), right: medias.get(3), controller: controller)
             bottomRow.snp.makeConstraints { (make) in
                 make.left.right.equalTo(self).inset(leftRight)
-                make.top.equalTo(topRow.snp.bottom).inset(-15).priority(999)
+                make.top.equalTo(topRow.snp.bottom).inset(-20).priority(999)
                 make.bottom.equalTo(self).inset(topBottom).priority(999)
             }
         } else {
@@ -56,12 +51,12 @@ class PlaceVendorArticleGridCard: PlaceCardView {
     }
 
     override class var cardId: String? {
-        return "vendor_Article_20171029"
+        return "vendor_InstagramMedia_20171204"
     }
 
     class RowView: UIView {
-        let leftView = ArticleView()
-        let rightView = ArticleView()
+        let leftView = MediaView()
+        let rightView = MediaView()
 
         override init(frame: CGRect) {
             super.init(frame: frame)
@@ -83,9 +78,9 @@ class PlaceVendorArticleGridCard: PlaceCardView {
             }
         }
 
-        func render(left: Article?, right: Article?, controller: PlaceViewController) {
-            leftView.render(article: left, controller: controller)
-            rightView.render(article: right, controller: controller)
+        func render(left: InstagramMedia?, right: InstagramMedia?, controller: PlaceViewController) {
+            leftView.render(media: left, controller: controller)
+            rightView.render(media: right, controller: controller)
         }
 
         required init?(coder aDecoder: NSCoder) {
@@ -93,36 +88,25 @@ class PlaceVendorArticleGridCard: PlaceCardView {
         }
     }
 
-    class ArticleView: UIView, SFSafariViewControllerDelegate {
-        let articleImageView = ShimmerImageView()
-        let articleTitleLabel = UILabel()
+    class MediaView: UIView, SFSafariViewControllerDelegate {
+        let mediaImageView = ShimmerImageView()
 
-        var article: Article!
+        var media: InstagramMedia!
         var controller: PlaceViewController!
 
         override init(frame: CGRect) {
             super.init(frame: frame)
-            self.addSubview(articleImageView)
-            self.addSubview(articleTitleLabel)
+            self.addSubview(mediaImageView)
 
-            articleImageView.layer.cornerRadius = 2
-            articleImageView.snp.makeConstraints { (make) in
+            mediaImageView.layer.cornerRadius = 2
+            mediaImageView.snp.makeConstraints { (make) in
                 make.left.right.equalTo(self)
                 make.top.equalTo(self)
-                make.width.equalTo(articleImageView.snp.height).dividedBy(0.8).priority(999)
-                make.bottom.equalTo(articleTitleLabel.snp.top).inset(-8)
-            }
-
-            articleTitleLabel.numberOfLines = 2
-            articleTitleLabel.font = UIFont.systemFont(ofSize: 12.0, weight: .regular)
-            articleTitleLabel.snp.makeConstraints { (make) in
-                make.left.right.equalTo(self)
-                make.height.equalTo(30).priority(999)
+                make.width.equalTo(mediaImageView.snp.height).priority(999)
                 make.bottom.equalTo(self)
             }
 
-            let tap = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
-            self.addGestureRecognizer(tap)
+            self.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:))))
             self.isUserInteractionEnabled = true
         }
 
@@ -130,23 +114,22 @@ class PlaceVendorArticleGridCard: PlaceCardView {
             fatalError("init(coder:) has not been implemented")
         }
 
-        func render(article: Article?, controller: PlaceViewController) {
-            self.article = article
+        func render(media: InstagramMedia?, controller: PlaceViewController) {
+            self.media = media
             self.controller = controller
 
-            if let article = article {
-                articleImageView.render(images: article.thumbnail)
-                articleTitleLabel.text = article.title
+            if let media = media {
+                mediaImageView.render(images: media.images)
             } else {
                 self.isHidden = true
             }
         }
 
         @objc func handleTap(_ sender: UITapGestureRecognizer) {
-            if let articleUrl = article.url, let url = URL(string: articleUrl) {
-                let safari = SFSafariViewController(url: url)
-                safari.delegate = self
-                controller.present(safari, animated: true, completion: nil)
+            if let mediaId = media.mediaId, let url = URL(string: "instagram://media?id=\(mediaId)") {
+                if (UIApplication.shared.canOpenURL(url)) {
+                    UIApplication.shared.open(url)
+                }
             }
         }
     }

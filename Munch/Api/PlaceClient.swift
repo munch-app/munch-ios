@@ -418,6 +418,42 @@ struct Article {
     }
 }
 
+struct InstagramMedia {
+    var userId: String?
+    var mediaId: String?
+
+    var locationId: String?
+
+    var placeId: String?
+    var placeSort: String?
+    var placeName: String?
+
+    var type: String?
+    var caption: String?
+    var username: String?
+    var profilePicture: String?
+
+    var images: [String: String]?
+
+    init(json: JSON) {
+        self.userId = json["userId"].string
+        self.mediaId = json["mediaId"].string
+
+        self.locationId = json["locationId"].string
+
+        self.placeId = json["placeId"].string
+        self.placeSort = json["placeSort"].string
+        self.placeName = json["placeName"].string
+
+        self.type = json["type"].string
+        self.caption = json["caption"].string
+        self.username = json["username"].string
+        self.profilePicture = json["profilePicture"].string
+
+        self.images = json["images"].dictionaryObject as? [String: String]
+    }
+}
+
 /**
  Menu data type from munch-core/service-menus
  */
