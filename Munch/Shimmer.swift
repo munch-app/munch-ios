@@ -7,8 +7,10 @@
 //
 
 import Foundation
+
 import Shimmer
 import SwiftyJSON
+import Kingfisher
 
 class ShimmerImageView: UIView {
     let shimmerView = ShimmerView()
@@ -38,24 +40,25 @@ class ShimmerImageView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func render(images: JSON?) {
-        render(images: images?.dictionaryObject as? [String: String])
+    func render(images: JSON?, completionHandler: CompletionHandler? = nil) {
+        render(images: images?.dictionaryObject as? [String: String], completionHandler: completionHandler)
     }
     
-    func render(placeImage: Place.Image?) {
-        render(images: placeImage?.images)
+    func render(placeImage: Place.Image?, completionHandler: CompletionHandler? = nil) {
+        render(images: placeImage?.images, completionHandler: completionHandler)
     }
     
-    func render(images: [String: String]?) {
+    func render(images: [String: String]?, completionHandler: CompletionHandler? = nil) {
         self.imageView.isHidden = true
         self.shimmerView.isHidden = false
         self.shimmerView.isShimmering = true
-        imageView.render(images: images) { _, error, _, _ in
+        imageView.render(images: images) { image, error, cacheType, imageUrl in
             if (error == nil) {
                 self.imageView.isHidden = false
                 self.shimmerView.isHidden = true
                 self.shimmerView.isShimmering = false
             }
+            completionHandler?(image, error, cacheType, imageUrl)
         }
     }
 }

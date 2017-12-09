@@ -21,8 +21,10 @@ class PlaceBasicImageBannerCard: PlaceCardView {
 
     override func didLoad(card: PlaceCard) {
         self.addSubview(imageBannerView)
+        self.addSubview(imageGradientView)
+
         imageBannerView.snp.makeConstraints { make in
-            make.height.equalTo(260).priority(999)
+            make.height.equalTo(UIScreen.main.bounds.height * 0.38).priority(999)
             make.edges.equalTo(self).inset(UIEdgeInsets(top: 0, left: 0, bottom: topBottom, right: 0))
         }
 
@@ -31,7 +33,7 @@ class PlaceBasicImageBannerCard: PlaceCardView {
         gradientLayer.colors = [UIColor.black.withAlphaComponent(0.5).cgColor, UIColor.clear.cgColor]
         imageGradientView.layer.insertSublayer(gradientLayer, at: 0)
         imageGradientView.backgroundColor = UIColor.clear
-        self.addSubview(imageGradientView)
+        imageGradientView.isHidden = true
 
         imageGradientView.snp.makeConstraints { make in
             make.height.equalTo(64)
@@ -40,7 +42,9 @@ class PlaceBasicImageBannerCard: PlaceCardView {
             make.right.equalTo(self)
         }
 
-        imageBannerView.render(images: card["images"][0]["images"])
+        imageBannerView.render(images: card["images"][0]["images"]) { _, error, _, _ in
+            self.imageGradientView.isHidden = false
+        }
     }
 
     override class var cardId: String? {
