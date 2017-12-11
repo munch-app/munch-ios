@@ -142,7 +142,7 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
         }
 
         indicator.isUserInteractionEnabled = false
-        indicator.setImage(UIImage(named: "Expand-20"), for: .normal)
+        indicator.setImage(UIImage(named: "RIP-Expand"), for: .normal)
         indicator.contentHorizontalAlignment = .right
         indicator.tintColor = .black
         indicator.snp.makeConstraints { make in
@@ -519,12 +519,15 @@ class PlaceHeaderLocationCard: PlaceTitleCardView {
 
 class PlaceBasicLocationCard: PlaceCardView {
     private let addressLabel = AddressLabel()
-    private let mapView = MKMapView()
+    private let mapView = UIImageView()
+    private let pinImageView = UIImageView()
+
     private var address: String?
 
     override func didLoad(card: PlaceCard) {
         self.addSubview(addressLabel)
         self.addSubview(mapView)
+        self.addSubview(pinImageView)
         self.address = card["address"].string
 
         addressLabel.render(card: card)
@@ -533,13 +536,15 @@ class PlaceBasicLocationCard: PlaceCardView {
             make.left.right.equalTo(self).inset(leftRight)
         }
 
-        mapView.isUserInteractionEnabled = false
-        mapView.showsUserLocation = false
         mapView.snp.makeConstraints { make in
             make.top.equalTo(addressLabel.snp.bottom).inset(-24)
             make.bottom.equalTo(self)
             make.left.right.equalTo(self)
             make.height.equalTo(230)
+        }
+
+        pinImageView.snp.makeConstraints { make in
+            make.center.equalTo(mapView)
         }
 
         render(location: card)
@@ -563,12 +568,21 @@ class PlaceBasicLocationCard: PlaceCardView {
             region.center.longitude = coordinate.longitude
             region.span.latitudeDelta = 0.004
             region.span.longitudeDelta = 0.004
-            mapView.setRegion(region, animated: false)
 
-            let annotation = MKPointAnnotation()
-            annotation.coordinate = coordinate
-            annotation.title = card["placeName"].stringValue
-            mapView.addAnnotation(annotation)
+            let options = MKMapSnapshotOptions()
+            options.showsPointsOfInterest = false
+            options.region = region
+            options.size = CGSize(width: UIScreen.main.bounds.width, height: 230)
+
+            MKMapSnapshotter(options: options).start { snapshot, error in
+                self.mapView.image = snapshot?.image
+                self.pinImageView.image = UIImage(named: "RIP-PlaceMarker")
+            }
+
+//            let annotation = MKPointAnnotation()
+//            annotation.coordinate = coordinate
+//            annotation.title = card["placeName"].stringValue
+//            mapView.addAnnotation(annotation)
         }
     }
 
