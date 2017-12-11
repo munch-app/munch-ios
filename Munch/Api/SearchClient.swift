@@ -83,16 +83,19 @@ struct Tag: SearchResult {
 
 struct Container: SearchResult {
     var id: String?
+    var type: String?
     var name: String?
 
     init(json: JSON) {
         self.id = json["id"].string
+        self.type = json["type"].string
         self.name = json["name"].string
     }
 
     func toParams() -> Parameters {
         var params = Parameters()
         params["id"] = id
+        params["type"] = type
         params["name"] = name
         return params
     }

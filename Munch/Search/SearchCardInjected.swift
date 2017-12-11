@@ -60,7 +60,7 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
         }
         actionButton.addTarget(self, action: #selector(enableLocation(button:)), for: .touchUpInside)
     }
-    
+
     @objc func enableLocation(button: UIButton) {
         if MunchLocation.isEnabled {
             controller.render(searchQuery: controller.searchQuery)
@@ -69,15 +69,15 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
             actionButton.setTitle("Refresh Search", for: .normal)
         }
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     func render(card: SearchCard, controller: SearchController) {
         self.controller = controller
     }
-    
+
     static var cardId: String {
         return "injected_NoLocation_20171020"
     }
@@ -205,5 +205,187 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
 
     static var cardId: String {
         return "injected_NoResultLocation_20171208"
+    }
+}
+
+class SearchContainersCard: UITableViewCell, SearchCardView {
+    private static let preferredOrder = [
+        ("Shopping Mall", "Mall"),
+        ("Hawker Centre", "Hawker"),
+        ("Coffeeshop", "Coffeeshop")
+    ]
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 21.0, weight: .semibold)
+        label.textColor = UIColor.black.withAlphaComponent(0.72)
+        return label
+    }()
+    private let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+        layout.itemSize = CGSize(width: 120, height: 110)
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 18
+
+        let collectionView = UICollectionView.init(frame: .zero, collectionViewLayout: layout)
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.backgroundColor = UIColor.white
+        collectionView.register(SearchContainersCardContainerCell.self, forCellWithReuseIdentifier: "SearchContainersCardContainerCell")
+        return collectionView
+    }()
+
+    private var controller: SearchController!
+    private var containers = [Container]()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(titleLabel)
+        self.addSubview(collectionView)
+
+        self.collectionView.dataSource = self
+        self.collectionView.delegate = self
+
+        titleLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(leftRight)
+            make.top.equalTo(self).inset(topBottom)
+        }
+
+        collectionView.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-topBottom)
+            make.bottom.equalTo(self).inset(topBottom)
+            make.height.equalTo(110)
+        }
+    }
+
+    func render(card: SearchCard, controller: SearchController) {
+        self.controller = controller
+        self.titleLabel.text = getTitle(card: card)
+        self.containers = card["containers"].map({ Container(json: $0.1) })
+        self.collectionView.reloadData()
+    }
+
+    private func getTitle(card: SearchCard) -> String? {
+        let types = Set(card["types"].map({ $0.1.stringValue }))
+        var typeNames = [String]()
+
+        for preferred in SearchContainersCard.preferredOrder {
+            if (types.contains(preferred.0)) {
+                typeNames.append(preferred.1)
+            }
+        }
+
+        if (typeNames.count < 3) {
+            return typeNames.joined(separator: " and ")
+        }
+
+        var nameBuilder = ""
+
+        for (index, name) in typeNames.enumerated() {
+            if (index == typeNames.count - 1) {
+                // Last
+                nameBuilder = nameBuilder + " and " + name
+            } else if (index == 0) {
+                // First
+                nameBuilder = name
+            } else {
+                nameBuilder = nameBuilder + ", " + name
+            }
+        }
+        return nameBuilder
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    static var cardId: String {
+        return "injected_Containers_20171211"
+    }
+}
+
+extension SearchContainersCard: UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return containers.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let container = containers[indexPath.row]
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchContainersCardContainerCell", for: indexPath) as! SearchContainersCardContainerCell
+        cell.render(container: container)
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let container = containers[indexPath.row]
+        var searchQuery = controller.searchQuery
+        searchQuery.filter.containers = [container]
+        controller.render(searchQuery: searchQuery)
+    }
+}
+
+fileprivate class SearchContainersCardContainerCell: UICollectionViewCell {
+    let imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.backgroundColor = .green
+        return imageView
+    }()
+
+    let nameLabel: UITextView = {
+        let nameLabel = UITextView()
+        nameLabel.font = UIFont.systemFont(ofSize: 13.0, weight: .semibold)
+        nameLabel.textColor = UIColor.black.withAlphaComponent(0.72)
+
+        nameLabel.textContainer.maximumNumberOfLines = 2
+        nameLabel.textContainer.lineBreakMode = .byTruncatingTail
+        nameLabel.textContainer.lineFragmentPadding = 2
+        nameLabel.textContainerInset = UIEdgeInsets(topBottom: 4, leftRight: 4)
+        nameLabel.isUserInteractionEnabled = false
+        return nameLabel
+    }()
+
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+
+        let containerView = UIView()
+        containerView.layer.cornerRadius = 3
+        containerView.layer.borderWidth = 1
+        containerView.layer.borderColor = UIColor(hex: "DDDDDD").cgColor
+        containerView.addSubview(imageView)
+        containerView.addSubview(nameLabel)
+        self.addSubview(containerView)
+
+        imageView.snp.makeConstraints { make in
+            make.left.right.equalTo(containerView)
+            make.top.equalTo(containerView)
+            make.bottom.equalTo(nameLabel.snp.top)
+        }
+
+        nameLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(containerView)
+            make.bottom.equalTo(containerView)
+            make.height.equalTo(40)
+        }
+
+        containerView.snp.makeConstraints { make in
+            make.edges.equalTo(self)
+        }
+
+        self.layoutIfNeeded()
+    }
+
+    fileprivate override func layoutSubviews() {
+        super.layoutSubviews()
+        self.imageView.roundCorners([.topLeft, .topRight], radius: 3)
+    }
+
+    func render(container: Container) {
+        nameLabel.text = container.name
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

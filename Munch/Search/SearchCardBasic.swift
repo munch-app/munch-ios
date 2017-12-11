@@ -57,6 +57,8 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
 
         topImageView.render(placeImage: images.get(0))
         bottomView.render(card: card)
+        setNeedsLayout()
+        layoutIfNeeded()
     }
 
     static var cardId: String {
@@ -195,4 +197,3 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         }
     }
 }
-

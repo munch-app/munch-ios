@@ -217,13 +217,8 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
         var tags = [String]()
 
         // FirstTag: Location Tag
-        if let locationName = query.filter.location?.name {
-            tags.append(locationName)
-        } else if MunchLocation.isEnabled {
-            tags.append("Nearby")
-        } else {
-            tags.append("Singapore")
-        }
+        // TODO: handle more then one location tag
+        tags.append(getLocationTag(query: query)[0])
 
         // Other Tags
         for tag in query.filter.tag.positives {
@@ -231,6 +226,22 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
         }
 
         render(tags: tags)
+    }
+
+    private func getLocationTag(query: SearchQuery) -> [String] {
+        if let containers = query.filter.containers, !containers.isEmpty {
+            return containers.map({$0.name ?? "Container"})
+        }
+
+        if let locationName = query.filter.location?.name {
+            return [locationName]
+        }
+
+        if MunchLocation.isEnabled {
+            return ["Nearby"]
+        }
+
+        return ["Singapore"]
     }
 
     private func render(tags: [String]) {
