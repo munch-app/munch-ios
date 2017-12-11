@@ -118,6 +118,7 @@ struct SearchQuery: Equatable {
 
     var query: String?
     var latLng: String?
+    var radius: Double?
 
     var filter: Filter
     var sort: Sort
@@ -133,6 +134,7 @@ struct SearchQuery: Equatable {
 
         self.query = json["query"].string
         self.latLng = json["latLng"].string
+        self.radius = json["radius"].string
 
         self.filter = Filter(json: json["filter"])
         self.sort = Sort(json: json["sort"])
@@ -217,6 +219,7 @@ struct SearchQuery: Equatable {
 
         params["query"] = query
         params["latLng"] = latLng
+        params["radius"] = radius
 
         params["filter"] = filter.toParams()
         params["sort"] = sort.toParams()
