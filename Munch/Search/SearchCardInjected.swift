@@ -329,7 +329,7 @@ extension SearchContainersCard: UICollectionViewDataSource, UICollectionViewDele
 fileprivate class SearchContainersCardContainerCell: UICollectionViewCell {
     let imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .green
+        imageView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
         return imageView
     }()
 

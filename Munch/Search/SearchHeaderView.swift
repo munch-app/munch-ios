@@ -70,8 +70,8 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
         tagCollection.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
             self.topConstraint = make.top.equalTo(textButton.snp.bottom).inset(-1).constraint
-            make.bottom.equalTo(self).inset(8)
-            make.height.equalTo(33)
+            make.bottom.equalTo(self).inset(7)
+            make.height.equalTo(34)
         }
     }
 
@@ -207,7 +207,7 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
         tagCollection.showsHorizontalScrollIndicator = false
         tagCollection.showsVerticalScrollIndicator = false
         tagCollection.alignment = .left
-        tagCollection.contentInset = UIEdgeInsets.init(topBottom: 2, leftRight: 0)
+        tagCollection.contentInset = UIEdgeInsets(topBottom: 2, leftRight: 0)
         tagCollection.snp.makeConstraints { (make) in
             make.edges.equalTo(self)
         }

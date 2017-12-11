@@ -174,6 +174,9 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         let item = items[indexPath.section].1[indexPath.row]
 
+        // Must clear containers as they are conflicting query
+        self.searchQuery.filter.containers = nil
+
         switch item {
         case .nearby:
             self.searchQuery.filter.location = nil
