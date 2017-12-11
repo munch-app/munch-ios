@@ -46,9 +46,13 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         // Render search results
         contentView(search: searchQuery)
         headerView.render(query: searchQuery)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
 
         // Filter Testing
-        // self.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
+//        self.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
         // Place Testing
 //         let controller = PlaceViewController(placeId: "8759e8cb-a52e-40e4-b75c-a65c9b089f23")
 //         self.navigationController!.pushViewController(controller, animated: true)
@@ -174,6 +178,7 @@ extension SearchController {
         // Register Search Cards
         register(SearchPlaceCard.self)
 
+        register(SearchContainersCard.self)
         register(SearchNoLocationCard.self)
         register(SearchNoResultCard.self)
         register(SearchNoResultLocationCard.self)

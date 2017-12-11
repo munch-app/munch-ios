@@ -12,12 +12,13 @@ import UIKit
 import TTGTagCollectionView
 import SnapKit
 import BEMCheckBox
+import TPKeyboardAvoiding
 
 class SearchFilterController: UIViewController {
     var searchQuery: SearchQuery!
 
     fileprivate let headerView = SearchFilterHeaderView()
-    fileprivate let tableView = UITableView()
+    fileprivate let tableView = TPKeyboardAvoidingTableView()
     fileprivate let applyView = SearchFilterApplyView()
 
     override func viewWillAppear(_ animated: Bool) {
@@ -79,6 +80,7 @@ class SearchFilterController: UIViewController {
         self.headerView.cancelButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
         self.headerView.resetButton.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
         self.applyView.applyBtn.addTarget(self, action: #selector(actionApply(_:)), for: .touchUpInside)
+        self.headerView.segmentControl.addTarget(nil, action: #selector(actionSegment(_:)), for: .valueChanged)
     }
 
     @objc func actionReset(_ sender: Any) {
@@ -96,6 +98,14 @@ class SearchFilterController: UIViewController {
     @objc func actionApply(_ sender: Any) {
         performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
     }
+
+    @objc func actionSegment(_ segControl: UISegmentedControl) {
+//        switch segControl.selectedSegmentIndex {
+//        case 0:
+//        case 1:
+//        default: break
+//        }
+    }
 }
 
 fileprivate enum SearchFilterType {
@@ -112,118 +122,118 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
                         SearchFilterType.tag("Dinner"),
                         SearchFilterType.tag("Supper")]),
             ("Cuisine", [SearchFilterType.tag("Singaporean"),
-                        SearchFilterType.tag("Japanese"),
-                        SearchFilterType.tag("Italian"),
-                        SearchFilterType.tag("Thai"),
-                        SearchFilterType.tag("Chinese"),
-                        SearchFilterType.tag("Korean"),
-                        SearchFilterType.tag("Mexican"),
-                        SearchFilterType.tag("Mediterranean"),
-                        SearchFilterType.seeMore("Cuisine", [
-                            "African",
-                            "American",
-                            "Arabic",
-                            "Argentinean",
-                            "Asian",
-                            "Australian",
-                            "Bangladeshi",
-                            "Beijing",
-                            "Belgian",
-                            "Brazilian",
-                            "Burmese",
-                            "Cambodian",
-                            "Cantonese",
-                            "Caribbean",
-                            "Chinese",
-                            "Cuban",
-                            "Dongbei",
-                            "Dutch",
-                            "English",
-                            "Eurasian",
-                            "European",
-                            "Foochow",
-                            "French",
-                            "Fujian",
-                            "Fusion",
-                            "German",
-                            "Greek",
-                            "Hainanese",
-                            "Hakka",
-                            "Hokkien",
-                            "Hong Kong",
-                            "Indian",
-                            "Indochinese",
-                            "International",
-                            "Iranian",
-                            "Irish",
-                            "Italian",
-                            "Japanese",
-                            "Korean",
-                            "Latin American",
-                            "Lebanese",
-                            "Malay Indonesian",
-                            "Mediterranean",
-                            "Mexican",
-                            "Middle Eastern",
-                            "Modern European",
-                            "Mongolian",
-                            "Moroccan",
-                            "Nonya Peranakan",
-                            "North Indian",
-                            "Pakistani",
-                            "Portuguese",
-                            "Russian",
-                            "Shanghainese",
-                            "Sze chuan",
-                            "Singaporean",
-                            "South Indian",
-                            "Spanish",
-                            "Swiss",
-                            "Taiwanese",
-                            "Teochew",
-                            "Thai",
-                            "Turkish",
-                            "Vietnamese",
-                            "Western",
-                        ])]),
-        ("Establishment", [SearchFilterType.tag("Bars & Pubs"),
-                           SearchFilterType.tag("Hawker"),
-                           SearchFilterType.tag("Café"),
-                           SearchFilterType.tag("Snacks"),
-                           SearchFilterType.seeMore("Establishment", [
-                               "Bakery",
-                               "Buffet",
-                               "Café",
-                               "Dessert",
-                               "Fast Food",
-                               "Hawker",
-                               "Restaurant",
-                               "High Tea",
-                               "Drinks",
-                               "Snacks",
+                         SearchFilterType.tag("Japanese"),
+                         SearchFilterType.tag("Italian"),
+                         SearchFilterType.tag("Thai"),
+                         SearchFilterType.tag("Chinese"),
+                         SearchFilterType.tag("Korean"),
+                         SearchFilterType.tag("Mexican"),
+                         SearchFilterType.tag("Mediterranean"),
+                         SearchFilterType.seeMore("Cuisine", [
+                             "African",
+                             "American",
+                             "Arabic",
+                             "Argentinean",
+                             "Asian",
+                             "Australian",
+                             "Bangladeshi",
+                             "Beijing",
+                             "Belgian",
+                             "Brazilian",
+                             "Burmese",
+                             "Cambodian",
+                             "Cantonese",
+                             "Caribbean",
+                             "Chinese",
+                             "Cuban",
+                             "Dongbei",
+                             "Dutch",
+                             "English",
+                             "Eurasian",
+                             "European",
+                             "Foochow",
+                             "French",
+                             "Fujian",
+                             "Fusion",
+                             "German",
+                             "Greek",
+                             "Hainanese",
+                             "Hakka",
+                             "Hokkien",
+                             "Hong Kong",
+                             "Indian",
+                             "Indochinese",
+                             "International",
+                             "Iranian",
+                             "Irish",
+                             "Italian",
+                             "Japanese",
+                             "Korean",
+                             "Latin American",
+                             "Lebanese",
+                             "Malay Indonesian",
+                             "Mediterranean",
+                             "Mexican",
+                             "Middle Eastern",
+                             "Modern European",
+                             "Mongolian",
+                             "Moroccan",
+                             "Nonya Peranakan",
+                             "North Indian",
+                             "Pakistani",
+                             "Portuguese",
+                             "Russian",
+                             "Shanghainese",
+                             "Sze chuan",
+                             "Singaporean",
+                             "South Indian",
+                             "Spanish",
+                             "Swiss",
+                             "Taiwanese",
+                             "Teochew",
+                             "Thai",
+                             "Turkish",
+                             "Vietnamese",
+                             "Western",
+                         ])]),
+            ("Establishment", [SearchFilterType.tag("Bars & Pubs"),
+                               SearchFilterType.tag("Hawker"),
+                               SearchFilterType.tag("Café"),
+                               SearchFilterType.tag("Snacks"),
+                               SearchFilterType.seeMore("Establishment", [
+                                   "Bakery",
+                                   "Buffet",
+                                   "Café",
+                                   "Dessert",
+                                   "Fast Food",
+                                   "Hawker",
+                                   "Restaurant",
+                                   "High Tea",
+                                   "Drinks",
+                                   "Snacks",
+                               ])]),
+            ("Amenities", [SearchFilterType.tag("Child-Friendly"),
+                           SearchFilterType.tag("Halal"),
+                           SearchFilterType.tag("Large Group"),
+                           SearchFilterType.tag("Pet-Friendly"),
+                           SearchFilterType.seeMore("Amenities", [
+                               "Child-Friendly",
+                               "Vegetarian-Friendly",
+                               "Healthy",
+                               "Pet-Friendly",
+                               "Halal",
+                               "Large Group",
                            ])]),
-        ("Amenities", [SearchFilterType.tag("Child-Friendly"),
-                       SearchFilterType.tag("Halal"),
-                       SearchFilterType.tag("Large Group"),
-                       SearchFilterType.tag("Pet-Friendly"),
-                       SearchFilterType.seeMore("Amenities", [
-                           "Child-Friendly",
-                           "Vegetarian-Friendly",
-                           "Healthy",
-                           "Pet-Friendly",
-                           "Halal",
-                           "Large Group",
-                       ])]),
-        ("Occasion", [SearchFilterType.tag("Brunch"),
-                      SearchFilterType.tag("Romantic"),
-                      SearchFilterType.tag("Business Meal"),
-                      SearchFilterType.tag("Football Screening"),
-                      SearchFilterType.seeMore("Occasion", [
-                          "Brunch",
-                          "Romantic",
-                          "Business Meal",
-                          "Supper",
-                      ])])
+            ("Occasion", [SearchFilterType.tag("Brunch"),
+                          SearchFilterType.tag("Romantic"),
+                          SearchFilterType.tag("Business Meal"),
+                          SearchFilterType.tag("Football Screening"),
+                          SearchFilterType.seeMore("Occasion", [
+                              "Brunch",
+                              "Romantic",
+                              "Business Meal",
+                              "Supper",
+                          ])])
         ]
     }
 
@@ -294,14 +304,14 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
 
 fileprivate class SearchFilterHeaderView: UIView {
     fileprivate let resetButton = UIButton()
-    fileprivate let titleView = UILabel()
+    fileprivate let segmentControl = UISegmentedControl(items: ["Filter", "Location"])
     fileprivate let cancelButton = UIButton()
 
     init() {
         super.init(frame: CGRect.zero)
         self.addSubview(resetButton)
-        self.addSubview(titleView)
         self.addSubview(cancelButton)
+        self.addSubview(segmentControl)
 
         self.makeViews()
     }
@@ -321,15 +331,25 @@ fileprivate class SearchFilterHeaderView: UIView {
             make.left.equalTo(self)
         }
 
-        titleView.text = "Filters"
-        titleView.font = .systemFont(ofSize: 17, weight: .regular)
-        titleView.textAlignment = .center
-        titleView.snp.makeConstraints { make in
-            make.top.equalTo(self.safeArea.top)
-            make.height.equalTo(44)
-            make.bottom.equalTo(self)
-            make.left.equalTo(resetButton.snp.right)
-            make.right.equalTo(cancelButton.snp.left)
+
+        segmentControl.selectedSegmentIndex = 0
+        segmentControl.setTitleTextAttributes([
+            NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14, weight: .regular),
+            NSAttributedStringKey.foregroundColor: UIColor.black
+        ], for: .normal)
+        segmentControl.setTitleTextAttributes([
+            NSAttributedStringKey.foregroundColor: UIColor.white
+        ], for: .selected)
+        segmentControl.backgroundColor = UIColor.white
+        segmentControl.tintColor = .primary
+
+        segmentControl.snp.makeConstraints { make in
+            make.top.equalTo(self.safeArea.top).inset(6)
+
+            make.bottom.equalTo(self).inset(8)
+            make.height.equalTo(28)
+            make.width.equalTo(180)
+            make.centerX.equalTo(self)
         }
 
         cancelButton.setTitle("CANCEL", for: .normal)
@@ -493,11 +513,51 @@ fileprivate class SearchFilterTagMoreCell: UITableViewCell {
     }
 }
 
+class SearchLocationCell: UITableViewCell {
+    let titleLabel = UILabel()
+    let typeLabel = UILabel()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.addSubview(titleLabel)
+        self.addSubview(typeLabel)
+
+        titleLabel.font = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
+        titleLabel.textColor = .black
+        titleLabel.snp.makeConstraints { (make) in
+            make.top.bottom.equalTo(self).inset(16)
+            make.left.equalTo(self).inset(24)
+            make.right.equalTo(typeLabel.snp.left).inset(-8)
+        }
+
+        typeLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.regular)
+        typeLabel.textColor = UIColor(hex: "686868")
+        typeLabel.textAlignment = .right
+        typeLabel.snp.makeConstraints { (make) in
+            make.right.equalTo(self).inset(24)
+            make.top.bottom.equalTo(self).inset(16)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func render(title: String?, type: String? = nil) {
+        self.titleLabel.text = title
+        self.typeLabel.text = type
+    }
+
+    class var id: String {
+        return "SearchLocationCell"
+    }
+}
+
 fileprivate class SearchFilterMoreController: UIViewController, UIGestureRecognizerDelegate {
     var searchQuery: SearchQuery!
     var seeMore: (String, [String])!
 
-    let headerView = SearchFilterHeaderView()
+    let headerView = SearchFilterMoreHeaderView()
     let tableView = UITableView()
     let applyView = SearchFilterMoreApplyView()
 
@@ -585,24 +645,86 @@ fileprivate class SearchFilterMoreController: UIViewController, UIGestureRecogni
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
-}
 
-fileprivate class SearchFilterMoreApplyView: SearchFilterApplyView {
-    fileprivate override func renderDidCommit(_ sender: Any) {
-        MunchApi.search.count(query: searchQuery, callback: { (meta, count) in
-            if let count = count {
-                if count == 0 {
-                    self.applyBtn.setTitle("No result", for: .normal)
-                } else if count > 100 {
-                    self.applyBtn.setTitle("Apply (100+ places)", for: .normal)
-                } else if count <= 10 {
-                    self.applyBtn.setTitle("Apply (\(count) places)", for: .normal)
-                } else {
-                    let rounded = count % 10 * 10
-                    self.applyBtn.setTitle("Apply (\(rounded)+ places)", for: .normal)
-                }
+    fileprivate class SearchFilterMoreHeaderView: UIView {
+        fileprivate let resetButton = UIButton()
+        fileprivate let titleView = UILabel()
+        fileprivate let cancelButton = UIButton()
+
+        init() {
+            super.init(frame: CGRect.zero)
+            self.addSubview(resetButton)
+            self.addSubview(titleView)
+            self.addSubview(cancelButton)
+
+            self.makeViews()
+        }
+
+        private func makeViews() {
+            self.backgroundColor = .white
+
+            resetButton.setTitle("RESET", for: .normal)
+            resetButton.setTitleColor(UIColor.black.withAlphaComponent(0.7), for: .normal)
+            resetButton.titleLabel?.font = .systemFont(ofSize: 12, weight: .medium)
+            resetButton.titleEdgeInsets.left = 24
+            resetButton.contentHorizontalAlignment = .left
+            resetButton.snp.makeConstraints { make in
+                make.top.equalTo(self.safeArea.top)
+                make.bottom.equalTo(self)
+                make.width.equalTo(90)
+                make.left.equalTo(self)
             }
-        })
+
+            titleView.font = .systemFont(ofSize: 17, weight: .medium)
+            titleView.textAlignment = .center
+            titleView.snp.makeConstraints { make in
+                make.top.equalTo(self.safeArea.top)
+                make.height.equalTo(44)
+                make.bottom.equalTo(self)
+                make.left.equalTo(resetButton.snp.right)
+                make.right.equalTo(cancelButton.snp.left)
+            }
+
+            cancelButton.setTitle("CANCEL", for: .normal)
+            cancelButton.setTitleColor(UIColor.black.withAlphaComponent(0.7), for: .normal)
+            cancelButton.titleLabel?.font = .systemFont(ofSize: 12, weight: .medium)
+            cancelButton.titleEdgeInsets.right = 24
+            cancelButton.contentHorizontalAlignment = .right
+            cancelButton.snp.makeConstraints { make in
+                make.top.equalTo(self.safeArea.top)
+                make.bottom.equalTo(self)
+                make.width.equalTo(90)
+                make.right.equalTo(self)
+            }
+        }
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            self.hairlineShadow(height: 1.0)
+        }
+
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+
+    fileprivate class SearchFilterMoreApplyView: SearchFilterApplyView {
+        fileprivate override func renderDidCommit(_ sender: Any) {
+            MunchApi.search.count(query: searchQuery, callback: { (meta, count) in
+                if let count = count {
+                    if count == 0 {
+                        self.applyBtn.setTitle("No result", for: .normal)
+                    } else if count > 100 {
+                        self.applyBtn.setTitle("Apply (100+ places)", for: .normal)
+                    } else if count <= 10 {
+                        self.applyBtn.setTitle("Apply (\(count) places)", for: .normal)
+                    } else {
+                        let rounded = count % 10 * 10
+                        self.applyBtn.setTitle("Apply (\(rounded)+ places)", for: .normal)
+                    }
+                }
+            })
+        }
     }
 }
 
