@@ -2,7 +2,18 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "icons8-search.pdf"
+      "filename" : "icons8-search-35 (3).png",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "icons8-search-70 (3).png",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "icons8-search-105 (3).png",
+      "scale" : "3x"
     }
   ],
   "info" : {

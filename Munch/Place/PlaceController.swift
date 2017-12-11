@@ -421,8 +421,9 @@ extension PlaceViewController {
 }
 
 class ReviewRatingUtils {
-    static let min: (CGFloat, CGFloat, CGFloat) = (1.0, 0.33, 0.22)
-    static let max: (CGFloat, CGFloat, CGFloat) = (0.02, 0.57, 0.32)
+    static let min: (CGFloat, CGFloat, CGFloat) = (1.0, 0.0, 0.0)
+    static let med: (CGFloat, CGFloat, CGFloat) = (0.90, 0.40, 0.0)
+    static let max: (CGFloat, CGFloat, CGFloat) = (0.00, 0.77, 0.0)
 
     class func create(review: Place.Review?) -> NSAttributedString? {
         if let percent = review?.average {
@@ -441,9 +442,10 @@ class ReviewRatingUtils {
     }
 
     class func color(percent: CGFloat) -> UIColor {
-        let red = min.0 + (max.0 - min.0) * percent
-        let green = min.1 + (max.1 - min.1) * percent
-        let blue = min.2 + (max.2 - min.2) * percent
+        let range = percent < 0.6 ? (min, med) : (med, max)
+        let red = range.0.0 + (range.1.0 - range.0.0) * percent
+        let green = range.0.1 + (range.1.1 - range.0.1) * percent
+        let blue = range.0.2 + (range.1.2 - range.0.2) * percent
 
         return UIColor(red: red, green: green, blue: blue, alpha: 1.0)
     }

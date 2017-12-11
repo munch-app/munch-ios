@@ -26,13 +26,13 @@ enum InitialViewProvider {
     static func search() -> UIViewController {
         let searchStoryboard = UIStoryboard(name: "Search", bundle: nil)
         let searchController = searchStoryboard.instantiateInitialViewController()!
-        searchController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), image: UIImage(named: "TabBar-Search"))
+        searchController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "SEARCH", image: UIImage(named: "TabBar-Search"))
         return searchController
     }
     
     static func account() -> UIViewController {
         let controller = AccountController()
-        controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), image: UIImage(named: "TabBar-Account"))
+        controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "PROFILE", image: UIImage(named: "TabBar-Profile"))
         return controller
     }
 }
@@ -91,15 +91,16 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
 class MunchTabBarContentView: ESTabBarItemContentView {
     override init(frame: CGRect) {
         super.init(frame: frame)
-        titleLabel.font = UIFont.systemFont(ofSize: 9, weight: UIFont.Weight.regular)
-        insets.bottom = 3
-        insets.top = 3
-        
-        iconColor = UIColor.black.withAlphaComponent(0.68)
-        textColor = UIColor.black.withAlphaComponent(0.68)
-        
-        highlightIconColor = UIColor.black
-        highlightTextColor = UIColor.black
+        titleLabel.font = UIFont.systemFont(ofSize: 8, weight: .bold)
+        insets.bottom = 4
+        insets.top = 5
+
+        textColor = UIColor.black.withAlphaComponent(0.63)
+        highlightTextColor = UIColor.primary500
+
+        iconColor = UIColor.black.withAlphaComponent(0.6)
+        highlightIconColor = UIColor.primary500
+
     }
     
     required init?(coder aDecoder: NSCoder) {
