@@ -44,8 +44,8 @@ class ShimmerImageView: UIView {
         render(images: images?.dictionaryObject as? [String: String], completionHandler: completionHandler)
     }
     
-    func render(placeImage: Place.Image?, completionHandler: CompletionHandler? = nil) {
-        render(images: placeImage?.images, completionHandler: completionHandler)
+    func render(sourcedImage: SourcedImage?, completionHandler: CompletionHandler? = nil) {
+        render(images: sourcedImage?.images, completionHandler: completionHandler)
     }
     
     func render(images: [String: String]?, completionHandler: CompletionHandler? = nil) {

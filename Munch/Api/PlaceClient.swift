@@ -78,7 +78,7 @@ struct Place: SearchResult, Equatable {
 
     // Many
     var hours: [Hour]?
-    var images: [Image]?
+    var images: [SourcedImage]?
 
     init?(json: JSON) {
         guard json.exists() else {
@@ -97,12 +97,8 @@ struct Place: SearchResult, Equatable {
         self.review = Review(json: json["review"])
         self.tag = Tag(json: json["tag"])
 
-        self.hours = json["hours"].flatMap {
-            Hour(json: $0.1)
-        }
-        self.images = json["images"].map {
-            Image(json: $0.1)
-        }
+        self.hours = json["hours"].flatMap({ Hour(json: $0.1) })
+        self.images = json["images"].map({ SourcedImage(json: $0.1) })
     }
 
     struct Price {
@@ -165,7 +161,7 @@ struct Place: SearchResult, Equatable {
             guard json.exists() else {
                 return nil
             }
-            
+
             self.total = json["total"].int ?? 0
             self.average = json["average"].double ?? 0
         }
@@ -176,25 +172,8 @@ struct Place: SearchResult, Equatable {
         var implicits: [String]
 
         init(json: JSON) {
-            self.explicits = json["explicits"].map {
-                $0.1.stringValue
-            }
-            self.implicits = json["implicits"].map {
-                $0.1.stringValue
-            }
-        }
-    }
-
-    /**
-     Place.Image from munch-core/munch-data
-     */
-    struct Image {
-        var source: String
-        var images: [String: String]
-
-        init(json: JSON) {
-            self.source = json["source"].stringValue
-            self.images = json["images"].dictionaryObject as! [String: String]
+            self.explicits = json["explicits"].map({$0.1.stringValue})
+            self.implicits = json["implicits"].map({$0.1.stringValue})
         }
     }
 
@@ -468,4 +447,17 @@ struct InstagramMedia {
 struct Menu {
     let placeId: String
     let menuId: String
+}
+
+/**
+ SourcedImage from munch-core/munch-data
+ */
+struct SourcedImage {
+    var source: String
+    var images: [String: String]
+
+    init(json: JSON) {
+        self.source = json["source"].stringValue
+        self.images = json["images"].dictionaryObject as! [String: String]
+    }
 }

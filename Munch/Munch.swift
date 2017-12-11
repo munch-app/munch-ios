@@ -148,12 +148,12 @@ public class MunchImageView: UIImageView {
     var completionHandler: CompletionHandler?
 
     /**
-     Render PlaceImage to UIImageView
-     PlaceImage will contain a ImageMeta to use for rendering
+     Render SourcedImage to UIImageView
+     SourcedImage will contain a ImageMeta to use for rendering
      Shimmer is set to true by default
      */
-    func render(placeImage: Place.Image?, completionHandler: CompletionHandler? = nil) {
-        render(images: placeImage?.images, completionHandler: completionHandler)
+    func render(sourcedImage: SourcedImage?, completionHandler: CompletionHandler? = nil) {
+        render(images: sourcedImage?.images, completionHandler: completionHandler)
     }
 
     /**

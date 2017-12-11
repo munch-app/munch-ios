@@ -86,10 +86,17 @@ struct Container: SearchResult {
     var type: String?
     var name: String?
 
+    var images: [SourcedImage]?
+    var ranking: Double
+
     init(json: JSON) {
         self.id = json["id"].string
         self.type = json["type"].string
         self.name = json["name"].string
+
+        self.images = json["images"].map({SourcedImage(json: $0.1)})
+        self.ranking = json["ranking"].double ?? 0
+
     }
 
     func toParams() -> Parameters {

@@ -327,8 +327,8 @@ extension SearchContainersCard: UICollectionViewDataSource, UICollectionViewDele
 }
 
 fileprivate class SearchContainersCardContainerCell: UICollectionViewCell {
-    let imageView: UIImageView = {
-        let imageView = UIImageView()
+    let imageView: MunchImageView = {
+        let imageView = MunchImageView()
         imageView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
         return imageView
     }()
@@ -383,6 +383,7 @@ fileprivate class SearchContainersCardContainerCell: UICollectionViewCell {
 
     func render(container: Container) {
         nameLabel.text = container.name
+        imageView.render(sourcedImage: container.images?.get(0))
     }
 
     required init?(coder aDecoder: NSCoder) {

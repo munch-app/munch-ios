@@ -52,10 +52,10 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
 
     func render(card: SearchCard, controller: SearchController) {
         let images = card["images"].flatMap {
-            Place.Image(json: $0.1)
+            SourcedImage(json: $0.1)
         }
 
-        topImageView.render(placeImage: images.get(0))
+        topImageView.render(sourcedImage: images.get(0))
         bottomView.render(card: card)
         setNeedsLayout()
         layoutIfNeeded()
