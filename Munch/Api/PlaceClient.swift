@@ -73,7 +73,7 @@ struct Place: SearchResult, Equatable {
     // One
     var price: Price?
     var location: Location
-    var review: Review
+    var review: Review?
     var tag: Tag
 
     // Many
@@ -114,7 +114,11 @@ struct Place: SearchResult, Equatable {
 
         }
 
-        init(json: JSON) {
+        init?(json: JSON) {
+            guard json.exists() else {
+                return nil
+            }
+
             self.lowest = json["lowest"].double
             self.middle = json["middle"].double
             self.highest = json["highest"].double
@@ -157,7 +161,11 @@ struct Place: SearchResult, Equatable {
         var total: Int
         var average: Double
 
-        init(json: JSON) {
+        init?(json: JSON) {
+            guard json.exists() else {
+                return nil
+            }
+            
             self.total = json["total"].int ?? 0
             self.average = json["average"].double ?? 0
         }

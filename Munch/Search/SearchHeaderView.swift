@@ -44,8 +44,8 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
 
         filterButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
         filterButton.snp.makeConstraints { make in
-            make.width.equalTo(46)
-            make.right.equalTo(self).inset(24)
+            make.width.equalTo(72)
+            make.right.equalTo(self)
             make.height.equalTo(52)
             make.top.equalTo(self.safeArea.top)
         }
@@ -134,8 +134,9 @@ class SearchFilterButton: UIButton {
         super.init(frame: frame)
 
         setImage(UIImage(named: "Search-Filter"), for: .normal)
-        tintColor = UIColor.black.withAlphaComponent(0.7)
+        tintColor = UIColor.black.withAlphaComponent(0.66)
         contentHorizontalAlignment = .right
+        contentEdgeInsets.right = 24
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -151,7 +152,7 @@ class SearchTextButton: UIButton {
         self.backgroundColor = UIColor.white
 
         field.layer.cornerRadius = 4
-        field.color = UIColor(hex: "2E2E2E")
+        field.color = UIColor(hex: "303030")
         field.backgroundColor = UIColor.init(hex: "EBEBEB")
 
         field.leftImage = UIImage(named: "SC-Search-18")
@@ -215,7 +216,7 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
         var tags = [String]()
 
         // FirstTag: Location Tag
-        if let locationName = query.location?.name {
+        if let locationName = query.filter.location?.name {
             tags.append(locationName)
         } else if MunchLocation.isEnabled {
             tags.append("Nearby")
@@ -234,7 +235,7 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
     private func render(tags: [String]) {
         tagCollection.removeAllTags()
         tagCollection.addTags(tags)
-        tagCollection.addTag("＋", with: plusTagConfig)
+//        tagCollection.addTag("＋", with: plusTagConfig)
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -160,8 +160,8 @@ fileprivate class PlaceHeaderView: UIView {
 
 fileprivate class PlaceBottomView: UIView {
     let mainButton = UIButton()
-    let ratingView = CosmosView()
-    let ratingLabel = UILabel()
+    let ratingPercentLabel = UILabel()
+    let ratingCountLabel = UILabel()
     let openingHours = UILabel()
 
     var place: Place?
@@ -181,8 +181,8 @@ fileprivate class PlaceBottomView: UIView {
 
     private func initViews() {
         self.backgroundColor = .white
-        self.addSubview(ratingView)
-        self.addSubview(ratingLabel)
+        self.addSubview(ratingCountLabel)
+        self.addSubview(ratingPercentLabel)
         self.addSubview(openingHours)
         self.addSubview(mainButton)
 
@@ -200,30 +200,19 @@ fileprivate class PlaceBottomView: UIView {
             make.height.equalTo(40)
         }
 
-        ratingView.rating = 0
-        ratingView.isUserInteractionEnabled = false
-        ratingView.settings.fillMode = .precise
-        ratingView.settings.filledColor = UIColor.init(hex: "#3B5998")
-        ratingView.settings.filledBorderColor = UIColor.init(hex: "#3B5998")
-        ratingView.settings.emptyColor = UIColor.clear
-        ratingView.settings.emptyBorderColor = UIColor.init(hex: "#3B5998")
-        ratingView.settings.starSize = 18
-        ratingView.settings.starMargin = 0
-        ratingView.snp.makeConstraints { (make) in
-            make.left.equalTo(self).inset(23)
+        ratingPercentLabel.font = UIFont.systemFont(ofSize: 14.0, weight: .semibold)
+        ratingPercentLabel.textColor = .primary300
+        ratingPercentLabel.snp.makeConstraints { (make) in
+            make.left.equalTo(self).inset(24)
             make.top.equalTo(self).inset(10)
-            make.width.equalTo(87)
-            make.height.equalTo(20)
         }
 
-        ratingLabel.text = "0 Reviews"
-        ratingLabel.font = UIFont.systemFont(ofSize: 11.0, weight: .regular)
-        ratingLabel.textColor = UIColor.black.withAlphaComponent(0.8)
-        ratingLabel.textAlignment = .left
-        ratingLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(ratingView.snp.right).inset(-10)
-            make.right.equalTo(mainButton.snp.left).inset(-12)
-            make.top.equalTo(self).inset(12)
+        ratingCountLabel.text = "0 Reviews"
+        ratingCountLabel.font = UIFont.systemFont(ofSize: 11.0, weight: .regular)
+        ratingCountLabel.textColor = UIColor.black.withAlphaComponent(0.8)
+        ratingCountLabel.textAlignment = .left
+        ratingCountLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(self).inset(13)
         }
 
         openingHours.text = "No Opening Hour"
@@ -238,16 +227,28 @@ fileprivate class PlaceBottomView: UIView {
 
     private func setHidden(isHidden: Bool) {
         self.mainButton.isHidden = isHidden
-        self.ratingView.isHidden = isHidden
-        self.ratingLabel.isHidden = isHidden
+        self.ratingPercentLabel.isHidden = isHidden
+        self.ratingCountLabel.isHidden = isHidden
         self.openingHours.isHidden = isHidden
     }
 
     func render(place: Place) {
         self.setHidden(isHidden: false)
         self.place = place
-        self.ratingView.rating = place.review.average
-        self.ratingLabel.text = "\(place.review.total) Reviews"
+
+        if let text = ReviewRatingUtils.create(review: place.review) {
+            self.ratingPercentLabel.attributedText = text
+            self.ratingCountLabel.text = "\(place.review?.total ?? 0) Reviews"
+
+            ratingCountLabel.snp.makeConstraints { (make) in
+                make.left.equalTo(ratingPercentLabel.snp.right).inset(-5)
+            }
+        } else {
+            // No Review
+            ratingCountLabel.snp.makeConstraints { (make) in
+                make.left.equalTo(self).inset(24)
+            }
+        }
 
         if let hours = place.hours, !hours.isEmpty {
             let businessHours = BusinessHour(hours: hours)
@@ -419,4 +420,31 @@ extension PlaceViewController {
     }
 }
 
+class ReviewRatingUtils {
+    static let min: (CGFloat, CGFloat, CGFloat) = (1.0, 0.33, 0.22)
+    static let max: (CGFloat, CGFloat, CGFloat) = (0.02, 0.57, 0.32)
 
+    class func create(review: Place.Review?) -> NSAttributedString? {
+        if let percent = review?.average {
+            return create(percent: CGFloat(percent))
+        }
+        return nil
+    }
+
+    class func create(percent: CGFloat) -> NSAttributedString {
+        let fixedPercent: CGFloat = percent > 1.0 ? 1.0 : percent
+
+        return "\(Int(fixedPercent * 100))%".set(style: .default { make in
+            make.font = FontAttribute(font: UIFont.systemFont(ofSize: 14.0, weight: .semibold))
+            make.color = color(percent: fixedPercent)
+        })
+    }
+
+    class func color(percent: CGFloat) -> UIColor {
+        let red = min.0 + (max.0 - min.0) * percent
+        let green = min.1 + (max.1 - min.1) * percent
+        let blue = min.2 + (max.2 - min.2) * percent
+
+        return UIColor(red: red, green: green, blue: blue, alpha: 1.0)
+    }
+}

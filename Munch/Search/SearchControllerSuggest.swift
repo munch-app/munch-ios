@@ -197,7 +197,7 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
             }
         case let .location(location):
             recentDatabase.put(text: location.id ?? "", dictionary: location.toParams())
-            self.searchQuery.location = location
+            self.searchQuery.filter.location = location
             self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
         case let .tag(tag):
             if let tagName = tag.name {
