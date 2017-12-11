@@ -431,11 +431,11 @@ class ReviewRatingUtils {
         return nil
     }
 
-    class func create(percent: CGFloat) -> NSAttributedString {
+    class func create(percent: CGFloat, fontSize: CGFloat = 14.0) -> NSAttributedString {
         let fixedPercent: CGFloat = percent > 1.0 ? 1.0 : percent
 
         return "\(Int(fixedPercent * 100))%".set(style: .default { make in
-            make.font = FontAttribute(font: UIFont.systemFont(ofSize: 14.0, weight: .semibold))
+            make.font = FontAttribute(font: UIFont.systemFont(ofSize: fontSize, weight: .semibold))
             make.color = color(percent: fixedPercent)
         })
     }

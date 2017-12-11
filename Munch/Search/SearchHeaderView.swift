@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+
 import SnapKit
 import TTGTagCollectionView
 
@@ -134,7 +135,7 @@ class SearchFilterButton: UIButton {
         super.init(frame: frame)
 
         setImage(UIImage(named: "Search-Filter"), for: .normal)
-        tintColor = UIColor.black.withAlphaComponent(0.66)
+        tintColor = UIColor.black.withAlphaComponent(0.65)
         contentHorizontalAlignment = .right
         contentEdgeInsets.right = 24
     }
@@ -153,7 +154,7 @@ class SearchTextButton: UIButton {
 
         field.layer.cornerRadius = 4
         field.color = UIColor(hex: "303030")
-        field.backgroundColor = UIColor.init(hex: "EBEBEB")
+        field.backgroundColor = UIColor(hex: "EBEBEB")
 
         field.leftImage = UIImage(named: "SC-Search-18")
         field.leftImagePadding = 3
@@ -246,19 +247,20 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
         override init() {
             super.init()
 
-            tagTextFont = UIFont.systemFont(ofSize: 13.0, weight: .regular)
+            tagTextFont = UIFont.systemFont(ofSize: 14.0, weight: .regular)
             tagShadowOffset = CGSize.zero
             tagShadowRadius = 0
+            tagCornerRadius = 4
 
-            tagBorderWidth = 0.5
-            tagBorderColor = UIColor.black.withAlphaComponent(0.25)
-            tagTextColor = UIColor.black.withAlphaComponent(0.75)
-            tagBackgroundColor = UIColor.white
+            tagBorderWidth = 1.0
+            tagBorderColor = UIColor.clear
+            tagTextColor = UIColor(hex: "303030")
+            tagBackgroundColor = UIColor(hex: "EBEBEB")
 
-            tagSelectedBorderWidth = 0.5
-            tagSelectedBorderColor = UIColor.black.withAlphaComponent(0.25)
-            tagSelectedTextColor = UIColor.black.withAlphaComponent(0.75)
-            tagSelectedBackgroundColor = UIColor.white
+            tagSelectedBorderWidth = 1.0
+            tagSelectedBorderColor = UIColor.clear
+            tagSelectedTextColor = UIColor(hex: "303030")
+            tagSelectedBackgroundColor = UIColor(hex: "EBEBEB")
 
             tagExtraSpace = CGSize(width: 21, height: 13)
         }
