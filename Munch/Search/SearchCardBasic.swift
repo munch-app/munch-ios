@@ -93,6 +93,7 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
             }
 
             tagCollection.defaultConfig = DefaultTagConfig()
+            tagCollection.isUserInteractionEnabled = false
             tagCollection.horizontalSpacing = 8
             tagCollection.verticalSpacing = 0
             tagCollection.numberOfLines = 0
@@ -128,7 +129,10 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         private func render(tag card: SearchCard) {
             if let average = card["review"]["average"].double {
                 tagLabel.attributedText = ReviewRatingUtils.create(percent: CGFloat(average), fontSize: 15.0)
-                tagCollection.contentInset.left = 8 // Only add spacing if review exists
+                tagCollection.contentInset.left = 8
+            } else {
+                tagLabel.text = nil
+                tagCollection.contentInset.left = 0
             }
 
             tagCollection.removeAllTags()
@@ -182,15 +186,9 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
                 tagShadowRadius = 0
                 tagCornerRadius = 3
 
-                tagBorderWidth = 0.5
-                tagBorderColor = UIColor.black.withAlphaComponent(0.25)
-                tagTextColor = UIColor.black.withAlphaComponent(0.75)
-                tagBackgroundColor = UIColor.white
-
-                tagSelectedBorderWidth = 0.5
-                tagSelectedBorderColor = UIColor.black.withAlphaComponent(0.25)
-                tagSelectedTextColor = UIColor.black.withAlphaComponent(0.75)
-                tagSelectedBackgroundColor = UIColor.white
+                tagBorderWidth = 0
+                tagTextColor = UIColor.black.withAlphaComponent(0.88)
+                tagBackgroundColor = UIColor(hex: "ebebeb")
 
                 tagExtraSpace = CGSize(width: 14, height: 7)
             }

@@ -97,16 +97,16 @@ class PlaceBasicNameTagCard: PlaceCardView {
             tagTextFont = UIFont.systemFont(ofSize: 15.0, weight: .regular)
             tagShadowOffset = CGSize.zero
             tagShadowRadius = 0
+            tagCornerRadius = 3
 
-            tagBorderWidth = 0.5
-            tagBorderColor = UIColor.black.withAlphaComponent(0.25)
-            tagTextColor = UIColor.black.withAlphaComponent(0.75)
-            tagBackgroundColor = UIColor.white
+            tagBorderWidth = 0
+            tagTextColor = UIColor.black.withAlphaComponent(0.88)
+            tagBackgroundColor = UIColor(hex: "ebebeb")
 
-            tagSelectedBorderWidth = 0.5
-            tagSelectedBorderColor = UIColor.black.withAlphaComponent(0.25)
-            tagSelectedTextColor = UIColor.black.withAlphaComponent(0.75)
-            tagSelectedBackgroundColor = UIColor.white
+            tagSelectedBorderWidth = 0
+            tagSelectedTextColor = UIColor.black.withAlphaComponent(0.88)
+            tagSelectedBackgroundColor = UIColor(hex: "ebebeb")
+            tagSelectedCornerRadius = 3
 
             tagExtraSpace = CGSize(width: 15, height: 8)
         }

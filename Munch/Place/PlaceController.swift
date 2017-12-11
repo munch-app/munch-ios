@@ -212,7 +212,7 @@ fileprivate class PlaceBottomView: UIView {
         ratingCountLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         ratingCountLabel.textAlignment = .left
         ratingCountLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(self).inset(13)
+            make.top.equalTo(self).inset(12)
         }
 
         openingHours.text = "No Opening Hour"
@@ -241,7 +241,7 @@ fileprivate class PlaceBottomView: UIView {
             self.ratingCountLabel.text = "\(place.review?.total ?? 0) Reviews"
 
             ratingCountLabel.snp.makeConstraints { (make) in
-                make.left.equalTo(ratingPercentLabel.snp.right).inset(-5)
+                make.left.equalTo(ratingPercentLabel.snp.right).inset(-7)
             }
         } else {
             // No Review
