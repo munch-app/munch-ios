@@ -210,9 +210,9 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
 
 class SearchContainersCard: UITableViewCell, SearchCardView {
     private static let preferredOrder = [
-        ("Shopping Mall", "Mall"),
-        ("Hawker Centre", "Hawker"),
-        ("Coffeeshop", "Coffeeshop")
+        ("Shopping Mall", "Malls"),
+        ("Hawker Centre", "Hawkers"),
+        ("Coffeeshop", "Coffeeshops")
     ]
     private let titleLabel: UILabel = {
         let label = UILabel()

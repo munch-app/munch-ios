@@ -134,7 +134,7 @@ struct SearchQuery: Equatable {
 
         self.query = json["query"].string
         self.latLng = json["latLng"].string
-        self.radius = json["radius"].string
+        self.radius = json["radius"].double
 
         self.filter = Filter(json: json["filter"])
         self.sort = Sort(json: json["sort"])

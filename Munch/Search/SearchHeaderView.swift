@@ -69,8 +69,8 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
 
         tagCollection.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
-            self.topConstraint = make.top.equalTo(textButton.snp.bottom).inset(-1).constraint
-            make.bottom.equalTo(self).inset(7)
+            self.topConstraint = make.top.equalTo(textButton.snp.bottom).constraint
+            make.bottom.equalTo(self).inset(8)
             make.height.equalTo(34)
         }
     }

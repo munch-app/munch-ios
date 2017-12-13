@@ -132,6 +132,8 @@ public class MunchLocation {
                 let m = (Int(distance / 50) * 50)
                 if (m == 1000) {
                     return "1.0km"
+                } else if (m == 0) {
+                    return "<50m"
                 }
                 return "\(m)m"
             } else if (distance < 100000) {
