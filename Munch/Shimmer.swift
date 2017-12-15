@@ -65,14 +65,14 @@ class ShimmerImageView: UIView {
 
 class ShimmerView: FBShimmeringView {
     
-    override init(frame: CGRect = CGRect()) {
+    init(frame: CGRect = CGRect(), color: UIColor = UIColor.black.withAlphaComponent(0.1)) {
         super.init(frame: frame)
         self.contentView = UIView()
-        self.contentView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        self.contentView.backgroundColor = color
         
         self.isShimmering = true
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

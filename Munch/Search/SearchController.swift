@@ -112,12 +112,14 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
             // Reset ContentView first
             reset()
 
+            // 2 Seconds lag for all searches
+            let deadline = DispatchTime.now() + 2
             self.cardManager = SearchCardManager(search: searchQuery, completion: { meta, manager in
                 guard manager === self.cardManager else {
                     return // Card manager is not in context anymore
                 }
 
-                DispatchQueue.main.async {
+                DispatchQueue.main.asyncAfter(deadline: deadline) {
                     if (meta.isOk()) {
                         self.cardTableView.isScrollEnabled = true
                         self.scrollsToTop(animated: animated)
