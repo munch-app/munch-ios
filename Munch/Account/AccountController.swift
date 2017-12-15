@@ -142,7 +142,7 @@ class AccountProfileController: UIViewController {
             self.addSubview(settingButton)
 
             titleView.text = "Profile"
-            titleView.font = .systemFont(ofSize: 17, weight: .regular)
+            titleView.font = .systemFont(ofSize: 17, weight: .medium)
             titleView.textAlignment = .center
             titleView.snp.makeConstraints { make in
                 make.centerX.equalTo(self)

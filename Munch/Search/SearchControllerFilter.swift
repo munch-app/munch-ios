@@ -80,7 +80,6 @@ class SearchFilterController: UIViewController {
         self.headerView.cancelButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
         self.headerView.resetButton.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
         self.applyView.applyBtn.addTarget(self, action: #selector(actionApply(_:)), for: .touchUpInside)
-        self.headerView.segmentControl.addTarget(nil, action: #selector(actionSegment(_:)), for: .valueChanged)
     }
 
     @objc func actionReset(_ sender: Any) {
@@ -97,14 +96,6 @@ class SearchFilterController: UIViewController {
 
     @objc func actionApply(_ sender: Any) {
         performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
-    }
-
-    @objc func actionSegment(_ segControl: UISegmentedControl) {
-//        switch segControl.selectedSegmentIndex {
-//        case 0:
-//        case 1:
-//        default: break
-//        }
     }
 }
 
@@ -304,14 +295,14 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
 
 fileprivate class SearchFilterHeaderView: UIView {
     fileprivate let resetButton = UIButton()
-    fileprivate let segmentControl = UISegmentedControl(items: ["Filter", "Location"])
+    fileprivate let titleView = UILabel()
     fileprivate let cancelButton = UIButton()
 
     init() {
         super.init(frame: CGRect.zero)
         self.addSubview(resetButton)
+        self.addSubview(titleView)
         self.addSubview(cancelButton)
-        self.addSubview(segmentControl)
 
         self.makeViews()
     }
@@ -331,25 +322,15 @@ fileprivate class SearchFilterHeaderView: UIView {
             make.left.equalTo(self)
         }
 
-
-        segmentControl.selectedSegmentIndex = 0
-        segmentControl.setTitleTextAttributes([
-            NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14, weight: .regular),
-            NSAttributedStringKey.foregroundColor: UIColor.black
-        ], for: .normal)
-        segmentControl.setTitleTextAttributes([
-            NSAttributedStringKey.foregroundColor: UIColor.white
-        ], for: .selected)
-        segmentControl.backgroundColor = UIColor.white
-        segmentControl.tintColor = .primary
-
-        segmentControl.snp.makeConstraints { make in
-            make.top.equalTo(self.safeArea.top).inset(6)
-
-            make.bottom.equalTo(self).inset(8)
-            make.height.equalTo(28)
-            make.width.equalTo(180)
-            make.centerX.equalTo(self)
+        titleView.text = "Filters"
+        titleView.font = .systemFont(ofSize: 17, weight: .medium)
+        titleView.textAlignment = .center
+        titleView.snp.makeConstraints { make in
+            make.top.equalTo(self.safeArea.top)
+            make.height.equalTo(44)
+            make.bottom.equalTo(self)
+            make.left.equalTo(resetButton.snp.right)
+            make.right.equalTo(cancelButton.snp.left)
         }
 
         cancelButton.setTitle("CANCEL", for: .normal)
