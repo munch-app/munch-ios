@@ -73,7 +73,7 @@ class PlaceBasicNameTagCard: PlaceCardView {
         tagCollection.horizontalSpacing = 6
         tagCollection.numberOfLines = 0
         tagCollection.alignment = .left
-        tagCollection.scrollDirection = .horizontal
+        tagCollection.scrollDirection = .vertical
         tagCollection.contentInset = UIEdgeInsets(top: 4, left: 0, bottom: 3, right: 0)
         tagCollection.snp.makeConstraints { (make) in
             make.top.equalTo(nameLabel.snp.bottom).inset(0)
@@ -84,6 +84,8 @@ class PlaceBasicNameTagCard: PlaceCardView {
         let tags = card["tags"].arrayValue.map({ $0.stringValue.capitalized })
         tagCollection.addTags(tags)
         tagCollection.reload()
+        tagCollection.setNeedsLayout()
+        tagCollection.layoutIfNeeded()
     }
 
     override class var cardId: String? {

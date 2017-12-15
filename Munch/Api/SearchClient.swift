@@ -104,6 +104,7 @@ struct Container: SearchResult, Equatable {
         params["id"] = id
         params["type"] = type
         params["name"] = name
+        params["dataType"] = "Container"
         return params
     }
 

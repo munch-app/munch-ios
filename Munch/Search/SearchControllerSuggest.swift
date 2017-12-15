@@ -124,6 +124,8 @@ class SearchSuggestController: UIViewController {
                 return SuggestType.location(location)
             } else if let tag = $0 as? Tag {
                 return SuggestType.tag(tag)
+            } else if let container = $0 as? Container {
+                return SuggestType.container(container)
             } else {
                 return nil
             }
@@ -136,6 +138,7 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
         case place(Place)
         case tag(Tag)
         case location(Location)
+        case container(Container)
     }
 
     private var items: [(String?, [SuggestType])] {
@@ -180,6 +183,8 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
             cell.render(title: location.name, type: "LOCATION")
         case let .tag(tag):
             cell.render(title: tag.name, type: "TAG")
+        case let .container(container):
+            cell.render(title: container.name, type: container.type?.uppercased())
         }
         return cell
     }
@@ -205,6 +210,11 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
                 self.searchQuery.filter.tag.positives.insert(tagName)
                 self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
             }
+        case let .container(container):
+            recentDatabase.put(text: container.id ?? "", dictionary: container.toParams())
+            self.searchQuery.filter.location = nil
+            self.searchQuery.filter.containers = [container]
+            self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
         }
     }
 }
@@ -284,9 +294,9 @@ class SearchQueryCell: UITableViewCell {
         titleLabel.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.regular)
         titleLabel.textColor = .black
         titleLabel.snp.makeConstraints { (make) in
-            make.top.bottom.equalTo(self).inset(16)
-            make.left.equalTo(self).inset(24)
-            make.right.equalTo(typeLabel.snp.left).inset(-8)
+            make.top.bottom.equalTo(self).inset(16).priority(999)
+            make.left.equalTo(self).inset(24).priority(999)
+            make.right.equalTo(typeLabel.snp.left).inset(-8).priority(999)
         }
 
         typeLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.regular)
