@@ -10,30 +10,60 @@ import Foundation
 import UIKit
 import MapKit
 
+import SwiftyJSON
 import SnapKit
 import SwiftRichString
 import SafariServices
 import TTGTagCollectionView
 
 class PlaceBasicImageBannerCard: PlaceCardView {
-    let imageGradientView = UIView()
-    let imageBannerView = ShimmerImageView()
-
-    override func didLoad(card: PlaceCard) {
-        self.addSubview(imageBannerView)
-        self.addSubview(imageGradientView)
-
-        imageBannerView.snp.makeConstraints { make in
-            make.height.equalTo(UIScreen.main.bounds.height * 0.38).priority(999)
-            make.edges.equalTo(self).inset(UIEdgeInsets(top: 0, left: 0, bottom: topBottom, right: 0))
-        }
-
+    private let imageGradientView: UIView = {
         let gradientLayer = CAGradientLayer()
         gradientLayer.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 64)
         gradientLayer.colors = [UIColor.black.withAlphaComponent(0.5).cgColor, UIColor.clear.cgColor]
+
+        let imageGradientView = UIView()
         imageGradientView.layer.insertSublayer(gradientLayer, at: 0)
         imageGradientView.backgroundColor = UIColor.clear
-        imageGradientView.isHidden = true
+        return imageGradientView
+    }()
+    private let pageTitleView: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 12.0, weight: .medium)
+        label.textColor = UIColor(hex: "ffffff")
+        return label
+    }()
+    private let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        layout.itemSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 0.38)
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 0
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.isPagingEnabled = true
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.alwaysBounceHorizontal = true
+        collectionView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        collectionView.register(PlaceBasicImageBannerCardImageCell.self, forCellWithReuseIdentifier: "PlaceBasicImageBannerCardImageCell")
+        return collectionView
+    }()
+
+    var images = [SourcedImage]()
+
+    override func didLoad(card: PlaceCard) {
+        self.addSubview(collectionView)
+        self.addSubview(imageGradientView)
+        self.addSubview(pageTitleView)
+
+        self.collectionView.dataSource = self
+        self.collectionView.delegate = self
+
+        collectionView.snp.makeConstraints { make in
+            make.height.equalTo(UIScreen.main.bounds.height * 0.38).priority(999)
+            make.edges.equalTo(self).inset(UIEdgeInsets(top: 0, left: 0, bottom: topBottom, right: 0))
+        }
 
         imageGradientView.snp.makeConstraints { make in
             make.height.equalTo(64)
@@ -42,13 +72,59 @@ class PlaceBasicImageBannerCard: PlaceCardView {
             make.right.equalTo(self)
         }
 
-        imageBannerView.render(images: card["images"][0]["images"]) { _, error, _, _ in
-            self.imageGradientView.isHidden = false
+        pageTitleView.snp.makeConstraints { make in
+            make.right.equalTo(self.collectionView).inset(leftRight)
+            make.bottom.equalTo(self.collectionView).inset(topBottom)
         }
+
+        self.images = card["images"].map({ SourcedImage(json: $0.1) })
+        // self.pageTitleView.text = "1|\(self.images.count)"
     }
 
     override class var cardId: String? {
         return "basic_ImageBanner_20170915"
+    }
+}
+
+extension PlaceBasicImageBannerCard: UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return images.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let image = images[indexPath.row]
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PlaceBasicImageBannerCardImageCell", for: indexPath) as! PlaceBasicImageBannerCardImageCell
+        cell.render(image: image)
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if let indexPath = self.collectionView.indexPathsForVisibleItems.get(0) {
+            self.pageTitleView.text = "\(indexPath.row + 1)|\(self.images.count)"
+        }
+    }
+}
+
+fileprivate class PlaceBasicImageBannerCardImageCell: UICollectionViewCell {
+    let imageView: ShimmerImageView = {
+        return ShimmerImageView()
+    }()
+
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        self.addSubview(imageView)
+
+        imageView.snp.makeConstraints { make in
+            make.edges.equalTo(self)
+        }
+    }
+
+    func render(image: SourcedImage) {
+        imageView.render(sourcedImage: image)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 

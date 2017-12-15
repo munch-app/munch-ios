@@ -227,7 +227,7 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 18
 
-        let collectionView = UICollectionView.init(frame: .zero, collectionViewLayout: layout)
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.backgroundColor = UIColor.white
