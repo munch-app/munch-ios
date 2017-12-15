@@ -46,6 +46,10 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         // Render search results
         contentView(search: searchQuery)
         headerView.render(query: searchQuery)
+
+        let edgePan = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(screenEdgeSwiped))
+        edgePan.edges = .left
+        self.view.addGestureRecognizer(edgePan)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -159,6 +163,24 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     func render(searchQuery: SearchQuery) {
         self.contentView(search: searchQuery)
         self.headerView.render(query: searchQuery)
+    }
+
+    @objc func screenEdgeSwiped(_ recognizer: UIScreenEdgePanGestureRecognizer) {
+//        if self.headerView.hasPrevious() {
+//
+//        }
+//
+//        switch recognizer.state {
+//        case .began:
+//            fallthrough
+//        case .changed:
+//            print("Changed: \(recognizer.translation(in: self.view).x)")
+//        case .ended:
+//            // More than half == good
+//            print("Ended: \(recognizer.translation(in: self.view).x)")
+//        default:
+//            return
+//        }
     }
 }
 

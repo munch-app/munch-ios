@@ -80,10 +80,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
             controller.performSegue(withIdentifier: "SearchHeaderView_suggest", sender: self)
         } else if view is SearchBackButton {
             // When back button is clicked
-            if let _ = searchQueryHistories.popLast(), let last = searchQueryHistories.last {
-                controller.contentView(search: last, animated: false)
-                render(query: last)
-            }
+            renderPrevious()
         } else if view is SearchFilterButton {
             controller.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
         }
@@ -126,6 +123,20 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
             textButton.field.leftImage = UIImage(named: "SC-Search-18")
             backButton.isHidden = true
         }
+    }
+
+    func renderPrevious() {
+        if let _ = searchQueryHistories.popLast(), let last = searchQueryHistories.last {
+            controller.contentView(search: last, animated: false)
+            render(query: last)
+        }
+    }
+
+    func hasPrevious() -> Bool {
+        if self.searchQueryHistories.count > 1 {
+            return true
+        }
+        return false
     }
 
     override func layoutSubviews() {
