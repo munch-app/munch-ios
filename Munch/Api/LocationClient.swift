@@ -21,15 +21,15 @@ class LocationClient {
         }
     }
     
-    func suggest(text: String, callback: @escaping (_ meta: MetaJSON, _ locations: [Location]) -> Void) {
+    func suggest(text: String, callback: @escaping (_ meta: MetaJSON, _ results: [SearchResult]) -> Void) {
         MunchApi.restful.get("/locations/suggest", parameters: ["text": text]) { meta, json in
-            callback(meta, json["data"].map { Location(json: $0.1)! })
+            callback(meta, json["data"].flatMap({ SearchClient.parseResult(result: $0.1) }))
         }
     }
 
-    func search(text: String, callback: @escaping (_ meta: MetaJSON, _ locations: [Location]) -> Void) {
+    func search(text: String, callback: @escaping (_ meta: MetaJSON, _ results: [SearchResult]) -> Void) {
         MunchApi.restful.get("/locations/search", parameters: ["text": text]) { meta, json in
-            callback(meta, json["data"].map { Location(json: $0.1)! })
+            callback(meta, json["data"].flatMap({ SearchClient.parseResult(result: $0.1) }))
         }
     }
 }

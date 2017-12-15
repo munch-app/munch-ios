@@ -40,8 +40,22 @@ class SearchLocationController: UIViewController {
         super.viewDidLoad()
         self.initViews()
 
-        self.popularLocations = readJson(forResource: "locations-popular")?.flatMap({ Location(json: $0.1) }).map({ LocationType.location($0) })
-        self.recentLocations = recentDatabase.get().flatMap({ $1 }).flatMap({ Location(json: $0) }).map({ LocationType.recent($0) })
+        self.popularLocations = readJson(forResource: "locations-popular")?
+                .flatMap({ Location(json: $0.1) })
+                .map({ LocationType.location($0) })
+
+        self.recentLocations = recentDatabase.get()
+                .flatMap({ $1 })
+                .flatMap({ SearchClient.parseResult(result: $0) })
+                .flatMap { result in
+                    if let location = result as? Location {
+                        return LocationType.recentLocation(location)
+                    } else if let container = result as? Container {
+                        return LocationType.recentContainer(container)
+                    } else {
+                        return nil
+                    }
+                }
 
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -85,8 +99,17 @@ class SearchLocationController: UIViewController {
 
     @objc func textFieldDidCommit(textField: UITextField) {
         if let text = textField.text, text.count >= 2 {
-            MunchApi.locations.suggest(text: text, callback: { (meta, locations) in
-                self.results = locations.map({ LocationType.location($0) })
+            MunchApi.locations.suggest(text: text, callback: { (meta, results) in
+                self.results = results.flatMap { result in
+                    if let location = result as? Location {
+                        return LocationType.location(location)
+                    } else if let container = result as? Container {
+                        return LocationType.container(container)
+                    } else {
+                        return nil
+                    }
+                }
+
                 self.tableView.reloadData()
             })
         } else {
@@ -114,8 +137,10 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
     enum LocationType {
         case nearby
         case singapore
-        case recent(Location)
+        case recentLocation(Location)
+        case recentContainer(Container)
         case location(Location)
+        case container(Container)
     }
 
     private var items: [(String?, [LocationType])] {
@@ -162,9 +187,13 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
         case .singapore:
             cell.render(title: "Anywhere")
         case let .location(location):
-            cell.render(title: location.name)
-        case let .recent(location):
+            cell.render(title: location.name, type: "LOCATION")
+        case let .container(container):
+            cell.render(title: container.name, type: container.type?.uppercased())
+        case let .recentLocation(location):
             cell.render(title: location.name, type: "RECENT")
+        case let .recentContainer(container):
+            cell.render(title: container.name, type: "RECENT")
         }
 
         return cell
@@ -174,12 +203,30 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         let item = items[indexPath.section].1[indexPath.row]
 
-        // Must clear containers as they are conflicting query
-        self.searchQuery.filter.containers = nil
+        func select(result: SearchResult, save: Bool) {
+            if let location = result as? Location {
+                self.searchQuery.filter.location = location
+                self.searchQuery.filter.containers = []
+
+                if save, let name = location.name {
+                    recentDatabase.put(text: name, dictionary: location.toParams())
+                }
+                self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
+            } else if let container = result as? Container {
+                self.searchQuery.filter.location = nil
+                self.searchQuery.filter.containers = [container]
+
+                if save, let name = container.name {
+                    recentDatabase.put(text: name, dictionary: container.toParams())
+                }
+                self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
+            }
+        }
 
         switch item {
         case .nearby:
             self.searchQuery.filter.location = nil
+            self.searchQuery.filter.containers = nil
             self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
         case .singapore:
             var singapore = Location()
@@ -189,20 +236,15 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
             singapore.city = "singapore"
             singapore.latLng = "1.290270, 103.851959"
             singapore.points = ["1.26675774823,103.603134155", "1.32442122318,103.617553711", "1.38963424766,103.653259277", "1.41434608581,103.666305542", "1.42944763543,103.671798706", "1.43905766081,103.682785034", "1.44386265833,103.695831299", "1.45896401284,103.720550537", "1.45827758983,103.737716675", "1.44935407163,103.754196167", "1.45004049736,103.760375977", "1.47887018872,103.803634644", "1.4754381021,103.826980591", "1.45827758983,103.86680603", "1.43219336108,103.892211914", "1.4287612035,103.897018433", "1.42670190649,103.915557861", "1.43219336108,103.934783936", "1.42189687297,103.960189819", "1.42464260763,103.985595703", "1.42121043879,104.000701904", "1.43974408965,104.02130127", "1.44592193988,104.043960571", "1.42464260763,104.087219238", "1.39718511473,104.094772339", "1.35737118164,104.081039429", "1.29009788407,104.127044678", "1.277741368,104.127044678", "1.25371463932,103.982162476", "1.17545464492,103.812561035", "1.13014521522,103.736343384", "1.19055762617,103.653945923", "1.1960495989,103.565368652", "1.26675774823,103.603134155"]
-            self.searchQuery.filter.location = singapore
-            self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
-        case let .location(location):
-            if let name = location.name {
-                recentDatabase.put(text: name, dictionary: location.toParams())
-            }
-            self.searchQuery.filter.location = location
-            self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
-        case let .recent(location):
-            if let name = location.name {
-                recentDatabase.put(text: name, dictionary: location.toParams())
-            }
-            self.searchQuery.filter.location = location
-            self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
+            select(result: singapore, save: false)
+        case .location(let location):
+            select(result: location, save: true)
+        case .container(let container):
+            select(result: container, save: true)
+        case .recentContainer(let container):
+            select(result: container, save: true)
+        case .recentLocation(let location):
+            select(result: location, save: true)
         }
     }
 }
