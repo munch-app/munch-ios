@@ -113,7 +113,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
             reset()
 
             // 2 Seconds lag for all searches
-            let deadline = DispatchTime.now() + 2
+            let deadline = DispatchTime.now() + 1.5
             self.cardManager = SearchCardManager(search: searchQuery, completion: { meta, manager in
                 guard manager === self.cardManager else {
                     return // Card manager is not in context anymore

@@ -108,10 +108,10 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
     private var items: [(String?, [SearchFilterType])] {
         return [
             // TODO Need to implement open now
-            ("Timing", [SearchFilterType.tag("Breakfast"),
-                        SearchFilterType.tag("Lunch"),
-                        SearchFilterType.tag("Dinner"),
-                        SearchFilterType.tag("Supper")]),
+//            ("Timing", [SearchFilterType.tag("Breakfast"),
+//                        SearchFilterType.tag("Lunch"),
+//                        SearchFilterType.tag("Dinner"),
+//                        SearchFilterType.tag("Supper")]),
             ("Cuisine", [SearchFilterType.tag("Singaporean"),
                          SearchFilterType.tag("Japanese"),
                          SearchFilterType.tag("Italian"),

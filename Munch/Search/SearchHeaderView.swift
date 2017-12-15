@@ -97,8 +97,16 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
         controller.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
     }
 
-    func tagCollection(selectedTag tagCollection: SearchFilterTagCollection, didTapTag tagText: String!) {
-        controller.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
+    func tagCollection(selectedText: String, selectedTag tagCollection: SearchFilterTagCollection, didTapTag tagText: String!) {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
+            var searchQuery = self.controller.searchQuery
+            searchQuery.filter.tag.positives.remove(selectedText)
+            self.controller.render(searchQuery: searchQuery)
+        })
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        self.controller.present(alert, animated: true)
+        // controller.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
     }
 
     func render(query: SearchQuery) {
@@ -230,7 +238,7 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
 
     private func getLocationTag(query: SearchQuery) -> [String] {
         if let containers = query.filter.containers, !containers.isEmpty {
-            return containers.map({$0.name ?? "Container"})
+            return containers.map({ $0.name ?? "Container" })
         }
 
         if let locationName = query.filter.location?.name {
@@ -286,7 +294,7 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
             delegate?.tagCollection(selectedPlus: self)
         } else {
             // Filter selected
-            delegate?.tagCollection(selectedTag: self, didTapTag: tagText)
+            delegate?.tagCollection(selectedText: tagText, selectedTag: self, didTapTag: tagText)
         }
     }
 }
@@ -299,7 +307,7 @@ protocol SearchFilterTagDelegate {
 
     func tagCollection(selectedPlus tagCollection: SearchFilterTagCollection)
 
-    func tagCollection(selectedTag tagCollection: SearchFilterTagCollection, didTapTag tagText: String!)
+    func tagCollection(selectedText: String, selectedTag tagCollection: SearchFilterTagCollection, didTapTag tagText: String!)
 }
 
 class HeaderViewSegue: UIStoryboardSegue {
