@@ -229,9 +229,10 @@ extension SearchController {
         case 1:
             let card = cards[indexPath.row]
             if card.cardId == SearchPlaceCard.cardId, let placeId = card["placeId"].string {
-                // Place Card
-                let controller = PlaceViewController(placeId: placeId)
-                self.navigationController!.pushViewController(controller, animated: true)
+                DispatchQueue.main.sync {
+                    let controller = PlaceViewController(placeId: placeId)
+                    self.navigationController!.pushViewController(controller, animated: true)
+                }
             }
         default: break
         }
