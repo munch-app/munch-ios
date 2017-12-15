@@ -263,8 +263,13 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
     func render(card: SearchCard, controller: SearchController) {
         self.controller = controller
         self.titleLabel.text = getTitle(card: card)
-        self.containers = card["containers"].map({ Container(json: $0.1) })
-        self.collectionView.reloadData()
+
+        let containers = card["containers"].map({ Container(json: $0.1) })
+        if self.containers != containers {
+            self.containers = containers
+            self.collectionView.setContentOffset(.zero, animated: false)
+            self.collectionView.reloadData()
+        }
     }
 
     private func getTitle(card: SearchCard) -> String? {

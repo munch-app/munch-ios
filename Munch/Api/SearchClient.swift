@@ -81,7 +81,7 @@ struct Tag: SearchResult {
     }
 }
 
-struct Container: SearchResult {
+struct Container: SearchResult, Equatable {
     var id: String?
     var type: String?
     var name: String?
@@ -105,6 +105,10 @@ struct Container: SearchResult {
         params["type"] = type
         params["name"] = name
         return params
+    }
+
+    static func ==(lhs: Container, rhs: Container) -> Bool {
+        return lhs.id == rhs.id
     }
 }
 
