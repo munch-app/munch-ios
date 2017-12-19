@@ -419,6 +419,45 @@ class PlaceBasicPhoneCard: PlaceCardView, SFSafariViewControllerDelegate {
     }
 }
 
+class PlaceBasicPriceCard: PlaceCardView {
+    private let priceTitleLabel = UILabel()
+    private let priceLabel = UILabel()
+
+    override func didLoad(card: PlaceCard) {
+        self.selectionStyle = .default
+        self.addSubview(priceTitleLabel)
+        self.addSubview(priceLabel)
+
+        priceTitleLabel.text = "Price"
+        priceTitleLabel.font = UIFont.systemFont(ofSize: 15.0, weight: .medium)
+        priceTitleLabel.textColor = .black
+        priceTitleLabel.textAlignment = .left
+        priceTitleLabel.numberOfLines = 1
+        priceTitleLabel.snp.makeConstraints { make in
+            make.left.equalTo(self).inset(leftRight)
+            make.top.bottom.equalTo(self).inset(topBottom)
+            make.width.equalTo(70)
+        }
+
+        if let price = card["price"].double {
+            priceLabel.text = "$\(price) per pax"
+            priceLabel.font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
+            priceLabel.textColor = UIColor.black.withAlphaComponent(0.8)
+            priceLabel.textAlignment = .right
+            priceLabel.numberOfLines = 1
+            priceLabel.snp.makeConstraints { make in
+                make.right.equalTo(self).inset(leftRight)
+                make.left.equalTo(priceTitleLabel.snp.right).inset(-10)
+                make.top.bottom.equalTo(self).inset(topBottom)
+            }
+        }
+    }
+
+    override class var cardId: String? {
+        return "basic_Price_20171219"
+    }
+}
+
 class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
     private let websiteTitleLabel = UILabel()
     private let websiteLabel = UILabel()

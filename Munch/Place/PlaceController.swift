@@ -252,11 +252,11 @@ fileprivate class PlaceBottomView: UIView {
 
         if let hours = place.hours, !hours.isEmpty {
             let businessHours = BusinessHour(hours: hours)
-            var time = businessHours.todayTime
+            let time = businessHours.todayTime
             if time.lowercased() == "closed" {
                 openingHours.text = "Closed Now"
             } else {
-                openingHours.text = businessHours.todayTime
+                openingHours.text = time
             }
 
         }
@@ -344,6 +344,7 @@ extension PlaceViewController {
         register(PlaceHeaderAboutCard.self)
         register(PlaceBasicDescriptionCard.self)
         register(PlaceBasicPhoneCard.self)
+        register(PlaceBasicPriceCard.self)
         register(PlaceBasicWebsiteCard.self)
     }
 
