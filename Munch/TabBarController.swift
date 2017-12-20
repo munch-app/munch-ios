@@ -10,6 +10,8 @@ import Foundation
 import UIKit
 import ESTabBarController_swift
 
+import Auth0
+
 /**
  Initial view provider
  */
@@ -54,33 +56,39 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
         self.viewControllers = controllers
     }
     
-//    override func viewWillLayoutSubviews() {
-//        Might need to optimize for iPhone X
-//        var tabFrame = self.tabBar.frame
-//        tabFrame.size.height = 44
-//        tabFrame.origin.y = self.view.frame.size.height - 44
-//        self.tabBar.frame = tabFrame
-//    }
-    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-        if (self.previousController == viewController) {
-            sameTabCounter += 1
 
-            if (sameTabCounter >= 2) {
-                if let navigation = viewController as? UINavigationController {
-                    if let controller = navigation.topViewController as? SearchController {
-                        controller.scrollsToTop(animated: true)
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        if (viewController is AccountController) {
+            if (CredentialsManager(authentication: Auth0.authentication()).hasValid()) {
+                return true
+            }
+
+            // If user not authenticated, show boarding controller
+            let boarding = AccountBoardingController()
+            self.present(boarding, animated: true)
+            return false
+        }
+
+        if (viewController is SearchController) {
+            if (self.previousController == viewController) {
+                sameTabCounter += 1
+
+                if (sameTabCounter >= 2) {
+                    if let navigation = viewController as? UINavigationController {
+                        if let controller = navigation.topViewController as? SearchController {
+                            controller.scrollsToTop(animated: true)
+                        }
                     }
                 }
+            } else {
+                sameTabCounter = 0
             }
-        } else {
-            sameTabCounter = 0
+            self.previousController = viewController
         }
-        self.previousController = viewController
+
         return true
     }
 }

@@ -2,7 +2,18 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "icons8-place-marker (1).pdf"
+      "filename" : "icons8-map-pin-40.png",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "icons8-map-pin-80.png",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "icons8-map-pin-120.png",
+      "scale" : "3x"
     }
   ],
   "info" : {

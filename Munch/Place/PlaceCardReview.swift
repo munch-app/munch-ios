@@ -12,7 +12,7 @@ import SnapKit
 
 class PlaceHeaderReviewCard: PlaceTitleCardView {
     override func didLoad(card: PlaceCard) {
-        self.title = "Reviews"
+        self.title = "Review"
     }
 
     override class var cardId: String? {

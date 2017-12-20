@@ -340,6 +340,10 @@ extension PlaceViewController {
         register(PlaceHeaderReviewCard.self)
         register(PlaceVendorFacebookReviewCard.self)
 
+        // Register Menu Cards
+        register(PlaceHeaderMenuCard.self)
+        register(PlaceVendorMenuImageCard.self)
+
         // Register About Cards
         register(PlaceHeaderAboutCard.self)
         register(PlaceBasicDescriptionCard.self)
