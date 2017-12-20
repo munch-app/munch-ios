@@ -72,21 +72,18 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
             return false
         }
 
-        if (viewController is SearchController) {
-            if (self.previousController == viewController) {
-                sameTabCounter += 1
-
-                if (sameTabCounter >= 2) {
-                    if let navigation = viewController as? UINavigationController {
-                        if let controller = navigation.topViewController as? SearchController {
-                            controller.scrollsToTop(animated: true)
-                        }
+        if let navigation = viewController as? UINavigationController {
+            if let controller = navigation.topViewController as? SearchController {
+                if (self.previousController == viewController) {
+                    sameTabCounter += 1
+                    if (sameTabCounter >= 2) {
+                        controller.scrollsToTop(animated: true)
                     }
+                } else {
+                    sameTabCounter = 0
                 }
-            } else {
-                sameTabCounter = 0
+                self.previousController = viewController
             }
-            self.previousController = viewController
         }
 
         return true

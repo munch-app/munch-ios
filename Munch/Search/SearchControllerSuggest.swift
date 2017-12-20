@@ -178,7 +178,7 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
 
         switch item {
         case let .place(place):
-            cell.render(title: place.name, type: "PLACE")
+            cell.render(title: place.name, type: "RESTAURANT")
         case let .location(location):
             cell.render(title: location.name, type: "LOCATION")
         case let .tag(tag):

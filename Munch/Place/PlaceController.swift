@@ -35,10 +35,16 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
         // Make navigation bar transparent, bar must be hidden
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
     }
 
     override func viewDidLoad() {

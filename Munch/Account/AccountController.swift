@@ -47,6 +47,8 @@ class AccountProfileController: UIViewController {
             let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
             if (credentialsManager.hasValid()) {
                 self.reloadProfile(credentialsManager: credentialsManager)
+            } else {
+                self.alert(title: "User Not Authenticated", message: "User should be authenticated")
             }
         }
     }

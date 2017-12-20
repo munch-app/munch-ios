@@ -116,6 +116,7 @@ fileprivate class PlaceMenuImageCardCell: UICollectionViewCell {
         super.init(frame: frame)
         self.addSubview(imageView)
 
+        imageView.layer.cornerRadius = 2
         imageView.snp.makeConstraints { make in
             make.edges.equalTo(self)
         }
