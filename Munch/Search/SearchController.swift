@@ -245,14 +245,7 @@ extension SearchController {
                 return cardView as! UITableViewCell
             }
         case 2: // Loading card
-            if let cardView = cardTableView.dequeueReusableCell(withIdentifier: SearchStaticLoadingCard.cardId) as? SearchStaticLoadingCard {
-                if self.cardManager?.more ?? false {
-                    cardView.startAnimating()
-                } else {
-                    cardView.stopAnimating()
-                }
-                return cardView
-            }
+            return cardTableView.dequeueReusableCell(withIdentifier: SearchStaticLoadingCard.cardId)!
         default: break
         }
 
@@ -296,7 +289,12 @@ extension SearchController {
 
                 DispatchQueue.main.async {
                     if (meta.isOk()) {
-                        self.cardTableView.reloadData()
+                        if (manager.more) {
+                            self.cardTableView.reloadData()
+                        } else {
+                            let cell = self.cardTableView.cellForRow(at: .init(row: 0, section: 2)) as? SearchStaticLoadingCard
+                            cell?.stopAnimating()
+                        }
                     } else {
                         self.present(meta.createAlert(), animated: true)
                     }
