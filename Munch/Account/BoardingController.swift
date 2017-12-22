@@ -59,7 +59,7 @@ class AccountBoardingController: UIViewController {
     }
 
     private func initViews() {
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .black
         self.view.addSubview(collectionView)
         self.view.addSubview(headerView)
         self.view.addSubview(headerIconLabel)
@@ -84,7 +84,8 @@ class AccountBoardingController: UIViewController {
         }
 
         bottomView.snp.makeConstraints { make in
-            make.bottom.left.right.equalTo(self.view)
+            make.left.right.equalTo(self.view)
+            make.bottom.equalTo(self.view.safeArea.bottom)
         }
     }
 
@@ -150,7 +151,7 @@ class AccountBoardingController: UIViewController {
 
         override init(frame: CGRect = CGRect.zero) {
             super.init(frame: frame)
-            self.backgroundColor = .white
+            self.backgroundColor = .black
             self.addSubview(signUp)
             self.addSubview(signIn)
 

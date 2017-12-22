@@ -42,11 +42,6 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         navigationController?.navigationBar.shadowImage = UIImage()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         self.registerCards()

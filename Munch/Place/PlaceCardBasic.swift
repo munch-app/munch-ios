@@ -617,7 +617,7 @@ fileprivate class AddressLabel: UIView {
         }
 
         if let nearestTrain = card["nearestTrain"].string {
-            line.append(nearestTrain + " MRT")
+            line.append("Near " + nearestTrain + " MRT")
         }
 
         lineTwoLabel.text = line.joined(separator: " • ")

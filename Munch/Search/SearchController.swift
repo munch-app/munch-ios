@@ -11,6 +11,18 @@ import UIKit
 
 import SnapKit
 
+class SearchNavigationalController: UINavigationController, UINavigationControllerDelegate {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.delegate = self
+    }
+
+    // Fix bug when pop gesture is enabled for the root controller
+    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        self.interactivePopGestureRecognizer?.isEnabled = self.viewControllers.count > 1
+    }
+}
+
 class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var cardTableView: UITableView!
     var headerView: SearchHeaderView!
