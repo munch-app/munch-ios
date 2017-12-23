@@ -574,35 +574,7 @@ fileprivate class AddressLabel: UIView {
     }
 
     private func render(lineOne card: PlaceCard) {
-        var line = [NSAttributedString]()
-
-        if let street = card["street"].string {
-            line.append(street.set(style: .default {
-                $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.medium))
-            }
-            ))
-        }
-
-        if let unitNumber = card["unitNumber"].string {
-            if unitNumber.hasPrefix("#") {
-                line.append(NSAttributedString(string: unitNumber))
-            } else {
-                line.append(NSAttributedString(string: "#\(unitNumber)"))
-            }
-        }
-
-        if let city = card["city"].string, let postal = card["postal"].string {
-            line.append(NSAttributedString(string: "\(city) \(postal)"))
-        }
-
-        if (!line.isEmpty) {
-            let attrString = NSMutableAttributedString(attributedString: line[0])
-            for string in line.dropFirst() {
-                attrString.append(NSAttributedString(string: ", "))
-                attrString.append(string)
-            }
-            lineOneLabel.attributedText = attrString
-        } else if let address = card["address"].string {
+        if let address = card["address"].string {
             lineOneLabel.text = address
         }
     }
