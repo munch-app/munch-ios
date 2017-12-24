@@ -27,10 +27,14 @@ class PlaceBasicImageBannerCard: PlaceCardView {
         imageGradientView.backgroundColor = UIColor.clear
         return imageGradientView
     }()
-    private let pageTitleView: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12.0, weight: .medium)
-        label.textColor = UIColor(hex: "ffffff")
+    private let pageTitleView: UIButton = {
+        let label = UIButton()
+        label.titleLabel?.font = UIFont.systemFont(ofSize: 11.0, weight: .regular)
+        label.setTitleColor(.white, for: .normal)
+        label.backgroundColor = UIColor.black.withAlphaComponent(0.55)
+        label.contentEdgeInsets = UIEdgeInsets(topBottom: 3, leftRight: 6)
+        label.layer.masksToBounds = true
+        label.layer.cornerRadius = 9
         return label
     }()
     private let collectionView: UICollectionView = {
@@ -78,7 +82,7 @@ class PlaceBasicImageBannerCard: PlaceCardView {
         }
 
         self.images = card["images"].map({ SourcedImage(json: $0.1) })
-        // self.pageTitleView.text = "1|\(self.images.count)"
+        self.pageTitleView.setTitle("1/\(self.images.count)", for: .normal)
     }
 
     override class var cardId: String? {
@@ -100,7 +104,7 @@ extension PlaceBasicImageBannerCard: UICollectionViewDataSource, UICollectionVie
 
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if let indexPath = self.collectionView.indexPathsForVisibleItems.get(0) {
-            self.pageTitleView.text = "\(indexPath.row + 1)|\(self.images.count)"
+            self.pageTitleView.setTitle("\(indexPath.row + 1)/\(self.images.count)", for: .normal)
         }
     }
 }
