@@ -58,12 +58,16 @@ extension UILabel {
 }
 
 extension UIView {
-    func hairlineShadow(height: CGFloat = 1.0) {
+    func hairlineShadow(width: CGFloat = -1.0, height: CGFloat = 1.0) {
+        self.shadow(width: width, height: height, radius: 1.0, opacity: 0.52)
+    }
+
+    func shadow(width: CGFloat, height: CGFloat, radius: CGFloat, opacity: Float, color: UIColor = UIColor.black.withAlphaComponent(0.26)) {
         self.layer.masksToBounds = false
-        self.layer.shadowColor = UIColor.black.withAlphaComponent(0.26).cgColor
-        self.layer.shadowOpacity = 0.52
-        self.layer.shadowOffset = CGSize(width: -1, height: height)
-        self.layer.shadowRadius = 1
+        self.layer.shadowColor = color.cgColor
+        self.layer.shadowOpacity = opacity
+        self.layer.shadowOffset = CGSize(width: width, height: height)
+        self.layer.shadowRadius = radius
 
         self.layer.shadowPath = UIBezierPath(rect: self.bounds).cgPath
         self.layer.shouldRasterize = true
@@ -78,8 +82,8 @@ extension UIView {
         if #available(iOS 11.0, *) {
             return self.safeAreaLayoutGuide.snp
         }
-        let guide = UILayoutGuide()
         // TODO 20 top in the future
+        let guide = UILayoutGuide()
         return guide.snp
     }
 

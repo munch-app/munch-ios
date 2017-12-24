@@ -116,18 +116,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ddd-UH-ZV9">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ddd-UH-ZV9">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstAttribute="trailing" secondItem="ddd-UH-ZV9" secondAttribute="trailing" id="73C-LE-gVL"/>
-                            <constraint firstItem="Z4F-6q-SWi" firstAttribute="top" secondItem="ddd-UH-ZV9" secondAttribute="bottom" id="ByB-Dj-0TW"/>
-                            <constraint firstItem="ddd-UH-ZV9" firstAttribute="leading" secondItem="nJg-ji-abr" secondAttribute="leading" id="eUA-zH-T0N"/>
-                            <constraint firstItem="ddd-UH-ZV9" firstAttribute="top" secondItem="nJg-ji-abr" secondAttribute="top" id="shk-Gk-JZx"/>
-                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="2Su-VP-EC8"/>
                     <nil key="simulatedTopBarMetrics"/>

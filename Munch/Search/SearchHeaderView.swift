@@ -132,6 +132,10 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
         }
     }
 
+    func getPrevious() -> SearchQuery {
+        return searchQueryHistories[searchQueryHistories.count - 2]
+    }
+
     func hasPrevious() -> Bool {
         if self.searchQueryHistories.count > 1 {
             return true

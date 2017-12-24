@@ -25,8 +25,11 @@ class SearchNavigationalController: UINavigationController, UINavigationControll
 
 class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var cardTableView: UITableView!
-    var headerView: SearchHeaderView!
-    let refreshControl = UIRefreshControl()
+    private var headerView: SearchHeaderView!
+    private let refreshControl = UIRefreshControl()
+
+    private let backIndicatorView = BackIndicatorView()
+    private var backIndicatorConstraint: Constraint!
 
     var cardManager: SearchCardManager?
 
@@ -77,8 +80,19 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     private func initViews() {
         self.headerView = SearchHeaderView(controller: self)
         self.view.addSubview(headerView)
+        self.view.addSubview(backIndicatorView)
+
+        cardTableView.snp.makeConstraints { make in
+            make.edges.equalTo(self.view)
+        }
+
         headerView.snp.makeConstraints { make in
             make.top.left.right.equalTo(self.view)
+        }
+
+        backIndicatorView.snp.makeConstraints { make in
+            self.backIndicatorConstraint = make.left.equalTo(self.view).inset(-66).constraint
+            make.top.equalTo(headerView.snp.bottom).inset(-12)
         }
 
         self.cardTableView.separatorStyle = .none
@@ -177,22 +191,70 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         self.headerView.render(query: searchQuery)
     }
 
+    var backProgress: CGFloat = 0.0
+
     @objc func screenEdgeSwiped(_ recognizer: UIScreenEdgePanGestureRecognizer) {
-//        if self.headerView.hasPrevious() {
-//
-//        }
-//
-//        switch recognizer.state {
-//        case .began:
-//            fallthrough
-//        case .changed:
-//            print("Changed: \(recognizer.translation(in: self.view).x)")
-//        case .ended:
-//            // More than half == good
-//            print("Ended: \(recognizer.translation(in: self.view).x)")
-//        default:
-//            return
-//        }
+        // Offset by 10
+        func getIndicatorOffset() -> CGFloat {
+            let x = recognizer.translation(in: self.view).x
+            let actual = (x - 10.0) / 2.2
+            return actual > 66.0 ? 0 : actual - 66.0
+        }
+
+        if self.headerView.hasPrevious() {
+            switch recognizer.state {
+            case .began:
+                fallthrough
+            case .changed:
+                let offset = getIndicatorOffset()
+                if offset == 0.0 && offset != backIndicatorConstraint.layoutConstraints[0].constant {
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                }
+                backIndicatorConstraint.update(offset: offset)
+                cardTableView.alpha = 0.6 + (-offset / 66.0) * 0.4
+            case .ended:
+                if (backIndicatorConstraint.layoutConstraints[0].constant == 0.0) {
+                    self.headerView.renderPrevious()
+                }
+                fallthrough
+            default:
+                cardTableView.alpha = 1.0
+                backIndicatorConstraint.update(offset: -66)
+                return
+            }
+        }
+    }
+
+    fileprivate class BackIndicatorView: UIView {
+        let imageView: UIImageView = {
+            let imageView = UIImageView()
+            imageView.tintColor = .black
+            imageView.image = UIImage(named: "Search-Back")
+            return imageView
+        }()
+
+        init() {
+            super.init(frame: .zero)
+            self.addSubview(imageView)
+            self.backgroundColor = .white
+            self.layer.cornerRadius = 3
+            self.layer.masksToBounds = true
+
+            imageView.snp.makeConstraints { make in
+                make.height.width.equalTo(32)
+                make.left.equalTo(self).inset(24)
+                make.top.bottom.right.equalTo(self).inset(10)
+            }
+        }
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            self.shadow(width: 0, height: 0, radius: 3, opacity: 1.0)
+        }
+
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
     }
 }
 
