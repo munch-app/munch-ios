@@ -82,7 +82,7 @@ class PlaceBasicImageBannerCard: PlaceCardView {
         }
 
         self.images = card["images"].map({ SourcedImage(json: $0.1) })
-        self.pageTitleView.setTitle("1/\(self.images.count)", for: .normal)
+        self.pageTitleView.setTitle("\(self.images.isEmpty ? 0 : 1)/\(self.images.count)", for: .normal)
     }
 
     override class var cardId: String? {
@@ -519,7 +519,7 @@ class PlaceBasicAddressCard: PlaceCardView {
         self.addSubview(addressLabel)
         self.address = card["address"].string
 
-        addressLabel.render(card: card)
+        addressLabel.render(card: card, simple: true)
         addressLabel.snp.makeConstraints { make in
             make.top.bottom.equalTo(self).inset(topBottom)
             make.left.right.equalTo(self).inset(leftRight)
@@ -568,8 +568,8 @@ fileprivate class AddressLabel: UIView {
         }
     }
 
-    func render(card: PlaceCard) {
-        render(lineOne: card)
+    func render(card: PlaceCard, simple: Bool) {
+        render(lineOne: card, simple: simple)
         render(lineTwo: card)
     }
 
@@ -577,8 +577,22 @@ fileprivate class AddressLabel: UIView {
         super.init(coder: aDecoder)
     }
 
-    private func render(lineOne card: PlaceCard) {
-        if let address = card["address"].string {
+    private func render(lineOne card: PlaceCard, simple: Bool) {
+        if (simple) {
+            var line = NSMutableAttributedString()
+
+            if let street = card["street"].string {
+                line.append(string: street, style: .default {
+                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15.0, weight: .medium))
+                })
+            }
+            if let unitNumber = card["unitNumber"].string {
+                line.append(string: ", " + unitNumber, style: .default {
+                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15.0, weight: .regular))
+                })
+            }
+            lineOneLabel.attributedText = line
+        } else if let address = card["address"].string {
             lineOneLabel.text = address
         }
     }
@@ -623,7 +637,7 @@ class PlaceBasicLocationCard: PlaceCardView {
         self.addSubview(pinImageView)
         self.address = card["address"].string
 
-        addressLabel.render(card: card)
+        addressLabel.render(card: card, simple: false)
         addressLabel.snp.makeConstraints { make in
             make.top.equalTo(self).inset(topBottom)
             make.left.right.equalTo(self).inset(leftRight)
