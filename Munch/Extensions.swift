@@ -74,6 +74,13 @@ extension UIView {
 
         self.layer.rasterizationScale = UIScreen.main.scale
     }
+
+    func roundCorners(_ corners: UIRectCorner, radius: CGFloat) {
+        let path = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        let mask = CAShapeLayer()
+        mask.path = path.cgPath
+        self.layer.mask = mask
+    }
 }
 
 extension UIView {
@@ -85,13 +92,6 @@ extension UIView {
         // TODO 20 top in the future
         let guide = UILayoutGuide()
         return guide.snp
-    }
-
-    func roundCorners(_ corners: UIRectCorner, radius: CGFloat) {
-        let path = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
-        let mask = CAShapeLayer()
-        mask.path = path.cgPath
-        self.layer.mask = mask
     }
 }
 

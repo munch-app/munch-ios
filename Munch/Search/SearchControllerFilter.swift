@@ -18,8 +18,22 @@ class SearchFilterController: UIViewController {
     var searchQuery: SearchQuery!
 
     fileprivate let headerView = SearchFilterHeaderView()
-    fileprivate let tableView = TPKeyboardAvoidingTableView()
+    fileprivate let tableView: TPKeyboardAvoidingTableView = {
+        let tableView = TPKeyboardAvoidingTableView()
+        tableView.separatorStyle = .none
+        tableView.separatorInset.left = 24
+        tableView.allowsSelection = true
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.sectionHeaderHeight = 44
+        tableView.estimatedRowHeight = 50
+
+        tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 10))
+        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 12))
+        return tableView
+    }()
     fileprivate let applyView = SearchFilterApplyView()
+
+    fileprivate var filterManager: SearchFilterManager!
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -31,25 +45,29 @@ class SearchFilterController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        self.filterManager = SearchFilterManager(searchQuery: searchQuery)
         self.applyView.render(searchQuery: searchQuery)
         self.tableView.reloadData()
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.filterManager = SearchFilterManager(searchQuery: searchQuery)
         self.initViews()
-        self.linkActions()
         self.registerCell()
 
         self.tableView.delegate = self
         self.tableView.dataSource = self
-        self.applyView.render(searchQuery: searchQuery)
+
+        self.headerView.cancelButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
+        self.headerView.resetButton.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
+        self.applyView.applyBtn.addTarget(self, action: #selector(actionApply(_:)), for: .touchUpInside)
     }
 
     private func initViews() {
-        view.addSubview(tableView)
-        view.addSubview(headerView)
-        view.addSubview(applyView)
+        self.view.addSubview(tableView)
+        self.view.addSubview(headerView)
+        self.view.addSubview(applyView)
 
         headerView.snp.makeConstraints { (make) in
             make.top.equalTo(self.view)
@@ -57,14 +75,6 @@ class SearchFilterController: UIViewController {
         }
 
         tableView.separatorStyle = .none
-        tableView.separatorInset.left = 24
-        tableView.allowsSelection = true
-        tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.sectionHeaderHeight = 44
-        tableView.estimatedRowHeight = 50
-
-        tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 10))
-        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 12))
         tableView.snp.makeConstraints { make in
             make.left.right.equalTo(self.view)
             make.top.equalTo(self.headerView.snp.bottom)
@@ -74,12 +84,6 @@ class SearchFilterController: UIViewController {
         applyView.snp.makeConstraints { (make) in
             make.left.right.bottom.equalTo(self.view)
         }
-    }
-
-    private func linkActions() {
-        self.headerView.cancelButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
-        self.headerView.resetButton.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
-        self.applyView.applyBtn.addTarget(self, action: #selector(actionApply(_:)), for: .touchUpInside)
     }
 
     @objc func actionReset(_ sender: Any) {
@@ -99,169 +103,46 @@ class SearchFilterController: UIViewController {
     }
 }
 
-fileprivate enum SearchFilterType {
-    case tag(String)
-    case seeMore(String, [String])
-}
-
 extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
-    private var items: [(String?, [SearchFilterType])] {
-        return [
-            // TODO Need to implement open now
-//            ("Timing", [SearchFilterType.tag("Breakfast"),
-//                        SearchFilterType.tag("Lunch"),
-//                        SearchFilterType.tag("Dinner"),
-//                        SearchFilterType.tag("Supper")]),
-            ("Cuisine", [SearchFilterType.tag("Singaporean"),
-                         SearchFilterType.tag("Japanese"),
-                         SearchFilterType.tag("Italian"),
-                         SearchFilterType.tag("Thai"),
-                         SearchFilterType.tag("Chinese"),
-                         SearchFilterType.tag("Korean"),
-                         SearchFilterType.tag("Mexican"),
-                         SearchFilterType.tag("Mediterranean"),
-                         SearchFilterType.seeMore("Cuisine", [
-                             "African",
-                             "American",
-                             "Arabic",
-                             "Argentinean",
-                             "Asian",
-                             "Australian",
-                             "Bangladeshi",
-                             "Beijing",
-                             "Belgian",
-                             "Brazilian",
-                             "Burmese",
-                             "Cambodian",
-                             "Cantonese",
-                             "Caribbean",
-                             "Chinese",
-                             "Cuban",
-                             "Dongbei",
-                             "Dutch",
-                             "English",
-                             "Eurasian",
-                             "European",
-                             "Foochow",
-                             "French",
-                             "Fujian",
-                             "Fusion",
-                             "German",
-                             "Greek",
-                             "Hainanese",
-                             "Hakka",
-                             "Hokkien",
-                             "Hong Kong",
-                             "Indian",
-                             "Indochinese",
-                             "International",
-                             "Iranian",
-                             "Irish",
-                             "Italian",
-                             "Japanese",
-                             "Korean",
-                             "Latin American",
-                             "Lebanese",
-                             "Malay Indonesian",
-                             "Mediterranean",
-                             "Mexican",
-                             "Middle Eastern",
-                             "Modern European",
-                             "Mongolian",
-                             "Moroccan",
-                             "Nonya Peranakan",
-                             "North Indian",
-                             "Pakistani",
-                             "Portuguese",
-                             "Russian",
-                             "Shanghainese",
-                             "Sze chuan",
-                             "Singaporean",
-                             "South Indian",
-                             "Spanish",
-                             "Swiss",
-                             "Taiwanese",
-                             "Teochew",
-                             "Thai",
-                             "Turkish",
-                             "Vietnamese",
-                             "Western",
-                         ])]),
-            ("Establishment", [SearchFilterType.tag("Bars & Pubs"),
-                               SearchFilterType.tag("Hawker"),
-                               SearchFilterType.tag("Café"),
-                               SearchFilterType.tag("Snacks"),
-                               SearchFilterType.seeMore("Establishment", [
-                                   "Bakery",
-                                   "Buffet",
-                                   "Café",
-                                   "Dessert",
-                                   "Fast Food",
-                                   "Hawker",
-                                   "Restaurant",
-                                   "High Tea",
-                                   "Drinks",
-                                   "Snacks",
-                               ])]),
-            ("Amenities", [SearchFilterType.tag("Child-Friendly"),
-                           SearchFilterType.tag("Halal"),
-                           SearchFilterType.tag("Large Group"),
-                           SearchFilterType.tag("Pet-Friendly"),
-                           SearchFilterType.seeMore("Amenities", [
-                               "Child-Friendly",
-                               "Vegetarian-Friendly",
-                               "Healthy",
-                               "Pet-Friendly",
-                               "Halal",
-                               "Large Group",
-                           ])]),
-            ("Occasion", [SearchFilterType.tag("Brunch"),
-                          SearchFilterType.tag("Romantic"),
-                          SearchFilterType.tag("Business Meal"),
-                          SearchFilterType.tag("Football Screening"),
-                          SearchFilterType.seeMore("Occasion", [
-                              "Brunch",
-                              "Romantic",
-                              "Business Meal",
-                              "Supper",
-                          ])])
-        ]
-    }
-
     func registerCell() {
         tableView.register(SearchFilterTagCell.self, forCellReuseIdentifier: SearchFilterTagCell.id)
         tableView.register(SearchFilterTagMoreCell.self, forCellReuseIdentifier: SearchFilterTagMoreCell.id)
+        tableView.register(SearchFilterLocationCell.self, forCellReuseIdentifier: SearchFilterLocationCell.id)
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return items.count
+        return filterManager.items.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items[section].1.count
+        return filterManager.items[section].1.count
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return items[section].0
+        return filterManager.items[section].0
     }
 
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header = view as! UITableViewHeaderFooterView
         header.tintColor = .white
-        header.textLabel!.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.medium)
-        header.textLabel!.textColor = UIColor.black.withAlphaComponent(0.85)
+        header.textLabel!.font = UIFont.systemFont(ofSize: 22, weight: UIFont.Weight.medium)
+        header.textLabel!.textColor = UIColor.black.withAlphaComponent(0.75)
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let item = items[indexPath.section].1[indexPath.row]
+        let item = filterManager.items[indexPath.section].1[indexPath.row]
         let selectedTags = self.searchQuery.filter.tag.positives
 
         switch item {
+        case .location:
+            let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterLocationCell.id) as! SearchFilterLocationCell
+            cell.controller = self
+            return cell
         case let .tag(tag):
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterTagCell.id) as! SearchFilterTagCell
             cell.render(title: tag, selected: selectedTags.contains(tag))
             return cell
-        case let .seeMore(name, _):
+        case let .seeMore(name):
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterTagMoreCell.id) as! SearchFilterTagMoreCell
             cell.render(text: "More \(name)")
             return cell
@@ -270,7 +151,7 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let item = items[indexPath.section].1[indexPath.row]
+        let item = filterManager.items[indexPath.section].1[indexPath.row]
 
         switch item {
         case let .tag(tag):
@@ -284,11 +165,11 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
                 tableView.endUpdates()
                 self.applyView.render(searchQuery: searchQuery)
             }
-        case let .seeMore(name, tags):
-            let controller = SearchFilterMoreController()
-            controller.seeMore = (name, tags.sorted())
-            controller.searchQuery = searchQuery
+        case let .seeMore(type):
+            let controller = SearchFilterMoreController(searchQuery: searchQuery, type: type)
             self.navigationController?.pushViewController(controller, animated: true)
+        default:
+            return
         }
     }
 }
@@ -415,9 +296,213 @@ fileprivate class SearchFilterApplyView: UIView {
     }
 }
 
+fileprivate class SearchFilterLocationCell: UITableViewCell {
+    private let headerLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Location"
+        label.font = UIFont.systemFont(ofSize: 22, weight: .medium)
+        label.textColor = UIColor.black.withAlphaComponent(0.75)
+        return label
+    }()
+    private let moreButton: UIButton = {
+        let button = UIButton()
+        button.tintColor = .black
+        button.setImage(UIImage(named: "Search-Right-Arrow"), for: .normal)
+
+        button.setTitle("MORE", for: .normal)
+        button.setTitleColor(UIColor.black.withAlphaComponent(0.85), for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 11, weight: .regular)
+        button.contentEdgeInsets.right = 20
+        button.titleEdgeInsets.right = -2
+
+        button.contentHorizontalAlignment = .right
+        button.semanticContentAttribute = .forceRightToLeft
+        return button
+    }()
+    private let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+        layout.itemSize = CGSize(width: 100, height: 90)
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 18
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.backgroundColor = UIColor.white
+        collectionView.register(SearchFilterLocationGridCell.self, forCellWithReuseIdentifier: "SearchFilterLocationGridCell")
+        return collectionView
+    }()
+
+    var controller: SearchFilterController!
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(moreButton)
+        self.addSubview(headerLabel)
+        self.addSubview(collectionView)
+
+        self.collectionView.dataSource = self
+        self.collectionView.delegate = self
+
+        moreButton.snp.makeConstraints { make in
+            make.right.equalTo(self)
+            make.width.equalTo(80)
+            make.top.bottom.equalTo(headerLabel)
+        }
+
+        headerLabel.snp.makeConstraints { (make) in
+            make.left.equalTo(self).inset(24)
+            make.right.equalTo(moreButton.snp.left)
+            make.top.equalTo(self).inset(12)
+        }
+
+        collectionView.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.top.equalTo(headerLabel.snp.bottom).inset(-12)
+            make.bottom.equalTo(self).inset(10)
+            make.height.equalTo(100)
+        }
+    }
+
+    func actionMore(_ sender: Any) {
+
+        // TODO
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    class var id: String {
+        return "SearchFilterLocationCell"
+    }
+}
+
+extension SearchFilterLocationCell: UICollectionViewDataSource, UICollectionViewDelegate {
+    private var items: [LocationType] {
+        return [LocationType.nearby, LocationType.anywhere] + controller.filterManager.recentLocations
+    }
+
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return items.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let locationType = items[indexPath.row]
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchFilterLocationGridCell", for: indexPath) as! SearchFilterLocationGridCell
+
+        switch locationType {
+        case .nearby:
+            cell.render(text: "Nearby", image: UIImage(named: "Search-Location-Nearby"))
+        case .anywhere:
+            cell.render(text: "Anywhere", image: UIImage(named: "Search-Location-Anywhere"))
+        case let .recentLocation(location):
+            cell.render(text: location.name, image: UIImage(named: "Search-Location-Recent"))
+        case let .recentContainer(container):
+            cell.render(text: container.name, image: UIImage(named: "Search-Location-Recent"))
+        case let .location(location):
+            cell.render(text: location.name, image: nil)
+        case let .container(container):
+            cell.render(text: container.name, image: nil)
+        }
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let locationType = items[indexPath.row]
+        controller.searchQuery.filter.location = nil
+        controller.searchQuery.filter.containers = nil
+
+        switch locationType {
+        case .nearby:
+            break
+        case .anywhere:
+            controller.searchQuery.filter.location = SearchFilterManager.anywhere
+        case let .recentLocation(location):
+            controller.searchQuery.filter.location = location
+        case let .recentContainer(container):
+            controller.searchQuery.filter.containers = [container]
+        case let .location(location):
+            controller.searchQuery.filter.location = location
+        case let .container(container):
+            controller.searchQuery.filter.containers = [container]
+        }
+        controller.actionApply(collectionView)
+    }
+}
+
+fileprivate class SearchFilterLocationGridCell: UICollectionViewCell {
+    let containerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(hex: "F8F8F8")
+        return view
+    }()
+    let imageView: MunchImageView = {
+        let imageView = MunchImageView()
+        imageView.tintColor = UIColor(hex: "333333")
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+
+    let nameLabel: UITextView = {
+        let nameLabel = UITextView()
+        nameLabel.backgroundColor = .white
+        nameLabel.font = UIFont.systemFont(ofSize: 13.0, weight: .semibold)
+        nameLabel.textColor = UIColor.black.withAlphaComponent(0.72)
+
+        nameLabel.textContainer.maximumNumberOfLines = 1
+        nameLabel.textContainer.lineBreakMode = .byTruncatingTail
+        nameLabel.textContainerInset = UIEdgeInsets(topBottom: 6, leftRight: 4)
+        nameLabel.isUserInteractionEnabled = false
+        return nameLabel
+    }()
+
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        self.addSubview(containerView)
+        containerView.addSubview(imageView)
+        containerView.addSubview(nameLabel)
+
+        imageView.snp.makeConstraints { make in
+            make.left.right.equalTo(containerView).inset(35)
+            make.top.equalTo(containerView)
+            make.bottom.equalTo(nameLabel.snp.top)
+        }
+
+        nameLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(containerView)
+            make.bottom.equalTo(containerView)
+            make.height.equalTo(30)
+        }
+
+        containerView.snp.makeConstraints { make in
+            make.edges.equalTo(self)
+        }
+        self.layoutIfNeeded()
+    }
+
+    fileprivate override func layoutSubviews() {
+        super.layoutSubviews()
+        containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.5)
+        imageView.roundCorners([.topLeft, .topRight], radius: 3)
+        nameLabel.roundCorners([.bottomLeft, .bottomRight], radius: 3)
+    }
+
+    func render(text: String?, image: UIImage?) {
+        nameLabel.text = text
+        imageView.image = image
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 fileprivate class SearchFilterTagCell: UITableViewCell {
     let titleLabel = UILabel()
-    let checkButton = BEMCheckBox(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+    let checkButton = BEMCheckBox(frame: CGRect(x: 0, y: 0, width: 26, height: 26))
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -433,9 +518,11 @@ fileprivate class SearchFilterTagCell: UITableViewCell {
         }
 
         checkButton.snp.makeConstraints { make in
-            make.top.bottom.equalTo(self).inset(9)
+            make.top.bottom.equalTo(self).inset(11)
             make.right.equalTo(self).inset(24)
         }
+        checkButton.boxType = .square
+        checkButton.cornerRadius = 1
         checkButton.lineWidth = 1.5
         checkButton.tintColor = UIColor.black.withAlphaComponent(0.6)
         checkButton.onCheckColor = .primary
@@ -473,7 +560,7 @@ fileprivate class SearchFilterTagMoreCell: UITableViewCell {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.addSubview(titleLabel)
-        titleLabel.font = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.regular)
+        titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         titleLabel.textColor = .primary600
         titleLabel.snp.makeConstraints { (make) in
             make.top.bottom.equalTo(self).inset(12)
@@ -494,53 +581,25 @@ fileprivate class SearchFilterTagMoreCell: UITableViewCell {
     }
 }
 
-class SearchLocationCell: UITableViewCell {
-    let titleLabel = UILabel()
-    let typeLabel = UILabel()
-
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.addSubview(titleLabel)
-        self.addSubview(typeLabel)
-
-        titleLabel.font = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
-        titleLabel.textColor = .black
-        titleLabel.snp.makeConstraints { (make) in
-            make.top.bottom.equalTo(self).inset(16)
-            make.left.equalTo(self).inset(24)
-            make.right.equalTo(typeLabel.snp.left).inset(-8)
-        }
-
-        typeLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.regular)
-        typeLabel.textColor = UIColor(hex: "686868")
-        typeLabel.textAlignment = .right
-        typeLabel.snp.makeConstraints { (make) in
-            make.right.equalTo(self).inset(24)
-            make.top.bottom.equalTo(self).inset(16)
-        }
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func render(title: String?, type: String? = nil) {
-        self.titleLabel.text = title
-        self.typeLabel.text = type
-    }
-
-    class var id: String {
-        return "SearchLocationCell"
-    }
-}
-
 fileprivate class SearchFilterMoreController: UIViewController, UIGestureRecognizerDelegate {
-    var searchQuery: SearchQuery!
-    var seeMore: (String, [String])!
+    var searchQuery: SearchQuery
+    let type: String
+    let tags: [String]
 
     let headerView = SearchFilterMoreHeaderView()
     let tableView = UITableView()
     let applyView = SearchFilterMoreApplyView()
+
+    init(searchQuery: SearchQuery, type: String) {
+        self.searchQuery = searchQuery
+        self.type = type
+        self.tags = SearchFilterManager(searchQuery: searchQuery).getMoreTypes(type: type)
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError()
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -553,7 +612,6 @@ fileprivate class SearchFilterMoreController: UIViewController, UIGestureRecogni
     override func viewDidLoad() {
         super.viewDidLoad()
         self.initViews()
-        self.linkActions()
         self.registerCell()
 
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
@@ -562,14 +620,18 @@ fileprivate class SearchFilterMoreController: UIViewController, UIGestureRecogni
         self.tableView.delegate = self
         self.tableView.dataSource = self
 
+        self.headerView.cancelButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
+        self.headerView.resetButton.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
+        self.applyView.applyBtn.addTarget(self, action: #selector(actionApply(_:)), for: .touchUpInside)
+
         self.applyView.render(searchQuery: searchQuery)
-        self.headerView.titleView.text = seeMore.0
+        self.headerView.titleView.text = type
     }
 
     private func initViews() {
-        view.addSubview(tableView)
-        view.addSubview(headerView)
-        view.addSubview(applyView)
+        self.view.addSubview(tableView)
+        self.view.addSubview(headerView)
+        self.view.addSubview(applyView)
 
         headerView.snp.makeConstraints { (make) in
             make.top.equalTo(self.view)
@@ -596,14 +658,8 @@ fileprivate class SearchFilterMoreController: UIViewController, UIGestureRecogni
         }
     }
 
-    private func linkActions() {
-        self.headerView.cancelButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
-        self.headerView.resetButton.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
-        self.applyView.applyBtn.addTarget(self, action: #selector(actionApply(_:)), for: .touchUpInside)
-    }
-
     @objc func actionReset(_ sender: Any) {
-        for tag in seeMore.1 {
+        for tag in tags {
             searchQuery.filter.tag.positives.remove(tag)
         }
         self.applyView.render(searchQuery: searchQuery)
@@ -715,12 +771,12 @@ extension SearchFilterMoreController: UITableViewDataSource, UITableViewDelegate
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return seeMore.1.count
+        return tags.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let selectedTags = self.searchQuery.filter.tag.positives
-        let tag = seeMore.1[indexPath.row]
+        let tag = tags[indexPath.row]
 
         let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterTagCell.id) as! SearchFilterTagCell
         cell.render(title: tag, selected: selectedTags.contains(tag))
@@ -729,7 +785,7 @@ extension SearchFilterMoreController: UITableViewDataSource, UITableViewDelegate
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let tag = seeMore.1[indexPath.row]
+        let tag = tags[indexPath.row]
 
         if let cell = tableView.cellForRow(at: indexPath) as? SearchFilterTagCell {
             tableView.beginUpdates()

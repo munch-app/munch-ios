@@ -13,13 +13,22 @@ import TPKeyboardAvoiding
 class SearchLocationController: UIViewController {
     var searchQuery: SearchQuery!
     let headerView = SearchLocationHeaderView()
-    let tableView = TPKeyboardAvoidingTableView()
+    let tableView: TPKeyboardAvoidingTableView = {
+        let tableView = TPKeyboardAvoidingTableView()
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.estimatedRowHeight = 50
 
-    let recentDatabase = RecentDatabase(name: "SearchLocation", maxItems: 3)
+        tableView.tableFooterView = UIView(frame: CGRect.zero)
+        tableView.contentInset.top = 0
+        tableView.contentInset.bottom = 12
+        tableView.separatorInset.left = 24
+        return tableView
+    }()
 
+    // PopularLocation & RecentLocation
+    var filterManager: SearchFilterManager!
+    // Suggestion Result
     var results: [LocationType]?
-    var recentLocations: [LocationType]!
-    var popularLocations: [LocationType]!
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -38,49 +47,23 @@ class SearchLocationController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.initViews()
+        self.registerCell()
+        self.view.addSubview(tableView)
+        self.view.addSubview(headerView)
 
-        self.popularLocations = readJson(forResource: "locations-popular")?
-                .flatMap({ Location(json: $0.1) })
-                .map({ LocationType.location($0) })
-
-        self.recentLocations = recentDatabase.get()
-                .flatMap({ $1 })
-                .flatMap({ SearchClient.parseResult(result: $0) })
-                .flatMap { result in
-                    if let location = result as? Location {
-                        return LocationType.recentLocation(location)
-                    } else if let container = result as? Container {
-                        return LocationType.recentContainer(container)
-                    } else {
-                        return nil
-                    }
-                }
+        self.filterManager = SearchFilterManager(searchQuery: searchQuery)
 
         self.tableView.delegate = self
         self.tableView.dataSource = self
 
         self.headerView.textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-        registerCell()
-    }
-
-    private func initViews() {
-        self.view.addSubview(tableView)
-        self.view.addSubview(headerView)
-
         self.headerView.cancelButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
+
         headerView.snp.makeConstraints { make in
             make.top.equalTo(self.view).inset(20)
             make.left.right.equalTo(self.view)
         }
 
-        self.tableView.rowHeight = UITableViewAutomaticDimension
-        self.tableView.estimatedRowHeight = 50
-
-        self.tableView.tableFooterView = UIView(frame: CGRect.zero)
-        self.tableView.contentInset.top = 0
-        self.tableView.contentInset.bottom = 12
-        self.tableView.separatorInset.left = 24
         tableView.snp.makeConstraints { make in
             make.left.right.equalTo(self.view)
             make.top.equalTo(self.headerView.snp.bottom)
@@ -117,39 +100,16 @@ class SearchLocationController: UIViewController {
             self.tableView.reloadData()
         }
     }
-
-    private func readJson(forResource resourceName: String) -> JSON? {
-        if let path = Bundle.main.path(forResource: resourceName, ofType: "json") {
-            do {
-                let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .alwaysMapped)
-                return try JSON(data: data)
-            } catch let error {
-                print("parse error: \(error.localizedDescription)")
-            }
-        }
-
-        print("Invalid json file/filename/path.")
-        return nil
-    }
 }
 
 extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
-    enum LocationType {
-        case nearby
-        case singapore
-        case recentLocation(Location)
-        case recentContainer(Container)
-        case location(Location)
-        case container(Container)
-    }
-
     private var items: [(String?, [LocationType])] {
         if let results = results {
             return [("SUGGESTIONS", results)]
         } else {
             return [
-                (nil, [LocationType.nearby, LocationType.singapore] + recentLocations),
-                ("POPULAR LOCATIONS", popularLocations ?? []),
+                (nil, [LocationType.nearby, LocationType.anywhere] + self.filterManager.recentLocations),
+                ("POPULAR LOCATIONS", self.filterManager.popularLocations ?? []),
             ]
         }
     }
@@ -184,7 +144,7 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
         switch item {
         case .nearby:
             cell.render(title: "Nearby")
-        case .singapore:
+        case .anywhere:
             cell.render(title: "Anywhere")
         case let .location(location):
             cell.render(title: location.name, type: "LOCATION")
@@ -200,43 +160,37 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        let item = items[indexPath.section].1[indexPath.row]
+        func select(result: SearchResult?, save: Bool) {
+            self.searchQuery.filter.location = nil
+            self.searchQuery.filter.containers = nil
 
-        func select(result: SearchResult, save: Bool) {
-            if let location = result as? Location {
-                self.searchQuery.filter.location = location
-                self.searchQuery.filter.containers = []
-
-                if save, let name = location.name {
-                    recentDatabase.put(text: name, dictionary: location.toParams())
+            if result == nil {
+                self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
+            } else if let location = result as? Location {
+                if save {
+                    self.filterManager.save(history: location)
                 }
+
+                self.searchQuery.filter.location = location
                 self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
             } else if let container = result as? Container {
-                self.searchQuery.filter.location = nil
-                self.searchQuery.filter.containers = [container]
-
-                if save, let name = container.name {
-                    recentDatabase.put(text: name, dictionary: container.toParams())
+                if save {
+                    self.filterManager.save(history: container)
                 }
+
+                self.searchQuery.filter.containers = [container]
                 self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
             }
         }
 
+        tableView.deselectRow(at: indexPath, animated: true)
+
+        let item = items[indexPath.section].1[indexPath.row]
         switch item {
         case .nearby:
-            self.searchQuery.filter.location = nil
-            self.searchQuery.filter.containers = nil
-            self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
-        case .singapore:
-            var singapore = Location()
-            singapore.id = "singapore"
-            singapore.name = "Singapore"
-            singapore.country = "singapore"
-            singapore.city = "singapore"
-            singapore.latLng = "1.290270, 103.851959"
-            singapore.points = ["1.26675774823,103.603134155", "1.32442122318,103.617553711", "1.38963424766,103.653259277", "1.41434608581,103.666305542", "1.42944763543,103.671798706", "1.43905766081,103.682785034", "1.44386265833,103.695831299", "1.45896401284,103.720550537", "1.45827758983,103.737716675", "1.44935407163,103.754196167", "1.45004049736,103.760375977", "1.47887018872,103.803634644", "1.4754381021,103.826980591", "1.45827758983,103.86680603", "1.43219336108,103.892211914", "1.4287612035,103.897018433", "1.42670190649,103.915557861", "1.43219336108,103.934783936", "1.42189687297,103.960189819", "1.42464260763,103.985595703", "1.42121043879,104.000701904", "1.43974408965,104.02130127", "1.44592193988,104.043960571", "1.42464260763,104.087219238", "1.39718511473,104.094772339", "1.35737118164,104.081039429", "1.29009788407,104.127044678", "1.277741368,104.127044678", "1.25371463932,103.982162476", "1.17545464492,103.812561035", "1.13014521522,103.736343384", "1.19055762617,103.653945923", "1.1960495989,103.565368652", "1.26675774823,103.603134155"]
-            select(result: singapore, save: false)
+            select(result: nil, save: false)
+        case .anywhere:
+            select(result: SearchFilterManager.anywhere, save: false)
         case .location(let location):
             select(result: location, save: true)
         case .container(let container):
@@ -249,21 +203,56 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-class SearchLocationHeaderView: UIView {
-    fileprivate let textField = SearchTextField()
-    fileprivate let cancelButton = UIButton()
+class SearchLocationCell: UITableViewCell {
+    let titleLabel: UILabel = {
+        let titleLabel = UILabel()
+        titleLabel.font = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
+        titleLabel.textColor = .black
+        return titleLabel
+    }()
+    let typeLabel: UILabel = {
+        let typeLabel = UILabel()
+        typeLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.regular)
+        typeLabel.textColor = UIColor(hex: "686868")
+        typeLabel.textAlignment = .right
+        return typeLabel
+    }()
 
-    override init(frame: CGRect = CGRect()) {
-        super.init(frame: frame)
-        self.addSubview(textField)
-        self.addSubview(cancelButton)
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.addSubview(titleLabel)
+        self.addSubview(typeLabel)
 
-        self.makeViews()
+
+        titleLabel.snp.makeConstraints { (make) in
+            make.top.bottom.equalTo(self).inset(16)
+            make.left.equalTo(self).inset(24)
+            make.right.equalTo(typeLabel.snp.left).inset(-8)
+        }
+
+        typeLabel.snp.makeConstraints { (make) in
+            make.right.equalTo(self).inset(24)
+            make.top.bottom.equalTo(self).inset(16)
+        }
     }
 
-    private func makeViews() {
-        self.backgroundColor = .white
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
+    func render(title: String?, type: String? = nil) {
+        self.titleLabel.text = title
+        self.typeLabel.text = type
+    }
+
+    class var id: String {
+        return "SearchLocationCell"
+    }
+}
+
+class SearchLocationHeaderView: UIView {
+    fileprivate let textField: SearchTextField = {
+        let textField = SearchTextField()
         textField.clearButtonMode = .whileEditing
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
@@ -280,6 +269,24 @@ class SearchLocationHeaderView: UIView {
 
         textField.placeholder = "Search Location"
         textField.font = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
+        return textField
+    }()
+    fileprivate let cancelButton: UIButton = {
+        let cancelButton = UIButton()
+        cancelButton.setTitle("Cancel", for: .normal)
+        cancelButton.setTitleColor(.black, for: .normal)
+        cancelButton.titleLabel?.font = .systemFont(ofSize: 15)
+        cancelButton.titleEdgeInsets.right = 24
+        cancelButton.contentHorizontalAlignment = .right
+        return cancelButton
+    }()
+
+    override init(frame: CGRect = CGRect()) {
+        super.init(frame: frame)
+        self.addSubview(textField)
+        self.addSubview(cancelButton)
+
+        self.backgroundColor = .white
 
         textField.snp.makeConstraints { make in
             make.top.equalTo(self.safeArea.top).inset(8)
@@ -289,11 +296,6 @@ class SearchLocationHeaderView: UIView {
             make.height.equalTo(36)
         }
 
-        cancelButton.setTitle("Cancel", for: .normal)
-        cancelButton.setTitleColor(.black, for: .normal)
-        cancelButton.titleLabel?.font = .systemFont(ofSize: 15)
-        cancelButton.titleEdgeInsets.right = 24
-        cancelButton.contentHorizontalAlignment = .right
         cancelButton.snp.makeConstraints { make in
             make.width.equalTo(90)
             make.top.equalTo(self.safeArea.top).inset(8)
