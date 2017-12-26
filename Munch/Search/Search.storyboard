@@ -97,6 +97,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
                         <segue destination="wim-cZ-EAJ" kind="unwind" identifier="unwindToSearchWithSegue" unwindAction="unwindToSearchWithSegue:" id="EGg-2a-JQc"/>
+                        <segue destination="JUD-HV-zBf" kind="showDetail" identifier="SearchHeaderView_location" customClass="HeaderViewSegue" customModule="Munch" customModuleProvider="target" id="L5q-2S-wby"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SAL-19-iD8" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -178,4 +179,7 @@
             <point key="canvasLocation" x="457" y="-2684"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="L5q-2S-wby"/>
+    </inferredMetricsTieBreakers>
 </document>

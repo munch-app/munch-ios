@@ -328,7 +328,6 @@ protocol SearchFilterTagDelegate {
 class HeaderViewSegue: UIStoryboardSegue {
     override func perform() {
         super.perform()
-        let searchQuery = (source as! SearchController).searchQuery
 
         if let navigation = destination as? UINavigationController {
             let controller = navigation.topViewController
@@ -340,6 +339,15 @@ class HeaderViewSegue: UIStoryboardSegue {
                 location.searchQuery = searchQuery
             }
         }
+    }
+
+    private var searchQuery: SearchQuery {
+        if let controller = source as? SearchController {
+            return controller.searchQuery
+        } else if let controller = source as? SearchFilterController {
+            return controller.searchQuery
+        }
+        fatalError()
     }
 }
 

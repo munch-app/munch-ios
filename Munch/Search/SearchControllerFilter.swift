@@ -345,6 +345,7 @@ fileprivate class SearchFilterLocationCell: UITableViewCell {
 
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
+        self.moreButton.addTarget(self, action: #selector(actionMore(_:)), for: .touchUpInside)
 
         moreButton.snp.makeConstraints { make in
             make.right.equalTo(self)
@@ -367,8 +368,7 @@ fileprivate class SearchFilterLocationCell: UITableViewCell {
     }
 
     func actionMore(_ sender: Any) {
-
-        // TODO
+        controller.performSegue(withIdentifier: "SearchHeaderView_location", sender: self)
     }
 
     required init?(coder aDecoder: NSCoder) {
