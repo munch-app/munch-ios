@@ -12,8 +12,9 @@ import UIKit
 import SnapKit
 
 class SearchNavigationalController: UINavigationController, UINavigationControllerDelegate {
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    required init() {
+        super.init(nibName: nil, bundle: nil)
+        self.viewControllers = [SearchController()]
         self.delegate = self
     }
 
@@ -21,11 +22,15 @@ class SearchNavigationalController: UINavigationController, UINavigationControll
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
         self.interactivePopGestureRecognizer?.isEnabled = self.viewControllers.count > 1
     }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
 class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    @IBOutlet weak var cardTableView: UITableView!
-    private var headerView: SearchHeaderView!
+    private let cardTableView = UITableView()
+    private var headerView = SearchHeaderView()
     private let refreshControl = UIRefreshControl()
 
     private let backIndicatorView = BackIndicatorView()
@@ -55,6 +60,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         self.initViews()
         self.registerCards()
 
+        self.headerView.controller = self
         self.cardTableView.delegate = self
         self.cardTableView.dataSource = self
 
@@ -71,14 +77,13 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         super.viewDidAppear(animated)
 
         // Filter Testing
-//        self.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
+//        self.goTo(extension: SearchFilterController.self)
         // Place Testing
-//         let controller = PlaceViewController(placeId: "8759e8cb-a52e-40e4-b75c-a65c9b089f23")
-//         self.navigationController!.pushViewController(controller, animated: true)
+//         self.navigationController!.pushViewController(PlaceViewController(placeId: "8759e8cb-a52e-40e4-b75c-a65c9b089f23"), animated: true)
     }
 
     private func initViews() {
-        self.headerView = SearchHeaderView(controller: self)
+        self.view.addSubview(cardTableView)
         self.view.addSubview(headerView)
         self.view.addSubview(backIndicatorView)
 
@@ -91,8 +96,8 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         }
 
         backIndicatorView.snp.makeConstraints { make in
-            self.backIndicatorConstraint = make.left.equalTo(self.view).inset(-66).constraint
             make.top.equalTo(headerView.snp.bottom).inset(-12)
+            self.backIndicatorConstraint = make.left.equalTo(self.view).inset(-66).constraint
         }
 
         self.cardTableView.separatorStyle = .none
@@ -115,17 +120,6 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     func scrollsToTop(animated: Bool = true) {
         // Scroll to content view
         cardTableView.scrollToRow(at: .init(row: 0, section: 1), at: .top, animated: animated)
-    }
-
-    @IBAction func unwindToSearch(segue: UIStoryboardSegue) {
-        let controller = segue.source
-        if let query = controller as? SearchSuggestController {
-            render(searchQuery: query.searchQuery)
-        } else if let filter = controller as? SearchFilterController {
-            render(searchQuery: filter.searchQuery)
-        } else if let location = controller as? SearchLocationController {
-            render(searchQuery: location.searchQuery)
-        }
     }
 
     func contentView(search searchQuery: SearchQuery, animated: Bool = true) {
@@ -163,6 +157,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
 
         // Reset ContentView first
         reset()
+
         // Check if Location is Enabled
         if MunchLocation.isEnabled {
             MunchLocation.waitFor(completion: { latLng, error in
@@ -181,17 +176,40 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         }
     }
 
-    @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
-        self.contentView(search: self.searchQuery)
-        refreshControl.endRefreshing()
-    }
-
     func render(searchQuery: SearchQuery) {
         self.contentView(search: searchQuery)
         self.headerView.render(query: searchQuery)
     }
 
-    var backProgress: CGFloat = 0.0
+    func goTo(extension type: UIViewController.Type) {
+        if type == SearchSuggestController.self {
+            let controller = SearchSuggestRootController(searchQuery: self.searchQuery) { searchQuery in
+                if let searchQuery = searchQuery {
+                    self.render(searchQuery: searchQuery)
+                }
+            }
+            self.present(controller, animated: true)
+        } else if type == SearchFilterController.self {
+            let controller = SearchFilterRootController(searchQuery: self.searchQuery) { searchQuery in
+                if let searchQuery = searchQuery {
+                    self.render(searchQuery: searchQuery)
+                }
+            }
+            self.present(controller, animated: true)
+        } else if type == SearchLocationController.self {
+            let controller = SearchFilterRootController(startWithLocation: self.searchQuery) { searchQuery in
+                if let searchQuery = searchQuery {
+                    self.render(searchQuery: searchQuery)
+                }
+            }
+            self.present(controller, animated: true)
+        }
+    }
+
+    @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
+        self.contentView(search: self.searchQuery)
+        refreshControl.endRefreshing()
+    }
 
     @objc func screenEdgeSwiped(_ recognizer: UIScreenEdgePanGestureRecognizer) {
         // Offset by 10

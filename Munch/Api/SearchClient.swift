@@ -40,14 +40,17 @@ class SearchClient {
     /**
      Method to parse search result type
      */
-    public static func parseResult(result json: JSON) -> SearchResult? {
-        switch json["dataType"].stringValue {
-        case "Tag": return Tag(json: json)
-        case "Place": return Place(json: json)
-        case "Location": return Location(json: json)
-        case "Container": return Container(json: json)
-        default: return nil
+    public static func parseResult(result json: JSON?) -> SearchResult? {
+        if let json = json {
+            switch json["dataType"].stringValue {
+            case "Tag": return Tag(json: json)
+            case "Place": return Place(json: json)
+            case "Location": return Location(json: json)
+            case "Container": return Container(json: json)
+            default: return nil
+            }
         }
+        return nil
     }
 }
 
@@ -94,7 +97,7 @@ struct Container: SearchResult, Equatable {
         self.type = json["type"].string
         self.name = json["name"].string
 
-        self.images = json["images"].map({SourcedImage(json: $0.1)})
+        self.images = json["images"].map({ SourcedImage(json: $0.1) })
         self.ranking = json["ranking"].double ?? 0
 
     }

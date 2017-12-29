@@ -26,10 +26,9 @@ enum InitialViewProvider {
     }
     
     static func search() -> UIViewController {
-        let searchStoryboard = UIStoryboard(name: "Search", bundle: nil)
-        let searchController = searchStoryboard.instantiateInitialViewController()!
-        searchController.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "SEARCH", image: UIImage(named: "TabBar-Search"))
-        return searchController
+        let controller = SearchNavigationalController()
+        controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "SEARCH", image: UIImage(named: "TabBar-Search"))
+        return controller
     }
     
     static func account() -> UIViewController {

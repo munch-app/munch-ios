@@ -13,11 +13,43 @@ import TTGTagCollectionView
 import SnapKit
 import BEMCheckBox
 import TPKeyboardAvoiding
+import RangeSeekSlider
+
+class SearchFilterRootController: UINavigationController, UINavigationControllerDelegate {
+    init(searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
+        super.init(nibName: nil, bundle: nil)
+        self.viewControllers = [SearchFilterController(searchQuery: searchQuery, extensionDismiss: extensionDismiss)]
+        self.delegate = self
+    }
+
+    init(startWithLocation searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
+        super.init(nibName: nil, bundle: nil)
+        let filterController = SearchFilterController(searchQuery: searchQuery, extensionDismiss: extensionDismiss)
+        let locationController = SearchLocationController(searchQuery: searchQuery) { searchQuery in
+            if let searchQuery = searchQuery {
+                filterController.render(searchQuery: searchQuery)
+            }
+        }
+
+        self.viewControllers = [filterController, locationController]
+        self.delegate = self
+    }
+
+    // Fix bug when pop gesture is enabled for the root controller
+    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        self.interactivePopGestureRecognizer?.isEnabled = self.viewControllers.count > 1
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
 
 class SearchFilterController: UIViewController {
-    var searchQuery: SearchQuery!
+    fileprivate var filterManager: SearchFilterManager
+    private let onExtensionDismiss: ((SearchQuery?) -> Void)
 
-    fileprivate let headerView = SearchFilterHeaderView()
+    private let headerView = SearchFilterHeaderView()
     fileprivate let tableView: TPKeyboardAvoidingTableView = {
         let tableView = TPKeyboardAvoidingTableView()
         tableView.separatorStyle = .none
@@ -33,7 +65,14 @@ class SearchFilterController: UIViewController {
     }()
     fileprivate let applyView = SearchFilterApplyView()
 
-    fileprivate var filterManager: SearchFilterManager!
+    init(searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
+        self.filterManager = SearchFilterManager(searchQuery: searchQuery)
+        self.onExtensionDismiss = extensionDismiss
+        super.init(nibName: nil, bundle: nil)
+
+        self.initViews()
+        self.registerCell()
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -43,18 +82,8 @@ class SearchFilterController: UIViewController {
         navigationController?.navigationBar.shadowImage = UIImage()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        self.filterManager = SearchFilterManager(searchQuery: searchQuery)
-        self.applyView.render(searchQuery: searchQuery)
-        self.tableView.reloadData()
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.filterManager = SearchFilterManager(searchQuery: searchQuery)
-        self.initViews()
-        self.registerCell()
 
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -62,6 +91,8 @@ class SearchFilterController: UIViewController {
         self.headerView.cancelButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
         self.headerView.resetButton.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
         self.applyView.applyBtn.addTarget(self, action: #selector(actionApply(_:)), for: .touchUpInside)
+
+        self.render(searchQuery: filterManager.searchQuery)
     }
 
     private func initViews() {
@@ -86,20 +117,29 @@ class SearchFilterController: UIViewController {
         }
     }
 
-    @objc func actionReset(_ sender: Any) {
-        searchQuery?.filter.tag.positives = []
-        searchQuery?.filter.hour.day = nil
-        searchQuery?.filter.hour.time = nil
+    func render(searchQuery: SearchQuery) {
+        self.filterManager = .init(searchQuery: searchQuery)
         self.applyView.render(searchQuery: searchQuery)
         self.tableView.reloadData()
     }
 
+    @objc func actionReset(_ sender: Any) {
+        self.applyView.render(searchQuery: filterManager.reset())
+        self.tableView.reloadData()
+    }
+
     @objc func actionCancel(_ sender: Any) {
+        self.onExtensionDismiss(nil)
         self.dismiss(animated: true)
     }
 
     @objc func actionApply(_ sender: Any) {
-        performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
+        self.onExtensionDismiss(filterManager.searchQuery)
+        self.dismiss(animated: true)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -108,6 +148,8 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
         tableView.register(SearchFilterTagCell.self, forCellReuseIdentifier: SearchFilterTagCell.id)
         tableView.register(SearchFilterTagMoreCell.self, forCellReuseIdentifier: SearchFilterTagMoreCell.id)
         tableView.register(SearchFilterLocationCell.self, forCellReuseIdentifier: SearchFilterLocationCell.id)
+        tableView.register(SearchFilterHourCell.self, forCellReuseIdentifier: SearchFilterHourCell.id)
+        tableView.register(SearchFilterPriceCell.self, forCellReuseIdentifier: SearchFilterPriceCell.id)
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -130,17 +172,24 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let item = filterManager.items[indexPath.section].1[indexPath.row]
-        let selectedTags = self.searchQuery.filter.tag.positives
+        // TODO Render selected data on Location, Hour, Price on call?
 
-        switch item {
+        switch filterManager.items[indexPath.section].1[indexPath.row] {
         case .location:
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterLocationCell.id) as! SearchFilterLocationCell
             cell.controller = self
             return cell
+        case .hour:
+            let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterHourCell.id) as! SearchFilterHourCell
+            cell.controller = self
+            return cell
+        case .price:
+            let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterPriceCell.id) as! SearchFilterPriceCell
+            cell.controller = self
+            return cell
         case let .tag(tag):
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterTagCell.id) as! SearchFilterTagCell
-            cell.render(title: tag, selected: selectedTags.contains(tag))
+            cell.render(title: tag, selected: filterManager.isSelected(tag: tag))
             return cell
         case let .seeMore(name):
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterTagMoreCell.id) as! SearchFilterTagMoreCell
@@ -151,22 +200,19 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let item = filterManager.items[indexPath.section].1[indexPath.row]
 
-        switch item {
+        switch filterManager.items[indexPath.section].1[indexPath.row] {
         case let .tag(tag):
             if let cell = tableView.cellForRow(at: indexPath) as? SearchFilterTagCell {
-                tableView.beginUpdates()
-                if (cell.flip()) {
-                    self.searchQuery.filter.tag.positives.insert(tag)
-                } else {
-                    self.searchQuery.filter.tag.positives.remove(tag)
-                }
-                tableView.endUpdates()
+                let searchQuery = self.filterManager.select(tag: tag, selected: cell.flip())
                 self.applyView.render(searchQuery: searchQuery)
             }
         case let .seeMore(type):
-            let controller = SearchFilterMoreController(searchQuery: searchQuery, type: type)
+            let controller = SearchFilterMoreController(searchQuery: filterManager.searchQuery, type: type) { searchQuery in
+                if let searchQuery = searchQuery {
+                    self.render(searchQuery: searchQuery)
+                }
+            }
             self.navigationController?.pushViewController(controller, animated: true)
         default:
             return
@@ -174,6 +220,8 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
+
+// MARK: Header & Apply View
 fileprivate class SearchFilterHeaderView: UIView {
     fileprivate let resetButton = UIButton()
     fileprivate let titleView = UILabel()
@@ -238,23 +286,22 @@ fileprivate class SearchFilterHeaderView: UIView {
 }
 
 fileprivate class SearchFilterApplyView: UIView {
-    fileprivate let applyBtn = UIButton()
-    fileprivate var searchQuery: SearchQuery!
-
-    override init(frame: CGRect = CGRect.zero) {
-        super.init(frame: frame)
-        initViews()
-    }
-
-    private func initViews() {
-        self.backgroundColor = UIColor.white
-        self.addSubview(applyBtn)
-
+    fileprivate let applyBtn: UIButton = {
+        let applyBtn = UIButton()
         applyBtn.layer.cornerRadius = 3
         applyBtn.backgroundColor = .primary
         applyBtn.setTitle("Loading...", for: .normal)
         applyBtn.setTitleColor(.white, for: .normal)
         applyBtn.titleLabel!.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+        return applyBtn
+    }()
+    fileprivate var searchQuery: SearchQuery!
+
+    override init(frame: CGRect = CGRect.zero) {
+        super.init(frame: frame)
+        self.backgroundColor = .white
+        self.addSubview(applyBtn)
+
         applyBtn.snp.makeConstraints { (make) in
             make.top.equalTo(self).inset(12)
             make.bottom.equalTo(self.safeArea.bottom).inset(12)
@@ -264,8 +311,8 @@ fileprivate class SearchFilterApplyView: UIView {
     }
 
     func render(searchQuery: SearchQuery) {
-        self.searchQuery = searchQuery
         applyBtn.setTitle("Loading...", for: .normal)
+        self.searchQuery = searchQuery
         self.perform(#selector(renderDidCommit(_:)), with: nil, afterDelay: 0.5)
     }
 
@@ -296,6 +343,7 @@ fileprivate class SearchFilterApplyView: UIView {
     }
 }
 
+// MARK: Filter Location Cell
 fileprivate class SearchFilterLocationCell: UITableViewCell {
     private let headerLabel: UILabel = {
         let label = UILabel()
@@ -367,8 +415,13 @@ fileprivate class SearchFilterLocationCell: UITableViewCell {
         }
     }
 
-    func actionMore(_ sender: Any) {
-        controller.performSegue(withIdentifier: "SearchHeaderView_location", sender: self)
+    @objc func actionMore(_ sender: Any) {
+        let controller = SearchLocationController(searchQuery: self.controller.filterManager.searchQuery) { searchQuery in
+            if let searchQuery = searchQuery {
+                self.controller.render(searchQuery: searchQuery)
+            }
+        }
+        self.controller.navigationController?.pushViewController(controller, animated: true)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -390,6 +443,7 @@ extension SearchFilterLocationCell: UICollectionViewDataSource, UICollectionView
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        // TODO render already selected items
         let locationType = items[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchFilterLocationGridCell", for: indexPath) as! SearchFilterLocationGridCell
 
@@ -411,88 +465,432 @@ extension SearchFilterLocationCell: UICollectionViewDataSource, UICollectionView
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let locationType = items[indexPath.row]
-        controller.searchQuery.filter.location = nil
-        controller.searchQuery.filter.containers = nil
+        // TODO selector
+//        let locationType = items[indexPath.row]
+//        controller.searchQuery.filter.location = nil
+//        controller.searchQuery.filter.containers = nil
+//
+//        switch locationType {
+//        case .nearby:
+//            break
+//        case .anywhere:
+//            controller.searchQuery.filter.location = SearchFilterManager.anywhere
+//        case let .recentLocation(location):
+//            controller.searchQuery.filter.location = location
+//        case let .recentContainer(container):
+//            controller.searchQuery.filter.containers = [container]
+//        case let .location(location):
+//            controller.searchQuery.filter.location = location
+//        case let .container(container):
+//            controller.searchQuery.filter.containers = [container]
+//        }
+    }
 
-        switch locationType {
-        case .nearby:
-            break
-        case .anywhere:
-            controller.searchQuery.filter.location = SearchFilterManager.anywhere
-        case let .recentLocation(location):
-            controller.searchQuery.filter.location = location
-        case let .recentContainer(container):
-            controller.searchQuery.filter.containers = [container]
-        case let .location(location):
-            controller.searchQuery.filter.location = location
-        case let .container(container):
-            controller.searchQuery.filter.containers = [container]
+    fileprivate class SearchFilterLocationGridCell: UICollectionViewCell {
+        let containerView: UIView = {
+            let view = UIView()
+            view.backgroundColor = UIColor(hex: "F8F8F8")
+            return view
+        }()
+        let imageView: MunchImageView = {
+            let imageView = MunchImageView()
+            imageView.tintColor = UIColor(hex: "333333")
+            imageView.contentMode = .scaleAspectFit
+            return imageView
+        }()
+
+        let nameLabel: UITextView = {
+            let nameLabel = UITextView()
+            nameLabel.backgroundColor = .white
+            nameLabel.font = UIFont.systemFont(ofSize: 13.0, weight: .semibold)
+            nameLabel.textColor = UIColor.black.withAlphaComponent(0.72)
+
+            nameLabel.textContainer.maximumNumberOfLines = 1
+            nameLabel.textContainer.lineBreakMode = .byTruncatingTail
+            nameLabel.textContainerInset = UIEdgeInsets(topBottom: 6, leftRight: 4)
+            nameLabel.isUserInteractionEnabled = false
+            return nameLabel
+        }()
+
+        override init(frame: CGRect = .zero) {
+            super.init(frame: frame)
+            self.addSubview(containerView)
+            containerView.addSubview(imageView)
+            containerView.addSubview(nameLabel)
+
+            imageView.snp.makeConstraints { make in
+                make.left.right.equalTo(containerView).inset(35)
+                make.top.equalTo(containerView)
+                make.bottom.equalTo(nameLabel.snp.top)
+            }
+
+            nameLabel.snp.makeConstraints { make in
+                make.left.right.equalTo(containerView)
+                make.bottom.equalTo(containerView)
+                make.height.equalTo(30)
+            }
+
+            containerView.snp.makeConstraints { make in
+                make.edges.equalTo(self)
+            }
+            self.layoutIfNeeded()
         }
-        controller.actionApply(collectionView)
+
+        fileprivate override func layoutSubviews() {
+            super.layoutSubviews()
+            containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.5)
+            imageView.roundCorners([.topLeft, .topRight], radius: 3)
+            nameLabel.roundCorners([.bottomLeft, .bottomRight], radius: 3)
+        }
+
+        func render(text: String?, image: UIImage?) {
+            nameLabel.text = text
+            imageView.image = image
+        }
+
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
     }
 }
 
-fileprivate class SearchFilterLocationGridCell: UICollectionViewCell {
-    let containerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor(hex: "F8F8F8")
-        return view
+// MARK: Filter Hour Cell
+fileprivate class SearchFilterHourCell: UITableViewCell {
+    private let headerLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Timing"
+        label.font = UIFont.systemFont(ofSize: 22, weight: .medium)
+        label.textColor = UIColor.black.withAlphaComponent(0.75)
+        return label
     }()
-    let imageView: MunchImageView = {
-        let imageView = MunchImageView()
-        imageView.tintColor = UIColor(hex: "333333")
-        imageView.contentMode = .scaleAspectFit
-        return imageView
+    private let collectionView: UICollectionView = {
+        let layout = UICollectionViewLeftAlignedLayout()
+        layout.sectionInset = UIEdgeInsets(top: 2, left: 24, bottom: 2, right: 24)
+        layout.scrollDirection = .vertical
+        layout.minimumInteritemSpacing = 16 // LeftRight
+        layout.minimumLineSpacing = 14 // TopBottom
+        layout.sectionInset.top = 2
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.backgroundColor = UIColor.white
+        collectionView.register(SearchFilterHourGridCell.self, forCellWithReuseIdentifier: "SearchFilterHourGridCell")
+        return collectionView
     }()
 
-    let nameLabel: UITextView = {
-        let nameLabel = UITextView()
-        nameLabel.backgroundColor = .white
-        nameLabel.font = UIFont.systemFont(ofSize: 13.0, weight: .semibold)
-        nameLabel.textColor = UIColor.black.withAlphaComponent(0.72)
+    var controller: SearchFilterController!
 
-        nameLabel.textContainer.maximumNumberOfLines = 1
-        nameLabel.textContainer.lineBreakMode = .byTruncatingTail
-        nameLabel.textContainerInset = UIEdgeInsets(topBottom: 6, leftRight: 4)
-        nameLabel.isUserInteractionEnabled = false
-        return nameLabel
-    }()
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(headerLabel)
+        self.addSubview(collectionView)
 
-    override init(frame: CGRect = .zero) {
-        super.init(frame: frame)
-        self.addSubview(containerView)
-        containerView.addSubview(imageView)
-        containerView.addSubview(nameLabel)
+        self.collectionView.dataSource = self
+        self.collectionView.delegate = self
 
-        imageView.snp.makeConstraints { make in
-            make.left.right.equalTo(containerView).inset(35)
-            make.top.equalTo(containerView)
-            make.bottom.equalTo(nameLabel.snp.top)
+        headerLabel.snp.makeConstraints { (make) in
+            make.left.right.equalTo(self).inset(24)
+            make.top.equalTo(self).inset(12)
         }
 
-        nameLabel.snp.makeConstraints { make in
-            make.left.right.equalTo(containerView)
-            make.bottom.equalTo(containerView)
-            make.height.equalTo(30)
+        collectionView.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.top.equalTo(headerLabel.snp.bottom).inset(-12)
+            make.bottom.equalTo(self).inset(10)
+            make.height.equalTo(80)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    class var id: String {
+        return "SearchFilterHourCell"
+    }
+}
+
+extension SearchFilterHourCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    private var items: [FilterHourType] {
+        return controller.filterManager.hourItems
+    }
+
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return items.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchFilterHourGridCell", for: indexPath) as! SearchFilterHourGridCell
+
+        switch items[indexPath.row] {
+        case .now:
+            cell.render(text: "Open Now", image: UIImage(named: "Search-Timing-Present"))
+        case .breakfast:
+            cell.render(text: "Breakfast", image: nil)
+        case .lunch:
+            cell.render(text: "Lunch", image: nil)
+        case .dinner:
+            cell.render(text: "Dinner", image: nil)
+        case .supper:
+            cell.render(text: "Supper", image: nil)
+        }
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        switch items[indexPath.row] {
+        case .now:
+            let width = UILabel.textWidth(font: SearchFilterHourGridCell.labelFont, text: "Open Now")
+            return CGSize(width: width + 28 + 20, height: 30)
+        case .breakfast:
+            let width = UILabel.textWidth(font: SearchFilterHourGridCell.labelFont, text: "Breakfast")
+            return CGSize(width: width + 28, height: 30)
+        case .lunch:
+            let width = UILabel.textWidth(font: SearchFilterHourGridCell.labelFont, text: "Lunch")
+            return CGSize(width: width + 28, height: 30)
+        case .dinner:
+            let width = UILabel.textWidth(font: SearchFilterHourGridCell.labelFont, text: "Dinner")
+            return CGSize(width: width + 28, height: 30)
+        case .supper:
+            let width = UILabel.textWidth(font: SearchFilterHourGridCell.labelFont, text: "Supper")
+            return CGSize(width: width + 28, height: 30)
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        switch items[indexPath.row] {
+        case .now:
+            return
+        case .breakfast:
+            return
+        case .lunch:
+            return
+        case .dinner:
+            return
+        case .supper:
+            return
+        }
+//        controller.actionApply(collectionView)
+    }
+
+    fileprivate class SearchFilterHourGridCell: UICollectionViewCell {
+        static let labelFont = UIFont.systemFont(ofSize: 13.0, weight: .semibold)
+        let containerView: UIView = {
+            let view = UIView()
+            view.backgroundColor = .white
+            return view
+        }()
+        let imageView: MunchImageView = {
+            let imageView = MunchImageView()
+            imageView.tintColor = UIColor(hex: "333333")
+            imageView.contentMode = .scaleAspectFit
+            return imageView
+        }()
+        let nameLabel: UILabel = {
+            let nameLabel = UILabel()
+            nameLabel.backgroundColor = .white
+            nameLabel.font = labelFont
+            nameLabel.textColor = UIColor.black.withAlphaComponent(0.72)
+
+            nameLabel.numberOfLines = 1
+            nameLabel.isUserInteractionEnabled = false
+
+            nameLabel.textAlignment = .right
+            return nameLabel
+        }()
+
+        override init(frame: CGRect = .zero) {
+            super.init(frame: frame)
+            self.addSubview(containerView)
+            containerView.addSubview(nameLabel)
+            containerView.addSubview(imageView)
+
+            nameLabel.snp.makeConstraints { make in
+                make.right.equalTo(containerView).inset(14)
+                make.left.top.bottom.equalTo(containerView)
+                make.height.equalTo(30)
+            }
+
+            imageView.snp.makeConstraints { make in
+                make.top.bottom.equalTo(containerView).inset(5)
+                make.left.equalTo(containerView).inset(8)
+                make.width.equalTo(20)
+            }
+
+            containerView.snp.makeConstraints { make in
+                make.edges.equalTo(self)
+            }
+            self.layoutIfNeeded()
         }
 
-        containerView.snp.makeConstraints { make in
-            make.edges.equalTo(self)
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            containerView.layer.cornerRadius = 2.0
+            containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.5)
         }
+
+        func render(text: String?, image: UIImage?) {
+            nameLabel.text = text
+            imageView.image = image
+        }
+
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+}
+
+// MARK: Filter Price Cell
+fileprivate class SearchFilterPriceCell: UITableViewCell {
+    private let headerLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Price Range"
+        label.font = UIFont.systemFont(ofSize: 22, weight: .medium)
+        label.textColor = UIColor.black.withAlphaComponent(0.75)
+        return label
+    }()
+    private let averageLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Average price in area is $25"
+        label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        label.textColor = UIColor.black.withAlphaComponent(0.75)
+        return label
+    }()
+
+    private let priceButtons = PriceButtonGroup()
+    private let priceSlider = PriceRangeSlider()
+
+    var controller: SearchFilterController!
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(priceSlider)
+        self.addSubview(headerLabel)
+        self.addSubview(averageLabel)
+        self.addSubview(priceButtons)
+
+
+        headerLabel.snp.makeConstraints { (make) in
+            make.left.right.equalTo(self).inset(24)
+            make.top.equalTo(self).inset(12)
+        }
+
+        averageLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(24)
+            make.top.equalTo(headerLabel.snp.bottom).inset(-10)
+            make.bottom.equalTo(priceSlider.snp.top).inset(-12)
+        }
+
+        priceSlider.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(16).priority(999)
+            make.bottom.equalTo(priceButtons.snp.top).inset(8).priority(999)
+        }
+
+        priceButtons.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(24)
+            make.bottom.equalTo(self).inset(12)
+        }
+
         self.layoutIfNeeded()
     }
 
-    fileprivate override func layoutSubviews() {
-        super.layoutSubviews()
-        containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.5)
-        imageView.roundCorners([.topLeft, .topRight], radius: 3)
-        nameLabel.roundCorners([.bottomLeft, .bottomRight], radius: 3)
+    class var id: String {
+        return "SearchFilterPriceCell"
     }
 
-    func render(text: String?, image: UIImage?) {
-        nameLabel.text = text
-        imageView.image = image
+    class PriceRangeSlider: RangeSeekSlider {
+        override func setupStyle() {
+            colorBetweenHandles = .primary
+            handleColor = .primary
+            tintColor = UIColor(hex: "BBBBBB")
+            minLabelColor = UIColor.black.withAlphaComponent(0.75)
+            maxLabelColor = UIColor.black.withAlphaComponent(0.75)
+            minLabelFont = UIFont.systemFont(ofSize: 14, weight: .regular)
+            maxLabelFont = UIFont.systemFont(ofSize: 14, weight: .regular)
+
+            numberFormatter.numberStyle = .currency
+
+            handleDiameter = 18
+            selectedHandleDiameterMultiplier = 1.3
+            lineHeight = 3.0
+        }
+    }
+
+    class PriceButtonGroup: UIButton {
+        fileprivate let cheapButton: UIButton = {
+            let button = UIButton()
+            button.backgroundColor = .white
+            button.setTitle("$", for: .normal)
+            button.setTitleColor(UIColor.black.withAlphaComponent(0.75), for: .normal)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 13.0, weight: .semibold)
+            return button
+        }()
+        fileprivate let averageButton: UIButton = {
+            let button = UIButton()
+            button.backgroundColor = .white
+            button.setTitle("$$", for: .normal)
+            button.setTitleColor(UIColor.black.withAlphaComponent(0.75), for: .normal)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 13.0, weight: .semibold)
+            return button
+        }()
+        fileprivate let expensiveButton: UIButton = {
+            let button = UIButton()
+            button.backgroundColor = .white
+            button.setTitle("$$$", for: .normal)
+            button.setTitleColor(UIColor.black.withAlphaComponent(0.75), for: .normal)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 13.0, weight: .semibold)
+            return button
+        }()
+
+        required init() {
+            super.init(frame: .zero)
+            self.addSubview(cheapButton)
+            self.addSubview(averageButton)
+            self.addSubview(expensiveButton)
+
+            cheapButton.snp.makeConstraints { make in
+                make.left.equalTo(self)
+                make.right.equalTo(averageButton.snp.left).inset(-18)
+                make.width.equalTo(averageButton.snp.width)
+                make.width.equalTo(expensiveButton.snp.width)
+                make.height.equalTo(28)
+                make.top.bottom.equalTo(self)
+            }
+
+            averageButton.snp.makeConstraints { make in
+                make.left.equalTo(cheapButton.snp.right).inset(-18)
+                make.right.equalTo(expensiveButton.snp.left).inset(-18)
+                make.width.equalTo(cheapButton.snp.width)
+                make.width.equalTo(expensiveButton.snp.width)
+                make.top.bottom.equalTo(self)
+            }
+
+            expensiveButton.snp.makeConstraints { make in
+                make.left.equalTo(averageButton.snp.right).inset(-18)
+                make.right.equalTo(self)
+                make.width.equalTo(cheapButton.snp.width)
+                make.width.equalTo(averageButton.snp.width)
+                make.top.bottom.equalTo(self)
+            }
+        }
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            cheapButton.layer.cornerRadius = 2.0
+            averageButton.layer.cornerRadius = 2.0
+            expensiveButton.layer.cornerRadius = 2.0
+            cheapButton.shadow(width: 1, height: 1, radius: 2, opacity: 0.5)
+            averageButton.shadow(width: 1, height: 1, radius: 2, opacity: 0.5)
+            expensiveButton.shadow(width: 1, height: 1, radius: 2, opacity: 0.5)
+        }
+
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -500,9 +898,10 @@ fileprivate class SearchFilterLocationGridCell: UICollectionViewCell {
     }
 }
 
+// MARK: Filter Tag Cells
 fileprivate class SearchFilterTagCell: UITableViewCell {
-    let titleLabel = UILabel()
-    let checkButton = BEMCheckBox(frame: CGRect(x: 0, y: 0, width: 26, height: 26))
+    private let titleLabel = UILabel()
+    private let checkButton = BEMCheckBox(frame: CGRect(x: 0, y: 0, width: 26, height: 26))
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -555,7 +954,7 @@ fileprivate class SearchFilterTagCell: UITableViewCell {
 }
 
 fileprivate class SearchFilterTagMoreCell: UITableViewCell {
-    let titleLabel = UILabel()
+    private let titleLabel = UILabel()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -581,24 +980,28 @@ fileprivate class SearchFilterTagMoreCell: UITableViewCell {
     }
 }
 
+// MARK: Filter More Controller
 fileprivate class SearchFilterMoreController: UIViewController, UIGestureRecognizerDelegate {
-    var searchQuery: SearchQuery
-    let type: String
-    let tags: [String]
+    fileprivate let filterManager: SearchFilterManager
+    private let onExtensionDismiss: ((SearchQuery?) -> Void)
 
-    let headerView = SearchFilterMoreHeaderView()
-    let tableView = UITableView()
-    let applyView = SearchFilterMoreApplyView()
+    private let type: String
+    private let tags: [String]
 
-    init(searchQuery: SearchQuery, type: String) {
-        self.searchQuery = searchQuery
+    private let headerView = SearchFilterMoreHeaderView()
+    private let tableView = UITableView()
+    private let applyView = SearchFilterMoreApplyView()
+
+    init(searchQuery: SearchQuery, type: String, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
+        self.filterManager = SearchFilterManager(searchQuery: searchQuery)
+        self.onExtensionDismiss = extensionDismiss
+
         self.type = type
-        self.tags = SearchFilterManager(searchQuery: searchQuery).getMoreTypes(type: type)
+        self.tags = filterManager.getMoreTypes(type: type)
         super.init(nibName: nil, bundle: nil)
-    }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError()
+        self.initViews()
+        self.registerCell()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -611,8 +1014,6 @@ fileprivate class SearchFilterMoreController: UIViewController, UIGestureRecogni
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.initViews()
-        self.registerCell()
 
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
@@ -624,7 +1025,7 @@ fileprivate class SearchFilterMoreController: UIViewController, UIGestureRecogni
         self.headerView.resetButton.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
         self.applyView.applyBtn.addTarget(self, action: #selector(actionApply(_:)), for: .touchUpInside)
 
-        self.applyView.render(searchQuery: searchQuery)
+        self.applyView.render(searchQuery: filterManager.searchQuery)
         self.headerView.titleView.text = type
     }
 
@@ -659,28 +1060,27 @@ fileprivate class SearchFilterMoreController: UIViewController, UIGestureRecogni
     }
 
     @objc func actionReset(_ sender: Any) {
-        for tag in tags {
-            searchQuery.filter.tag.positives.remove(tag)
-        }
+        let searchQuery = filterManager.reset(tags: self.tags)
         self.applyView.render(searchQuery: searchQuery)
         self.tableView.reloadData()
     }
 
     @objc func actionCancel(_ sender: Any) {
+        self.onExtensionDismiss(nil)
         self.navigationController?.popViewController(animated: true)
     }
 
     @objc func actionApply(_ sender: Any) {
-        // On cancel, update previous filter view
-        if let count = navigationController?.viewControllers.count,
-           let filter = navigationController?.viewControllers[count - 2] as? SearchFilterController {
-            filter.searchQuery = self.searchQuery
-        }
+        self.onExtensionDismiss(filterManager.searchQuery)
         self.navigationController?.popViewController(animated: true)
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     fileprivate class SearchFilterMoreHeaderView: UIView {
@@ -775,11 +1175,10 @@ extension SearchFilterMoreController: UITableViewDataSource, UITableViewDelegate
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let selectedTags = self.searchQuery.filter.tag.positives
         let tag = tags[indexPath.row]
 
         let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterTagCell.id) as! SearchFilterTagCell
-        cell.render(title: tag, selected: selectedTags.contains(tag))
+        cell.render(title: tag, selected: filterManager.isSelected(tag: tag))
         return cell
     }
 
@@ -788,13 +1187,7 @@ extension SearchFilterMoreController: UITableViewDataSource, UITableViewDelegate
         let tag = tags[indexPath.row]
 
         if let cell = tableView.cellForRow(at: indexPath) as? SearchFilterTagCell {
-            tableView.beginUpdates()
-            if (cell.flip()) {
-                self.searchQuery.filter.tag.positives.insert(tag)
-            } else {
-                self.searchQuery.filter.tag.positives.remove(tag)
-            }
-            tableView.endUpdates()
+            let searchQuery = self.filterManager.select(tag: tag, selected: cell.flip())
             self.applyView.render(searchQuery: searchQuery)
         }
     }

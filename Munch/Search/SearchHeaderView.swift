@@ -17,7 +17,7 @@ import TTGTagCollectionView
  SearchController only controls rendering of the data
  */
 class SearchHeaderView: UIView, SearchFilterTagDelegate {
-    let controller: SearchController
+    var controller: SearchController!
 
     let backButton = SearchBackButton()
     let textButton = SearchTextButton()
@@ -28,15 +28,14 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
 
     var searchQueryHistories = [SearchQuery]()
 
-    init(controller: SearchController) {
-        self.controller = controller
-        super.init(frame: CGRect())
+    required init() {
+        super.init(frame: .zero)
         self.tagCollection.delegate = self
         self.initViews()
     }
 
     private func initViews() {
-        self.backgroundColor = UIColor.white
+        self.backgroundColor = .white
 
         self.addSubview(tagCollection)
         self.addSubview(textButton)
@@ -77,21 +76,21 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
 
     @objc func onHeaderAction(for view: UIView) {
         if view is SearchTextButton {
-            controller.performSegue(withIdentifier: "SearchHeaderView_suggest", sender: self)
+            controller.goTo(extension: SearchSuggestController.self)
         } else if view is SearchBackButton {
             // When back button is clicked
             renderPrevious()
         } else if view is SearchFilterButton {
-            controller.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
+            controller.goTo(extension: SearchFilterController.self)
         }
     }
 
     func tagCollection(selectedLocation tagCollection: SearchFilterTagCollection) {
-        controller.performSegue(withIdentifier: "SearchHeaderView_location", sender: self)
+        controller.goTo(extension: SearchLocationController.self)
     }
 
     func tagCollection(selectedPlus tagCollection: SearchFilterTagCollection) {
-        controller.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
+        // Future: Puzzle Building Feature
     }
 
     func tagCollection(selectedText: String, selectedTag tagCollection: SearchFilterTagCollection, didTapTag tagText: String!) {
@@ -103,7 +102,6 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
         })
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         self.controller.present(alert, animated: true)
-        // controller.performSegue(withIdentifier: "SearchHeaderView_filter", sender: self)
     }
 
     func render(query: SearchQuery) {
@@ -137,10 +135,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
     }
 
     func hasPrevious() -> Bool {
-        if self.searchQueryHistories.count > 1 {
-            return true
-        }
-        return false
+        return self.searchQueryHistories.count > 1
     }
 
     override func layoutSubviews() {
@@ -240,8 +235,8 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
         var tags = [String]()
 
         // FirstTag: Location Tag
-        // TODO: handle more then one location tag
         tags.append(getLocationTag(query: query)[0])
+        // TODO Handle Opening Hours & Price Filter
 
         // Other Tags
         for tag in query.filter.tag.positives {
@@ -323,32 +318,6 @@ protocol SearchFilterTagDelegate {
     func tagCollection(selectedPlus tagCollection: SearchFilterTagCollection)
 
     func tagCollection(selectedText: String, selectedTag tagCollection: SearchFilterTagCollection, didTapTag tagText: String!)
-}
-
-class HeaderViewSegue: UIStoryboardSegue {
-    override func perform() {
-        super.perform()
-
-        if let navigation = destination as? UINavigationController {
-            let controller = navigation.topViewController
-            if let query = controller as? SearchSuggestController {
-                query.searchQuery = searchQuery
-            } else if let filter = controller as? SearchFilterController {
-                filter.searchQuery = searchQuery
-            } else if let location = controller as? SearchLocationController {
-                location.searchQuery = searchQuery
-            }
-        }
-    }
-
-    private var searchQuery: SearchQuery {
-        if let controller = source as? SearchController {
-            return controller.searchQuery
-        } else if let controller = source as? SearchFilterController {
-            return controller.searchQuery
-        }
-        fatalError()
-    }
 }
 
 // Header Scroll to Hide Functions

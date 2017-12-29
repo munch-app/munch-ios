@@ -11,9 +11,11 @@ import SwiftyJSON
 import TPKeyboardAvoiding
 
 class SearchLocationController: UIViewController {
-    var searchQuery: SearchQuery!
-    let headerView = SearchLocationHeaderView()
-    let tableView: TPKeyboardAvoidingTableView = {
+    private let filterManager: SearchFilterManager
+    private let onExtensionDismiss: ((SearchQuery?) -> Void)
+
+    private let headerView = SearchLocationHeaderView()
+    private let tableView: TPKeyboardAvoidingTableView = {
         let tableView = TPKeyboardAvoidingTableView()
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 50
@@ -25,10 +27,17 @@ class SearchLocationController: UIViewController {
         return tableView
     }()
 
-    // PopularLocation & RecentLocation
-    var filterManager: SearchFilterManager!
     // Suggestion Result
-    var results: [LocationType]?
+    private var results: [LocationType]?
+
+    required init(searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
+        self.filterManager = SearchFilterManager(searchQuery: searchQuery)
+        self.onExtensionDismiss = extensionDismiss
+        super.init(nibName: nil, bundle: nil)
+
+        self.registerCell()
+        self.initViews()
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -47,20 +56,19 @@ class SearchLocationController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.registerCell()
-        self.view.addSubview(tableView)
-        self.view.addSubview(headerView)
-
-        self.filterManager = SearchFilterManager(searchQuery: searchQuery)
-
         self.tableView.delegate = self
         self.tableView.dataSource = self
 
         self.headerView.textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         self.headerView.cancelButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
+    }
+
+    private func initViews() {
+        self.view.addSubview(tableView)
+        self.view.addSubview(headerView)
 
         headerView.snp.makeConstraints { make in
-            make.top.equalTo(self.view).inset(20)
+            make.top.equalTo(self.view)
             make.left.right.equalTo(self.view)
         }
 
@@ -72,7 +80,8 @@ class SearchLocationController: UIViewController {
     }
 
     @objc func actionCancel(_ sender: Any) {
-        self.dismiss(animated: true)
+        self.onExtensionDismiss(nil)
+        self.navigationController?.popViewController(animated: true)
     }
 
     @objc func textFieldDidChange(_ sender: Any) {
@@ -99,6 +108,10 @@ class SearchLocationController: UIViewController {
             results = nil
             self.tableView.reloadData()
         }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -138,10 +151,9 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let item = items[indexPath.section].1[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: SearchLocationCell.id) as! SearchLocationCell
 
-        switch item {
+        switch items[indexPath.section].1[indexPath.row] {
         case .nearby:
             cell.render(title: "Nearby")
         case .anywhere:
@@ -160,57 +172,48 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        func select(result: SearchResult?, save: Bool) {
-            self.searchQuery.filter.location = nil
-            self.searchQuery.filter.containers = nil
-
+        func select(result: SearchResult?, save: Bool = true) {
             if result == nil {
-                self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
+                let searchQuery = self.filterManager.select(location: nil, save: false)
+                self.onExtensionDismiss(searchQuery)
+                self.navigationController?.popViewController(animated: true)
             } else if let location = result as? Location {
-                if save {
-                    self.filterManager.save(history: location)
-                }
-
-                self.searchQuery.filter.location = location
-                self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
+                let searchQuery = self.filterManager.select(location: location, save: save)
+                self.onExtensionDismiss(searchQuery)
+                self.navigationController?.popViewController(animated: true)
             } else if let container = result as? Container {
-                if save {
-                    self.filterManager.save(history: container)
-                }
-
-                self.searchQuery.filter.containers = [container]
-                self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
+                let searchQuery = self.filterManager.select(container: container, save: save)
+                self.onExtensionDismiss(searchQuery)
+                self.navigationController?.popViewController(animated: true)
             }
         }
 
         tableView.deselectRow(at: indexPath, animated: true)
-
-        let item = items[indexPath.section].1[indexPath.row]
-        switch item {
+        switch items[indexPath.section].1[indexPath.row] {
         case .nearby:
-            select(result: nil, save: false)
+            select(result: nil)
         case .anywhere:
             select(result: SearchFilterManager.anywhere, save: false)
         case .location(let location):
-            select(result: location, save: true)
+            select(result: location)
         case .container(let container):
-            select(result: container, save: true)
+            select(result: container)
         case .recentContainer(let container):
-            select(result: container, save: true)
+            select(result: container)
         case .recentLocation(let location):
-            select(result: location, save: true)
+            select(result: location)
         }
     }
 }
 
 class SearchLocationCell: UITableViewCell {
-    let titleLabel: UILabel = {
+    private let titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.font = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
         titleLabel.textColor = .black
         return titleLabel
     }()
-    let typeLabel: UILabel = {
+    private let typeLabel: UILabel = {
         let typeLabel = UILabel()
         typeLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.regular)
         typeLabel.textColor = UIColor(hex: "686868")

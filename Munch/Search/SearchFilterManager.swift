@@ -9,6 +9,8 @@ import SwiftyJSON
 
 enum FilterType {
     case location
+    case hour
+    case price
     case tag(String)
     case seeMore(String)
 }
@@ -20,6 +22,14 @@ enum LocationType {
     case recentContainer(Container)
     case location(Location)
     case container(Container)
+}
+
+enum FilterHourType {
+    case now
+    case breakfast
+    case lunch
+    case dinner
+    case supper
 }
 
 class SearchFilterManager {
@@ -46,13 +56,15 @@ class SearchFilterManager {
     private var priorityTypes: [String: [String]] = [
         "Cuisine": ["Singaporean", "Japanese", "Italian", "Thai", "Chinese", "Korean", "Mexican", "Mediterranean"],
         "Establishment": ["Bars & Pubs", "Hawker", "Cafe", "Snacks"],
-        "Amenities": ["Child-Friendly", "Halal", "Large Group", "Pet-Friendly", "Amenities", ],
+        "Amenities": ["Child-Friendly", "Halal", "Large Group", "Pet-Friendly", ],
         "Occasion": ["Brunch", "Romantic", "Business Meal", "Football Screening", ]
     ]
 
     public var items: [(String?, [FilterType])] {
         return [
             (nil, [FilterType.location]),
+            (nil, [FilterType.price]),
+            (nil, [FilterType.hour]),
             ("Cuisine", getPriorityTypes(type: "Cuisine").map({ FilterType.tag($0) }) + [FilterType.seeMore("Cuisine")]),
             ("Establishment", getPriorityTypes(type: "Establishment").map({ FilterType.tag($0) }) + [FilterType.seeMore("Establishment")]),
             ("Amenities", getPriorityTypes(type: "Amenities").map({ FilterType.tag($0) }) + [FilterType.seeMore("Amenities")]),
@@ -60,6 +72,9 @@ class SearchFilterManager {
         ]
     }
 
+    public var hourItems: [FilterHourType] {
+        return [FilterHourType.now, FilterHourType.breakfast, FilterHourType.lunch, FilterHourType.dinner, FilterHourType.supper]
+    }
 
     func getMoreTypes(type: String) -> [String] {
         if let tags = types[type]?.sorted() {
@@ -92,16 +107,50 @@ class SearchFilterManager {
         return []
     }
 
-    func save(history location: Location) {
-        if let name = location.name {
-            recentLocationDatabase.put(text: name, dictionary: location.toParams())
+    func select(location: Location?, save: Bool = true) -> SearchQuery {
+        if save, let name = location?.name {
+            recentLocationDatabase.put(text: name, dictionary: location!.toParams())
         }
+        searchQuery.filter.location = location
+        searchQuery.filter.containers = []
+        return searchQuery
     }
 
-    func save(history container: Container) {
-        if let name = container.name {
+    func select(container: Container, save: Bool = true) -> SearchQuery {
+        if save, let name = container.name {
             recentLocationDatabase.put(text: name, dictionary: container.toParams())
         }
+        searchQuery.filter.location = nil
+        searchQuery.filter.containers = [container]
+        return searchQuery
+    }
+
+    func select(tag: String, selected: Bool) -> SearchQuery {
+        if (selected) {
+            searchQuery.filter.tag.positives.insert(tag)
+        } else {
+            searchQuery.filter.tag.positives.remove(tag)
+        }
+        return searchQuery
+    }
+
+    func isSelected(tag: String) -> Bool {
+        return searchQuery.filter.tag.positives.contains(tag)
+    }
+
+    func reset() -> SearchQuery {
+        searchQuery.filter.tag.positives = []
+        searchQuery.filter.hour.day = nil
+        searchQuery.filter.hour.time = nil
+        // TODO more reset
+        return searchQuery
+    }
+
+    func reset(tags: [String]) -> SearchQuery {
+        for tag in tags {
+            searchQuery.filter.tag.positives.remove(tag)
+        }
+        return searchQuery
     }
 }
 

@@ -13,18 +13,47 @@ import SnapKit
 import SwiftyJSON
 import TPKeyboardAvoiding
 
+class SearchSuggestRootController: UINavigationController, UINavigationControllerDelegate {
+    init(searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
+        super.init(nibName: nil, bundle: nil)
+        self.viewControllers = [SearchSuggestController(searchQuery: searchQuery, extensionDismiss: extensionDismiss)]
+        self.delegate = self
+    }
+
+    // Fix bug when pop gesture is enabled for the root controller
+    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        self.interactivePopGestureRecognizer?.isEnabled = self.viewControllers.count > 1
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 class SearchSuggestController: UIViewController {
-    var searchQuery: SearchQuery!
-    let headerView = SearchSuggestHeaderView()
-    let tableView = TPKeyboardAvoidingTableView()
+    private var searchQuery: SearchQuery
+    private let onExtensionDismiss: ((SearchQuery?) -> Void)
 
-    let recentDatabase = RecentDatabase(name: "SearchSuggest", maxItems: 10)
+    private let headerView = SearchSuggestHeaderView()
+    private let tableView = TPKeyboardAvoidingTableView()
 
-    var suggestResults: [SuggestType]?
-    var recentSearches: [SuggestType]?
+    private let recentDatabase = RecentDatabase(name: "SearchSuggest", maxItems: 10)
+
+    private var suggestResults: [SuggestType]?
+    private var recentSearches: [SuggestType]?
+
+    init(searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
+        self.searchQuery = searchQuery
+        self.onExtensionDismiss = extensionDismiss
+        super.init(nibName: nil, bundle: nil)
+
+        self.initViews()
+        self.registerCell()
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
         // Make navigation bar transparent, bar must be hidden
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
@@ -49,10 +78,10 @@ class SearchSuggestController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.initViews()
 
-        self.recentSearches = self.map(results: recentDatabase.get()
-                .flatMap({ $1 }).flatMap({ SearchClient.parseResult(result: $0) }))
+        self.recentSearches = recentDatabase.get()
+                .flatMap({ SearchClient.parseResult(result: $1) })
+                .flatMap({ SuggestType.map(result: $0) })
 
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -60,7 +89,6 @@ class SearchSuggestController: UIViewController {
         self.headerView.textField.text = self.searchQuery.query
         self.headerView.textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         self.headerView.textField.addTarget(self, action: #selector(textFieldShouldReturn(_:)), for: .editingDidEndOnExit)
-        registerCell()
     }
 
     private func initViews() {
@@ -68,8 +96,8 @@ class SearchSuggestController: UIViewController {
         self.view.addSubview(headerView)
 
         self.headerView.cancelButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
-        headerView.snp.makeConstraints { make in
-            make.top.equalTo(self.view).inset(20)
+        self.headerView.snp.makeConstraints { make in
+            make.top.equalTo(self.view)
             make.left.right.equalTo(self.view)
         }
 
@@ -80,7 +108,7 @@ class SearchSuggestController: UIViewController {
         self.tableView.contentInset.top = 0
         self.tableView.contentInset.bottom = 12
         self.tableView.separatorInset.left = 24
-        tableView.snp.makeConstraints { make in
+        self.tableView.snp.makeConstraints { make in
             make.left.right.equalTo(self.view)
             make.top.equalTo(self.headerView.snp.bottom)
             make.bottom.equalTo(self.view)
@@ -88,6 +116,7 @@ class SearchSuggestController: UIViewController {
     }
 
     @objc func actionCancel(_ sender: Any) {
+        self.onExtensionDismiss(nil)
         self.dismiss(animated: true)
     }
 
@@ -99,7 +128,7 @@ class SearchSuggestController: UIViewController {
     @objc func textFieldDidCommit(textField: UITextField) {
         if let text = textField.text, text.count >= 2 {
             MunchApi.search.suggest(text: text, size: 20, callback: { (meta, results) in
-                self.suggestResults = self.map(results: results)
+                self.suggestResults = results.flatMap({ SuggestType.map(result: $0) })
                 self.tableView.reloadData()
             })
         } else {
@@ -111,25 +140,14 @@ class SearchSuggestController: UIViewController {
     @objc func textFieldShouldReturn(_ sender: Any) -> Bool {
         if let text = headerView.textField.text {
             self.searchQuery.query = text
-            self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
+            self.onExtensionDismiss(searchQuery)
+            self.dismiss(animated: true)
         }
         return true
     }
 
-    private func map(results: [SearchResult]) -> [SuggestType] {
-        return results.flatMap({
-            if let place = $0 as? Place {
-                return SuggestType.place(place)
-            } else if let location = $0 as? Location {
-                return SuggestType.location(location)
-            } else if let tag = $0 as? Tag {
-                return SuggestType.tag(tag)
-            } else if let container = $0 as? Container {
-                return SuggestType.container(container)
-            } else {
-                return nil
-            }
-        })
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -139,6 +157,20 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
         case tag(Tag)
         case location(Location)
         case container(Container)
+
+        static func map(result: SearchResult) -> SuggestType? {
+            if let place = result as? Place {
+                return SuggestType.place(place)
+            } else if let location = result as? Location {
+                return SuggestType.location(location)
+            } else if let tag = result as? Tag {
+                return SuggestType.tag(tag)
+            } else if let container = result as? Container {
+                return SuggestType.container(container)
+            } else {
+                return nil
+            }
+        }
     }
 
     private var items: [(String?, [SuggestType])] {
@@ -204,23 +236,26 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
             recentDatabase.put(text: location.id ?? "", dictionary: location.toParams())
             self.searchQuery.filter.location = location
             self.searchQuery.filter.containers = []
-            self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
+            self.onExtensionDismiss(searchQuery)
+            self.dismiss(animated: true)
         case let .tag(tag):
             if let tagName = tag.name {
                 recentDatabase.put(text: tag.id ?? "", dictionary: tag.toParams())
                 self.searchQuery.filter.tag.positives.insert(tagName)
-                self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
+                self.onExtensionDismiss(searchQuery)
+                self.dismiss(animated: true)
             }
         case let .container(container):
             recentDatabase.put(text: container.id ?? "", dictionary: container.toParams())
             self.searchQuery.filter.location = nil
             self.searchQuery.filter.containers = [container]
-            self.performSegue(withIdentifier: "unwindToSearchWithSegue", sender: self)
+            self.onExtensionDismiss(searchQuery)
+            self.dismiss(animated: true)
         }
     }
 }
 
-class SearchSuggestHeaderView: UIView {
+fileprivate class SearchSuggestHeaderView: UIView {
     fileprivate let textField = SearchTextField()
     fileprivate let cancelButton = UIButton()
 
@@ -229,10 +264,10 @@ class SearchSuggestHeaderView: UIView {
         self.addSubview(textField)
         self.addSubview(cancelButton)
 
-        self.makeViews()
+        self.initViews()
     }
 
-    private func makeViews() {
+    private func initViews() {
         self.backgroundColor = .white
 
         textField.clearButtonMode = .whileEditing
@@ -283,7 +318,7 @@ class SearchSuggestHeaderView: UIView {
     }
 }
 
-class SearchQueryCell: UITableViewCell {
+fileprivate class SearchQueryCell: UITableViewCell {
     let titleLabel = UILabel()
     let typeLabel = UILabel()
 

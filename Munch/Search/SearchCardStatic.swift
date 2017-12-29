@@ -8,8 +8,10 @@
 
 import Foundation
 import UIKit
+
 import Shimmer
 import NVActivityIndicatorView
+import SnapKit
 
 class SearchShimmerPlaceCard: UITableViewCell, SearchCardView {
     
@@ -26,20 +28,20 @@ class SearchShimmerPlaceCard: UITableViewCell, SearchCardView {
         self.addSubview(containerView)
         
         topView.snp.makeConstraints { make in
-            make.left.right.top.equalTo(containerView)
-            make.bottom.equalTo(bottomView.snp.top)
+            make.left.right.top.equalTo(containerView).priority(999)
+            make.bottom.equalTo(bottomView.snp.top).priority(999)
         }
         
         bottomView.snp.makeConstraints { make in
-            make.left.right.bottom.equalTo(containerView)
-            make.height.equalTo(73)
+            make.left.right.bottom.equalTo(containerView).priority(999)
+            make.height.equalTo(73).priority(999)
         }
         
         containerView.snp.makeConstraints { make in
             let height = (UIScreen.main.bounds.width * 0.888) - (topBottom * 2)
-            make.height.equalTo(height)
-            make.left.right.equalTo(self).inset(leftRight)
-            make.top.bottom.equalTo(self).inset(topBottom)
+            make.height.equalTo(height).priority(999)
+            make.left.right.equalTo(self).inset(leftRight).priority(999)
+            make.top.bottom.equalTo(self).inset(topBottom).priority(999)
         }
     }
     

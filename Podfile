@@ -7,7 +7,7 @@ target 'Munch' do
   pod 'RealmSwift', '~> 3.0'
   pod 'Alamofire', '~> 4.5'
   pod 'SwiftyJSON', '~> 4.0'
-  pod 'SwiftLocation', '~> 3.0.1-beta'
+  pod 'SwiftLocation', '~> 3.1'
   pod 'Kingfisher', '~> 4.2'
   pod 'SnapKit', '~> 4.0'
   pod 'SwiftRichString', '~> 1.0'
@@ -26,8 +26,9 @@ target 'Munch' do
   pod 'Shimmer', '~> 1.0'
   pod 'TTGTagCollectionView', '~> 1.7'
   pod 'SKPhotoBrowser', '~> 5.0'
-  pod 'Cosmos', '~> 12.0'
+  pod 'Cosmos', '~> 13.0'
   pod 'BEMCheckBox', '~> 1.4'
+  pod 'RangeSeekSlider', '~> 1.7'
 
   # pod 'MVCarouselCollectionView'
 
@@ -44,7 +45,7 @@ end
 
 post_install do |installer|
   # List of Pods to use as Swift 3.2
-  targetSwift32 = ['Lock']
+  targetSwift32 = ['Lock', 'RangeSeekSlider']
 
   installer.pods_project.targets.each do |target|
     if targetSwift32.include? target.name

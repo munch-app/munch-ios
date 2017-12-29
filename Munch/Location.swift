@@ -66,8 +66,7 @@ public class MunchLocation {
             completion(latLng, nil)
         } else {
             // Location already expired, query again
-            // TODO: Timeout bugged, , timeout: .delayed(10)
-            Locator.currentPosition(accuracy: .city, onSuccess: { (location) -> (Void) in
+            Locator.currentPosition(accuracy: .city, timeout: .delayed(10), onSuccess: { (location) -> (Void) in
                 let coord = location.coordinate
                 MunchLocation.locationExpiry = Date().addingTimeInterval(expiryIncrement)
                 MunchLocation.lastLatLng = "\(coord.latitude),\(coord.longitude)"
