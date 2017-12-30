@@ -38,7 +38,7 @@ class LocationClient {
  Location object form munch-core/service-location
  Used in search for munch-core/service-places
  */
-struct Location: SearchResult {
+struct Location: SearchResult, Equatable {
     var id: String?
     var name: String?
     var city: String?
@@ -74,5 +74,9 @@ struct Location: SearchResult {
         params["points"] = points
         params["dataType"] = "Location"
         return params
+    }
+
+    static func ==(lhs: Location, rhs: Location) -> Bool {
+        return lhs.id == rhs.id
     }
 }

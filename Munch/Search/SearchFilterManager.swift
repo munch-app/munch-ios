@@ -17,7 +17,7 @@ enum FilterType {
 
 enum LocationType {
     case nearby
-    case anywhere
+    case anywhere(Location)
     case recentLocation(Location)
     case recentContainer(Container)
     case location(Location)
@@ -72,6 +72,10 @@ class SearchFilterManager {
         ]
     }
 
+    public var locations: [LocationType] {
+        return [LocationType.nearby, LocationType.anywhere(SearchFilterManager.anywhere)] + recentLocations
+    }
+
     public var hourItems: [FilterHourType] {
         return [FilterHourType.now, FilterHourType.breakfast, FilterHourType.lunch, FilterHourType.dinner, FilterHourType.supper]
     }
@@ -107,7 +111,7 @@ class SearchFilterManager {
         return []
     }
 
-    func select(location: Location?, save: Bool = true) -> SearchQuery {
+    @discardableResult func select(location: Location?, save: Bool = true) -> SearchQuery {
         if save, let name = location?.name {
             recentLocationDatabase.put(text: name, dictionary: location!.toParams())
         }
@@ -116,7 +120,7 @@ class SearchFilterManager {
         return searchQuery
     }
 
-    func select(container: Container, save: Bool = true) -> SearchQuery {
+    @discardableResult func select(container: Container, save: Bool = true) -> SearchQuery {
         if save, let name = container.name {
             recentLocationDatabase.put(text: name, dictionary: container.toParams())
         }
@@ -125,7 +129,7 @@ class SearchFilterManager {
         return searchQuery
     }
 
-    func select(tag: String, selected: Bool) -> SearchQuery {
+    @discardableResult func select(tag: String, selected: Bool) -> SearchQuery {
         if (selected) {
             searchQuery.filter.tag.positives.insert(tag)
         } else {
@@ -136,6 +140,20 @@ class SearchFilterManager {
 
     func isSelected(tag: String) -> Bool {
         return searchQuery.filter.tag.positives.contains(tag)
+    }
+
+    func isSelected(location: Location?) -> Bool {
+        if let containers = searchQuery.filter.containers, !containers.isEmpty {
+            return false
+        }
+        return searchQuery.filter.location == location
+    }
+
+    func isSelected(container: Container) -> Bool {
+        if searchQuery.filter.location == nil, let containers = searchQuery.filter.containers {
+            return containers.contains(container)
+        }
+        return false
     }
 
     func reset() -> SearchQuery {

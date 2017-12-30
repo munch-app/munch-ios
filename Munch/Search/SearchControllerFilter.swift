@@ -47,6 +47,7 @@ class SearchFilterRootController: UINavigationController, UINavigationController
 
 class SearchFilterController: UIViewController {
     fileprivate var filterManager: SearchFilterManager
+    fileprivate var items: [(String?, [FilterType])]!
     private let onExtensionDismiss: ((SearchQuery?) -> Void)
 
     private let headerView = SearchFilterHeaderView()
@@ -119,6 +120,7 @@ class SearchFilterController: UIViewController {
 
     func render(searchQuery: SearchQuery) {
         self.filterManager = .init(searchQuery: searchQuery)
+        self.items = filterManager.items
         self.applyView.render(searchQuery: searchQuery)
         self.tableView.reloadData()
     }
@@ -153,15 +155,15 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return filterManager.items.count
+        return items.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return filterManager.items[section].1.count
+        return items[section].1.count
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return filterManager.items[section].0
+        return items[section].0
     }
 
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
@@ -174,10 +176,11 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // TODO Render selected data on Location, Hour, Price on call?
 
-        switch filterManager.items[indexPath.section].1[indexPath.row] {
+        switch items[indexPath.section].1[indexPath.row] {
         case .location:
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterLocationCell.id) as! SearchFilterLocationCell
             cell.controller = self
+            cell.collectionView.reloadData()
             return cell
         case .hour:
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterHourCell.id) as! SearchFilterHourCell
@@ -201,7 +204,7 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        switch filterManager.items[indexPath.section].1[indexPath.row] {
+        switch items[indexPath.section].1[indexPath.row] {
         case let .tag(tag):
             if let cell = tableView.cellForRow(at: indexPath) as? SearchFilterTagCell {
                 let searchQuery = self.filterManager.select(tag: tag, selected: cell.flip())
@@ -367,7 +370,7 @@ fileprivate class SearchFilterLocationCell: UITableViewCell {
         button.semanticContentAttribute = .forceRightToLeft
         return button
     }()
-    private let collectionView: UICollectionView = {
+    fileprivate let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
         layout.itemSize = CGSize(width: 100, height: 90)
@@ -435,7 +438,7 @@ fileprivate class SearchFilterLocationCell: UITableViewCell {
 
 extension SearchFilterLocationCell: UICollectionViewDataSource, UICollectionViewDelegate {
     private var items: [LocationType] {
-        return [LocationType.nearby, LocationType.anywhere] + controller.filterManager.recentLocations
+        return controller.filterManager.locations
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -443,47 +446,47 @@ extension SearchFilterLocationCell: UICollectionViewDataSource, UICollectionView
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        // TODO render already selected items
-        let locationType = items[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchFilterLocationGridCell", for: indexPath) as! SearchFilterLocationGridCell
 
-        switch locationType {
+        switch items[indexPath.row] {
         case .nearby:
-            cell.render(text: "Nearby", image: UIImage(named: "Search-Location-Nearby"))
-        case .anywhere:
-            cell.render(text: "Anywhere", image: UIImage(named: "Search-Location-Anywhere"))
+            let selected = controller.filterManager.isSelected(location: nil)
+            cell.render(text: "Nearby", image: UIImage(named: "Search-Location-Nearby"), selected: selected)
+        case let .anywhere(location):
+            let selected = controller.filterManager.isSelected(location: location)
+            cell.render(text: "Anywhere", image: UIImage(named: "Search-Location-Anywhere"), selected: selected)
         case let .recentLocation(location):
-            cell.render(text: location.name, image: UIImage(named: "Search-Location-Recent"))
+            let selected = controller.filterManager.isSelected(location: location)
+            cell.render(text: location.name, image: UIImage(named: "Search-Location-Recent"), selected: selected)
         case let .recentContainer(container):
-            cell.render(text: container.name, image: UIImage(named: "Search-Location-Recent"))
+            let selected = controller.filterManager.isSelected(container: container)
+            cell.render(text: container.name, image: UIImage(named: "Search-Location-Recent"), selected: selected)
         case let .location(location):
-            cell.render(text: location.name, image: nil)
+            let selected = controller.filterManager.isSelected(location: location)
+            cell.render(text: location.name, image: nil, selected: selected)
         case let .container(container):
-            cell.render(text: container.name, image: nil)
+            let selected = controller.filterManager.isSelected(container: container)
+            cell.render(text: container.name, image: nil, selected: selected)
         }
         return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // TODO selector
-//        let locationType = items[indexPath.row]
-//        controller.searchQuery.filter.location = nil
-//        controller.searchQuery.filter.containers = nil
-//
-//        switch locationType {
-//        case .nearby:
-//            break
-//        case .anywhere:
-//            controller.searchQuery.filter.location = SearchFilterManager.anywhere
-//        case let .recentLocation(location):
-//            controller.searchQuery.filter.location = location
-//        case let .recentContainer(container):
-//            controller.searchQuery.filter.containers = [container]
-//        case let .location(location):
-//            controller.searchQuery.filter.location = location
-//        case let .container(container):
-//            controller.searchQuery.filter.containers = [container]
-//        }
+        switch items[indexPath.row] {
+        case .nearby:
+            controller.filterManager.select(location: nil, save: false)
+        case .anywhere:
+            controller.filterManager.select(location: SearchFilterManager.anywhere, save: false)
+        case let .recentLocation(location):
+            controller.filterManager.select(location: location)
+        case let .recentContainer(container):
+            controller.filterManager.select(container: container)
+        case let .location(location):
+            controller.filterManager.select(location: location)
+        case let .container(container):
+            controller.filterManager.select(container: container)
+        }
+        collectionView.reloadData()
     }
 
     fileprivate class SearchFilterLocationGridCell: UICollectionViewCell {
@@ -538,14 +541,15 @@ extension SearchFilterLocationCell: UICollectionViewDataSource, UICollectionView
 
         fileprivate override func layoutSubviews() {
             super.layoutSubviews()
+            nameLabel.roundCorners([.bottomLeft, .bottomRight], radius: 3.0)
+            containerView.layer.cornerRadius = 3.0
             containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.5)
-            imageView.roundCorners([.topLeft, .topRight], radius: 3)
-            nameLabel.roundCorners([.bottomLeft, .bottomRight], radius: 3)
         }
 
-        func render(text: String?, image: UIImage?) {
+        func render(text: String?, image: UIImage?, selected: Bool) {
             nameLabel.text = text
             imageView.image = image
+            containerView.backgroundColor = selected ? .primary020 : UIColor(hex: "F8F8F8")
         }
 
         required init?(coder aDecoder: NSCoder) {

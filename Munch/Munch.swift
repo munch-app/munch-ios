@@ -49,36 +49,52 @@ extension UIColor {
         return .primary500
     }
 
+    class var primary010: UIColor {
+        return UIColor(hex: "ffedea")
+    }
+
+    class var primary020: UIColor {
+        return UIColor(hex: "ffdcd7")
+    }
+
+    class var primary030: UIColor {
+        return UIColor(hex: "ffcac3")
+    }
+
+    class var primary040: UIColor {
+        return UIColor(hex: "ffb9b0")
+    }
+
     class var primary050: UIColor {
-        return UIColor(hex: "FFA193")
+        return UIColor(hex: "ffa89c")
     }
 
     class var primary100: UIColor {
-        return UIColor(hex: "FF9181")
+        return UIColor(hex: "ff9788")
     }
 
     class var primary200: UIColor {
-        return UIColor(hex: "FF816F")
+        return UIColor(hex: "ff8674")
     }
 
     class var primary300: UIColor {
-        return UIColor(hex: "FF725D")
+        return UIColor(hex: "ff7560")
     }
 
     class var primary400: UIColor {
-        return UIColor(hex: "FF624B")
+        return UIColor(hex: "ff644d")
     }
 
     class var primary500: UIColor {
-        return UIColor(hex: "FF5339")
+        return UIColor(hex: "ff5339")
     }
 
     class var primary600: UIColor {
-        return UIColor(hex: "E84C34")
+        return UIColor(hex: "ff4225")
     }
 
     class var primary700: UIColor {
-        return UIColor(hex: "D1442F")
+        return UIColor(hex: "ff3112")
     }
 
     class var primary800: UIColor {

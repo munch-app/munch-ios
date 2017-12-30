@@ -121,7 +121,7 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
             return [("SUGGESTIONS", results)]
         } else {
             return [
-                (nil, [LocationType.nearby, LocationType.anywhere] + self.filterManager.recentLocations),
+                (nil, self.filterManager.locations),
                 ("POPULAR LOCATIONS", self.filterManager.popularLocations ?? []),
             ]
         }
