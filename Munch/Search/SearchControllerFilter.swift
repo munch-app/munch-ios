@@ -14,6 +14,7 @@ import SnapKit
 import BEMCheckBox
 import TPKeyboardAvoiding
 import RangeSeekSlider
+import NVActivityIndicatorView
 
 class SearchFilterRootController: UINavigationController, UINavigationControllerDelegate {
     init(searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
@@ -50,7 +51,12 @@ class SearchFilterController: UIViewController {
     fileprivate var items: [(String?, [FilterType])]!
     private let onExtensionDismiss: ((SearchQuery?) -> Void)
 
-    private let headerView = SearchFilterHeaderView()
+    fileprivate let filterLocationCell = SearchFilterLocationCell()
+    fileprivate let filterPriceCell = SearchFilterPriceCell()
+    fileprivate let filterHourCell = SearchFilterHourCell()
+
+    fileprivate let headerView = SearchFilterHeaderView()
+    fileprivate let applyView = SearchFilterApplyView()
     fileprivate let tableView: TPKeyboardAvoidingTableView = {
         let tableView = TPKeyboardAvoidingTableView()
         tableView.separatorStyle = .none
@@ -64,12 +70,15 @@ class SearchFilterController: UIViewController {
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 12))
         return tableView
     }()
-    fileprivate let applyView = SearchFilterApplyView()
 
     init(searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
         self.filterManager = SearchFilterManager(searchQuery: searchQuery)
         self.onExtensionDismiss = extensionDismiss
         super.init(nibName: nil, bundle: nil)
+
+        filterLocationCell.controller = self
+        filterPriceCell.controller = self
+        filterHourCell.controller = self
 
         self.initViews()
         self.registerCell()
@@ -94,6 +103,7 @@ class SearchFilterController: UIViewController {
         self.applyView.applyBtn.addTarget(self, action: #selector(actionApply(_:)), for: .touchUpInside)
 
         self.render(searchQuery: filterManager.searchQuery)
+        self.filterPriceCell.reload()
     }
 
     private func initViews() {
@@ -123,6 +133,9 @@ class SearchFilterController: UIViewController {
         self.items = filterManager.items
         self.applyView.render(searchQuery: searchQuery)
         self.tableView.reloadData()
+
+        self.filterLocationCell.collectionView.reloadData()
+        self.filterHourCell.collectionView.reloadData()
     }
 
     @objc func actionReset(_ sender: Any) {
@@ -149,9 +162,6 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
     func registerCell() {
         tableView.register(SearchFilterTagCell.self, forCellReuseIdentifier: SearchFilterTagCell.id)
         tableView.register(SearchFilterTagMoreCell.self, forCellReuseIdentifier: SearchFilterTagMoreCell.id)
-        tableView.register(SearchFilterLocationCell.self, forCellReuseIdentifier: SearchFilterLocationCell.id)
-        tableView.register(SearchFilterHourCell.self, forCellReuseIdentifier: SearchFilterHourCell.id)
-        tableView.register(SearchFilterPriceCell.self, forCellReuseIdentifier: SearchFilterPriceCell.id)
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -174,23 +184,13 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // TODO Render selected data on Location, Hour, Price on call?
-
         switch items[indexPath.section].1[indexPath.row] {
         case .location:
-            let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterLocationCell.id) as! SearchFilterLocationCell
-            cell.controller = self
-            cell.collectionView.reloadData()
-            return cell
+            return filterLocationCell
         case .hour:
-            let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterHourCell.id) as! SearchFilterHourCell
-            cell.controller = self
-            cell.collectionView.reloadData()
-            return cell
+            return filterHourCell
         case .price:
-            let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterPriceCell.id) as! SearchFilterPriceCell
-            cell.controller = self
-            return cell
+            return filterPriceCell
         case let .tag(tag):
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterTagCell.id) as! SearchFilterTagCell
             cell.render(title: tag, selected: filterManager.isSelected(tag: tag))
@@ -223,7 +223,6 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
         }
     }
 }
-
 
 // MARK: Header & Apply View
 fileprivate class SearchFilterHeaderView: UIView {
@@ -388,8 +387,8 @@ fileprivate class SearchFilterLocationCell: UITableViewCell {
 
     var controller: SearchFilterController!
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    required init() {
+        super.init(style: .default, reuseIdentifier: nil)
         self.selectionStyle = .none
         self.addSubview(moreButton)
         self.addSubview(headerLabel)
@@ -423,6 +422,7 @@ fileprivate class SearchFilterLocationCell: UITableViewCell {
         let controller = SearchLocationController(searchQuery: self.controller.filterManager.searchQuery) { searchQuery in
             if let searchQuery = searchQuery {
                 self.controller.render(searchQuery: searchQuery)
+                self.controller.filterPriceCell.reload()
             }
         }
         self.controller.navigationController?.pushViewController(controller, animated: true)
@@ -488,6 +488,8 @@ extension SearchFilterLocationCell: UICollectionViewDataSource, UICollectionView
             controller.filterManager.select(container: container)
         }
         collectionView.reloadData()
+        self.controller.applyView.render(searchQuery: self.controller.filterManager.searchQuery)
+        self.controller.filterPriceCell.reload()
     }
 
     fileprivate class SearchFilterLocationGridCell: UICollectionViewCell {
@@ -597,8 +599,8 @@ fileprivate class SearchFilterHourCell: UITableViewCell {
 
     var controller: SearchFilterController!
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    required init() {
+        super.init(style: .default, reuseIdentifier: nil)
         self.selectionStyle = .none
         self.addSubview(headerLabel)
         self.addSubview(collectionView)
@@ -642,19 +644,19 @@ extension SearchFilterHourCell: UICollectionViewDataSource, UICollectionViewDele
 
         switch items[indexPath.row] {
         case .now:
-            let selected = controller.filterManager.isSelected(hour: "now")
+            let selected = controller.filterManager.isSelected(hour: "Open Now")
             cell.render(text: "Open Now", image: UIImage(named: "Search-Timing-Present"), selected: selected)
         case .breakfast:
-            let selected = controller.filterManager.isSelected(hour: "breakfast")
+            let selected = controller.filterManager.isSelected(hour: "Breakfast")
             cell.render(text: "Breakfast", image: nil, selected: selected)
         case .lunch:
-            let selected = controller.filterManager.isSelected(hour: "lunch")
+            let selected = controller.filterManager.isSelected(hour: "Lunch")
             cell.render(text: "Lunch", image: nil, selected: selected)
         case .dinner:
-            let selected = controller.filterManager.isSelected(hour: "dinner")
+            let selected = controller.filterManager.isSelected(hour: "Dinner")
             cell.render(text: "Dinner", image: nil, selected: selected)
         case .supper:
-            let selected = controller.filterManager.isSelected(hour: "supper")
+            let selected = controller.filterManager.isSelected(hour: "Supper")
             cell.render(text: "Supper", image: nil, selected: selected)
         }
         return cell
@@ -683,17 +685,18 @@ extension SearchFilterHourCell: UICollectionViewDataSource, UICollectionViewDele
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch items[indexPath.row] {
         case .now:
-            controller.filterManager.select(hour: "now")
+            controller.filterManager.select(hour: "Open Now")
         case .breakfast:
-            controller.filterManager.select(hour: "breakfast")
+            controller.filterManager.select(hour: "Breakfast")
         case .lunch:
-            controller.filterManager.select(hour: "lunch")
+            controller.filterManager.select(hour: "Lunch")
         case .dinner:
-            controller.filterManager.select(hour: "dinner")
+            controller.filterManager.select(hour: "Dinner")
         case .supper:
-            controller.filterManager.select(hour: "supper")
+            controller.filterManager.select(hour: "Supper")
         }
         collectionView.reloadData()
+        self.controller.applyView.render(searchQuery: self.controller.filterManager.searchQuery)
     }
 
     fileprivate class SearchFilterHourGridCell: UICollectionViewCell {
@@ -784,25 +787,36 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
     }()
     private let averageLabel: UILabel = {
         let label = UILabel()
-        label.text = "Average price in area is $25"
-        label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        label.text = "Average price in selected area is $25 per pax"
+        label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         label.textColor = UIColor.black.withAlphaComponent(0.75)
         return label
+    }()
+    private let loadingIndicator: NVActivityIndicatorView = {
+        let indicator = NVActivityIndicatorView(frame: .zero, type: .ballBeat, color: .primary700, padding: 10)
+        indicator.startAnimating()
+        return indicator
     }()
 
     private let priceButtons = PriceButtonGroup()
     private let priceSlider = PriceRangeSlider()
 
     var controller: SearchFilterController!
+    var priceRangeInArea: PriceRangeInArea?
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    required init() {
+        super.init(style: .default, reuseIdentifier: nil)
         self.selectionStyle = .none
         self.addSubview(priceSlider)
         self.addSubview(headerLabel)
         self.addSubview(averageLabel)
         self.addSubview(priceButtons)
+        self.addSubview(loadingIndicator)
 
+        priceButtons.cheapButton.addTarget(self, action: #selector(onPriceButton(for:)), for: .touchUpInside)
+        priceButtons.averageButton.addTarget(self, action: #selector(onPriceButton(for:)), for: .touchUpInside)
+        priceButtons.expensiveButton.addTarget(self, action: #selector(onPriceButton(for:)), for: .touchUpInside)
+        priceSlider.addTarget(self, action: #selector(onPriceSlider(_:)), for: .touchUpInside)
 
         headerLabel.snp.makeConstraints { (make) in
             make.left.right.equalTo(self).inset(24)
@@ -825,11 +839,90 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
             make.bottom.equalTo(self).inset(12)
         }
 
+        loadingIndicator.snp.makeConstraints { make in
+            make.height.width.equalTo(50)
+            make.centerX.equalTo(self)
+            make.centerY.equalTo(self).inset(10)
+        }
+
         self.layoutIfNeeded()
+        self.setLoading(true)
     }
 
-    class var id: String {
-        return "SearchFilterPriceCell"
+    fileprivate func reload() {
+        self.priceRangeInArea = nil
+        self.setLoading(true)
+
+        controller.filterManager.getPriceInArea { metaJSON, priceRangeInArea in
+            self.priceRangeInArea = priceRangeInArea
+            if let priceRangeInArea = priceRangeInArea {
+                let averagePrice = String(format: "%.0f", priceRangeInArea.avg)
+                self.averageLabel.text = "Average price in selected area is $\(averagePrice) per pax"
+
+                self.priceSlider.minValue = CGFloat(priceRangeInArea.min)
+                self.priceSlider.maxValue = CGFloat(priceRangeInArea.max)
+
+                self.updateSelected()
+                self.setLoading(false)
+            } else {
+                self.setLoading(true)
+            }
+        }
+    }
+
+    @objc fileprivate func onPriceButton(for button: UIButton) {
+        if let priceRangeInArea = priceRangeInArea, let name = button.title(for: .normal) {
+            switch name {
+            case "$":
+                let min = priceRangeInArea.cheapRange.min
+                let max = priceRangeInArea.cheapRange.max
+                controller.filterManager.select(price: name, min: min, max: max)
+            case "$$":
+                let min = priceRangeInArea.averageRange.min
+                let max = priceRangeInArea.averageRange.max
+                controller.filterManager.select(price: name, min: min, max: max)
+            case "$$$":
+                let min = priceRangeInArea.expensiveRange.min
+                let max = priceRangeInArea.expensiveRange.max
+                controller.filterManager.select(price: name, min: min, max: max)
+            default: break
+            }
+
+            self.updateSelected()
+        } else {
+            controller.filterManager.select(price: nil, min: nil, max: nil)
+        }
+        self.controller.applyView.render(searchQuery: self.controller.filterManager.searchQuery)
+    }
+
+    @objc fileprivate func onPriceSlider(_ priceSlider: PriceRangeSlider) {
+        let min = Double(priceSlider.selectedMinValue)
+        let max = Double(priceSlider.selectedMaxValue)
+        priceButtons.select(name: nil)
+
+        if priceRangeInArea?.min == min && priceRangeInArea?.max == max {
+            controller.filterManager.select(price: nil, min: nil, max: nil)
+        } else {
+            controller.filterManager.select(price: nil, min: min, max: max)
+        }
+        self.controller.applyView.render(searchQuery: self.controller.filterManager.searchQuery)
+    }
+
+    private func setLoading(_ hidden: Bool) {
+        averageLabel.isHidden = hidden
+        priceSlider.isHidden = hidden
+        priceButtons.isHidden = hidden
+        loadingIndicator.isHidden = !hidden
+    }
+
+    private func updateSelected() {
+        if let priceRangeInArea = priceRangeInArea {
+            priceButtons.select(name: controller.filterManager.searchQuery.filter.price.name)
+            let price = self.controller.filterManager.searchQuery.filter.price
+            self.priceSlider.selectedMinValue = CGFloat(price.min ?? priceRangeInArea.min)
+            self.priceSlider.selectedMaxValue = CGFloat(price.max ?? priceRangeInArea.max)
+            priceSlider.setNeedsLayout()
+        }
     }
 
     class PriceRangeSlider: RangeSeekSlider {
@@ -847,6 +940,8 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
             handleDiameter = 18
             selectedHandleDiameterMultiplier = 1.3
             lineHeight = 3.0
+
+            minDistance = 5
         }
     }
 
@@ -856,7 +951,7 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
             button.backgroundColor = .white
             button.setTitle("$", for: .normal)
             button.setTitleColor(UIColor.black.withAlphaComponent(0.75), for: .normal)
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 13.0, weight: .semibold)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 14.0, weight: .medium)
             return button
         }()
         fileprivate let averageButton: UIButton = {
@@ -864,7 +959,7 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
             button.backgroundColor = .white
             button.setTitle("$$", for: .normal)
             button.setTitleColor(UIColor.black.withAlphaComponent(0.75), for: .normal)
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 13.0, weight: .semibold)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 14.0, weight: .medium)
             return button
         }()
         fileprivate let expensiveButton: UIButton = {
@@ -872,9 +967,12 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
             button.backgroundColor = .white
             button.setTitle("$$$", for: .normal)
             button.setTitleColor(UIColor.black.withAlphaComponent(0.75), for: .normal)
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 13.0, weight: .semibold)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 14.0, weight: .medium)
             return button
         }()
+        fileprivate var buttons: [UIButton] {
+            return [cheapButton, averageButton, expensiveButton]
+        }
 
         required init() {
             super.init(frame: .zero)
@@ -882,7 +980,8 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
             self.addSubview(averageButton)
             self.addSubview(expensiveButton)
 
-            cheapButton.snp.makeConstraints { make in
+            cheapButton.snp.makeConstraints {
+                make in
                 make.left.equalTo(self)
                 make.right.equalTo(averageButton.snp.left).inset(-18)
                 make.width.equalTo(averageButton.snp.width)
@@ -891,7 +990,8 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
                 make.top.bottom.equalTo(self)
             }
 
-            averageButton.snp.makeConstraints { make in
+            averageButton.snp.makeConstraints {
+                make in
                 make.left.equalTo(cheapButton.snp.right).inset(-18)
                 make.right.equalTo(expensiveButton.snp.left).inset(-18)
                 make.width.equalTo(cheapButton.snp.width)
@@ -899,12 +999,25 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
                 make.top.bottom.equalTo(self)
             }
 
-            expensiveButton.snp.makeConstraints { make in
+            expensiveButton.snp.makeConstraints {
+                make in
                 make.left.equalTo(averageButton.snp.right).inset(-18)
                 make.right.equalTo(self)
                 make.width.equalTo(cheapButton.snp.width)
                 make.width.equalTo(averageButton.snp.width)
                 make.top.bottom.equalTo(self)
+            }
+        }
+
+        fileprivate func select(name: String?) {
+            for button in buttons {
+                if (button.title(for: .normal) == name) {
+                    button.backgroundColor = .primary400
+                    button.setTitleColor(.white, for: .normal)
+                } else {
+                    button.backgroundColor = .white
+                    button.setTitleColor(UIColor.black.withAlphaComponent(0.75), for: .normal)
+                }
             }
         }
 
@@ -922,6 +1035,10 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
             fatalError("init(coder:) has not been implemented")
         }
 
+    }
+
+    class var id: String {
+        return "SearchFilterPriceCell"
     }
 
     required init?(coder aDecoder: NSCoder) {

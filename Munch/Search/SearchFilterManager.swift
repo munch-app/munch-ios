@@ -80,7 +80,7 @@ class SearchFilterManager {
         return [FilterHourType.now, FilterHourType.breakfast, FilterHourType.lunch, FilterHourType.dinner, FilterHourType.supper]
     }
 
-    func getMoreTypes(type: String) -> [String] {
+    public func getMoreTypes(type: String) -> [String] {
         if let tags = types[type]?.sorted() {
             var selected = [String]()
             var sorted = tags
@@ -148,6 +148,19 @@ class SearchFilterManager {
         return searchQuery
     }
 
+    @discardableResult func select(price name: String?, min: Double?, max: Double?) -> SearchQuery {
+        if let name = name, isSelected(price: name) {
+            searchQuery.filter.price.name = nil
+            searchQuery.filter.price.min = nil
+            searchQuery.filter.price.max = nil
+        } else {
+            searchQuery.filter.price.name = name
+            searchQuery.filter.price.min = min
+            searchQuery.filter.price.max = max
+        }
+        return searchQuery
+    }
+
     func isSelected(tag: String) -> Bool {
         return searchQuery.filter.tag.positives.contains(tag)
     }
@@ -170,6 +183,10 @@ class SearchFilterManager {
         return searchQuery.filter.hour.name == name
     }
 
+    func isSelected(price name: String) -> Bool {
+        return searchQuery.filter.price.name == name
+    }
+
     /**
      Reset everything except for location and containers
      */
@@ -183,6 +200,7 @@ class SearchFilterManager {
         searchQuery.filter.hour.close = nil
 
         // Filters Price
+        searchQuery.filter.price.name = nil
         searchQuery.filter.price.min = nil
         searchQuery.filter.price.max = nil
 
@@ -196,6 +214,12 @@ class SearchFilterManager {
             searchQuery.filter.tag.positives.remove(tag)
         }
         return searchQuery
+    }
+}
+
+extension SearchFilterManager {
+    public func getPriceInArea(callback: @escaping (_ meta: MetaJSON, _ priceRangeInArea: PriceRangeInArea?) -> Void) {
+        MunchApi.search.priceRange(query: self.searchQuery, callback: callback)
     }
 }
 

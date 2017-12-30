@@ -37,6 +37,16 @@ class SearchClient {
         }
     }
 
+    func priceRange(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ priceRangeInArea: PriceRangeInArea?) -> Void) {
+        // TODO Actual logic
+        let priceRangeInArea = PriceRangeInArea.init(avg: 25.0, min: 5, max: 65,
+                cheapRange: .init(min: 5, max: 15),
+                averageRange: .init(min: 15, max: 35),
+                expensiveRange: .init(min: 35, max: 65)
+        )
+        callback(.init(metaJson: .init(["code", 200])), priceRangeInArea)
+    }
+
     /**
      Method to parse search result type
      */
@@ -51,6 +61,21 @@ class SearchClient {
             }
         }
         return nil
+    }
+}
+
+struct PriceRangeInArea {
+    var avg: Double
+    var min: Double
+    var max: Double
+
+    var cheapRange: PriceRange
+    var averageRange: PriceRange
+    var expensiveRange: PriceRange
+
+    struct PriceRange {
+        var min: Double
+        var max: Double
     }
 }
 
@@ -160,6 +185,7 @@ struct SearchQuery: Equatable {
         }
 
         init(json: JSON) {
+            price.name = json["price"]["name"].string
             price.min = json["price"]["min"].double
             price.max = json["price"]["max"].double
 
@@ -175,6 +201,7 @@ struct SearchQuery: Equatable {
         }
 
         struct Price {
+            var name: String?
             var min: Double?
             var max: Double?
         }
@@ -193,7 +220,7 @@ struct SearchQuery: Equatable {
 
         func toParams() -> Parameters {
             var params = Parameters()
-            params["price"] = ["min": price.min, "max": price.max]
+            params["price"] = ["name": price.name, "min": price.min, "max": price.max]
             params["tag"] = ["positives": Array(tag.positives)]
             params["hour"] = ["name": hour.name, "day": hour.day, "open": hour.open, "close": hour.close]
             params["location"] = location?.toParams()

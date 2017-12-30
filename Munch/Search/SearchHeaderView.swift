@@ -85,19 +85,42 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
         }
     }
 
-    func tagCollection(selectedLocation tagCollection: SearchFilterTagCollection) {
+    func tagCollection(selectedLocation name: String, for tagCollection: SearchFilterTagCollection) {
         controller.goTo(extension: SearchLocationController.self)
     }
 
-    func tagCollection(selectedPlus tagCollection: SearchFilterTagCollection) {
-        // Future: Puzzle Building Feature
-    }
-
-    func tagCollection(selectedText: String, selectedTag tagCollection: SearchFilterTagCollection, didTapTag tagText: String!) {
+    func tagCollection(selectedHour name: String, for tagCollection: SearchFilterTagCollection) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
             var searchQuery = self.controller.searchQuery
-            searchQuery.filter.tag.positives.remove(selectedText)
+            searchQuery.filter.hour.name = nil
+            searchQuery.filter.hour.open = nil
+            searchQuery.filter.hour.close = nil
+            searchQuery.filter.hour.close = nil
+            self.controller.render(searchQuery: searchQuery)
+        })
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        self.controller.present(alert, animated: true)
+    }
+
+    func tagCollection(selectedPrice name: String, for tagCollection: SearchFilterTagCollection) {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
+            var searchQuery = self.controller.searchQuery
+            searchQuery.filter.price.name = nil
+            searchQuery.filter.price.min = nil
+            searchQuery.filter.price.max = nil
+            self.controller.render(searchQuery: searchQuery)
+        })
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        self.controller.present(alert, animated: true)
+    }
+
+    func tagCollection(selectedTag name: String, for tagCollection: SearchFilterTagCollection) {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
+            var searchQuery = self.controller.searchQuery
+            searchQuery.filter.tag.positives.remove(name)
             self.controller.render(searchQuery: searchQuery)
         })
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -204,12 +227,20 @@ class SearchBackButton: UIButton {
 
 }
 
+enum SearchFilterTagType {
+    case location(String)
+    case price(String)
+    case hour(String)
+    case tag(String)
+}
+
 class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
     let tagCollection = TTGTextTagCollectionView()
     let defaultTagConfig = DefaultTagConfig()
     let plusTagConfig = DefaultTagConfig()
 
     var delegate: SearchFilterTagDelegate?
+    var tags: [SearchFilterTagType]!
 
     override init(frame: CGRect = CGRect()) {
         super.init(frame: frame)
@@ -232,40 +263,75 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
     }
 
     func render(query: SearchQuery) {
-        var tags = [String]()
+        var tags = [SearchFilterTagType]()
 
         // FirstTag: Location Tag
-        tags.append(getLocationTag(query: query)[0])
-        // TODO Handle Opening Hours & Price Filter
+        tags.append(contentsOf: getLocationTag(query: query))
+        tags.append(contentsOf: getHourTag(query: query))
+        tags.append(contentsOf: getPriceTag(query: query))
 
         // Other Tags
         for tag in query.filter.tag.positives {
-            tags.append(tag)
+            tags.append(SearchFilterTagType.tag(tag))
         }
 
         render(tags: tags)
     }
 
-    private func getLocationTag(query: SearchQuery) -> [String] {
+    /**
+     Must always return one returns min
+     */
+    private func getLocationTag(query: SearchQuery) -> [SearchFilterTagType] {
         if let containers = query.filter.containers, !containers.isEmpty {
-            return containers.map({ $0.name ?? "Container" })
+            return containers.map({ SearchFilterTagType.location($0.name ?? "Container") })
         }
 
         if let locationName = query.filter.location?.name {
-            return [locationName]
+            return [SearchFilterTagType.location(locationName)]
         }
 
         if MunchLocation.isEnabled {
-            return ["Nearby"]
+            return [SearchFilterTagType.location("Nearby")]
         }
 
-        return ["Singapore"]
+        return [SearchFilterTagType.location("Singapore")]
     }
 
-    private func render(tags: [String]) {
+    private func getPriceTag(query: SearchQuery) -> [SearchFilterTagType] {
+        if let min = query.filter.price.min, let max = query.filter.price.max {
+            let min = String(format: "%.0f", min)
+            let max = String(format: "%.0f", max)
+            return [SearchFilterTagType.price("$\(min) - $\(max)")]
+        }
+        return []
+    }
+
+    private func getHourTag(query: SearchQuery) -> [SearchFilterTagType] {
+        if let name = query.filter.hour.name {
+            return [SearchFilterTagType.hour(name)]
+        } else if let day = query.filter.hour.day,
+                  let open = query.filter.hour.open,
+                  let close = query.filter.hour.close {
+            return [SearchFilterTagType.hour("\(day): \(open)-\(close)")]
+        }
+        return []
+    }
+
+    private func render(tags: [SearchFilterTagType]) {
         tagCollection.removeAllTags()
-        tagCollection.addTags(tags)
-//        tagCollection.addTag("＋", with: plusTagConfig)
+        self.tags = tags
+        for tag in tags {
+            switch tag {
+            case let .location(name):
+                tagCollection.addTag(name)
+            case let .price(name):
+                tagCollection.addTag(name)
+            case let .hour(name):
+                tagCollection.addTag(name)
+            case let .tag(name):
+                tagCollection.addTag(name)
+            }
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -296,15 +362,15 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
     }
 
     func textTagCollectionView(_ textTagCollectionView: TTGTextTagCollectionView!, didTapTag tagText: String!, at index: UInt, selected: Bool) {
-        if (index == 0) {
-            // Location Selected
-            delegate?.tagCollection(selectedLocation: self)
-        } else if (tagText.hasPrefix("＋")) {
-            // Is ＋ button selected
-            delegate?.tagCollection(selectedPlus: self)
-        } else {
-            // Filter selected
-            delegate?.tagCollection(selectedText: tagText, selectedTag: self, didTapTag: tagText)
+        switch tags[Int(index)] {
+        case let .location(name):
+            delegate?.tagCollection(selectedLocation: name, for: self)
+        case let .price(name):
+            delegate?.tagCollection(selectedPrice: name, for: self)
+        case let .hour(name):
+            delegate?.tagCollection(selectedHour: name, for: self)
+        case let .tag(name):
+            delegate?.tagCollection(selectedTag: name, for: self)
         }
     }
 }
@@ -313,11 +379,13 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
  Delegate tool for SearchFilterTag
  */
 protocol SearchFilterTagDelegate {
-    func tagCollection(selectedLocation tagCollection: SearchFilterTagCollection)
+    func tagCollection(selectedLocation name: String, for tagCollection: SearchFilterTagCollection)
 
-    func tagCollection(selectedPlus tagCollection: SearchFilterTagCollection)
+    func tagCollection(selectedHour name: String, for tagCollection: SearchFilterTagCollection)
 
-    func tagCollection(selectedText: String, selectedTag tagCollection: SearchFilterTagCollection, didTapTag tagText: String!)
+    func tagCollection(selectedPrice name: String, for tagCollection: SearchFilterTagCollection)
+
+    func tagCollection(selectedTag name: String, for tagCollection: SearchFilterTagCollection)
 }
 
 // Header Scroll to Hide Functions
