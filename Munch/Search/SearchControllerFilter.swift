@@ -185,6 +185,7 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
         case .hour:
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterHourCell.id) as! SearchFilterHourCell
             cell.controller = self
+            cell.collectionView.reloadData()
             return cell
         case .price:
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterPriceCell.id) as! SearchFilterPriceCell
@@ -549,7 +550,18 @@ extension SearchFilterLocationCell: UICollectionViewDataSource, UICollectionView
         func render(text: String?, image: UIImage?, selected: Bool) {
             nameLabel.text = text
             imageView.image = image
-            containerView.backgroundColor = selected ? .primary020 : UIColor(hex: "F8F8F8")
+
+            if selected {
+                containerView.backgroundColor = .primary030
+
+                nameLabel.textColor = .white
+                nameLabel.backgroundColor = .primary400
+            } else {
+                containerView.backgroundColor = UIColor(hex: "F8F8F8")
+
+                nameLabel.textColor = UIColor.black.withAlphaComponent(0.72)
+                nameLabel.backgroundColor = .white
+            }
         }
 
         required init?(coder aDecoder: NSCoder) {
@@ -567,7 +579,7 @@ fileprivate class SearchFilterHourCell: UITableViewCell {
         label.textColor = UIColor.black.withAlphaComponent(0.75)
         return label
     }()
-    private let collectionView: UICollectionView = {
+    fileprivate let collectionView: UICollectionView = {
         let layout = UICollectionViewLeftAlignedLayout()
         layout.sectionInset = UIEdgeInsets(top: 2, left: 24, bottom: 2, right: 24)
         layout.scrollDirection = .vertical
@@ -630,15 +642,20 @@ extension SearchFilterHourCell: UICollectionViewDataSource, UICollectionViewDele
 
         switch items[indexPath.row] {
         case .now:
-            cell.render(text: "Open Now", image: UIImage(named: "Search-Timing-Present"))
+            let selected = controller.filterManager.isSelected(hour: "now")
+            cell.render(text: "Open Now", image: UIImage(named: "Search-Timing-Present"), selected: selected)
         case .breakfast:
-            cell.render(text: "Breakfast", image: nil)
+            let selected = controller.filterManager.isSelected(hour: "breakfast")
+            cell.render(text: "Breakfast", image: nil, selected: selected)
         case .lunch:
-            cell.render(text: "Lunch", image: nil)
+            let selected = controller.filterManager.isSelected(hour: "lunch")
+            cell.render(text: "Lunch", image: nil, selected: selected)
         case .dinner:
-            cell.render(text: "Dinner", image: nil)
+            let selected = controller.filterManager.isSelected(hour: "dinner")
+            cell.render(text: "Dinner", image: nil, selected: selected)
         case .supper:
-            cell.render(text: "Supper", image: nil)
+            let selected = controller.filterManager.isSelected(hour: "supper")
+            cell.render(text: "Supper", image: nil, selected: selected)
         }
         return cell
     }
@@ -666,17 +683,17 @@ extension SearchFilterHourCell: UICollectionViewDataSource, UICollectionViewDele
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch items[indexPath.row] {
         case .now:
-            return
+            controller.filterManager.select(hour: "now")
         case .breakfast:
-            return
+            controller.filterManager.select(hour: "breakfast")
         case .lunch:
-            return
+            controller.filterManager.select(hour: "lunch")
         case .dinner:
-            return
+            controller.filterManager.select(hour: "dinner")
         case .supper:
-            return
+            controller.filterManager.select(hour: "supper")
         }
-//        controller.actionApply(collectionView)
+        collectionView.reloadData()
     }
 
     fileprivate class SearchFilterHourGridCell: UICollectionViewCell {
@@ -694,7 +711,7 @@ extension SearchFilterHourCell: UICollectionViewDataSource, UICollectionViewDele
         }()
         let nameLabel: UILabel = {
             let nameLabel = UILabel()
-            nameLabel.backgroundColor = .white
+            nameLabel.backgroundColor = .clear
             nameLabel.font = labelFont
             nameLabel.textColor = UIColor.black.withAlphaComponent(0.72)
 
@@ -735,9 +752,19 @@ extension SearchFilterHourCell: UICollectionViewDataSource, UICollectionViewDele
             containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.5)
         }
 
-        func render(text: String?, image: UIImage?) {
+        func render(text: String?, image: UIImage?, selected: Bool) {
             nameLabel.text = text
             imageView.image = image
+
+            if selected {
+                containerView.backgroundColor = .primary400
+                nameLabel.textColor = .white
+                imageView.tintColor = .white
+            } else {
+                containerView.backgroundColor = .white
+                nameLabel.textColor = UIColor.black.withAlphaComponent(0.72)
+                imageView.tintColor = UIColor(hex: "333333")
+            }
         }
 
         required init?(coder aDecoder: NSCoder) {
@@ -807,7 +834,7 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
 
     class PriceRangeSlider: RangeSeekSlider {
         override func setupStyle() {
-            colorBetweenHandles = .primary
+            colorBetweenHandles = .primary200
             handleColor = .primary
             tintColor = UIColor(hex: "BBBBBB")
             minLabelColor = UIColor.black.withAlphaComponent(0.75)
@@ -928,10 +955,12 @@ fileprivate class SearchFilterTagCell: UITableViewCell {
         checkButton.cornerRadius = 1
         checkButton.lineWidth = 1.5
         checkButton.tintColor = UIColor.black.withAlphaComponent(0.6)
-        checkButton.onCheckColor = .primary
-        checkButton.onTintColor = .primary
         checkButton.animationDuration = 0.25
         checkButton.isEnabled = false
+
+        checkButton.onCheckColor = .white
+        checkButton.onTintColor = .primary
+        checkButton.onFillColor = .primary
     }
 
     func render(title: String, selected: Bool) {

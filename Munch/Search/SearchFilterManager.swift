@@ -138,6 +138,16 @@ class SearchFilterManager {
         return searchQuery
     }
 
+    @discardableResult func select(hour name: String) -> SearchQuery {
+        if (isSelected(hour: name)) {
+            searchQuery.filter.hour.name = nil
+        } else {
+            // TODO actual hour logic
+            searchQuery.filter.hour.name = name
+        }
+        return searchQuery
+    }
+
     func isSelected(tag: String) -> Bool {
         return searchQuery.filter.tag.positives.contains(tag)
     }
@@ -156,11 +166,28 @@ class SearchFilterManager {
         return false
     }
 
+    func isSelected(hour name: String) -> Bool {
+        return searchQuery.filter.hour.name == name
+    }
+
+    /**
+     Reset everything except for location and containers
+     */
     func reset() -> SearchQuery {
         searchQuery.filter.tag.positives = []
+
+        // Filters Hour
+        searchQuery.filter.hour.name = nil
         searchQuery.filter.hour.day = nil
-        searchQuery.filter.hour.time = nil
-        // TODO more reset
+        searchQuery.filter.hour.open = nil
+        searchQuery.filter.hour.close = nil
+
+        // Filters Price
+        searchQuery.filter.price.min = nil
+        searchQuery.filter.price.max = nil
+
+        // Sort
+        searchQuery.sort.type = nil
         return searchQuery
     }
 

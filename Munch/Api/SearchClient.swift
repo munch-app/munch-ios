@@ -165,8 +165,10 @@ struct SearchQuery: Equatable {
 
             tag.positives = Set(json["tag"]["positives"].arrayValue.map({ $0.stringValue }))
 
+            hour.name = json["hour"]["name"].string
             hour.day = json["hour"]["day"].string
-            hour.time = json["hour"]["time"].string
+            hour.open = json["hour"]["open"].string
+            hour.close = json["hour"]["close"].string
 
             location = Location(json: json["location"])
             containers = json["containers"].map({ Container(json: $0.1) })
@@ -175,7 +177,6 @@ struct SearchQuery: Equatable {
         struct Price {
             var min: Double?
             var max: Double?
-
         }
 
         struct Tag {
@@ -183,15 +184,18 @@ struct SearchQuery: Equatable {
         }
 
         struct Hour {
+            var name: String?
+
             var day: String?
-            var time: String?
+            var open: String?
+            var close: String?
         }
 
         func toParams() -> Parameters {
             var params = Parameters()
             params["price"] = ["min": price.min, "max": price.max]
             params["tag"] = ["positives": Array(tag.positives)]
-            params["hour"] = ["day": hour.day, "time": hour.time]
+            params["hour"] = ["name": hour.name, "day": hour.day, "open": hour.open, "close": hour.close]
             params["location"] = location?.toParams()
             params["containers"] = containers?.map({ $0.toParams() })
             return params
