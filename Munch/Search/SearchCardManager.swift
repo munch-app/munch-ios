@@ -11,6 +11,7 @@ import UIKit
 
 class SearchCardManager {
     var query: SearchQuery?
+    var time = Date()
 
     private(set) var cards: [SearchCard]
     // Whether this card manager is currently loading more content

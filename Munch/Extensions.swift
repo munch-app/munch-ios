@@ -84,7 +84,6 @@ extension UIView {
 }
 
 extension UIView {
-
     var safeArea: ConstraintBasicAttributesDSL {
         if #available(iOS 11.0, *) {
             return self.safeAreaLayoutGuide.snp
@@ -216,13 +215,13 @@ class UICollectionViewLeftAlignedLayout: UICollectionViewFlowLayout {
             let previousFrame = layoutAttributesForItem(at: previousIndexPath)?.frame ?? CGRect.zero
             let previousFrameRightPoint = previousFrame.origin.x + previousFrame.width
             let currentFrame = currentItemAttributes.frame
-            let strecthedCurrentFrame = CGRect.init(x: sectionInset.left,
+            let stretchedCurrentFrame = CGRect.init(x: sectionInset.left,
                     y: currentFrame.origin.y,
                     width: layoutWidth,
                     height: currentFrame.size.height)
             // if the current frame, once left aligned to the left and stretched to the full collection view
-            // widht intersects the previous frame then they are on the same line
-            let isFirstItemInRow = !previousFrame.intersects(strecthedCurrentFrame)
+            // width intersects the previous frame then they are on the same line
+            let isFirstItemInRow = !previousFrame.intersects(stretchedCurrentFrame)
 
             if (isFirstItemInRow) {
                 // make sure the first item on a line is left aligned

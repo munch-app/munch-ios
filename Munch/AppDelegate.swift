@@ -45,10 +45,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
         if let tabBar = self.window?.rootViewController as? TabBarController {
-            if let navigation = tabBar.selectedViewController as? UINavigationController {
-                if let _ = navigation.topViewController as? SearchController {
-                    // TODO Refresh
-                    // controller.refreshQuery()
+            if let navigation = tabBar.selectedViewController as? SearchNavigationalController {
+                if let search = navigation.topViewController as? SearchController {
+                    search.reset()
                 }
             }
         }

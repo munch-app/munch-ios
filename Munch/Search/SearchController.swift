@@ -176,6 +176,16 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         }
     }
 
+    func reset() {
+        if let time = cardManager?.time, time.addingTimeInterval(60 * 60) > Date() {
+            // Query requires refresh as it expired in 1 hour
+            searchQuery = SearchQuery()
+            contentView(search: searchQuery)
+            headerView.searchQueryHistories.removeAll()
+            headerView.render(query: searchQuery)
+        }
+    }
+
     func render(searchQuery: SearchQuery) {
         self.contentView(search: searchQuery)
         self.headerView.render(query: searchQuery)

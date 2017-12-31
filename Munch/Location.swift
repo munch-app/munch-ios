@@ -15,9 +15,7 @@ import CoreLocation
  */
 public class MunchLocation {
 
-    /**
-     Last latLng of userLocation, can be nil
-     */
+    // Last latLng of userLocation, can be nil
     private static var lastLatLng: String?
     private static var lastLocation: CLLocation?
 
@@ -87,10 +85,7 @@ public class MunchLocation {
         if (isEnabled) {
             scheduleOnce()
         }
-        if let latLng = lastLatLng {
-            return latLng
-        }
-        return nil
+        return lastLatLng
     }
 
     /**
@@ -114,7 +109,7 @@ public class MunchLocation {
      Distance from current location in metres
      */
     public class func distance(latLng: String) -> Double? {
-        if let locationA = MunchLocation.lastLocation, let locationB = CLLocation(latLng: latLng) {
+        if let locationA = lastLocation, let locationB = CLLocation(latLng: latLng) {
             return locationA.distance(from: locationB)
         }
         return nil

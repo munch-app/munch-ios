@@ -579,7 +579,7 @@ fileprivate class AddressLabel: UIView {
 
     private func render(lineOne card: PlaceCard, simple: Bool) {
         if (simple) {
-            var line = NSMutableAttributedString()
+            let line = NSMutableAttributedString()
 
             if let street = card["street"].string {
                 line.append(string: street, style: .default {
@@ -607,7 +607,7 @@ fileprivate class AddressLabel: UIView {
         }
 
         if let nearestTrain = card["nearestTrain"].string {
-            line.append("Near " + nearestTrain + " MRT")
+            line.append("Nearest MRT: " + nearestTrain)
         }
 
         lineTwoLabel.text = line.joined(separator: " • ")
