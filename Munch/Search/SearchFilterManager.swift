@@ -33,6 +33,17 @@ enum FilterHourType {
 }
 
 class SearchFilterManager {
+    private let dayFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEE"
+        return formatter
+    }()
+    private let timeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "mm:ss"
+        return formatter
+    }()
+
     var searchQuery: SearchQuery
 
     let recentLocationDatabase = RecentDatabase(name: "SearchLocation", maxItems: 3)
@@ -142,8 +153,27 @@ class SearchFilterManager {
         if (isSelected(hour: name)) {
             searchQuery.filter.hour.name = nil
         } else {
-            // TODO actual hour logic
             searchQuery.filter.hour.name = name
+            searchQuery.filter.hour.day = dayFormatter.string(from: Date()).lowercased()
+            switch name {
+            case "Open Now":
+                searchQuery.filter.hour.open = timeFormatter.string(from: Date())
+                searchQuery.filter.hour.close = timeFormatter.string(from: Date().addingTimeInterval(30 * 60)) // 30 Minutes
+            case "Breakfast":
+                searchQuery.filter.hour.open = "10:00"
+                searchQuery.filter.hour.close = "10:15"
+            case "Lunch":
+                searchQuery.filter.hour.open = "11:15"
+                searchQuery.filter.hour.close = "11:45"
+            case "Dinner":
+                searchQuery.filter.hour.open = "18:30"
+                searchQuery.filter.hour.close = "19:00"
+            case "Supper":
+                searchQuery.filter.hour.open = "11:00"
+                searchQuery.filter.hour.close = "11:55"
+            default:
+                break
+            }
         }
         return searchQuery
     }
@@ -159,6 +189,12 @@ class SearchFilterManager {
             searchQuery.filter.price.max = max
         }
         return searchQuery
+    }
+
+    func resetPrice() {
+        searchQuery.filter.price.name = nil
+        searchQuery.filter.price.min = nil
+        searchQuery.filter.price.max = nil
     }
 
     func isSelected(tag: String) -> Bool {

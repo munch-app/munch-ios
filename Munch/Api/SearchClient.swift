@@ -8,6 +8,7 @@
 
 import Foundation
 import Alamofire
+
 import SwiftyJSON
 
 /**
@@ -38,13 +39,9 @@ class SearchClient {
     }
 
     func priceRange(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ priceRangeInArea: PriceRangeInArea?) -> Void) {
-        // TODO Actual logic
-        let priceRangeInArea = PriceRangeInArea.init(avg: 25.0, min: 5, max: 65,
-                cheapRange: .init(min: 5, max: 15),
-                averageRange: .init(min: 15, max: 35),
-                expensiveRange: .init(min: 35, max: 65)
-        )
-        callback(.init(metaJson: .init(["code", 200])), priceRangeInArea)
+        MunchApi.restful.post("/search/filter/price_range", parameters: query.toParams()) { metaJSON, json in
+            callback(metaJSON, PriceRangeInArea.init(json: json["data"]))
+        }
     }
 
     /**
@@ -74,8 +71,26 @@ struct PriceRangeInArea {
     var expensiveRange: PriceRange
 
     struct PriceRange {
+        init(json: JSON) {
+            self.min = json["min"].doubleValue
+            self.max = json["max"].doubleValue
+        }
+
         var min: Double
         var max: Double
+    }
+
+    init?(json: JSON) {
+        guard json.exists() else {
+            return nil
+        }
+        self.avg = json["avg"].doubleValue
+        self.min = json["min"].doubleValue
+        self.max = json["max"].doubleValue
+
+        self.cheapRange = .init(json: json["cheapRange"])
+        self.averageRange = .init(json: json["averageRange"])
+        self.expensiveRange = .init(json: json["expensiveRange"])
     }
 }
 

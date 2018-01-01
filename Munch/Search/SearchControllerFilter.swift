@@ -804,6 +804,10 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
     var controller: SearchFilterController!
     var priceRangeInArea: PriceRangeInArea?
 
+    var filterManager: SearchFilterManager {
+        return controller.filterManager
+    }
+
     required init() {
         super.init(style: .default, reuseIdentifier: nil)
         self.selectionStyle = .none
@@ -853,19 +857,24 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
         self.priceRangeInArea = nil
         self.setLoading(true)
 
-        controller.filterManager.getPriceInArea { metaJSON, priceRangeInArea in
+        let deadline = DispatchTime.now() + 1
+        filterManager.getPriceInArea { metaJSON, priceRangeInArea in
             self.priceRangeInArea = priceRangeInArea
-            if let priceRangeInArea = priceRangeInArea {
-                let averagePrice = String(format: "%.0f", priceRangeInArea.avg)
-                self.averageLabel.text = "Average price in selected area is $\(averagePrice) per pax"
 
-                self.priceSlider.minValue = CGFloat(priceRangeInArea.min)
-                self.priceSlider.maxValue = CGFloat(priceRangeInArea.max)
+            if metaJSON.isOk(), let priceRangeInArea = priceRangeInArea {
+                DispatchQueue.main.asyncAfter(deadline: deadline) {
+                    let averagePrice = String(format: "%.0f", priceRangeInArea.avg)
+                    self.averageLabel.text = "Average price in selected area is $\(averagePrice) per pax"
 
-                self.updateSelected()
-                self.setLoading(false)
+                    self.priceSlider.minValue = CGFloat(priceRangeInArea.min)
+                    self.priceSlider.maxValue = CGFloat(priceRangeInArea.max)
+
+                    self.filterManager.resetPrice()
+                    self.updateSelected()
+                    self.setLoading(false)
+                }
             } else {
-                self.setLoading(true)
+                self.controller.present(metaJSON.createAlert(), animated: true)
             }
         }
     }
@@ -890,9 +899,9 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
 
             self.updateSelected()
         } else {
-            controller.filterManager.select(price: nil, min: nil, max: nil)
+            filterManager.select(price: nil, min: nil, max: nil)
         }
-        self.controller.applyView.render(searchQuery: self.controller.filterManager.searchQuery)
+        self.controller.applyView.render(searchQuery: self.filterManager.searchQuery)
     }
 
     @objc fileprivate func onPriceSlider(_ priceSlider: PriceRangeSlider) {
@@ -901,11 +910,11 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
         priceButtons.select(name: nil)
 
         if priceRangeInArea?.min == min && priceRangeInArea?.max == max {
-            controller.filterManager.select(price: nil, min: nil, max: nil)
+            filterManager.select(price: nil, min: nil, max: nil)
         } else {
-            controller.filterManager.select(price: nil, min: min, max: max)
+            filterManager.select(price: nil, min: min, max: max)
         }
-        self.controller.applyView.render(searchQuery: self.controller.filterManager.searchQuery)
+        self.controller.applyView.render(searchQuery: self.filterManager.searchQuery)
     }
 
     private func setLoading(_ hidden: Bool) {
@@ -917,8 +926,8 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
 
     private func updateSelected() {
         if let priceRangeInArea = priceRangeInArea {
-            priceButtons.select(name: controller.filterManager.searchQuery.filter.price.name)
-            let price = self.controller.filterManager.searchQuery.filter.price
+            priceButtons.select(name: filterManager.searchQuery.filter.price.name)
+            let price = self.filterManager.searchQuery.filter.price
             self.priceSlider.selectedMinValue = CGFloat(price.min ?? priceRangeInArea.min)
             self.priceSlider.selectedMaxValue = CGFloat(price.max ?? priceRangeInArea.max)
             priceSlider.setNeedsLayout()
