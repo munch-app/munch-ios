@@ -40,7 +40,7 @@ class SearchFilterManager {
     }()
     private let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "mm:ss"
+        formatter.dateFormat = "HH:mm"
         return formatter
     }()
 
@@ -152,6 +152,9 @@ class SearchFilterManager {
     @discardableResult func select(hour name: String) -> SearchQuery {
         if (isSelected(hour: name)) {
             searchQuery.filter.hour.name = nil
+            searchQuery.filter.hour.day = nil
+            searchQuery.filter.hour.open = nil
+            searchQuery.filter.hour.close = nil
         } else {
             searchQuery.filter.hour.name = name
             searchQuery.filter.hour.day = dayFormatter.string(from: Date()).lowercased()
@@ -169,8 +172,8 @@ class SearchFilterManager {
                 searchQuery.filter.hour.open = "18:30"
                 searchQuery.filter.hour.close = "19:00"
             case "Supper":
-                searchQuery.filter.hour.open = "11:00"
-                searchQuery.filter.hour.close = "11:55"
+                searchQuery.filter.hour.open = "23:15"
+                searchQuery.filter.hour.close = "23:45"
             default:
                 break
             }
