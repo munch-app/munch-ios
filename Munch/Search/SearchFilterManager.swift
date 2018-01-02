@@ -163,17 +163,17 @@ class SearchFilterManager {
                 searchQuery.filter.hour.open = timeFormatter.string(from: Date())
                 searchQuery.filter.hour.close = timeFormatter.string(from: Date().addingTimeInterval(30 * 60)) // 30 Minutes
             case "Breakfast":
-                searchQuery.filter.hour.open = "10:00"
+                searchQuery.filter.hour.open = "08:00"
                 searchQuery.filter.hour.close = "10:15"
             case "Lunch":
-                searchQuery.filter.hour.open = "11:15"
-                searchQuery.filter.hour.close = "11:45"
+                searchQuery.filter.hour.open = "11:30"
+                searchQuery.filter.hour.close = "12:30"
             case "Dinner":
                 searchQuery.filter.hour.open = "18:30"
-                searchQuery.filter.hour.close = "19:00"
+                searchQuery.filter.hour.close = "20:00"
             case "Supper":
-                searchQuery.filter.hour.open = "23:15"
-                searchQuery.filter.hour.close = "23:45"
+                searchQuery.filter.hour.open = "22:00"
+                searchQuery.filter.hour.close = "23:59"
             default:
                 break
             }
