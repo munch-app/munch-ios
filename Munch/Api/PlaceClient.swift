@@ -454,10 +454,12 @@ struct Menu {
  */
 struct SourcedImage {
     var source: String
+    var sourceId: String?
     var images: [String: String]
 
     init(json: JSON) {
         self.source = json["source"].stringValue
+        self.sourceId = json["sourceId"].string
         self.images = json["images"].dictionaryObject as! [String: String]
     }
 }

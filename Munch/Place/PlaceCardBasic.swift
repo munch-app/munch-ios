@@ -27,6 +27,16 @@ class PlaceBasicImageBannerCard: PlaceCardView {
         imageGradientView.backgroundColor = UIColor.clear
         return imageGradientView
     }()
+    private let sourceTitleView: UIButton = {
+        let label = UIButton()
+        label.titleLabel?.font = UIFont.systemFont(ofSize: 11.0, weight: .regular)
+        label.setTitleColor(.white, for: .normal)
+        label.backgroundColor = UIColor.black.withAlphaComponent(0.55)
+        label.contentEdgeInsets = UIEdgeInsets(topBottom: 3, leftRight: 6)
+        label.layer.masksToBounds = true
+        label.layer.cornerRadius = 9
+        return label
+    }()
     private let pageTitleView: UIButton = {
         let label = UIButton()
         label.titleLabel?.font = UIFont.systemFont(ofSize: 11.0, weight: .regular)
@@ -60,6 +70,7 @@ class PlaceBasicImageBannerCard: PlaceCardView {
         self.addSubview(collectionView)
         self.addSubview(imageGradientView)
         self.addSubview(pageTitleView)
+        self.addSubview(sourceTitleView)
 
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
@@ -81,8 +92,14 @@ class PlaceBasicImageBannerCard: PlaceCardView {
             make.bottom.equalTo(self.collectionView).inset(topBottom)
         }
 
+        sourceTitleView.snp.makeConstraints { make in
+            make.right.equalTo(pageTitleView.snp.left).inset(-5)
+            make.bottom.equalTo(self.collectionView).inset(topBottom)
+        }
+
         self.images = card["images"].map({ SourcedImage(json: $0.1) })
         self.pageTitleView.setTitle("\(self.images.isEmpty ? 0 : 1)/\(self.images.count)", for: .normal)
+        self.setSourceId(sourcedImage: self.images.get(indexPath.row))
     }
 
     override class var cardId: String? {
@@ -105,6 +122,21 @@ extension PlaceBasicImageBannerCard: UICollectionViewDataSource, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if let indexPath = self.collectionView.indexPathsForVisibleItems.get(0) {
             self.pageTitleView.setTitle("\(indexPath.row + 1)/\(self.images.count)", for: .normal)
+            self.setSourceId(sourcedImage: self.images.get(indexPath.row))
+        }
+    }
+
+    private func setSourceId(sourcedImage: SourcedImage?) {
+        if let sourceId = sourcedImage?.sourceId {
+            if sourcedImage!.source == "instagram" {
+                self.sourceTitleView.setTitle("@" + sourceId, for: .normal)
+            } else {
+                self.sourceTitleView.setTitle(sourceId, for: .normal)
+            }
+
+            self.sourceTitleView.isHidden = false
+        } else {
+            self.sourceTitleView.isHidden = true
         }
     }
 }
