@@ -35,6 +35,7 @@ class PlaceBasicImageBannerCard: PlaceCardView {
         label.contentEdgeInsets = UIEdgeInsets(topBottom: 3, leftRight: 6)
         label.layer.masksToBounds = true
         label.layer.cornerRadius = 9
+        label.isUserInteractionEnabled = false
         return label
     }()
     private let pageTitleView: UIButton = {
@@ -45,6 +46,7 @@ class PlaceBasicImageBannerCard: PlaceCardView {
         label.contentEdgeInsets = UIEdgeInsets(topBottom: 3, leftRight: 6)
         label.layer.masksToBounds = true
         label.layer.cornerRadius = 9
+        label.isUserInteractionEnabled = false
         return label
     }()
     private let collectionView: UICollectionView = {
@@ -99,7 +101,7 @@ class PlaceBasicImageBannerCard: PlaceCardView {
 
         self.images = card["images"].map({ SourcedImage(json: $0.1) })
         self.pageTitleView.setTitle("\(self.images.isEmpty ? 0 : 1)/\(self.images.count)", for: .normal)
-        self.setSourceId(sourcedImage: self.images.get(indexPath.row))
+        self.setSourceId(sourcedImage: self.images.get(0))
     }
 
     override class var cardId: String? {
@@ -460,7 +462,6 @@ class PlaceBasicPriceCard: PlaceCardView {
     private let priceLabel = UILabel()
 
     override func didLoad(card: PlaceCard) {
-        self.selectionStyle = .default
         self.addSubview(priceTitleLabel)
         self.addSubview(priceLabel)
 
@@ -548,6 +549,7 @@ class PlaceBasicAddressCard: PlaceCardView {
     private var address: String?
 
     override func didLoad(card: PlaceCard) {
+        self.selectionStyle = .default
         self.addSubview(addressLabel)
         self.address = card["address"].string
 
@@ -562,9 +564,19 @@ class PlaceBasicAddressCard: PlaceCardView {
         if let address = address?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
             // Monster Jobs uses comgooglemap url scheme, those fuckers
             if (UIApplication.shared.canOpenURL(URL(string: "https://www.google.com/maps/")!)) {
-                UIApplication.shared.open(URL(string: "https://www.google.com/maps/?daddr=\(address)")!)
+                let alert = UIAlertController(title: nil, message: "Open Google Maps", preferredStyle: .alert)
+                alert.addAction(.init(title: "Cancel", style: .cancel))
+                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { alert in
+                    UIApplication.shared.open(URL(string: "https://www.google.com/maps/?daddr=\(address)")!)
+                })
+                controller.present(alert, animated: true)
             } else if (UIApplication.shared.canOpenURL(URL(string: "http://maps.apple.com/")!)) {
-                UIApplication.shared.open(URL(string: "http://maps.apple.com/?daddr=\(address)")!)
+                let alert = UIAlertController(title: nil, message: "Open Apple Maps", preferredStyle: .alert)
+                alert.addAction(.init(title: "Cancel", style: .cancel))
+                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { alert in
+                    UIApplication.shared.open(URL(string: "http://maps.apple.com/?daddr=\(address)")!)
+                })
+                controller.present(alert, animated: true)
             }
         }
     }
@@ -602,7 +614,9 @@ fileprivate class AddressLabel: UIView {
 
     func render(card: PlaceCard, simple: Bool) {
         render(lineOne: card, simple: simple)
-        render(lineTwo: card)
+        if (simple) {
+            render(lineTwo: card)
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -693,9 +707,19 @@ class PlaceBasicLocationCard: PlaceCardView {
         if let address = address?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
             // Monster Jobs uses comgooglemap url scheme, those fuckers
             if (UIApplication.shared.canOpenURL(URL(string: "https://www.google.com/maps/")!)) {
-                UIApplication.shared.open(URL(string: "https://www.google.com/maps/?daddr=\(address)")!)
+                let alert = UIAlertController(title: nil, message: "Open Google Maps", preferredStyle: .alert)
+                alert.addAction(.init(title: "Cancel", style: .cancel))
+                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { alert in
+                    UIApplication.shared.open(URL(string: "https://www.google.com/maps/?daddr=\(address)")!)
+                })
+                controller.present(alert, animated: true)
             } else if (UIApplication.shared.canOpenURL(URL(string: "http://maps.apple.com/")!)) {
-                UIApplication.shared.open(URL(string: "http://maps.apple.com/?daddr=\(address)")!)
+                let alert = UIAlertController(title: nil, message: "Open Apple Maps", preferredStyle: .alert)
+                alert.addAction(.init(title: "Cancel", style: .cancel))
+                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { alert in
+                    UIApplication.shared.open(URL(string: "http://maps.apple.com/?daddr=\(address)")!)
+                })
+                controller.present(alert, animated: true)
             }
         }
     }

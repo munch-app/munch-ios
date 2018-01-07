@@ -30,7 +30,7 @@ class PlaceCardView: UITableViewCell {
     }
 
     let leftRight: CGFloat = 24.0
-    let topBottom: CGFloat = 11.0
+    let topBottom: CGFloat = 8.0
 
     class var cardId: String? {
         return nil
@@ -62,8 +62,8 @@ class PlaceTitleCardView: PlaceCardView {
             make.height.equalTo(1.0 / UIScreen.main.scale)
         }
 
-        titleLabel.font = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
-        titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
+        titleLabel.font = UIFont.systemFont(ofSize: 20.0, weight: .semibold)
+        titleLabel.textColor = UIColor.black.withAlphaComponent(0.85)
         titleLabel.snp.makeConstraints { (make) in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(separatorLine.snp.bottom).inset(-20)

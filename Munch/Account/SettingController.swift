@@ -125,7 +125,7 @@ class AccountSettingController: UIViewController, UIGestureRecognizerDelegate, S
     }
 }
 
-fileprivate enum SettingCellType {
+enum SettingCellType {
     // Profile: Images, Person Name
     case loading
     case instagramConnect

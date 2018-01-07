@@ -28,6 +28,18 @@ class PlaceClient {
             )
         }
     }
+
+    func getArticle(id: String, maxSort: String? = nil, size: Int, callback: @escaping (_ meta: MetaJSON, _ articles: [Article]) -> Void) {
+        MunchApi.restful.get("/places\(id)/data/article") { meta, json in
+            callback(meta, json["data"].map({ Article(json: $0.1) }))
+        }
+    }
+
+    func getInstagram(id: String, maxSort: String? = nil, size: Int, callback: @escaping (_ meta: MetaJSON, _ articles: [InstagramMedia]) -> Void) {
+        MunchApi.restful.get("/places\(id)/data/instagram") { meta, json in
+            callback(meta, json["data"].map({ InstagramMedia(json: $0.1) }))
+        }
+    }
 }
 
 /**
@@ -172,8 +184,8 @@ struct Place: SearchResult, Equatable {
         var implicits: [String]
 
         init(json: JSON) {
-            self.explicits = json["explicits"].map({$0.1.stringValue})
-            self.implicits = json["implicits"].map({$0.1.stringValue})
+            self.explicits = json["explicits"].map({ $0.1.stringValue })
+            self.implicits = json["implicits"].map({ $0.1.stringValue })
         }
     }
 

@@ -32,6 +32,7 @@ class PlaceVendorMenuImageCard: PlaceCardView, SFSafariViewControllerDelegate {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
+        collectionView.alwaysBounceHorizontal = true
         collectionView.backgroundColor = UIColor.white
         collectionView.register(PlaceMenuImageCardCell.self, forCellWithReuseIdentifier: "PlaceMenuImageCardCell")
         return collectionView
@@ -41,7 +42,6 @@ class PlaceVendorMenuImageCard: PlaceCardView, SFSafariViewControllerDelegate {
 
     override func didLoad(card: PlaceCard) {
         self.menus = card["menus"].array ?? []
-        self.selectionStyle = .default
         self.addSubview(collectionView)
 
         self.collectionView.delegate = self

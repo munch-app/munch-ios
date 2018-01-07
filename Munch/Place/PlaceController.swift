@@ -58,6 +58,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
             if let place = place, meta.isOk() {
                 self.cards = cards
                 self.place = place
+                self.headerView.render(place: place)
                 self.bottomView.render(place: place)
 
                 self.cells = self.create(cards: cards)
@@ -115,6 +116,13 @@ fileprivate class PlaceHeaderView: UIView {
     let backButton = UIButton()
     let backgroundView = UIView()
     let shadowView = UIView()
+    fileprivate let titleView: UILabel = {
+        let titleView = UILabel()
+        titleView.font = .systemFont(ofSize: 17, weight: .medium)
+        titleView.textAlignment = .center
+        titleView.isHidden = true
+        return titleView
+    }()
 
     override init(frame: CGRect = CGRect.zero) {
         super.init(frame: frame)
@@ -126,6 +134,7 @@ fileprivate class PlaceHeaderView: UIView {
         self.addSubview(shadowView)
         self.addSubview(backgroundView)
         self.addSubview(backButton)
+        self.addSubview(titleView)
 
         backButton.setImage(UIImage(named: "NavigationBar-Back"), for: .normal)
         backButton.tintColor = .white
@@ -147,6 +156,18 @@ fileprivate class PlaceHeaderView: UIView {
         shadowView.snp.makeConstraints { make in
             make.edges.equalTo(self)
         }
+
+        titleView.snp.makeConstraints { make in
+            make.top.equalTo(self.safeArea.top)
+            make.height.equalTo(44)
+            make.bottom.equalTo(self)
+            make.left.equalTo(backButton.snp.right)
+            make.right.equalTo(self).inset(64)
+        }
+    }
+
+    fileprivate func render(place: Place) {
+        self.titleView.text = place.name
     }
 
     override func layoutSubviews() {
@@ -278,7 +299,7 @@ fileprivate class PlaceBottomView: UIView {
     }
 
     @objc func actionCall(_ sender: Any) {
-        if let phone = place?.phone {
+        if let phone = place?.phone?.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression, range: nil) {
             if let url = URL(string: "tel://\(phone)"), UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url)
             }
@@ -331,7 +352,7 @@ extension PlaceViewController {
 
         // Register Vendor Article Cards
         register(PlaceHeaderArticleCard.self)
-        register(PlaceVendorArticleGridCard.self)
+        register(PlaceVendorArticleCard.self)
 
         // Register Vendor Instagram Cards
         register(PlaceHeaderInstagramCard.self)
@@ -395,20 +416,29 @@ extension PlaceViewController {
             headerView.backButton.tintColor = .black
             headerView.backgroundView.isHidden = true
             headerView.shadowView.isHidden = true
+            headerView.titleView.isHidden = true
         } else if (155 > y) {
             // Full Opacity
             headerView.backButton.tintColor = .white
             headerView.backgroundView.isHidden = true
             headerView.shadowView.isHidden = true
+            headerView.titleView.isHidden = true
         } else if (175 < y) {
             // Full White
             headerView.backButton.tintColor = .black
             headerView.backgroundView.isHidden = false
             headerView.backgroundView.backgroundColor = .white
             headerView.shadowView.isHidden = false
+            headerView.titleView.isHidden = false
         } else {
             let progress = 1.0 - (175 - y) / 20.0
-            headerView.backButton.tintColor = progress > 0.5 ? .black : .white
+            if progress > 0.5 {
+                headerView.backButton.tintColor = .black
+                headerView.titleView.isHidden = false
+            } else {
+                headerView.backButton.tintColor = .white
+                headerView.titleView.isHidden = true
+            }
             headerView.backgroundView.isHidden = false
             headerView.backgroundView.backgroundColor = UIColor.white.withAlphaComponent(progress)
         }

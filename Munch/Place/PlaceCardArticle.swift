@@ -23,131 +23,133 @@ class PlaceHeaderArticleCard: PlaceTitleCardView {
     }
 }
 
-class PlaceVendorArticleGridCard: PlaceCardView {
-    let topRow = RowView()
-    let bottomRow = RowView()
+class PlaceVendorArticleCard: PlaceCardView {
+    private let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+        layout.itemSize = CGSize(width: 150, height: 160)
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 18
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.alwaysBounceHorizontal = true
+        collectionView.backgroundColor = UIColor.white
+        collectionView.register(PlaceVendorArticleCardCell.self, forCellWithReuseIdentifier: "PlaceVendorArticleCardCell")
+        return collectionView
+    }()
+
+    private var articles = [Article]()
 
     override func didLoad(card: PlaceCard) {
-        // Hide See More if < 4
-        // Hide Articles if not shown
-        let articles = card.data.map({ Article(json: $0.1) })
-        super.addSubview(topRow)
+        self.articles = card.data.map({ Article(json: $0.1) })
+        self.addSubview(collectionView)
 
-        topRow.render(left: articles.get(0), right: articles.get(1), controller: controller)
-        topRow.snp.makeConstraints { (make) in
-            make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(self).inset(topBottom).priority(999)
-        }
+        self.collectionView.delegate = self
+        self.collectionView.dataSource = self
 
-        if (articles.count > 3) {
-            super.addSubview(bottomRow)
-
-            bottomRow.render(left: articles.get(2), right: articles.get(3), controller: controller)
-            bottomRow.snp.makeConstraints { (make) in
-                make.left.right.equalTo(self).inset(leftRight)
-                make.top.equalTo(topRow.snp.bottom).inset(-15).priority(999)
-                make.bottom.equalTo(self).inset(topBottom).priority(999)
+        if (!articles.isEmpty) {
+            collectionView.snp.makeConstraints { make in
+                make.top.bottom.equalTo(self).inset(topBottom)
+                make.height.equalTo(160)
+                make.left.right.equalTo(self)
             }
         } else {
-            topRow.snp.makeConstraints({ (make) in
-                make.bottom.equalTo(self).inset(topBottom).priority(999)
-            })
+            let titleView = UILabel()
+            titleView.text = "Error Loading Articles"
+            titleView.textColor = .primary
+            self.addSubview(titleView)
+
+            titleView.snp.makeConstraints { make in
+                make.top.bottom.equalTo(self).inset(topBottom)
+                make.centerX.equalTo(self)
+            }
         }
     }
 
     override class var cardId: String? {
         return "vendor_Article_20171029"
     }
+}
 
-    class RowView: UIView {
-        let leftView = ArticleView()
-        let rightView = ArticleView()
+extension PlaceVendorArticleCard: UICollectionViewDataSource, UICollectionViewDelegate, SFSafariViewControllerDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return articles.count
+    }
 
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-            self.addSubview(leftView)
-            self.addSubview(rightView)
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PlaceVendorArticleCardCell", for: indexPath) as! PlaceVendorArticleCardCell
+        cell.render(article: articles[indexPath.row])
+        return cell
+    }
 
-            leftView.snp.makeConstraints { (make) in
-                make.top.bottom.equalTo(self).priority(999)
-                make.right.equalTo(rightView.snp.left).inset(-20).priority(999)
-                make.left.equalTo(self).priority(999)
-                make.width.equalTo(rightView.snp.width).priority(999)
-            }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let articleUrl = articles[indexPath.row].url, let url = URL(string: articleUrl) {
+            let safari = SFSafariViewController(url: url)
+            safari.delegate = self
+            controller.present(safari, animated: true, completion: nil)
+        }
+    }
+}
 
-            rightView.snp.makeConstraints { (make) in
-                make.top.bottom.equalTo(self).priority(999)
-                make.left.equalTo(leftView.snp.right).inset(-20).priority(999)
-                make.right.equalTo(self).priority(999)
-                make.width.equalTo(leftView.snp.width).priority(999)
-            }
+fileprivate class PlaceVendorArticleCardCell: UICollectionViewCell {
+    private let articleImageView: ShimmerImageView = {
+        let imageView = ShimmerImageView()
+        imageView.layer.cornerRadius = 2
+        return imageView
+    }()
+    private let articleTitleLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 2
+        label.font = UIFont.systemFont(ofSize: 12.0, weight: .regular)
+        label.textColor = UIColor.black.withAlphaComponent(0.85)
+        return label
+    }()
+    private let articleBrandLabel: UIButton = {
+        let label = UIButton()
+        label.titleLabel?.font = UIFont.systemFont(ofSize: 10.0, weight: .regular)
+        label.setTitleColor(.white, for: .normal)
+        label.backgroundColor = UIColor.black.withAlphaComponent(0.66)
+        label.contentEdgeInsets = UIEdgeInsets(topBottom: 3, leftRight: 4)
+        label.layer.masksToBounds = true
+        label.layer.cornerRadius = 7
+        label.isUserInteractionEnabled = false
+        return label
+    }()
+
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        self.addSubview(articleImageView)
+        self.addSubview(articleTitleLabel)
+        self.addSubview(articleBrandLabel)
+
+        articleImageView.snp.makeConstraints { (make) in
+            make.left.right.equalTo(self)
+            make.top.equalTo(self)
+            make.width.equalTo(articleImageView.snp.height).dividedBy(0.8).priority(999)
+            make.bottom.equalTo(articleTitleLabel.snp.top).inset(-4)
         }
 
-        func render(left: Article?, right: Article?, controller: PlaceViewController) {
-            leftView.render(article: left, controller: controller)
-            rightView.render(article: right, controller: controller)
+        articleBrandLabel.snp.makeConstraints { make in
+            make.right.equalTo(articleImageView).inset(5)
+            make.bottom.equalTo(articleImageView).inset(5)
         }
 
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
+        articleTitleLabel.snp.makeConstraints { (make) in
+            make.left.right.equalTo(self)
+            make.height.equalTo(20).priority(999)
+            make.bottom.equalTo(self)
         }
     }
 
-    class ArticleView: UIView, SFSafariViewControllerDelegate {
-        let articleImageView = ShimmerImageView()
-        let articleTitleLabel = UILabel()
+    func render(article: Article) {
+        articleImageView.render(images: article.thumbnail)
+        articleTitleLabel.text = article.title
+        articleBrandLabel.setTitle(article.brand, for: .normal)
+    }
 
-        var article: Article!
-        var controller: PlaceViewController!
-
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-            self.addSubview(articleImageView)
-            self.addSubview(articleTitleLabel)
-
-            articleImageView.layer.cornerRadius = 2
-            articleImageView.snp.makeConstraints { (make) in
-                make.left.right.equalTo(self)
-                make.top.equalTo(self)
-                make.width.equalTo(articleImageView.snp.height).dividedBy(0.8).priority(999)
-                make.bottom.equalTo(articleTitleLabel.snp.top).inset(-8)
-            }
-
-            articleTitleLabel.numberOfLines = 2
-            articleTitleLabel.font = UIFont.systemFont(ofSize: 12.0, weight: .regular)
-            articleTitleLabel.snp.makeConstraints { (make) in
-                make.left.right.equalTo(self)
-                make.height.equalTo(30).priority(999)
-                make.bottom.equalTo(self)
-            }
-
-            let tap = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
-            self.addGestureRecognizer(tap)
-            self.isUserInteractionEnabled = true
-        }
-
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-
-        func render(article: Article?, controller: PlaceViewController) {
-            self.article = article
-            self.controller = controller
-
-            if let article = article {
-                articleImageView.render(images: article.thumbnail)
-                articleTitleLabel.text = article.title
-            } else {
-                self.isHidden = true
-            }
-        }
-
-        @objc func handleTap(_ sender: UITapGestureRecognizer) {
-            if let articleUrl = article.url, let url = URL(string: articleUrl) {
-                let safari = SFSafariViewController(url: url)
-                safari.delegate = self
-                controller.present(safari, animated: true, completion: nil)
-            }
-        }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

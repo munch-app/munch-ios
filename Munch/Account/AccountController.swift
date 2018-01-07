@@ -194,7 +194,9 @@ extension AccountProfileController: UITableViewDataSource, UITableViewDelegate {
 
     private var items: [(String?, [AccountCellType])] {
         if let userInfo = self.userInfo {
-            return [(nil, [AccountCellType.profile(userInfo)])]
+            return [
+                (nil, [AccountCellType.profile(userInfo)])
+            ]
         } else {
             return [(nil, [AccountCellType.loading])]
         }
