@@ -20,117 +20,97 @@ class PlaceHeaderInstagramCard: PlaceTitleCardView {
     }
 }
 
-class PlaceVendorInstagramGridCard: PlaceCardView {
-    let topRow = RowView()
-    let bottomRow = RowView()
+class PlaceVendorInstagramCard: PlaceCardView {
+    private let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+        layout.itemSize = CGSize(width: 150, height: 150)
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 18
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.alwaysBounceHorizontal = true
+        collectionView.backgroundColor = UIColor.white
+        collectionView.register(PlaceVendorInstagramCardCell.self, forCellWithReuseIdentifier: "PlaceVendorInstagramCardCell")
+        return collectionView
+    }()
+
+    private var medias = [InstagramMedia]()
 
     override func didLoad(card: PlaceCard) {
-        // Hide See More if < 4
-        let medias = card.data.map({ InstagramMedia(json: $0.1) })
-        super.addSubview(topRow)
+        self.medias = card.data.map({ InstagramMedia(json: $0.1) })
+        self.addSubview(collectionView)
 
-        topRow.render(left: medias.get(0), right: medias.get(1), controller: controller)
-        topRow.snp.makeConstraints { (make) in
-            make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(self).inset(topBottom).priority(999)
-        }
+        self.collectionView.delegate = self
+        self.collectionView.dataSource = self
 
-        if (medias.count > 3) {
-            super.addSubview(bottomRow)
-            bottomRow.render(left: medias.get(2), right: medias.get(3), controller: controller)
-            bottomRow.snp.makeConstraints { (make) in
-                make.left.right.equalTo(self).inset(leftRight)
-                make.top.equalTo(topRow.snp.bottom).inset(-20).priority(999)
-                make.bottom.equalTo(self).inset(topBottom).priority(999)
+        if (!medias.isEmpty) {
+            collectionView.snp.makeConstraints { make in
+                make.top.bottom.equalTo(self).inset(topBottom)
+                make.height.equalTo(150)
+                make.left.right.equalTo(self)
             }
         } else {
-            topRow.snp.makeConstraints({ (make) in
-                make.bottom.equalTo(self).inset(topBottom).priority(999)
-            })
+            let titleView = UILabel()
+            titleView.text = "Error Loading Instagram Images"
+            titleView.textColor = .primary
+            self.addSubview(titleView)
+
+            titleView.snp.makeConstraints { make in
+                make.top.bottom.equalTo(self).inset(topBottom)
+                make.centerX.equalTo(self)
+            }
         }
     }
 
     override class var cardId: String? {
         return "vendor_InstagramMedia_20171204"
     }
+}
 
-    class RowView: UIView {
-        let leftView = MediaView()
-        let rightView = MediaView()
+extension PlaceVendorInstagramCard: UICollectionViewDataSource, UICollectionViewDelegate, SFSafariViewControllerDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return medias.count
+    }
 
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-            self.addSubview(leftView)
-            self.addSubview(rightView)
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PlaceVendorInstagramCardCell", for: indexPath) as! PlaceVendorInstagramCardCell
+        cell.render(media: medias[indexPath.row])
+        return cell
+    }
 
-            leftView.snp.makeConstraints { (make) in
-                make.top.bottom.equalTo(self).priority(999)
-                make.right.equalTo(rightView.snp.left).inset(-20).priority(999)
-                make.left.equalTo(self).priority(999)
-                make.width.equalTo(rightView.snp.width).priority(999)
-            }
-
-            rightView.snp.makeConstraints { (make) in
-                make.top.bottom.equalTo(self).priority(999)
-                make.left.equalTo(leftView.snp.right).inset(-20).priority(999)
-                make.right.equalTo(self).priority(999)
-                make.width.equalTo(leftView.snp.width).priority(999)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let mediaId = medias[indexPath.row].mediaId, let url = URL(string: "instagram://media?id=\(mediaId)") {
+            if (UIApplication.shared.canOpenURL(url)) {
+                UIApplication.shared.open(url)
             }
         }
+    }
+}
 
-        func render(left: InstagramMedia?, right: InstagramMedia?, controller: PlaceViewController) {
-            leftView.render(media: left, controller: controller)
-            rightView.render(media: right, controller: controller)
-        }
+fileprivate class PlaceVendorInstagramCardCell: UICollectionViewCell {
+    private let mediaImageView: ShimmerImageView = {
+        let imageView = ShimmerImageView()
+        imageView.layer.cornerRadius = 2
+        return imageView
+    }()
 
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        self.addSubview(mediaImageView)
+
+        mediaImageView.snp.makeConstraints { (make) in
+            make.edges.equalTo(self)
         }
     }
 
-    class MediaView: UIView, SFSafariViewControllerDelegate {
-        let mediaImageView = ShimmerImageView()
+    func render(media: InstagramMedia) {
+        mediaImageView.render(images: media.images)
+    }
 
-        var media: InstagramMedia!
-        var controller: PlaceViewController!
-
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-            self.addSubview(mediaImageView)
-
-            mediaImageView.layer.cornerRadius = 2
-            mediaImageView.snp.makeConstraints { (make) in
-                make.left.right.equalTo(self)
-                make.top.equalTo(self)
-                make.width.equalTo(mediaImageView.snp.height).priority(999)
-                make.bottom.equalTo(self)
-            }
-
-            self.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:))))
-            self.isUserInteractionEnabled = true
-        }
-
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-
-        func render(media: InstagramMedia?, controller: PlaceViewController) {
-            self.media = media
-            self.controller = controller
-
-            if let media = media {
-                mediaImageView.render(images: media.images)
-            } else {
-                self.isHidden = true
-            }
-        }
-
-        @objc func handleTap(_ sender: UITapGestureRecognizer) {
-            if let mediaId = media.mediaId, let url = URL(string: "instagram://media?id=\(mediaId)") {
-                if (UIApplication.shared.canOpenURL(url)) {
-                    UIApplication.shared.open(url)
-                }
-            }
-        }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
