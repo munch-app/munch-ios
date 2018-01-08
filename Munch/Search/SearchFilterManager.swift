@@ -12,7 +12,7 @@ enum FilterType {
     case hour
     case price
     case tag(String)
-    case seeMore(String)
+    case seeMore(String, String)
 }
 
 enum LocationType {
@@ -76,10 +76,10 @@ class SearchFilterManager {
             (nil, [FilterType.location]),
             (nil, [FilterType.price]),
             (nil, [FilterType.hour]),
-            ("Cuisine", getPriorityTypes(type: "Cuisine").map({ FilterType.tag($0) }) + [FilterType.seeMore("Cuisine")]),
-            ("Establishment", getPriorityTypes(type: "Establishment").map({ FilterType.tag($0) }) + [FilterType.seeMore("Establishment")]),
-            ("Amenities", getPriorityTypes(type: "Amenities").map({ FilterType.tag($0) }) + [FilterType.seeMore("Amenities")]),
-            ("Occasion", getPriorityTypes(type: "Occasion").map({ FilterType.tag($0) }) + [FilterType.seeMore("Occasion")]),
+            ("Cuisine", getPriorityTypes(type: "Cuisine").map({ FilterType.tag($0) }) + [FilterType.seeMore("Cuisine", "More Cuisines")]),
+            ("Establishment", getPriorityTypes(type: "Establishment").map({ FilterType.tag($0) }) + [FilterType.seeMore("Establishment", "More Establishments")]),
+            ("Amenities", getPriorityTypes(type: "Amenities").map({ FilterType.tag($0) }) + [FilterType.seeMore("Amenities", "More Amenities")]),
+            ("Occasion", getPriorityTypes(type: "Occasion").map({ FilterType.tag($0) }) + [FilterType.seeMore("Occasion", "More Occasions")]),
         ]
     }
 

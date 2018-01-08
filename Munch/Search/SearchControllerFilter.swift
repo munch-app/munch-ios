@@ -195,9 +195,9 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterTagCell.id) as! SearchFilterTagCell
             cell.render(title: tag, selected: filterManager.isSelected(tag: tag))
             return cell
-        case let .seeMore(name):
+        case let .seeMore(_, name):
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchFilterTagMoreCell.id) as! SearchFilterTagMoreCell
-            cell.render(text: "More \(name)")
+            cell.render(text: name)
             return cell
         }
     }
@@ -211,7 +211,7 @@ extension SearchFilterController: UITableViewDataSource, UITableViewDelegate {
                 let searchQuery = self.filterManager.select(tag: tag, selected: cell.flip())
                 self.applyView.render(searchQuery: searchQuery)
             }
-        case let .seeMore(type):
+        case let .seeMore(type, _):
             let controller = SearchFilterMoreController(searchQuery: filterManager.searchQuery, type: type) { searchQuery in
                 if let searchQuery = searchQuery {
                     self.render(searchQuery: searchQuery)
