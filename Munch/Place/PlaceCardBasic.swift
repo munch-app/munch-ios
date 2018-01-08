@@ -176,7 +176,7 @@ class PlaceBasicNameTagCard: PlaceCardView {
         self.addSubview(tagCollection)
 
         nameLabel.text = card["name"].string
-        nameLabel.font = UIFont.systemFont(ofSize: 27.0, weight: UIFont.Weight.medium)
+        nameLabel.font = UIFont.systemFont(ofSize: 26.0, weight: .medium)
         nameLabel.textColor = UIColor.black.withAlphaComponent(0.9)
         nameLabel.numberOfLines = 0
         nameLabel.snp.makeConstraints { make in

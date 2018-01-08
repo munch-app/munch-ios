@@ -108,6 +108,7 @@ extension PlaceVendorMenuImageCard: UICollectionViewDataSource, UICollectionView
 fileprivate class PlaceMenuImageCardCell: UICollectionViewCell {
     let imageView: MunchImageView = {
         let imageView = MunchImageView()
+        imageView.layer.cornerRadius = 2
         imageView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
         return imageView
     }()
@@ -116,7 +117,6 @@ fileprivate class PlaceMenuImageCardCell: UICollectionViewCell {
         super.init(frame: frame)
         self.addSubview(imageView)
 
-        imageView.layer.cornerRadius = 2
         imageView.snp.makeConstraints { make in
             make.edges.equalTo(self)
         }

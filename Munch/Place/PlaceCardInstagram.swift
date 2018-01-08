@@ -11,12 +11,38 @@ import SnapKit
 import SwiftyJSON
 
 class PlaceHeaderInstagramCard: PlaceTitleCardView {
+    private let moreButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "RIP-More"), for: .normal)
+        button.tintColor = .black
+        button.isUserInteractionEnabled = false
+        return button
+    }()
+
+    required init(card: PlaceCard, controller: PlaceViewController) {
+        super.init(card: card, controller: controller)
+        self.addSubview(moreButton)
+        moreButton.snp.makeConstraints { make in
+            make.right.equalTo(self).inset(24)
+            make.top.bottom.equalTo(titleLabel)
+        }
+    }
+
     override func didLoad(card: PlaceCard) {
         self.title = "Instagram"
     }
 
+    override func didTap() {
+        let controller = PlaceDataViewController(place: self.controller.place!, selected: "Instagram")
+        self.controller.navigationController!.pushViewController(controller, animated: true)
+    }
+
     override class var cardId: String? {
         return "header_Instagram_20171208"
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 

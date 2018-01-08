@@ -79,7 +79,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         // Filter Testing
 //        self.goTo(extension: SearchFilterController.self)
         // Place Testing
-//         self.navigationController!.pushViewController(PlaceViewController(placeId: "8759e8cb-a52e-40e4-b75c-a65c9b089f23"), animated: true)
+//         self.navigationController!.pushViewController(PlaceViewController(placeId: "9512d8fd-5123-49be-b223-5d7e469d28b7"), animated: true)
     }
 
     private func initViews() {

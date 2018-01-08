@@ -16,7 +16,7 @@ import Auth0
  Initial view provider
  */
 enum InitialViewProvider {
-    
+
     /**
      Main tab controllers for Munch App
      */
@@ -24,14 +24,14 @@ enum InitialViewProvider {
         let controllers = [search(), account()]
         return TabBarController(controllers: controllers)
     }
-    
-    static func search() -> UIViewController {
+
+    private static func search() -> UIViewController {
         let controller = SearchNavigationalController()
         controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "SEARCH", image: UIImage(named: "TabBar-Search"))
         return controller
     }
-    
-    static func account() -> UIViewController {
+
+    private static func account() -> UIViewController {
         let controller = AccountController()
         controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "PROFILE", image: UIImage(named: "TabBar-Profile"))
         return controller
@@ -41,7 +41,7 @@ enum InitialViewProvider {
 class TabBarController: ESTabBarController, UITabBarControllerDelegate {
     var previousController: UIViewController?
     var sameTabCounter = 0
-    
+
     init(controllers: [UIViewController]) {
         super.init(nibName: nil, bundle: nil)
         tabBar.isTranslucent = false
@@ -50,11 +50,11 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
         tabBar.backgroundImage = UIImage()
         tabBar.hairlineShadow(height: -1.0)
         tabBar.frame = tabBar.frame.offsetBy(dx: 0, dy: -10)
-        
+
         self.delegate = self
         self.viewControllers = controllers
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -106,7 +106,7 @@ class MunchTabBarContentView: ESTabBarItemContentView {
         highlightIconColor = UIColor.primary500
 
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

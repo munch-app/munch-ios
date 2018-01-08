@@ -30,13 +30,21 @@ class PlaceClient {
     }
 
     func getArticle(id: String, maxSort: String? = nil, size: Int, callback: @escaping (_ meta: MetaJSON, _ articles: [Article]) -> Void) {
-        MunchApi.restful.get("/places\(id)/data/article") { meta, json in
+        var params = Parameters()
+        params["maxSort"] = maxSort
+        params["size"] = size
+
+        MunchApi.restful.get("/places/\(id)/data/article", parameters: params) { meta, json in
             callback(meta, json["data"].map({ Article(json: $0.1) }))
         }
     }
 
-    func getInstagram(id: String, maxSort: String? = nil, size: Int, callback: @escaping (_ meta: MetaJSON, _ articles: [InstagramMedia]) -> Void) {
-        MunchApi.restful.get("/places\(id)/data/instagram") { meta, json in
+    func getInstagram(id: String, maxSort: String? = nil, size: Int, callback: @escaping (_ meta: MetaJSON, _ medias: [InstagramMedia]) -> Void) {
+        var params = Parameters()
+        params["maxSort"] = maxSort
+        params["size"] = size
+
+        MunchApi.restful.get("/places/\(id)/data/instagram", parameters: params) { meta, json in
             callback(meta, json["data"].map({ InstagramMedia(json: $0.1) }))
         }
     }
