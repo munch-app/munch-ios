@@ -1315,7 +1315,7 @@ fileprivate class SearchFilterMoreController: UIViewController, UIGestureRecogni
                     } else if count <= 10 {
                         self.applyBtn.setTitle("Apply (\(count) places)", for: .normal)
                     } else {
-                        let rounded = count % 10 * 10
+                        let rounded = count / 10 * 10
                         self.applyBtn.setTitle("Apply (\(rounded)+ places)", for: .normal)
                     }
                 }
