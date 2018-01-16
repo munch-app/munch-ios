@@ -20,11 +20,12 @@ class PlaceClient {
         }
     }
 
-    func cards(id: String, callback: @escaping (_ meta: MetaJSON, _ place: Place?, _ cards: [PlaceCard]) -> Void) {
+    func cards(id: String, callback: @escaping (_ meta: MetaJSON, _ place: Place?, _ cards: [PlaceCard], _ liked: Bool?) -> Void) {
         MunchApi.restful.get("/places/\(id)/cards") { meta, json in
             callback(meta,
                     Place(json: json["data"]["place"]),
-                    json["data"]["cards"].map({ PlaceCard(json: $0.1) })
+                    json["data"]["cards"].map({ PlaceCard(json: $0.1) }),
+                    json["data"]["user"]["liked"].bool
             )
         }
     }
@@ -74,8 +75,6 @@ struct PlaceCard {
     subscript(name: String) -> JSON {
         return data[name]
     }
-
-
 }
 
 /**
@@ -475,11 +474,13 @@ struct Menu {
 struct SourcedImage {
     var source: String
     var sourceId: String?
+    var sourceName: String?
     var images: [String: String]
 
     init(json: JSON) {
         self.source = json["source"].stringValue
         self.sourceId = json["sourceId"].string
+        self.sourceName = json["sourceName"].string
         self.images = json["images"].dictionaryObject as! [String: String]
     }
 }

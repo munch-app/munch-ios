@@ -104,7 +104,6 @@ class MunchTabBarContentView: ESTabBarItemContentView {
 
         iconColor = UIColor.black.withAlphaComponent(0.6)
         highlightIconColor = UIColor.primary500
-
     }
 
     required init?(coder aDecoder: NSCoder) {

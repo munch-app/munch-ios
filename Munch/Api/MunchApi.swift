@@ -8,10 +8,13 @@
 
 import UIKit
 import Foundation
+
 import Alamofire
 import SwiftyJSON
+import Auth0
 
 let MunchApi = MunchClient()
+let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
 
 public class MunchClient {
     public static let url = MunchPlist.get(asString: "MunchApi-Url")!
@@ -20,6 +23,7 @@ public class MunchClient {
     let search = SearchClient()
     let places = PlaceClient()
     let locations = LocationClient()
+    let collections = CollectionClient()
 }
 
 public class RestfulClient {
@@ -55,6 +59,13 @@ public class RestfulClient {
     }
 
     /**
+     Params Encoding is json
+     */
+    func delete(_ path: String, parameters: Parameters = [:], callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
+        request(method: .delete, path: path, parameters: parameters, encoding: JSONEncoding.default, callback: callback)
+    }
+
+    /**
      method: HttpMethod
      path: After domain
      paramters: json or query string both supported
@@ -72,35 +83,41 @@ public class RestfulClient {
             headers["Location-LatLng"] = latLng
         }
 
-        Alamofire.request(url + path, method: method, parameters: parameters, encoding: encoding, headers: headers)
-                .responseJSON { response in
-                    switch response.result {
-                    case .success(let value):
-                        let json = JSON(value)
-                        callback(MetaJSON(metaJson: json["meta"]), json)
-                    case .failure(let error):
-                        switch response.response?.statusCode ?? 500 {
-                        case 502:
-                            let json = JSON(["meta": ["code": 502, "error": [
-                                "type": "BadGateway",
-                                "message": "Gateway error, try again later."
-                            ]]])
+        credentialsManager.credentials { error, credentials in
+            if let accessToken = credentials?.accessToken {
+                headers["Authorization"] = "Bearer \(accessToken)"
+            }
+
+            Alamofire.request(self.url + path, method: method, parameters: parameters, encoding: encoding, headers: headers)
+                    .responseJSON { response in
+                        switch response.result {
+                        case .success(let value):
+                            let json = JSON(value)
                             callback(MetaJSON(metaJson: json["meta"]), json)
-                        case 503:
-                            let json = JSON(["meta": ["code": 502, "error": [
-                                "type": "ServiceUnavailable",
-                                "message": "Server temporary down, try again later."
-                            ]]])
-                            callback(MetaJSON(metaJson: json["meta"]), json)
-                        default:
-                            let json = JSON(["meta": ["code": 500, "error": [
-                                "type": "Unknown Error",
-                                "message": error.localizedDescription
-                            ]]])
-                            callback(MetaJSON(metaJson: json["meta"]), json)
+                        case .failure(let error):
+                            switch response.response?.statusCode ?? 500 {
+                            case 502:
+                                let json = JSON(["meta": ["code": 502, "error": [
+                                    "type": "BadGateway",
+                                    "message": "Gateway error, try again later."
+                                ]]])
+                                callback(MetaJSON(metaJson: json["meta"]), json)
+                            case 503:
+                                let json = JSON(["meta": ["code": 502, "error": [
+                                    "type": "ServiceUnavailable",
+                                    "message": "Server temporary down, try again later."
+                                ]]])
+                                callback(MetaJSON(metaJson: json["meta"]), json)
+                            default:
+                                let json = JSON(["meta": ["code": 500, "error": [
+                                    "type": "Unknown Error",
+                                    "message": error.localizedDescription
+                                ]]])
+                                callback(MetaJSON(metaJson: json["meta"]), json)
+                            }
                         }
                     }
-                }
+        }
     }
 }
 

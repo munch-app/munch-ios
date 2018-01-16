@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 
+import Auth0
 import SnapKit
 import Cosmos
 import SwiftRichString
@@ -16,6 +17,7 @@ import SwiftRichString
 class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
     let placeId: String
     var place: Place?
+    var liked: Bool?
 
     private var cards = [PlaceShimmerImageBannerCard.card, PlaceShimmerNameTagCard.card]
     private var cells = [PlaceCardView]()
@@ -53,12 +55,15 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.cardTableView.delegate = self
         self.cardTableView.dataSource = self
         self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
+        self.headerView.heartButton.addTarget(self, action: #selector(onHeartButton(_:)), for: .touchUpInside)
+        self.headerView.addButton.addTarget(self, action: #selector(onAddButton(_:)), for: .touchUpInside)
 
-        MunchApi.places.cards(id: placeId) { meta, place, cards in
+        MunchApi.places.cards(id: placeId) { meta, place, cards, liked in
             if let place = place, meta.isOk() {
                 self.cards = cards
                 self.place = place
-                self.headerView.render(place: place)
+                self.liked = liked
+                self.headerView.render(place: place, liked: liked)
                 self.bottomView.render(place: place)
 
                 self.cells = self.create(cards: cards)
@@ -103,6 +108,38 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         navigationController?.popViewController(animated: true)
     }
 
+    @objc func onHeartButton(_ sender: Any) {
+        guard CredentialsManager(authentication: Auth0.authentication()).hasValid() else {
+            self.present(AccountBoardingController(), animated: true)
+            return
+        }
+
+        if let place = self.place, let liked = self.liked {
+            self.liked = !liked
+            self.headerView.render(place: place, liked: self.liked)
+
+            if self.liked! {
+                MunchApi.collections.liked.put(placeId: placeId) { meta in
+                    guard meta.isOk() else {
+                        self.present(meta.createAlert(), animated: true)
+                        return
+                    }
+                }
+            } else {
+                MunchApi.collections.liked.delete(placeId: placeId) { meta in
+                    guard meta.isOk() else {
+                        self.present(meta.createAlert(), animated: true)
+                        return
+                    }
+                }
+            }
+        }
+    }
+
+    @objc func onAddButton(_ sender: Any) {
+
+    }
+
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
@@ -113,9 +150,14 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
 }
 
 fileprivate class PlaceHeaderView: UIView {
-    let backButton = UIButton()
-    let backgroundView = UIView()
-    let shadowView = UIView()
+    fileprivate let backButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "NavigationBar-Back"), for: .normal)
+        button.tintColor = .white
+        button.imageEdgeInsets.left = 18
+        button.contentHorizontalAlignment = .left
+        return button
+    }()
     fileprivate let titleView: UILabel = {
         let titleView = UILabel()
         titleView.font = .systemFont(ofSize: 17, weight: .medium)
@@ -123,6 +165,21 @@ fileprivate class PlaceHeaderView: UIView {
         titleView.isHidden = true
         return titleView
     }()
+    fileprivate let heartButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "RIP-Heart"), for: .normal)
+        button.tintColor = .white
+        return button
+    }()
+    fileprivate let addButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "RIP-Add"), for: .normal)
+        button.tintColor = .white
+        return button
+    }()
+
+    let backgroundView = UIView()
+    let shadowView = UIView()
 
     override init(frame: CGRect = CGRect.zero) {
         super.init(frame: frame)
@@ -136,15 +193,30 @@ fileprivate class PlaceHeaderView: UIView {
         self.addSubview(backButton)
         self.addSubview(titleView)
 
-        backButton.setImage(UIImage(named: "NavigationBar-Back"), for: .normal)
-        backButton.tintColor = .white
-        backButton.imageEdgeInsets.left = 18
-        backButton.contentHorizontalAlignment = .left
+        self.addSubview(heartButton)
+        self.addSubview(addButton)
+
         backButton.snp.makeConstraints { make in
             make.top.equalTo(self.safeArea.top)
             make.left.equalTo(self)
             make.bottom.equalTo(self)
             make.width.equalTo(64)
+            make.height.equalTo(44)
+        }
+
+        heartButton.snp.makeConstraints { make in
+            make.top.equalTo(self.safeArea.top)
+            make.right.equalTo(self).inset(20)
+            make.bottom.equalTo(self)
+            make.width.equalTo(30)
+            make.height.equalTo(44)
+        }
+
+        addButton.snp.makeConstraints { make in
+            make.top.equalTo(self.safeArea.top)
+            make.right.equalTo(heartButton.snp.left)
+            make.bottom.equalTo(self)
+            make.width.equalTo(30)
             make.height.equalTo(44)
         }
 
@@ -161,13 +233,20 @@ fileprivate class PlaceHeaderView: UIView {
             make.top.equalTo(self.safeArea.top)
             make.height.equalTo(44)
             make.bottom.equalTo(self)
-            make.left.equalTo(backButton.snp.right)
-            make.right.equalTo(self).inset(64)
+
+            make.centerX.equalTo(self).priority(1000)
+            make.left.equalTo(backButton.snp.right).priority(900)
+            make.right.equalTo(addButton.snp.left).priority(900)
         }
     }
 
-    fileprivate func render(place: Place) {
+    fileprivate func render(place: Place, liked: Bool?) {
         self.titleView.text = place.name
+        if liked ?? false {
+            heartButton.setImage(UIImage(named: "RIP-Heart-Filled"), for: .normal)
+        } else {
+            heartButton.setImage(UIImage(named: "RIP-Heart"), for: .normal)
+        }
     }
 
     override func layoutSubviews() {
@@ -410,22 +489,28 @@ extension PlaceViewController {
     }
 
     func updateNavigationBackground(y: CGFloat) {
+        func updateTint(color: UIColor) {
+            headerView.backButton.tintColor = color
+            headerView.addButton.tintColor = color
+            headerView.heartButton.tintColor = color
+        }
+
         // Starts from - 20
         if (y < -36.0) {
             // -20 is the status bar height, another -16 is the height where it update the status bar color
-            headerView.backButton.tintColor = .black
+            updateTint(color: .black)
             headerView.backgroundView.isHidden = true
             headerView.shadowView.isHidden = true
             headerView.titleView.isHidden = true
         } else if (155 > y) {
             // Full Opacity
-            headerView.backButton.tintColor = .white
+            updateTint(color: .white)
             headerView.backgroundView.isHidden = true
             headerView.shadowView.isHidden = true
             headerView.titleView.isHidden = true
         } else if (175 < y) {
             // Full White
-            headerView.backButton.tintColor = .black
+            updateTint(color: .black)
             headerView.backgroundView.isHidden = false
             headerView.backgroundView.backgroundColor = .white
             headerView.shadowView.isHidden = false
@@ -433,10 +518,10 @@ extension PlaceViewController {
         } else {
             let progress = 1.0 - (175 - y) / 20.0
             if progress > 0.5 {
-                headerView.backButton.tintColor = .black
+                updateTint(color: .black)
                 headerView.titleView.isHidden = false
             } else {
-                headerView.backButton.tintColor = .white
+                updateTint(color: .white)
                 headerView.titleView.isHidden = true
             }
             headerView.backgroundView.isHidden = false

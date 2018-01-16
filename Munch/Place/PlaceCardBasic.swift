@@ -130,13 +130,11 @@ extension PlaceBasicImageBannerCard: UICollectionViewDataSource, UICollectionVie
     }
 
     private func setSourceId(sourcedImage: SourcedImage?) {
-        if let sourceId = sourcedImage?.sourceId {
-            if sourcedImage!.source == "instagram" {
-                self.sourceTitleView.setTitle("@" + sourceId, for: .normal)
-            } else {
-                self.sourceTitleView.setTitle(sourceId, for: .normal)
-            }
-
+        if let sourceName = sourcedImage?.sourceName {
+            self.sourceTitleView.setTitle(sourceName, for: .normal)
+            self.sourceTitleView.isHidden = false
+        } else if let sourceId = sourcedImage?.sourceId {
+            self.sourceTitleView.setTitle(sourceId, for: .normal)
             self.sourceTitleView.isHidden = false
         } else {
             self.sourceTitleView.isHidden = true
