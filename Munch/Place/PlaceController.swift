@@ -56,7 +56,6 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.cardTableView.dataSource = self
         self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
         self.headerView.heartButton.addTarget(self, action: #selector(onHeartButton(_:)), for: .touchUpInside)
-        self.headerView.addButton.addTarget(self, action: #selector(onAddButton(_:)), for: .touchUpInside)
 
         MunchApi.places.cards(id: placeId) { meta, place, cards, liked in
             if let place = place, meta.isOk() {
@@ -171,12 +170,12 @@ fileprivate class PlaceHeaderView: UIView {
         button.tintColor = .white
         return button
     }()
-    fileprivate let addButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "RIP-Add"), for: .normal)
-        button.tintColor = .white
-        return button
-    }()
+//    fileprivate let addButton: UIButton = {
+//        let button = UIButton()
+//        button.setImage(UIImage(named: "RIP-Add"), for: .normal)
+//        button.tintColor = .white
+//        return button
+//    }()
 
     let backgroundView = UIView()
     let shadowView = UIView()
@@ -191,10 +190,9 @@ fileprivate class PlaceHeaderView: UIView {
         self.addSubview(shadowView)
         self.addSubview(backgroundView)
         self.addSubview(backButton)
-        self.addSubview(titleView)
 
         self.addSubview(heartButton)
-        self.addSubview(addButton)
+//        self.addSubview(addButton)
 
         backButton.snp.makeConstraints { make in
             make.top.equalTo(self.safeArea.top)
@@ -212,13 +210,13 @@ fileprivate class PlaceHeaderView: UIView {
             make.height.equalTo(44)
         }
 
-        addButton.snp.makeConstraints { make in
-            make.top.equalTo(self.safeArea.top)
-            make.right.equalTo(heartButton.snp.left)
-            make.bottom.equalTo(self)
-            make.width.equalTo(30)
-            make.height.equalTo(44)
-        }
+//        addButton.snp.makeConstraints { make in
+//            make.top.equalTo(self.safeArea.top)
+//            make.right.equalTo(heartButton.snp.left)
+//            make.bottom.equalTo(self)
+//            make.width.equalTo(30)
+//            make.height.equalTo(44)
+//        }
 
         backgroundView.backgroundColor = .clear
         backgroundView.snp.makeConstraints { make in
@@ -227,16 +225,6 @@ fileprivate class PlaceHeaderView: UIView {
 
         shadowView.snp.makeConstraints { make in
             make.edges.equalTo(self)
-        }
-
-        titleView.snp.makeConstraints { make in
-            make.top.equalTo(self.safeArea.top)
-            make.height.equalTo(44)
-            make.bottom.equalTo(self)
-
-            make.centerX.equalTo(self).priority(1000)
-            make.left.equalTo(backButton.snp.right).priority(900)
-            make.right.equalTo(addButton.snp.left).priority(900)
         }
     }
 
@@ -491,7 +479,6 @@ extension PlaceViewController {
     func updateNavigationBackground(y: CGFloat) {
         func updateTint(color: UIColor) {
             headerView.backButton.tintColor = color
-            headerView.addButton.tintColor = color
             headerView.heartButton.tintColor = color
         }
 
