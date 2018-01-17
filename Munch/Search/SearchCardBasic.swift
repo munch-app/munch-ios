@@ -16,6 +16,24 @@ import TTGTagCollectionView
 
 class SearchPlaceCard: UITableViewCell, SearchCardView {
     let topImageView = ShimmerImageView()
+    let containerLabel: UIButton = {
+        let label = UIButton()
+        label.titleLabel?.font = UIFont.systemFont(ofSize: 12.0, weight: .regular)
+        label.setTitleColor(.white, for: .normal)
+        label.backgroundColor = UIColor.black.withAlphaComponent(0.55)
+        label.contentEdgeInsets.top = 3
+        label.contentEdgeInsets.bottom = 3
+        label.contentEdgeInsets.left = 8
+        label.contentEdgeInsets.right = 6
+        label.imageEdgeInsets.left = -5
+        label.layer.masksToBounds = true
+        label.layer.cornerRadius = 9
+        label.isUserInteractionEnabled = false
+
+        label.setImage(UIImage(named: "Search-Container-Small"), for: .normal)
+        label.tintColor = .white
+        return label
+    }()
     let bottomView = BottomView()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -24,8 +42,14 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
 
         let containerView = UIView()
         containerView.addSubview(topImageView)
+        containerView.addSubview(containerLabel)
         containerView.addSubview(bottomView)
         self.addSubview(containerView)
+
+        containerLabel.snp.makeConstraints { make in
+            make.left.equalTo(topImageView).inset(6)
+            make.bottom.equalTo(topImageView).inset(6)
+        }
 
         topImageView.layer.cornerRadius = 3
         topImageView.snp.makeConstraints { make in
@@ -53,6 +77,12 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
     func render(card: SearchCard, controller: SearchController) {
         let images = card["images"].flatMap {
             SourcedImage(json: $0.1)
+        }
+        if let containerName = card["containers"][0]["name"].string {
+            containerLabel.setTitle(containerName, for: .normal)
+            containerLabel.isHidden = false
+        } else {
+            containerLabel.isHidden = true
         }
 
         topImageView.render(sourcedImage: images.get(0))

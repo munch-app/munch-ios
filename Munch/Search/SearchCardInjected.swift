@@ -214,6 +214,12 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
         ("Hawker Centre", "Hawkers"),
         ("Coffeeshop", "Coffeeshops")
     ]
+    private let iconView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage.init(named: "Search-Container-Big")
+        imageView.tintColor = UIColor.black.withAlphaComponent(0.72)
+        return imageView
+    }()
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 21.0, weight: .semibold)
@@ -243,12 +249,19 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
         self.selectionStyle = .none
         self.addSubview(titleLabel)
         self.addSubview(collectionView)
+        self.addSubview(iconView)
 
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
 
+        iconView.snp.makeConstraints { make in
+            make.top.bottom.equalTo(titleLabel)
+            make.left.equalTo(self).inset(leftRight-3)
+        }
+
         titleLabel.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(leftRight)
+            make.right.equalTo(self).inset(leftRight)
+            make.left.equalTo(iconView.snp.right).inset(-3)
             make.top.equalTo(self).inset(topBottom)
         }
 
