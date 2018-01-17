@@ -35,6 +35,10 @@ public class MunchLocation {
         }
     }
 
+    public class var lastCoordinate: CLLocationCoordinate2D? {
+        return self.lastLocation?.coordinate
+    }
+
     public class func requestLocation() {
         switch Locator.state {
         case .notDetermined:

@@ -42,6 +42,7 @@
 		03E1A5AC1F6E7B58005A6E58 /* SearchCardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1A5AB1F6E7B58005A6E58 /* SearchCardManager.swift */; };
 		03F0BA5F1F99D6C30040B9C8 /* SearchCardInjected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0BA5E1F99D6C30040B9C8 /* SearchCardInjected.swift */; };
 		12855D04BD7B4359954CC379 /* Pods_MunchTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30933A940AE4DF2E7F80A839 /* Pods_MunchTests.framework */; };
+		B4B730544AF1361565440B2C /* PlaceMapController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73B4027BDB40E3CC44F31 /* PlaceMapController.swift */; };
 		B4B730D92CC36AD63D76C190 /* PlaceDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73B9E1E79F626D02B9A75 /* PlaceDataController.swift */; };
 		B4B7319B6239909F0C37875F /* PlaceCardMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B739295503DBF1CB674F6E /* PlaceCardMenu.swift */; };
 		B4B7321A7BF0F1FDE9D9A007 /* Auth0.plist in Resources */ = {isa = PBXBuildFile; fileRef = B4B73D105B16A6AD87C50DAA /* Auth0.plist */; };
@@ -158,6 +159,7 @@
 		B4B738FC6C7F484B97FA825F /* locations-popular.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "locations-popular.json"; sourceTree = "<group>"; };
 		B4B73924CDDEE30BE2E2AF8A /* AccountClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountClient.swift; sourceTree = "<group>"; };
 		B4B739295503DBF1CB674F6E /* PlaceCardMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardMenu.swift; sourceTree = "<group>"; };
+		B4B73B4027BDB40E3CC44F31 /* PlaceMapController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceMapController.swift; sourceTree = "<group>"; };
 		B4B73B9E1E79F626D02B9A75 /* PlaceDataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDataController.swift; sourceTree = "<group>"; };
 		B4B73C04AEC75362CDFAC648 /* RecentDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentDatabase.swift; sourceTree = "<group>"; };
 		B4B73CEBAA298AA8928EA653 /* SettingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingController.swift; sourceTree = "<group>"; };
@@ -325,6 +327,7 @@
 				B4B739295503DBF1CB674F6E /* PlaceCardMenu.swift */,
 				B4B730979285E2CEAED9B41C /* PlaceCardArticle.swift */,
 				B4B73B9E1E79F626D02B9A75 /* PlaceDataController.swift */,
+				B4B73B4027BDB40E3CC44F31 /* PlaceMapController.swift */,
 			);
 			path = Place;
 			sourceTree = "<group>";
@@ -759,6 +762,7 @@
 				B4B730D92CC36AD63D76C190 /* PlaceDataController.swift in Sources */,
 				B4B73BA7FADE13E2517C71F8 /* CollectionClient.swift in Sources */,
 				B4B7328EA1644B7350AB75A5 /* CollectionController.swift in Sources */,
+				B4B730544AF1361565440B2C /* PlaceMapController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

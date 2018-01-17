@@ -560,23 +560,9 @@ class PlaceBasicAddressCard: PlaceCardView {
     }
 
     override func didTap() {
-        if let address = address?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
-            // Monster Jobs uses comgooglemap url scheme, those fuckers
-            if (UIApplication.shared.canOpenURL(URL(string: "https://www.google.com/maps/")!)) {
-                let alert = UIAlertController(title: nil, message: "Open Google Maps", preferredStyle: .alert)
-                alert.addAction(.init(title: "Cancel", style: .cancel))
-                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { alert in
-                    UIApplication.shared.open(URL(string: "https://www.google.com/maps/?daddr=\(address)")!)
-                })
-                controller.present(alert, animated: true)
-            } else if (UIApplication.shared.canOpenURL(URL(string: "http://maps.apple.com/")!)) {
-                let alert = UIAlertController(title: nil, message: "Open Apple Maps", preferredStyle: .alert)
-                alert.addAction(.init(title: "Cancel", style: .cancel))
-                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { alert in
-                    UIApplication.shared.open(URL(string: "http://maps.apple.com/?daddr=\(address)")!)
-                })
-                controller.present(alert, animated: true)
-            }
+        if let place = self.controller.place {
+            let controller = PlaceMapViewController.init(place: place)
+            self.controller.navigationController?.pushViewController(controller, animated: true)
         }
     }
 
@@ -662,6 +648,14 @@ fileprivate class AddressLabel: UIView {
 class PlaceHeaderLocationCard: PlaceTitleCardView {
     override func didLoad(card: PlaceCard) {
         self.title = "Location"
+        self.moreButton.isHidden = false
+    }
+
+    override func didTap() {
+        if let place = self.controller.place {
+            let controller = PlaceMapViewController.init(place: place)
+            self.controller.navigationController?.pushViewController(controller, animated: true)
+        }
     }
 
     override class var cardId: String? {
@@ -703,23 +697,9 @@ class PlaceBasicLocationCard: PlaceCardView {
     }
 
     override func didTap() {
-        if let address = address?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
-            // Monster Jobs uses comgooglemap url scheme, those fuckers
-            if (UIApplication.shared.canOpenURL(URL(string: "https://www.google.com/maps/")!)) {
-                let alert = UIAlertController(title: nil, message: "Open Google Maps", preferredStyle: .alert)
-                alert.addAction(.init(title: "Cancel", style: .cancel))
-                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { alert in
-                    UIApplication.shared.open(URL(string: "https://www.google.com/maps/?daddr=\(address)")!)
-                })
-                controller.present(alert, animated: true)
-            } else if (UIApplication.shared.canOpenURL(URL(string: "http://maps.apple.com/")!)) {
-                let alert = UIAlertController(title: nil, message: "Open Apple Maps", preferredStyle: .alert)
-                alert.addAction(.init(title: "Cancel", style: .cancel))
-                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { alert in
-                    UIApplication.shared.open(URL(string: "http://maps.apple.com/?daddr=\(address)")!)
-                })
-                controller.present(alert, animated: true)
-            }
+        if let place = self.controller.place {
+            let controller = PlaceMapViewController.init(place: place)
+            self.controller.navigationController?.pushViewController(controller, animated: true)
         }
     }
 
@@ -740,11 +720,6 @@ class PlaceBasicLocationCard: PlaceCardView {
                 self.mapView.image = snapshot?.image
                 self.pinImageView.image = UIImage(named: "RIP-PlaceMarker")
             }
-
-//            let annotation = MKPointAnnotation()
-//            annotation.coordinate = coordinate
-//            annotation.title = card["placeName"].stringValue
-//            mapView.addAnnotation(annotation)
         }
     }
 

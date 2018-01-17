@@ -40,6 +40,14 @@ class PlaceCardView: UITableViewCell {
 class PlaceTitleCardView: PlaceCardView {
     let separatorLine = UIView()
     let titleLabel = UILabel()
+    let moreButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "RIP-More"), for: .normal)
+        button.tintColor = .black
+        button.isUserInteractionEnabled = false
+        button.isHidden = true
+        return button
+    }()
 
     var title: String? {
         set(title) {
@@ -54,6 +62,7 @@ class PlaceTitleCardView: PlaceCardView {
         super.init(card: card, controller: controller)
         self.addSubview(separatorLine)
         self.addSubview(titleLabel)
+        self.addSubview(moreButton)
 
         separatorLine.backgroundColor = UIColor(hex: "d5d4d8")
         separatorLine.snp.makeConstraints { make in
@@ -68,6 +77,11 @@ class PlaceTitleCardView: PlaceCardView {
             make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(separatorLine.snp.bottom).inset(-20)
             make.bottom.equalTo(self).inset(11)
+        }
+
+        moreButton.snp.makeConstraints { make in
+            make.right.equalTo(self).inset(24)
+            make.top.bottom.equalTo(titleLabel)
         }
     }
 
