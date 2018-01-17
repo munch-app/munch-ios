@@ -32,7 +32,7 @@ class PlaceHeaderArticleCard: PlaceTitleCardView {
     }
 
     override func didLoad(card: PlaceCard) {
-        self.title = "Article"
+        self.title = "Articles"
     }
 
     override func didTap() {

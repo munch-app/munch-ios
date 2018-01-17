@@ -245,13 +245,13 @@ fileprivate class SearchFilterHeaderView: UIView {
         resetButton.setTitle("RESET", for: .normal)
         resetButton.setTitleColor(UIColor.black.withAlphaComponent(0.7), for: .normal)
         resetButton.titleLabel?.font = .systemFont(ofSize: 12, weight: .medium)
-        resetButton.titleEdgeInsets.left = 24
-        resetButton.contentHorizontalAlignment = .left
+        resetButton.titleEdgeInsets.right = 24
+        resetButton.contentHorizontalAlignment = .right
         resetButton.snp.makeConstraints { make in
             make.top.equalTo(self.safeArea.top)
             make.bottom.equalTo(self)
             make.width.equalTo(90)
-            make.left.equalTo(self)
+            make.right.equalTo(self)
         }
 
         titleView.text = "Filters"
@@ -261,20 +261,19 @@ fileprivate class SearchFilterHeaderView: UIView {
             make.top.equalTo(self.safeArea.top)
             make.height.equalTo(44)
             make.bottom.equalTo(self)
-            make.left.equalTo(resetButton.snp.right)
-            make.right.equalTo(cancelButton.snp.left)
+            make.centerX.equalTo(self)
         }
 
         cancelButton.setTitle("CANCEL", for: .normal)
         cancelButton.setTitleColor(UIColor.black.withAlphaComponent(0.7), for: .normal)
         cancelButton.titleLabel?.font = .systemFont(ofSize: 12, weight: .medium)
-        cancelButton.titleEdgeInsets.right = 24
-        cancelButton.contentHorizontalAlignment = .right
+        cancelButton.titleEdgeInsets.left = 24
+        cancelButton.contentHorizontalAlignment = .left
         cancelButton.snp.makeConstraints { make in
             make.top.equalTo(self.safeArea.top)
             make.bottom.equalTo(self)
             make.width.equalTo(90)
-            make.right.equalTo(self)
+            make.left.equalTo(self)
         }
     }
 
@@ -1262,13 +1261,13 @@ fileprivate class SearchFilterMoreController: UIViewController, UIGestureRecogni
             resetButton.setTitle("RESET", for: .normal)
             resetButton.setTitleColor(UIColor.black.withAlphaComponent(0.7), for: .normal)
             resetButton.titleLabel?.font = .systemFont(ofSize: 12, weight: .medium)
-            resetButton.titleEdgeInsets.left = 24
-            resetButton.contentHorizontalAlignment = .left
+            resetButton.titleEdgeInsets.right = 24
+            resetButton.contentHorizontalAlignment = .right
             resetButton.snp.makeConstraints { make in
                 make.top.equalTo(self.safeArea.top)
                 make.bottom.equalTo(self)
                 make.width.equalTo(90)
-                make.left.equalTo(self)
+                make.right.equalTo(self)
             }
 
             titleView.font = .systemFont(ofSize: 17, weight: .medium)
@@ -1277,20 +1276,19 @@ fileprivate class SearchFilterMoreController: UIViewController, UIGestureRecogni
                 make.top.equalTo(self.safeArea.top)
                 make.height.equalTo(44)
                 make.bottom.equalTo(self)
-                make.left.equalTo(resetButton.snp.right)
-                make.right.equalTo(cancelButton.snp.left)
+                make.centerX.equalTo(self)
             }
 
             cancelButton.setTitle("CANCEL", for: .normal)
             cancelButton.setTitleColor(UIColor.black.withAlphaComponent(0.7), for: .normal)
             cancelButton.titleLabel?.font = .systemFont(ofSize: 12, weight: .medium)
-            cancelButton.titleEdgeInsets.right = 24
-            cancelButton.contentHorizontalAlignment = .right
+            cancelButton.titleEdgeInsets.left = 24
+            cancelButton.contentHorizontalAlignment = .left
             cancelButton.snp.makeConstraints { make in
                 make.top.equalTo(self.safeArea.top)
                 make.bottom.equalTo(self)
                 make.width.equalTo(90)
-                make.right.equalTo(self)
+                make.left.equalTo(self)
             }
         }
 

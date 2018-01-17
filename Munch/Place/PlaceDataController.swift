@@ -243,7 +243,7 @@ extension PlaceDataHeaderView: UICollectionViewDataSource, UICollectionViewDeleg
                 make.left.equalTo(self)
                 make.right.equalTo(self).inset(16)
                 make.bottom.equalTo(self)
-                make.height.equalTo(1)
+                make.height.equalTo(2)
             }
         }
 

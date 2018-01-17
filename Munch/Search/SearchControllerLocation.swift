@@ -10,7 +10,7 @@ import SnapKit
 import SwiftyJSON
 import TPKeyboardAvoiding
 
-class SearchLocationController: UIViewController {
+class SearchLocationController: UIViewController, UIGestureRecognizerDelegate {
     private let filterManager: SearchFilterManager
     private let onExtensionDismiss: ((SearchQuery?) -> Void)
 
@@ -58,6 +58,9 @@ class SearchLocationController: UIViewController {
         super.viewDidLoad()
         self.tableView.delegate = self
         self.tableView.dataSource = self
+
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
 
         self.headerView.textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         self.headerView.cancelButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)

@@ -90,7 +90,7 @@ class CollectionClient {
 }
 
 
-class LikedPlace {
+struct LikedPlace {
     var place: Place
     var sortKey: String
     var createdDate: Date
@@ -102,7 +102,7 @@ class LikedPlace {
     }
 }
 
-class PlaceCollection {
+struct PlaceCollection {
     var userId: String?
     var collectionId: String?
 
@@ -110,11 +110,16 @@ class PlaceCollection {
 
     var name: String?
     var description: String?
+    var count: Int?
 
     var thumbnail: [String: String]?
 
     var updatedDate: Date?
     var createdDate: Date?
+
+    init() {
+
+    }
 
     init(json: JSON) {
         self.userId = json["userId"].string
@@ -124,6 +129,7 @@ class PlaceCollection {
 
         self.name = json["name"].string
         self.description = json["description"].string
+        self.count = json["count"].int
 
         self.thumbnail = json["thumbnail"].dictionaryObject as? [String: String]
 
@@ -148,7 +154,7 @@ class PlaceCollection {
         return parameters
     }
 
-    class AddedPlace {
+    struct AddedPlace {
         var place: Place
         var sortKey: String
         var createdDate: Date

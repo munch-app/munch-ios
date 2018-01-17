@@ -137,7 +137,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
 
     @objc func onAddButton(_ sender: Any) {
-
+        // TODO Implementation Nav to SelectCollectionController
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {

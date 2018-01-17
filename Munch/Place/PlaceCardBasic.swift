@@ -257,7 +257,7 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
         }
 
         indicator.isUserInteractionEnabled = false
-        indicator.setImage(UIImage(named: "RIP-Expand"), for: .normal)
+        indicator.setImage(UIImage(named: "RIP-More"), for: .normal)
         indicator.contentHorizontalAlignment = .right
         indicator.tintColor = .black
         indicator.snp.makeConstraints { make in
