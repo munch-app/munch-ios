@@ -28,7 +28,7 @@ class PlaceDataViewController: UIViewController, UIGestureRecognizerDelegate {
         collectionView.contentInset = UIEdgeInsets(top: 18, left: 24, bottom: 18, right: 24)
         collectionView.register(PlaceDataInstagramCardCell.self, forCellWithReuseIdentifier: "PlaceDataInstagramCardCell")
         collectionView.register(PlaceDataArticleCardCell.self, forCellWithReuseIdentifier: "PlaceDataArticleCardCell")
-        collectionView.register(PlaceDataLoadingCardCell.self, forCellWithReuseIdentifier: "PlaceDataLoadingCardCell")
+        collectionView.register(PlaceDataLoadingCardCell.self, forCellWithReuseIdentifier: "PlaceDataLoadingCardCell") // TODO Reduce height of this card
         collectionView.register(PlaceDataEmptyCardCell.self, forCellWithReuseIdentifier: "PlaceDataEmptyCardCell")
         return collectionView
     }()
@@ -65,7 +65,6 @@ class PlaceDataViewController: UIViewController, UIGestureRecognizerDelegate {
         self.collectionView.dataSource = self
 
         self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
-        self.headerView.titleView.text = place.name
     }
 
     private func initViews() {
@@ -111,15 +110,9 @@ fileprivate class PlaceDataHeaderView: UIView {
         button.contentHorizontalAlignment = .left
         return button
     }()
-    fileprivate let titleView: UILabel = {
-        let titleView = UILabel()
-        titleView.font = .systemFont(ofSize: 17, weight: .medium)
-        titleView.textAlignment = .center
-        return titleView
-    }()
     fileprivate let tabsView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 0
 
@@ -141,7 +134,6 @@ fileprivate class PlaceDataHeaderView: UIView {
     private func initViews() {
         self.backgroundColor = .white
         self.addSubview(backButton)
-        self.addSubview(titleView)
         self.addSubview(tabsView)
 
         self.tabsView.delegate = self
@@ -149,25 +141,19 @@ fileprivate class PlaceDataHeaderView: UIView {
 
         backButton.snp.makeConstraints { make in
             make.top.equalTo(self.safeArea.top)
+            make.bottom.equalTo(self)
             make.left.equalTo(self)
 
-            make.width.equalTo(64)
+            make.width.equalTo(62)
             make.height.equalTo(44)
-        }
-
-        titleView.snp.makeConstraints { make in
-            make.top.equalTo(self.safeArea.top)
-            make.bottom.equalTo(tabsView.snp.top)
-            make.height.equalTo(44)
-
-            make.left.equalTo(backButton.snp.right)
-            make.right.equalTo(self).inset(64)
         }
 
         tabsView.snp.makeConstraints { make in
-            make.left.right.equalTo(self)
             make.bottom.equalTo(self)
             make.height.equalTo(34)
+
+            make.left.equalTo(backButton.snp.right)
+            make.right.equalTo(self).inset(64)
         }
     }
 
@@ -192,7 +178,7 @@ extension PlaceDataHeaderView: UICollectionViewDataSource, UICollectionViewDeleg
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = UILabel.textWidth(font: PlaceDataHeaderCollectionCell.labelFont, text: items[indexPath.row])
-        return CGSize(width: width + 16, height: 34)
+        return CGSize(width: width + 18, height: 34)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -241,7 +227,7 @@ extension PlaceDataHeaderView: UICollectionViewDataSource, UICollectionViewDeleg
 
             indicatorView.snp.makeConstraints { make in
                 make.left.equalTo(self)
-                make.right.equalTo(self).inset(16)
+                make.right.equalTo(self).inset(18)
                 make.bottom.equalTo(self)
                 make.height.equalTo(2)
             }
