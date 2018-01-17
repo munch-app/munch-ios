@@ -165,7 +165,7 @@ fileprivate class PlaceBasicImageBannerCardImageCell: UICollectionViewCell {
     }
 }
 
-class PlaceBasicNameTagCard: PlaceCardView {
+class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
     let nameLabel = UILabel()
     let tagCollection = TTGTextTagCollectionView()
 
@@ -199,6 +199,8 @@ class PlaceBasicNameTagCard: PlaceCardView {
         tagCollection.reload()
         tagCollection.setNeedsLayout()
         tagCollection.layoutIfNeeded()
+
+        tagCollection.delegate = self
     }
 
     override class var cardId: String? {
@@ -224,6 +226,20 @@ class PlaceBasicNameTagCard: PlaceCardView {
             tagSelectedCornerRadius = 3
 
             tagExtraSpace = CGSize(width: 15, height: 8)
+        }
+    }
+
+    func textTagCollectionView(_ textTagCollectionView: TTGTextTagCollectionView!, didTapTag tagText: String!, at index: UInt, selected: Bool) {
+        if let navigationController = self.controller.navigationController {
+            if let searchController = navigationController.viewControllers[navigationController.viewControllers.count - 2] as? SearchController {
+                navigationController.popViewController(animated: true)
+
+                // Add Selected as filter
+                var searchQuery = searchController.searchQuery
+                searchQuery.filter.tag.positives.insert(tagText)
+                searchController.render(searchQuery: searchQuery)
+            }
+
         }
     }
 }
@@ -257,7 +273,7 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
         }
 
         indicator.isUserInteractionEnabled = false
-        indicator.setImage(UIImage(named: "RIP-More"), for: .normal)
+        indicator.setImage(UIImage(named: "RIP-Expand"), for: .normal)
         indicator.contentHorizontalAlignment = .right
         indicator.tintColor = .black
         indicator.snp.makeConstraints { make in
