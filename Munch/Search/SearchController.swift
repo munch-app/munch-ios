@@ -414,7 +414,7 @@ extension SearchController {
         // Check nearest locate and move to it
         if let y = self.headerView.contentShouldMove(scrollView: scrollView) {
             let point = CGPoint(x: 0, y: y)
-            cardTableView.setContentOffset(point, animated: true)
+            scrollView.setContentOffset(point, animated: true)
         }
     }
 }

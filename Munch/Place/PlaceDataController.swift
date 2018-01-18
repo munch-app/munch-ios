@@ -557,9 +557,6 @@ fileprivate class PlaceDataLoadingCardCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func render(card: SearchCard, controller: SearchController) {
-    }
-
     func startAnimating() {
         self.indicator.startAnimating()
     }

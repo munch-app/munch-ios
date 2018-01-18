@@ -27,7 +27,7 @@ class AccountController: UINavigationController {
 }
 
 class AccountProfileController: UIViewController {
-    fileprivate let headerView = AccountHeaderView()
+    let headerView = AccountHeaderView()
     let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -114,10 +114,22 @@ class AccountProfileController: UIViewController {
     }
 }
 
-fileprivate class AccountHeaderView: UIView {
-    let layerOne = UIView() // Image & Setting
-    let layerTwo = UIView() // Profile Details
-    let layerThree = UIView() // Tab Bar
+class AccountHeaderView: UIView {
+    let layerOne: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }() // Image & Setting
+    let layerTwo: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }() // Profile Details
+    let layerThree: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }() // Tab Bar
 
     let settingButton: UIButton = {
         let button = UIButton()
@@ -137,7 +149,8 @@ fileprivate class AccountHeaderView: UIView {
 
     let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 20, weight: .medium)
+        label.font = .systemFont(ofSize: 22, weight: .medium)
+        label.numberOfLines = 1
         return label
     }()
     let emailLabel: UILabel = {
@@ -146,7 +159,9 @@ fileprivate class AccountHeaderView: UIView {
         return label
     }()
 
-    let likeTab = AccountTabButton(name: "LIKES")
+    fileprivate let likeTab = AccountTabButton(name: "LIKES")
+    fileprivate var topConstraint: Constraint! = nil
+    var selectedType: String = "LIKES"
 
     override init(frame: CGRect = CGRect.zero) {
         super.init(frame: frame)
@@ -157,14 +172,15 @@ fileprivate class AccountHeaderView: UIView {
         self.backgroundColor = .white
         layerOne.addSubview(profileImageView)
         layerOne.addSubview(settingButton)
-        self.addSubview(layerOne)
 
         layerTwo.addSubview(nameLabel)
         layerTwo.addSubview(emailLabel)
-        self.addSubview(layerTwo)
 
-        self.addSubview(layerThree)
         layerThree.addSubview(likeTab)
+
+        self.addSubview(layerTwo)
+        self.addSubview(layerOne)
+        self.addSubview(layerThree)
 
         layerOne.snp.makeConstraints { make in
             make.top.equalTo(self)
@@ -186,25 +202,26 @@ fileprivate class AccountHeaderView: UIView {
         }
 
         layerTwo.snp.makeConstraints { make in
-            make.top.equalTo(layerOne.snp.bottom)
+            self.topConstraint = make.top.equalTo(layerOne.snp.bottom).constraint
             make.left.right.equalTo(self)
+            make.height.equalTo(55)
         }
 
         nameLabel.snp.makeConstraints { make in
             make.left.right.equalTo(layerTwo).inset(24)
-            make.top.equalTo(layerTwo).inset(8)
+            make.top.equalTo(layerTwo).inset(10)
         }
 
         emailLabel.snp.makeConstraints { make in
             make.left.right.equalTo(layerTwo).inset(24)
             make.top.equalTo(nameLabel.snp.bottom).inset(-3)
-            make.bottom.equalTo(layerTwo).inset(8)
         }
 
         layerThree.snp.makeConstraints { make in
             make.top.equalTo(layerTwo.snp.bottom)
             make.left.right.equalTo(self)
             make.bottom.equalTo(self)
+            make.height.equalTo(40)
         }
 
         likeTab.snp.makeConstraints { make in
@@ -223,9 +240,10 @@ fileprivate class AccountHeaderView: UIView {
         self.emailLabel.text = UserDatabase.email
     }
 
-    func renderButtons(selected: AccountTabButton) {
+    fileprivate func renderButtons(selected: AccountTabButton) {
         likeTab.isTabSelected = false
 
+        selectedType = selected.titleLabel?.text ?? "LIKES"
         selected.isTabSelected = true
     }
 
@@ -236,6 +254,56 @@ fileprivate class AccountHeaderView: UIView {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+// Header Scroll to Hide Functions
+extension AccountHeaderView {
+    var contentHeight: CGFloat {
+        return 55 + 40 + 44 + 18 // + 18 Because of top constraints
+    }
+
+    var maxHeight: CGFloat {
+        // contentHeight + safeArea.top
+        return self.safeAreaInsets.top + contentHeight
+    }
+
+    func contentDidScroll(scrollView: UIScrollView) {
+        let offset = calculateOffset(scrollView: scrollView)
+        self.topConstraint.update(inset: offset)
+    }
+
+    /**
+     nil means don't move
+     */
+    func contentShouldMove(scrollView: UIScrollView) -> CGFloat? {
+        let offset = calculateOffset(scrollView: scrollView)
+
+        // Already fully closed or opened
+        if (offset == 55.0 || offset == 0.0) {
+            return nil
+        }
+
+
+        if (offset < 28) {
+            // To close
+            return -maxHeight + 55
+        } else {
+            // To open
+            return -maxHeight
+        }
+    }
+
+    private func calculateOffset(scrollView: UIScrollView) -> CGFloat {
+        let y = scrollView.contentOffset.y
+
+        if y <= -maxHeight {
+            return 0
+        } else if y >= -maxHeight + 55 {
+            return 55
+        } else {
+            return (maxHeight + y)
+        }
     }
 }
 
@@ -269,7 +337,7 @@ fileprivate class AccountTabButton: UIButton {
 
         nameLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self)
-            make.top.equalTo(self).inset(6)
+            make.top.equalTo(self).inset(12)
         }
 
         indicatorView.snp.makeConstraints { make in
