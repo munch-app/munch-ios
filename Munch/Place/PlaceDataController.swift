@@ -35,7 +35,7 @@ class PlaceDataViewController: UIViewController, UIGestureRecognizerDelegate {
     private let headerView = PlaceDataHeaderView()
     private var dataLoader: PlaceDataLoader!
 
-    init(place: Place, selected: String = "Instagram") {
+    init(place: Place, selected: String = "INSTAGRAM") {
         self.placeId = place.id!
         self.place = place
         super.init(nibName: nil, bundle: nil)
@@ -169,7 +169,7 @@ fileprivate class PlaceDataHeaderView: UIView {
 
 extension PlaceDataHeaderView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     private var items: [String] {
-        return ["Instagram", "Article"]
+        return ["INSTAGRAM", "ARTICLES"]
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -196,7 +196,7 @@ extension PlaceDataHeaderView: UICollectionViewDataSource, UICollectionViewDeleg
     }
 
     fileprivate class PlaceDataHeaderCollectionCell: UICollectionViewCell {
-        static let labelFont = UIFont.systemFont(ofSize: 16.0, weight: .medium)
+        static let labelFont = UIFont.systemFont(ofSize: 14.0, weight: .medium)
         private let nameLabel: UILabel = {
             let nameLabel = UILabel()
             nameLabel.backgroundColor = .clear
@@ -211,7 +211,7 @@ extension PlaceDataHeaderView: UICollectionViewDataSource, UICollectionViewDeleg
         }()
         private let indicatorView: UIView = {
             let view = UIView()
-            view.backgroundColor = UIColor.black.withAlphaComponent(0.85)
+            view.backgroundColor = .primary500
             return view
         }()
 
@@ -222,7 +222,7 @@ extension PlaceDataHeaderView: UICollectionViewDataSource, UICollectionViewDeleg
 
             nameLabel.snp.makeConstraints { make in
                 make.left.right.equalTo(self)
-                make.top.equalTo(self).inset(3)
+                make.top.equalTo(self).inset(4)
             }
 
             indicatorView.snp.makeConstraints { make in
@@ -266,9 +266,9 @@ fileprivate class PlaceDataLoader {
 
     var items: [PlaceDataType] {
         switch selectedData {
-        case "Instagram":
+        case "INSTAGRAM":
             return items(instagram, { PlaceDataType.instagram($0) })
-        case "Article":
+        case "ARTICLES":
             return items(article, { PlaceDataType.article($0) })
         default: return []
         }
@@ -276,9 +276,9 @@ fileprivate class PlaceDataLoader {
 
     var isEmpty: Bool {
         switch selectedData {
-        case "Instagram":
+        case "INSTAGRAM":
             return instagram.joined().isEmpty
-        case "Article":
+        case "ARTICLES":
             return article.joined().isEmpty
         default: return false
         }
@@ -286,9 +286,9 @@ fileprivate class PlaceDataLoader {
 
     var more: Bool {
         switch selectedData {
-        case "Instagram":
+        case "INSTAGRAM":
             return !(instagram.last?.isEmpty ?? false)
-        case "Article":
+        case "ARTICLES":
             return !(article.last?.isEmpty ?? false)
         default: return false
         }
@@ -313,7 +313,7 @@ fileprivate class PlaceDataLoader {
 
     func append(load completion: @escaping (_ meta: MetaJSON) -> Void) {
         switch selectedData {
-        case "Instagram":
+        case "INSTAGRAM":
             MunchApi.places.getInstagram(id: placeId, maxSort: instagram.last?.last?.placeSort, size: 20) { meta, medias in
                 if meta.isOk() {
                     self.instagram.append(medias)
@@ -323,7 +323,7 @@ fileprivate class PlaceDataLoader {
                 completion(meta)
             }
 
-        case "Article":
+        case "ARTICLES":
             MunchApi.places.getArticle(id: placeId, maxSort: article.last?.last?.placeSort, size: 20) { meta, articles in
                 if meta.isOk() {
                     self.article.append(articles)

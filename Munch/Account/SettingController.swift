@@ -14,7 +14,6 @@ import Lock
 class AccountSettingController: UIViewController, UIGestureRecognizerDelegate, SFSafariViewControllerDelegate {
     private let headerView = HeaderView()
     private let tableView = UITableView()
-    var userInfo: UserInfo!
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -62,12 +61,11 @@ class AccountSettingController: UIViewController, UIGestureRecognizerDelegate, S
     }
 
     private func logout() {
-        self.userInfo = nil
         let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
         if (credentialsManager.clear()) {
             print("Removed Credentials")
         }
-        navigationController?.pushViewController(AccountBoardingController(), animated: false)
+        self.navigationController?.popViewController(animated: true)
     }
 
     @objc func onBackButton(_ sender: Any) {
@@ -138,7 +136,6 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
             tableView.register(cellClass, forCellReuseIdentifier: String(describing: cellClass))
         }
 
-        register(cellClass: AccountLoadingCell.self)
         register(cellClass: SettingInstagramCell.self)
         register(cellClass: SettingLogoutCell.self)
     }
@@ -178,12 +175,12 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
         let item = items[indexPath.section].1[indexPath.row]
 
         switch item {
-        case .loading:
-            return dequeue(cellClass: AccountLoadingCell.self)
         case .instagramConnect:
             return dequeue(cellClass: SettingInstagramCell.self)
         case .logout:
             return dequeue(cellClass: SettingLogoutCell.self)
+        default:
+            return UITableViewCell()
         }
     }
 

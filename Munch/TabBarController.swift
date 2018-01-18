@@ -21,7 +21,7 @@ enum InitialViewProvider {
      Main tab controllers for Munch App
      */
     static func main() -> TabBarController {
-        let controllers = [search(), account()]
+        let controllers = [account(), search()]
         return TabBarController(controllers: controllers)
     }
 
@@ -60,17 +60,6 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
     }
 
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-        if (viewController is AccountController) {
-            if (CredentialsManager(authentication: Auth0.authentication()).hasValid()) {
-                return true
-            }
-
-            // If user not authenticated, show boarding controller
-            let boarding = AccountBoardingController()
-            self.present(boarding, animated: true)
-            return false
-        }
-
         if let navigation = viewController as? UINavigationController {
             if let controller = navigation.topViewController as? SearchController {
                 if (self.previousController == viewController) {

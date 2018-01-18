@@ -20,7 +20,7 @@ class PlaceHeaderArticleCard: PlaceTitleCardView {
     }
 
     override func didTap() {
-        let controller = PlaceDataViewController(place: self.controller.place!, selected: "Article")
+        let controller = PlaceDataViewController(place: self.controller.place!, selected: "ARTICLES")
         self.controller.navigationController!.pushViewController(controller, animated: true)
     }
 

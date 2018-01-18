@@ -16,7 +16,6 @@ import Lock
 import NVActivityIndicatorView
 
 class AccountController: UINavigationController {
-
     required init() {
         super.init(nibName: nil, bundle: nil)
         self.viewControllers = [AccountProfileController()]
@@ -28,9 +27,9 @@ class AccountController: UINavigationController {
 }
 
 class AccountProfileController: UIViewController {
-    private let headerView = HeaderView()
-    private let tableView = UITableView()
-    private var userInfo: UserInfo?
+    private let headerView = AccountHeaderView()
+
+    private let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -43,47 +42,37 @@ class AccountProfileController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if userInfo == nil {
-            let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
-            if (credentialsManager.hasValid()) {
-                self.reloadProfile(credentialsManager: credentialsManager)
-            } else {
-                self.alert(title: "User Not Authenticated", message: "User should be authenticated")
-            }
+        // Check if user is logged in, push to AccountAuthenticateController if not
+        if credentialsManager.hasValid() {
+            self.reloadProfile()
+        } else {
+            self.present(AccountBoardingController(), animated: true)
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.initViews()
-        self.registerCell()
 
-        self.tableView.delegate = self
-        self.tableView.dataSource = self
+        self.headerView.render()
+        self.headerView.settingButton.addTarget(self, action: #selector(onActionSetting(_:)), for: .touchUpInside)
+    }
 
-        self.headerView.settingButton.addTarget(self, action: #selector(actionSetting(_:)), for: .touchUpInside)
-        self.headerView.settingButton.isHidden = true
+    func initViews() {
+        self.view.addSubview(headerView)
 
-        // Check if user is logged in, push to AccountAuthenticateController if not
-        let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
-        if credentialsManager.hasValid() {
-            self.reloadProfile()
-        } else {
-            navigationController?.pushViewController(AccountBoardingController(), animated: false)
+        self.view.backgroundColor = .white
+
+        headerView.snp.makeConstraints { make in
+            make.top.left.right.equalTo(self.view)
         }
     }
 
-    @objc func actionSetting(_ sender: Any) {
-        let controller = AccountSettingController()
-        controller.userInfo = self.userInfo
-        navigationController?.pushViewController(controller, animated: true)
+    @objc func onActionSetting(_ sender: Any) {
+        navigationController?.pushViewController(AccountSettingController(), animated: true)
     }
 
-    private func reloadProfile(credentialsManager: CredentialsManager = CredentialsManager(authentication: Auth0.authentication())) {
-        self.headerView.settingButton.isHidden = true
-        self.userInfo = nil
-        self.tableView.reloadData()
-
+    func reloadProfile() {
         credentialsManager.credentials { error, credentials in
             guard let accessToken = credentials?.accessToken else {
                 return
@@ -94,227 +83,134 @@ class AccountProfileController: UIViewController {
                     .start { result in
                         switch (result) {
                         case .success(let userInfo):
-                            DispatchQueue.main.async {
-                                self.headerView.settingButton.isHidden = false
-                                self.userInfo = userInfo
-                                self.tableView.reloadData()
-                            }
+                            UserDatabase.update(userInfo: userInfo)
+                            self.headerView.render()
                         case .failure(let error):
                             self.alert(title: "Fetch Profile Error", error: error)
                         }
                     }
         }
     }
-
-    private func initViews() {
-        self.view.addSubview(tableView)
-        self.view.addSubview(headerView)
-
-        tableView.separatorStyle = .none
-        tableView.separatorInset.left = 24
-        tableView.allowsSelection = true
-        tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.sectionHeaderHeight = 40
-        tableView.estimatedRowHeight = 50
-
-        tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-        tableView.snp.makeConstraints { make in
-            make.top.equalTo(headerView.snp.bottom)
-            make.bottom.left.right.equalTo(self.view)
-        }
-
-        headerView.snp.makeConstraints { make in
-            make.top.left.right.equalTo(self.view)
-        }
-    }
-
-    private class HeaderView: UIView {
-        let titleView = UILabel()
-        let settingButton = UIButton()
-
-        override init(frame: CGRect = CGRect.zero) {
-            super.init(frame: frame)
-            self.initViews()
-        }
-
-        private func initViews() {
-            self.backgroundColor = .white
-            self.addSubview(titleView)
-            self.addSubview(settingButton)
-
-            titleView.text = "Profile"
-            titleView.font = .systemFont(ofSize: 17, weight: .medium)
-            titleView.textAlignment = .center
-            titleView.snp.makeConstraints { make in
-                make.centerX.equalTo(self)
-                make.top.equalTo(self.safeArea.top)
-                make.bottom.equalTo(self)
-                make.height.equalTo(44)
-            }
-
-            settingButton.setImage(UIImage(named: "NavigationBar-Setting"), for: .normal)
-            settingButton.tintColor = .black
-            settingButton.contentHorizontalAlignment = .right
-            settingButton.imageEdgeInsets.right = 24
-            settingButton.snp.makeConstraints { make in
-                make.right.equalTo(self)
-                make.top.equalTo(self.safeArea.top)
-                make.bottom.equalTo(self)
-                make.width.equalTo(64)
-            }
-        }
-
-        override func layoutSubviews() {
-            super.layoutSubviews()
-            self.hairlineShadow(height: 1.0)
-        }
-
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-    }
 }
 
-fileprivate enum AccountCellType {
-    // Profile: Images, Person Name
-    case loading
-    case profile(UserInfo)
-}
+fileprivate class AccountHeaderView: UIView {
+    let layerOne = UIView() // Image & Setting
+    let layerTwo = UIView() // Profile Details
+    let layerThree = UIView() // Tab Bar
 
-extension AccountProfileController: UITableViewDataSource, UITableViewDelegate {
-    func registerCell() {
-        func register(cellClass: UITableViewCell.Type) {
-            tableView.register(cellClass, forCellReuseIdentifier: String(describing: cellClass))
-        }
+    let settingButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "NavigationBar-Setting"), for: .normal)
+        button.tintColor = .black
+        button.contentHorizontalAlignment = .right
+        button.imageEdgeInsets.right = 24
+        return button
+    }()
+    let profileImageView: MunchImageView = {
+        let imageView = MunchImageView()
+        imageView.backgroundColor = UIColor(hex: "F0F0F0")
+        imageView.layer.cornerRadius = 22
+        imageView.clipsToBounds = true
+        return imageView
+    }()
 
-        register(cellClass: AccountLoadingCell.self)
-        register(cellClass: ProfileInfoCell.self)
-    }
+    let nameLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 20, weight: .medium)
+        return label
+    }()
+    let emailLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 13, weight: .regular)
+        return label
+    }()
 
-    private var items: [(String?, [AccountCellType])] {
-        if let userInfo = self.userInfo {
-            return [
-                (nil, [AccountCellType.profile(userInfo)])
-            ]
-        } else {
-            return [(nil, [AccountCellType.loading])]
-        }
-    }
+    let likeTab = AccountTabButton(name: "LIKES")
 
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return items.count
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items[section].1.count
-    }
-
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return items[section].0
-    }
-
-    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        let header = view as! UITableViewHeaderFooterView
-        header.tintColor = .white
-        header.textLabel!.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.medium)
-        header.textLabel!.textColor = UIColor.black.withAlphaComponent(0.85)
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        func dequeue(cellClass: UITableViewCell.Type) -> UITableViewCell {
-            let identifier = String(describing: cellClass)
-            return tableView.dequeueReusableCell(withIdentifier: identifier)!
-        }
-
-        let item = items[indexPath.section].1[indexPath.row]
-
-        switch item {
-        case .loading:
-            return dequeue(cellClass: AccountLoadingCell.self)
-        case .profile(let userInfo):
-            let cell = dequeue(cellClass: ProfileInfoCell.self) as! ProfileInfoCell
-            cell.render(userInfo: userInfo)
-            return cell
-        }
-    }
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-
-        let item = items[indexPath.section].1[indexPath.row]
-        switch item {
-        default:
-            return
-        }
-    }
-}
-
-fileprivate class ProfileInfoCell: UITableViewCell {
-    let profileImageView = ShimmerImageView()
-    let nameLabel = UILabel()
-    let emailLabel = UILabel()
-
-//    let editButton = UIButton()
-
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect = CGRect.zero) {
+        super.init(frame: frame)
         self.initViews()
     }
 
     private func initViews() {
-        self.addSubview(profileImageView)
-        self.addSubview(nameLabel)
-        self.addSubview(emailLabel)
-//        self.addSubview(editButton)
+        self.backgroundColor = .white
+        layerOne.addSubview(profileImageView)
+        layerOne.addSubview(settingButton)
+        self.addSubview(layerOne)
+
+        layerTwo.addSubview(nameLabel)
+        layerTwo.addSubview(emailLabel)
+        self.addSubview(layerTwo)
+
+        self.addSubview(layerThree)
+        layerThree.addSubview(likeTab)
+
+        layerOne.snp.makeConstraints { make in
+            make.top.equalTo(self)
+            make.left.right.equalTo(self)
+        }
+
+        settingButton.snp.makeConstraints { make in
+            make.right.equalTo(layerOne)
+            make.top.equalTo(self.safeArea.top)
+            make.bottom.equalTo(layerOne)
+            make.width.equalTo(64)
+        }
 
         profileImageView.snp.makeConstraints { make in
-            make.height.width.equalTo(100).priority(999)
-            make.top.bottom.equalTo(self).inset(24).priority(999)
-            make.left.equalTo(self).inset(24)
+            make.left.equalTo(layerOne).inset(24)
+            make.top.equalTo(self.safeArea.top)
+            make.bottom.equalTo(layerOne)
+            make.width.height.equalTo(44)
         }
 
-        nameLabel.text = "Name"
-        nameLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
-        nameLabel.textColor = .black
+        layerTwo.snp.makeConstraints { make in
+            make.top.equalTo(layerOne.snp.bottom)
+            make.left.right.equalTo(self)
+        }
+
         nameLabel.snp.makeConstraints { make in
-            make.left.equalTo(profileImageView.snp.right).inset(-24)
-            make.right.equalTo(self).inset(24)
-            make.top.equalTo(self).inset(24)
-            make.height.equalTo(34)
+            make.left.right.equalTo(layerTwo).inset(24)
+            make.top.equalTo(layerTwo).inset(8)
         }
 
-        emailLabel.text = "Email"
-        emailLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        emailLabel.textColor = .black
         emailLabel.snp.makeConstraints { make in
-            make.left.equalTo(profileImageView.snp.right).inset(-24)
-            make.right.equalTo(self).inset(24)
-            make.top.equalTo(nameLabel.snp.bottom)
-            make.height.equalTo(20)
+            make.left.right.equalTo(layerTwo).inset(24)
+            make.top.equalTo(nameLabel.snp.bottom).inset(-3)
+            make.bottom.equalTo(layerTwo).inset(8)
         }
 
-        self.setNeedsLayout()
-        self.layoutIfNeeded()
-//        editButton.setTitle("Edit Profile", for: .normal)
-//        editButton.setTitleColor(UIColor.black.withAlphaComponent(0.8), for: .normal)
-//        editButton.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-//        editButton.layer.cornerRadius = 3
-//        editButton.layer.borderWidth = 1.0
-//        editButton.layer.borderColor = UIColor.black.withAlphaComponent(0.45).cgColor
-//        editButton.snp.makeConstraints { make in
-//            make.left.equalTo(profileImageView.snp.right).inset(-24)
-//            make.right.equalTo(self).inset(24)
-//            make.top.equalTo(emailLabel.snp.bottom).inset(-5)
-//        }
+        layerThree.snp.makeConstraints { make in
+            make.top.equalTo(layerTwo.snp.bottom)
+            make.left.right.equalTo(self)
+            make.bottom.equalTo(self)
+        }
+
+        likeTab.snp.makeConstraints { make in
+            make.left.equalTo(layerThree).inset(24)
+            make.top.equalTo(layerThree)
+            make.bottom.equalTo(layerThree)
+        }
+        self.renderButtons(selected: likeTab)
     }
 
-    func render(userInfo: UserInfo) {
-        if let profileImage = userInfo.picture?.absoluteString {
-            profileImageView.render(images: ["original": profileImage])
+    func render() {
+        if let pictureUrl = UserDatabase.pictureUrl {
+            self.profileImageView.render(images: ["original": pictureUrl])
         }
-        nameLabel.text = userInfo.name
-        emailLabel.text = userInfo.email
+        self.nameLabel.text = UserDatabase.name
+        self.emailLabel.text = UserDatabase.email
+    }
+
+    func renderButtons(selected: AccountTabButton) {
+        likeTab.isTabSelected = false
+
+        selected.isTabSelected = true
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.hairlineShadow(height: 1.0)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -322,19 +218,53 @@ fileprivate class ProfileInfoCell: UITableViewCell {
     }
 }
 
-class AccountLoadingCell: UITableViewCell {
+fileprivate class AccountTabButton: UIButton {
+    private let nameLabel: UILabel = {
+        let nameLabel = UILabel()
+        nameLabel.backgroundColor = .clear
+        nameLabel.font = UIFont.systemFont(ofSize: 14.0, weight: .medium)
+        nameLabel.textColor = UIColor.black.withAlphaComponent(0.85)
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        nameLabel.numberOfLines = 1
+        nameLabel.isUserInteractionEnabled = false
 
-        let indicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 100, height: 35), type: .ballBeat, color: .primary, padding: 0)
-        indicator.startAnimating()
-        self.addSubview(indicator)
+        nameLabel.textAlignment = .left
+        return nameLabel
+    }()
+    private let indicatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.primary500
+        return view
+    }()
+    let name: String
 
-        let margin = (UIScreen.main.bounds.height / 2.0) - 64.0
-        indicator.snp.makeConstraints { make in
-            make.top.bottom.equalTo(self).inset(margin)
-            make.centerX.equalTo(self)
+    init(name: String) {
+        self.name = name
+        super.init(frame: .zero)
+        self.addSubview(nameLabel)
+        self.addSubview(indicatorView)
+
+        nameLabel.text = name
+
+        nameLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.top.equalTo(self).inset(6)
+        }
+
+        indicatorView.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.bottom.equalTo(self)
+            make.height.equalTo(2)
+        }
+    }
+
+    var isTabSelected: Bool {
+        get {
+            return !self.indicatorView.isHidden
+        }
+
+        set(value) {
+            self.indicatorView.isHidden = !value
         }
     }
 
