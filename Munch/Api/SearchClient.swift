@@ -139,7 +139,6 @@ struct Container: SearchResult, Equatable {
 
         self.images = json["images"].map({ SourcedImage(json: $0.1) })
         self.ranking = json["ranking"].double ?? 0
-
     }
 
     func toParams() -> Parameters {

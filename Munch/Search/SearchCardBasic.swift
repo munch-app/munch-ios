@@ -18,23 +18,26 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
     let topImageView = ShimmerImageView()
     let containerLabel: UIButton = {
         let label = UIButton()
-        label.titleLabel?.font = UIFont.systemFont(ofSize: 12.0, weight: .regular)
+        label.titleLabel?.font = UIFont.systemFont(ofSize: 13.0, weight: .regular)
         label.setTitleColor(.white, for: .normal)
         label.backgroundColor = UIColor.black.withAlphaComponent(0.55)
         label.contentEdgeInsets.top = 3
         label.contentEdgeInsets.bottom = 3
-        label.contentEdgeInsets.left = 8
+        label.contentEdgeInsets.left = 7
         label.contentEdgeInsets.right = 6
-        label.imageEdgeInsets.left = -5
+        label.imageEdgeInsets.left = -4
         label.layer.masksToBounds = true
-        label.layer.cornerRadius = 9
-        label.isUserInteractionEnabled = false
+        label.layer.cornerRadius = 5
+        label.isUserInteractionEnabled = true
 
         label.setImage(UIImage(named: "Search-Container-Small"), for: .normal)
         label.tintColor = .white
         return label
     }()
     let bottomView = BottomView()
+
+    var controller: SearchController!
+    var containers: [Container] = []
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -46,6 +49,7 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         containerView.addSubview(bottomView)
         self.addSubview(containerView)
 
+        containerLabel.addTarget(self, action: #selector(onContainerApply(_:)), for: .touchUpInside)
         containerLabel.snp.makeConstraints { make in
             make.left.equalTo(topImageView).inset(6)
             make.bottom.equalTo(topImageView).inset(6)
@@ -75,10 +79,14 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
     }
 
     func render(card: SearchCard, controller: SearchController) {
+        self.controller = controller
+        self.containers = card["containers"].map({ Container(json: $0.1) })
+
         let images = card["images"].flatMap {
             SourcedImage(json: $0.1)
         }
-        if let containerName = card["containers"][0]["name"].string {
+
+        if controller.searchQuery.filter.containers?.isEmpty ?? true, let containerName = containers.get(0)?.name {
             containerLabel.setTitle(containerName, for: .normal)
             containerLabel.isHidden = false
         } else {
@@ -89,6 +97,15 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         bottomView.render(card: card)
         setNeedsLayout()
         layoutIfNeeded()
+    }
+
+    @objc func onContainerApply(_ sender: Any) {
+        if let container = containers.get(0) {
+            var searchQuery = self.controller.searchQuery
+            searchQuery.filter.containers = [container]
+            searchQuery.filter.location = nil
+            self.controller.render(searchQuery: searchQuery)
+        }
     }
 
     static var cardId: String {

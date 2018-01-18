@@ -218,6 +218,7 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
         let imageView = UIImageView()
         imageView.image = UIImage.init(named: "Search-Container-Big")
         imageView.tintColor = UIColor.black.withAlphaComponent(0.72)
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     private let titleLabel: UILabel = {
@@ -256,12 +257,12 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
 
         iconView.snp.makeConstraints { make in
             make.top.bottom.equalTo(titleLabel)
-            make.left.equalTo(self).inset(leftRight-3)
+            make.left.equalTo(self).inset(leftRight)
         }
 
         titleLabel.snp.makeConstraints { make in
             make.right.equalTo(self).inset(leftRight)
-            make.left.equalTo(iconView.snp.right).inset(-3)
+            make.left.equalTo(iconView.snp.right).inset(-5)
             make.top.equalTo(self).inset(topBottom)
         }
 

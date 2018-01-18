@@ -27,9 +27,23 @@ class AccountController: UINavigationController {
 }
 
 class AccountProfileController: UIViewController {
-    private let headerView = AccountHeaderView()
+    fileprivate let headerView = AccountHeaderView()
+    let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 18
 
-    private let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.alwaysBounceVertical = true
+        collectionView.backgroundColor = UIColor.white
+        collectionView.contentInset = UIEdgeInsets(top: 18, left: 24, bottom: 18, right: 24)
+        return collectionView
+    }()
+
+    let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
+    let dataLoader = UserAccountDataLoader()
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -54,17 +68,24 @@ class AccountProfileController: UIViewController {
         super.viewDidLoad()
         self.initViews()
 
+        self.initAccountData()
+
         self.headerView.render()
         self.headerView.settingButton.addTarget(self, action: #selector(onActionSetting(_:)), for: .touchUpInside)
     }
 
     func initViews() {
+        self.view.addSubview(collectionView)
         self.view.addSubview(headerView)
 
         self.view.backgroundColor = .white
 
         headerView.snp.makeConstraints { make in
             make.top.left.right.equalTo(self.view)
+        }
+
+        collectionView.snp.makeConstraints { make in
+            make.edges.equalTo(self.view)
         }
     }
 

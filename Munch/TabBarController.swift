@@ -21,7 +21,7 @@ enum InitialViewProvider {
      Main tab controllers for Munch App
      */
     static func main() -> TabBarController {
-        let controllers = [account(), search()]
+        let controllers = [search(), account()]
         return TabBarController(controllers: controllers)
     }
 

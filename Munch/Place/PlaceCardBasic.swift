@@ -133,10 +133,7 @@ extension PlaceBasicImageBannerCard: UICollectionViewDataSource, UICollectionVie
         if let sourceName = sourcedImage?.sourceName {
             self.sourceTitleView.setTitle(sourceName, for: .normal)
             self.sourceTitleView.isHidden = false
-        } else if let sourceId = sourcedImage?.sourceId {
-            self.sourceTitleView.setTitle(sourceId, for: .normal)
-            self.sourceTitleView.isHidden = false
-        } else {
+        }  else {
             self.sourceTitleView.isHidden = true
         }
     }
@@ -480,7 +477,7 @@ class PlaceBasicPriceCard: PlaceCardView {
         self.addSubview(priceTitleLabel)
         self.addSubview(priceLabel)
 
-        priceTitleLabel.text = "Price"
+        priceTitleLabel.text = "Est. Price"
         priceTitleLabel.font = UIFont.systemFont(ofSize: 15.0, weight: .medium)
         priceTitleLabel.textColor = .black
         priceTitleLabel.textAlignment = .left
