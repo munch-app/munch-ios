@@ -565,7 +565,7 @@ class PlaceBasicAddressCard: PlaceCardView {
         self.addSubview(addressLabel)
         self.address = card["address"].string
 
-        addressLabel.render(card: card, simple: true)
+        addressLabel.render(card: card)
         addressLabel.snp.makeConstraints { make in
             make.top.bottom.equalTo(self).inset(topBottom)
             make.left.right.equalTo(self).inset(leftRight)
@@ -610,33 +610,17 @@ fileprivate class AddressLabel: UIView {
         }
     }
 
-    func render(card: PlaceCard, simple: Bool) {
-        render(lineOne: card, simple: simple)
-        if (simple) {
-            render(lineTwo: card)
-        }
+    func render(card: PlaceCard) {
+        render(lineOne: card)
+        render(lineTwo: card)
     }
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
 
-    private func render(lineOne card: PlaceCard, simple: Bool) {
-        if (simple) {
-            let line = NSMutableAttributedString()
-
-            if let street = card["street"].string {
-                line.append(string: street, style: .default {
-                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15.0, weight: .medium))
-                })
-            }
-            if let unitNumber = card["unitNumber"].string {
-                line.append(string: ", " + unitNumber, style: .default {
-                    $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15.0, weight: .regular))
-                })
-            }
-            lineOneLabel.attributedText = line
-        } else if let address = card["address"].string {
+    private func render(lineOne card: PlaceCard) {
+        if let address = card["address"].string {
             lineOneLabel.text = address
         }
     }
@@ -660,7 +644,7 @@ fileprivate class AddressLabel: UIView {
 
 class PlaceHeaderLocationCard: PlaceTitleCardView {
     override func didLoad(card: PlaceCard) {
-        self.title = "Location"
+        self.title = "Map"
         self.moreButton.isHidden = false
     }
 
@@ -677,26 +661,15 @@ class PlaceHeaderLocationCard: PlaceTitleCardView {
 }
 
 class PlaceBasicLocationCard: PlaceCardView {
-    private let addressLabel = AddressLabel()
     private let mapView = UIImageView()
     private let pinImageView = UIImageView()
 
-    private var address: String?
-
     override func didLoad(card: PlaceCard) {
-        self.addSubview(addressLabel)
         self.addSubview(mapView)
         self.addSubview(pinImageView)
-        self.address = card["address"].string
-
-        addressLabel.render(card: card, simple: false)
-        addressLabel.snp.makeConstraints { make in
-            make.top.equalTo(self).inset(topBottom)
-            make.left.right.equalTo(self).inset(leftRight)
-        }
 
         mapView.snp.makeConstraints { make in
-            make.top.equalTo(addressLabel.snp.bottom).inset(-24)
+            make.top.equalTo(self).inset(4)
             make.bottom.equalTo(self)
             make.left.right.equalTo(self)
             make.height.equalTo(230)
