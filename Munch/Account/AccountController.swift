@@ -38,7 +38,6 @@ class AccountProfileController: UIViewController {
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.alwaysBounceVertical = true
         collectionView.backgroundColor = UIColor.white
-        collectionView.contentInset = UIEdgeInsets(top: 18, left: 24, bottom: 18, right: 24)
         return collectionView
     }()
 
@@ -285,7 +284,7 @@ class AccountHeaderView: UIView {
 // Header Scroll to Hide Functions
 extension AccountHeaderView {
     var contentHeight: CGFloat {
-        return 55 + 40 + 44 + 18 // + 18 Because of top constraints
+        return 55 + 40 + 44 // + 18 Because of top constraints
     }
 
     var maxHeight: CGFloat {

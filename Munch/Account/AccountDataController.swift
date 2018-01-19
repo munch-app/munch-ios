@@ -19,8 +19,15 @@ extension AccountProfileController: UICollectionViewDataSource, UICollectionView
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
 
-        self.collectionView.contentInset.top = self.headerView.contentHeight
+        self.collectionView.contentInset.top = self.headerView.contentHeight // Top Override
         self.collectionView.contentInsetAdjustmentBehavior = .always
+
+        // Initial Refresh Control
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(collectionView(handleRefresh:)), for: .valueChanged)
+        refreshControl.tintColor = UIColor.black.withAlphaComponent(0.7)
+        self.collectionView.addSubview(refreshControl)
+
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -33,6 +40,13 @@ extension AccountProfileController: UICollectionViewDataSource, UICollectionView
         case 1: return 1 // Loader & Space Filler Cell
         default: return 0
         }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        if (section == 0) {
+            return UIEdgeInsets(top: 18, left: 24, bottom: 18, right: 24)
+        }
+        return .zero
     }
 
     private var squareWidth: CGFloat {
@@ -97,6 +111,12 @@ extension AccountProfileController: UICollectionViewDataSource, UICollectionView
         default:
             return
         }
+    }
+
+    @objc func collectionView(handleRefresh refreshControl: UIRefreshControl) {
+        dataLoader.reset()
+        collectionView.reloadData()
+        refreshControl.endRefreshing()
     }
 }
 
@@ -409,36 +429,32 @@ class UserAccountDataLoader {
         }
     }
 
-    var isEmpty: Bool {
+    private var currentList: [[Any]] {
         switch selectedType {
         case "LIKES":
-            return likes.joined().isEmpty
+            return likes
         case "COLLECTIONS":
-            return collections.joined().isEmpty
-        default: return false
+            return collections
+        default: return []
         }
+    }
+
+    var isEmpty: Bool {
+        return currentList.joined().isEmpty
     }
 
     var more: Bool {
-        switch selectedType {
-        case "LIKES":
-            return !(likes.last?.isEmpty ?? false)
-        case "COLLECTIONS":
-            return !(collections.last?.isEmpty ?? false)
-        default: return false
-        }
+        return !(currentList.last?.isEmpty ?? false)
     }
 
-    private func join<T>(_ dataList: [[T]], _ transform: (T) -> UserAccountDataType) -> [UserAccountDataType] {
-        if dataList.isEmpty {
-            return []
-        } else {
-            if dataList.joined().isEmpty {
-                // No data found
-                return []
-            } else {
-                return dataList.joined().map(transform)
-            }
+    func reset() {
+        switch selectedType {
+        case "LIKES":
+            likes = []
+        case "COLLECTIONS":
+            collections = []
+        default:
+            return
         }
     }
 
