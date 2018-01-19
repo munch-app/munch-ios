@@ -56,10 +56,16 @@ class AccountProfileController: UIViewController {
         super.viewDidAppear(animated)
 
         // Check if user is logged in, push to AccountBoardingController if not
+        // Only reload profile if is empty, to reduce network requests
         if credentialsManager.hasValid() {
-            self.reloadProfile()
+            if UserDatabase.isEmpty {
+                self.reloadProfile()
+            }
         } else {
-            let controller = AccountBoardingController.init(onAuthenticate: nil, onCancel: {
+            let controller = AccountBoardingController.init(onAuthenticate: {
+                // On successful authenticate, reload profile
+                self.reloadProfile()
+            }, onCancel: {
                 // On Cancel go to tab bar controller index = 0
                 self.tabBarController?.selectedIndex = 0
             })

@@ -64,6 +64,7 @@ class AccountSettingController: UIViewController, UIGestureRecognizerDelegate, S
         let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
         if (credentialsManager.clear()) {
             print("Removed Credentials")
+            UserDatabase.removeAll()
         }
         self.navigationController?.popViewController(animated: true)
     }

@@ -37,9 +37,22 @@ public class UserDatabase {
         }
     }
 
+    /**
+     Check if the name is nil, if nil means that no user data yet loaded
+     */
+    public static var isEmpty: Bool {
+        return name == nil
+    }
+
     public class func update(userInfo: UserInfo) {
         name = userInfo.name
         email = userInfo.email
         pictureUrl = userInfo.picture?.absoluteString
+    }
+
+    public class func removeAll() {
+        self.name = nil
+        self.email = nil
+        self.pictureUrl = nil
     }
 }
