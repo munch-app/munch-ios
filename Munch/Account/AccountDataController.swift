@@ -14,7 +14,7 @@ extension AccountProfileController: UICollectionViewDataSource, UICollectionView
         self.collectionView.register(AccountDataCollectionCell.self, forCellWithReuseIdentifier: "AccountDataCollectionCell")
         self.collectionView.register(AccountDataLoadingCell.self, forCellWithReuseIdentifier: "AccountDataLoadingCell")
         self.collectionView.register(AccountDataEmptyLikeCell.self, forCellWithReuseIdentifier: "AccountDataEmptyLikeCell")
-        self.collectionView.register(AccountDataEmptyCollectionCell.self, forCellWithReuseIdentifier: "AccountDataEmptyCollectionCell")
+        self.collectionView.register(AccountDataCollectionCreateCell.self, forCellWithReuseIdentifier: "AccountDataCollectionCreateCell")
 
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
@@ -24,7 +24,7 @@ extension AccountProfileController: UICollectionViewDataSource, UICollectionView
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 3
+        return 2
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -48,10 +48,10 @@ extension AccountProfileController: UICollectionViewDataSource, UICollectionView
         case .like:
             fallthrough
         case .collection:
+            fallthrough
+        case .createCollection:
             return CGSize(width: self.squareWidth, height: self.squareWidth)
         case .emptyLike:
-            fallthrough
-        case .emptyCollection:
             return CGSize(width: UIScreen.main.bounds.width - 24 * 2, height: self.squareWidth)
         }
     }
@@ -72,8 +72,8 @@ extension AccountProfileController: UICollectionViewDataSource, UICollectionView
             return cell
         case .emptyLike:
             return collectionView.dequeueReusableCell(withReuseIdentifier: "AccountDataEmptyLikeCell", for: indexPath)
-        case .emptyCollection:
-            return collectionView.dequeueReusableCell(withReuseIdentifier: "AccountDataEmptyCollectionCell", for: indexPath)
+        case .createCollection:
+            return collectionView.dequeueReusableCell(withReuseIdentifier: "AccountDataCollectionCreateCell", for: indexPath)
         }
     }
 
@@ -83,12 +83,15 @@ extension AccountProfileController: UICollectionViewDataSource, UICollectionView
         }
 
         switch dataLoader.items[indexPath.row] {
+        case .createCollection:
+            // TODO: Create new collection
+            return
         case .like(let likedPlace):
             if let placeId = likedPlace.place.id {
                 let controller = PlaceViewController(placeId: placeId)
                 self.navigationController!.pushViewController(controller, animated: true)
             }
-        case .collection:
+        case .collection(let placeCollection):
             // TODO Next Version
             return
         default:
@@ -109,6 +112,9 @@ extension AccountProfileController {
 
     private func appendLoad() {
         if dataLoader.more {
+            let loadingCell = self.collectionView.cellForItem(at: .init(row: 0, section: 1)) as? AccountDataLoadingCell
+            loadingCell?.startAnimating()
+
             dataLoader.append(delegate: self, load: { meta in
                 DispatchQueue.main.async {
                     guard self.headerView.selectedType == self.dataLoader.selectedType else {
@@ -122,14 +128,17 @@ extension AccountProfileController {
                             if (self.dataLoader.isEmpty) {
                                 self.collectionView.reloadData()
                             }
-                            let cell = self.collectionView.cellForItem(at: .init(row: 0, section: 1)) as? AccountDataLoadingCell
-                            cell?.stopAnimating()
+                            let loadingCell = self.collectionView.cellForItem(at: .init(row: 0, section: 1)) as? AccountDataLoadingCell
+                            loadingCell?.stopAnimating()
                         }
                     } else {
                         self.present(meta.createAlert(), animated: true)
                     }
                 }
             })
+        } else {
+            let loadingCell = self.collectionView.cellForItem(at: .init(row: 0, section: 1)) as? AccountDataLoadingCell
+            loadingCell?.stopAnimating()
         }
     }
 }
@@ -204,7 +213,7 @@ fileprivate class AccountDataLikedPlaceCell: UICollectionViewCell {
         }
 
         nameLabel.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(8)
+            make.left.right.equalTo(self).inset(11)
             make.bottom.equalTo(self).inset(8)
         }
     }
@@ -282,28 +291,49 @@ fileprivate class AccountDataLoadingCell: UICollectionViewCell {
     }
 }
 
-fileprivate class AccountDataEmptyCollectionCell: UICollectionViewCell {
-    private let label: UILabel = {
+fileprivate class AccountDataCollectionCreateCell: UICollectionViewCell {
+    private let imageView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 2
+        view.backgroundColor = UIColor(hex: "AAAAAA")
+        return view
+    }()
+    private let nameLabel: UILabel = {
         let label = UILabel()
-        label.text = "You haven create any collections."
-        label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 18.0, weight: UIFont.Weight.regular)
+        label.text = "Make A New Collection"
+        label.numberOfLines = 0
+        label.textColor = .white
+        label.font = UIFont.systemFont(ofSize: 16.0, weight: .medium)
+        return label
+    }()
+    private let descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Collect and share places in Munch"
+        label.numberOfLines = 0
+        label.textColor = .white
+        label.font = UIFont.systemFont(ofSize: 14.0, weight: .regular)
         return label
     }()
 
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
-        self.addSubview(label)
+        self.addSubview(imageView)
+        self.addSubview(nameLabel)
+        self.addSubview(descriptionLabel)
 
-        label.snp.makeConstraints { make in
-            make.left.right.equalTo(self)
-            make.top.bottom.equalTo(self)
-            make.height.equalTo(40).priority(999)
+        imageView.snp.makeConstraints { make in
+            make.edges.equalTo(self)
         }
-    }
 
-    func render(text: String) {
-        label.text = text
+        nameLabel.snp.makeConstraints { make in
+            make.top.equalTo(self).inset(8)
+            make.left.right.equalTo(self).inset(11)
+        }
+
+        descriptionLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(self).inset(8)
+            make.left.right.equalTo(self).inset(11)
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -344,7 +374,7 @@ fileprivate enum UserAccountDataType {
     case like(LikedPlace)
     case collection(PlaceCollection)
     case emptyLike
-    case emptyCollection
+    case createCollection
 }
 
 class UserAccountDataLoader {
@@ -352,6 +382,10 @@ class UserAccountDataLoader {
     var collections: [[PlaceCollection]] = []
 
     var selectedType = "LIKES" // ["LIKES", "COLLECTIONS"]
+
+    func select(type: String) {
+        self.selectedType = type
+    }
 
     fileprivate var items: [UserAccountDataType] {
         switch selectedType {
@@ -369,11 +403,7 @@ class UserAccountDataLoader {
             if collections.isEmpty {
                 return []
             } else {
-                let items = collections.joined().map({ UserAccountDataType.collection($0) })
-                if items.isEmpty {
-                    return [UserAccountDataType.emptyCollection]
-                }
-                return items
+                return [UserAccountDataType.createCollection] + collections.joined().map({ UserAccountDataType.collection($0) })
             }
         default: return []
         }
@@ -383,7 +413,7 @@ class UserAccountDataLoader {
         switch selectedType {
         case "LIKES":
             return likes.joined().isEmpty
-        case "LIKES":
+        case "COLLECTIONS":
             return collections.joined().isEmpty
         default: return false
         }
@@ -410,10 +440,6 @@ class UserAccountDataLoader {
                 return dataList.joined().map(transform)
             }
         }
-    }
-
-    func select(type: String) {
-        self.selectedType = type
     }
 
     func append(delegate: UIViewController, load completion: @escaping (_ meta: MetaJSON) -> Void) {

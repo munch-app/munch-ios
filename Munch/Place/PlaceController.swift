@@ -135,8 +135,9 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         }
     }
 
-    @objc func onAddButton(_ sender: Any) {
+    @objc func onMoreButton(_ sender: Any) {
         // TODO Implementation Nav to SelectCollectionController
+
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -170,12 +171,12 @@ fileprivate class PlaceHeaderView: UIView {
         button.tintColor = .white
         return button
     }()
-//    fileprivate let addButton: UIButton = {
-//        let button = UIButton()
-//        button.setImage(UIImage(named: "RIP-Add"), for: .normal)
-//        button.tintColor = .white
-//        return button
-//    }()
+    fileprivate let moreButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "RIP-Three-Dot"), for: .normal)
+        button.tintColor = .white
+        return button
+    }()
 
     let backgroundView = UIView()
     let shadowView = UIView()
@@ -192,7 +193,7 @@ fileprivate class PlaceHeaderView: UIView {
         self.addSubview(backButton)
 
         self.addSubview(heartButton)
-//        self.addSubview(addButton)
+        self.addSubview(moreButton)
 
         backButton.snp.makeConstraints { make in
             make.top.equalTo(self.safeArea.top)
@@ -202,21 +203,21 @@ fileprivate class PlaceHeaderView: UIView {
             make.height.equalTo(44)
         }
 
-        heartButton.snp.makeConstraints { make in
+        moreButton.snp.makeConstraints { make in
             make.top.equalTo(self.safeArea.top)
-            make.right.equalTo(self).inset(20)
+            make.right.equalTo(self).inset(18)
             make.bottom.equalTo(self)
             make.width.equalTo(30)
             make.height.equalTo(44)
         }
 
-//        addButton.snp.makeConstraints { make in
-//            make.top.equalTo(self.safeArea.top)
-//            make.right.equalTo(heartButton.snp.left)
-//            make.bottom.equalTo(self)
-//            make.width.equalTo(30)
-//            make.height.equalTo(44)
-//        }
+        heartButton.snp.makeConstraints { make in
+            make.top.equalTo(self.safeArea.top)
+            make.right.equalTo(moreButton.snp.left).inset(-8)
+            make.bottom.equalTo(self)
+            make.width.equalTo(30)
+            make.height.equalTo(44)
+        }
 
         backgroundView.backgroundColor = .clear
         backgroundView.snp.makeConstraints { make in
@@ -480,6 +481,7 @@ extension PlaceViewController {
         func updateTint(color: UIColor) {
             headerView.backButton.tintColor = color
             headerView.heartButton.tintColor = color
+            headerView.moreButton.tintColor = color
         }
 
         // Starts from - 20

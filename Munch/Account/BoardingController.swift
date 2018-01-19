@@ -42,8 +42,17 @@ class AccountBoardingController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         return button
     }()
-    private let headerView = BoardingHeader()
+    private let headerView = HeaderView()
     private let bottomView = BottomView()
+
+    private let onAuthenticate: (() -> ())?
+    private let onCancel: (() -> ())?
+
+    init(onAuthenticate: (() -> ())? = nil, onCancel: (() -> ())? = nil) {
+        self.onAuthenticate = onAuthenticate
+        self.onCancel = onCancel
+        super.init(nibName: nil, bundle: nil)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -91,6 +100,7 @@ class AccountBoardingController: UIViewController {
 
     @objc func action(_ sender: UIButton) {
         if sender == self.headerView.cancelButton {
+            self.onCancel?()
             self.dismiss(animated: true)
         } else if sender == self.bottomView.signIn {
             lock(screen: .login).present(from: self)
@@ -123,6 +133,7 @@ class AccountBoardingController: UIViewController {
                 .onAuth { credentials in
                     let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
                     if (credentialsManager.store(credentials: credentials)) {
+                        self.onAuthenticate?()
                         self.dismiss(animated: true)
                     } else {
                         self.alert(title: "Login Failure", message: "Unable to store the user credentials.")
@@ -177,7 +188,7 @@ class AccountBoardingController: UIViewController {
         }
     }
 
-    class BoardingHeader: UIView {
+    class HeaderView: UIView {
         let cancelButton: UIButton = {
             let button = UIButton()
             button.setTitle("CANCEL", for: .normal)
@@ -205,6 +216,10 @@ class AccountBoardingController: UIViewController {
         required init?(coder aDecoder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 

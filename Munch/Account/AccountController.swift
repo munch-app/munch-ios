@@ -56,11 +56,15 @@ class AccountProfileController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        // Check if user is logged in, push to AccountAuthenticateController if not
+        // Check if user is logged in, push to AccountBoardingController if not
         if credentialsManager.hasValid() {
             self.reloadProfile()
         } else {
-            self.present(AccountBoardingController(), animated: true)
+            let controller = AccountBoardingController.init(onAuthenticate: nil, onCancel: {
+                // On Cancel go to tab bar controller index = 0
+                self.tabBarController?.selectedIndex = 0
+            })
+            self.present(controller, animated: true)
         }
     }
 
@@ -72,6 +76,9 @@ class AccountProfileController: UIViewController {
 
         self.headerView.render()
         self.headerView.settingButton.addTarget(self, action: #selector(onActionSetting(_:)), for: .touchUpInside)
+
+        self.headerView.likeTab.addTarget(self, action: #selector(onActionSelectTab(selected:)), for: .touchUpInside)
+        self.headerView.collectionTab.addTarget(self, action: #selector(onActionSelectTab(selected:)), for: .touchUpInside)
     }
 
     func initViews() {
@@ -91,6 +98,11 @@ class AccountProfileController: UIViewController {
 
     @objc func onActionSetting(_ sender: Any) {
         navigationController?.pushViewController(AccountSettingController(), animated: true)
+    }
+
+    @objc fileprivate func onActionSelectTab(selected: AccountTabButton) {
+        self.dataLoader.select(type: selected.name)
+        self.collectionView.reloadData()
     }
 
     func reloadProfile() {
@@ -160,12 +172,18 @@ class AccountHeaderView: UIView {
     }()
 
     fileprivate let likeTab = AccountTabButton(name: "LIKES")
+    fileprivate let collectionTab = AccountTabButton(name: "COLLECTIONS")
     fileprivate var topConstraint: Constraint! = nil
     var selectedType: String = "LIKES"
 
     override init(frame: CGRect = CGRect.zero) {
         super.init(frame: frame)
         self.initViews()
+
+
+        self.likeTab.addTarget(self, action: #selector(onSelectTab(selected:)), for: .touchUpInside)
+        self.collectionTab.addTarget(self, action: #selector(onSelectTab(selected:)), for: .touchUpInside)
+        self.onSelectTab(selected: likeTab)
     }
 
     private func initViews() {
@@ -177,6 +195,7 @@ class AccountHeaderView: UIView {
         layerTwo.addSubview(emailLabel)
 
         layerThree.addSubview(likeTab)
+        layerThree.addSubview(collectionTab)
 
         self.addSubview(layerTwo)
         self.addSubview(layerOne)
@@ -229,7 +248,12 @@ class AccountHeaderView: UIView {
             make.top.equalTo(layerThree)
             make.bottom.equalTo(layerThree)
         }
-        self.renderButtons(selected: likeTab)
+
+        collectionTab.snp.makeConstraints { make in
+            make.left.equalTo(likeTab.snp.right).inset(-24)
+            make.top.equalTo(layerThree)
+            make.bottom.equalTo(layerThree)
+        }
     }
 
     func render() {
@@ -240,10 +264,11 @@ class AccountHeaderView: UIView {
         self.emailLabel.text = UserDatabase.email
     }
 
-    fileprivate func renderButtons(selected: AccountTabButton) {
+    @objc fileprivate func onSelectTab(selected: AccountTabButton) {
         likeTab.isTabSelected = false
+        collectionTab.isTabSelected = false
 
-        selectedType = selected.titleLabel?.text ?? "LIKES"
+        selectedType = selected.name
         selected.isTabSelected = true
     }
 
@@ -311,7 +336,7 @@ fileprivate class AccountTabButton: UIButton {
     private let nameLabel: UILabel = {
         let nameLabel = UILabel()
         nameLabel.backgroundColor = .clear
-        nameLabel.font = UIFont.systemFont(ofSize: 14.0, weight: .medium)
+        nameLabel.font = UIFont.systemFont(ofSize: 14.0, weight: .semibold)
         nameLabel.textColor = UIColor.black.withAlphaComponent(0.85)
 
         nameLabel.numberOfLines = 1
@@ -337,7 +362,7 @@ fileprivate class AccountTabButton: UIButton {
 
         nameLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self)
-            make.top.equalTo(self).inset(12)
+            make.top.equalTo(self).inset(13)
         }
 
         indicatorView.snp.makeConstraints { make in

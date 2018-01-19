@@ -16,22 +16,21 @@ import Auth0
  Initial view provider
  */
 enum InitialViewProvider {
-
+    
     /**
      Main tab controllers for Munch App
      */
     static func main() -> TabBarController {
-        let controllers = [search(), account()]
-        return TabBarController(controllers: controllers)
+        return TabBarController()
     }
-
-    private static func search() -> UIViewController {
+    
+    fileprivate static func search() -> UIViewController {
         let controller = SearchNavigationalController()
         controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "SEARCH", image: UIImage(named: "TabBar-Search"))
         return controller
     }
 
-    private static func account() -> UIViewController {
+    fileprivate static func account() -> UIViewController {
         let controller = AccountController()
         controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "PROFILE", image: UIImage(named: "TabBar-Profile"))
         return controller
@@ -42,7 +41,10 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
     var previousController: UIViewController?
     var sameTabCounter = 0
 
-    init(controllers: [UIViewController]) {
+    let searchController = InitialViewProvider.search()
+    let accountController = InitialViewProvider.account()
+    
+    init() {
         super.init(nibName: nil, bundle: nil)
         tabBar.isTranslucent = false
         tabBar.backgroundColor = UIColor.white
@@ -50,16 +52,30 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
         tabBar.backgroundImage = UIImage()
         tabBar.hairlineShadow(height: -1.0)
         tabBar.frame = tabBar.frame.offsetBy(dx: 0, dy: -10)
-
+        
         self.delegate = self
-        self.viewControllers = controllers
+        self.viewControllers = [searchController, accountController]
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        if (viewController is AccountController) {
+            if (CredentialsManager(authentication: Auth0.authentication()).hasValid()) {
+                return true
+            }
+
+            // If user not authenticated, show boarding controller
+            let controller = AccountBoardingController.init(onAuthenticate: {
+                // If user is authenticated, assign account controller
+                tabBarController.selectedViewController = self.accountController
+            }, onCancel: nil)
+            self.present(controller, animated: true)
+            return false
+        }
+
         if let navigation = viewController as? UINavigationController {
             if let controller = navigation.topViewController as? SearchController {
                 if (self.previousController == viewController) {
@@ -93,8 +109,9 @@ class MunchTabBarContentView: ESTabBarItemContentView {
 
         iconColor = UIColor.black.withAlphaComponent(0.6)
         highlightIconColor = UIColor.primary500
-    }
 
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
