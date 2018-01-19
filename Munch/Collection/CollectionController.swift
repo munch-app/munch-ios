@@ -28,6 +28,14 @@ class CollectionSelectListController: UIViewController {
     let placeId: String
 
     fileprivate let headerView = HeaderView()
+    fileprivate let emptyLabel: UILabel = {
+        let label = UILabel()
+        label.text = "You have no collections."
+        label.font = .systemFont(ofSize: 18, weight: .regular)
+        label.textAlignment = .center
+        label.isHidden = true
+        return label
+    }()
     fileprivate let tableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .none
@@ -39,6 +47,8 @@ class CollectionSelectListController: UIViewController {
 
         tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 10))
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 12))
+
+        tableView.register(CollectionSelectListCell.self, forCellReuseIdentifier: "CollectionSelectListCell")
         return tableView
     }()
 
@@ -62,6 +72,7 @@ class CollectionSelectListController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.initViews()
 
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -71,15 +82,41 @@ class CollectionSelectListController: UIViewController {
         fullLoad(maxSortKey: nil)
     }
 
-    func fullLoad(maxSortKey: String?) {
+    private func initViews() {
+        self.view.addSubview(tableView)
+        self.view.addSubview(headerView)
+        self.view.addSubview(emptyLabel)
+
+        tableView.snp.makeConstraints { make in
+            make.left.right.equalTo(self.view)
+            make.top.equalTo(headerView.snp.bottom)
+            make.bottom.equalTo(self.view)
+        }
+
+        headerView.snp.makeConstraints { make in
+            make.top.left.right.equalTo(self.view)
+        }
+
+        emptyLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self.view)
+            make.top.equalTo(headerView.snp.bottom)
+            make.bottom.equalTo(self.view)
+        }
+    }
+
+    private func fullLoad(maxSortKey: Int?) {
         MunchApi.collections.list(maxSortKey: maxSortKey, size: 50) { meta, collections in
             if meta.isOk() {
                 self.items.append(contentsOf: collections)
-                if collections.count == 50, let maxSortKey = collections.last?.collectionId {
+                if collections.count == 50, let maxSortKey = collections.last?.sortKey {
                     // More to load
                     self.fullLoad(maxSortKey: maxSortKey)
                 } else {
-                    self.tableView.reloadData()
+                    if self.items.isEmpty {
+                        self.emptyLabel.isHidden = false
+                    } else {
+                        self.tableView.reloadData()
+                    }
                 }
             } else {
                 self.present(meta.createAlert(), animated: true)
@@ -96,7 +133,7 @@ class CollectionSelectListController: UIViewController {
         alert.addTextField { textField in
             textField.text = nil
         }
-        alert.addAction(.init(title: "CANCEL", style: .cancel))
+        alert.addAction(.init(title: "CANCEL", style: .destructive))
         alert.addAction(.init(title: "OK", style: .default) { action in
             let textField = alert.textFields![0]
             var collection = PlaceCollection()
@@ -105,6 +142,8 @@ class CollectionSelectListController: UIViewController {
             MunchApi.collections.post(collection: collection) { meta, collection in
                 if meta.isOk() {
                     self.items = [collection] + self.items
+                    self.emptyLabel.isHidden = true
+                    self.tableView.reloadData()
                 } else {
                     self.present(meta.createAlert(), animated: true)
                 }
@@ -126,7 +165,7 @@ class CollectionSelectListController: UIViewController {
         }()
         fileprivate let titleView: UILabel = {
             let titleView = UILabel()
-            titleView.text = "Add to Collection"
+            titleView.text = "Add To Collection"
             titleView.font = .systemFont(ofSize: 17, weight: .medium)
             titleView.textAlignment = .center
             return titleView
@@ -192,10 +231,6 @@ class CollectionSelectListController: UIViewController {
 }
 
 extension CollectionSelectListController: UITableViewDataSource, UITableViewDelegate {
-    func registerCell() {
-        tableView.register(CollectionSelectListCell.self, forCellReuseIdentifier: "CollectionSelectListCell")
-    }
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
     }
@@ -231,8 +266,8 @@ extension CollectionSelectListController: UITableViewDataSource, UITableViewDele
 
         private let countLabel: UILabel = {
             let label = UILabel()
-            label.font = UIFont.systemFont(ofSize: 15, weight: .medium)
-            label.textColor = UIColor.black.withAlphaComponent(0.75)
+            label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+            label.textColor = UIColor.black.withAlphaComponent(0.7)
             return label
         }()
 
@@ -242,21 +277,20 @@ extension CollectionSelectListController: UITableViewDataSource, UITableViewDele
             self.addSubview(countLabel)
 
             nameLabel.snp.makeConstraints { make in
-                make.left.right.equalTo(self).inset(24)
-                make.top.equalTo(self).inset(10)
+                make.left.equalTo(self).inset(24)
+                make.top.bottom.equalTo(self).inset(10)
             }
 
             countLabel.snp.makeConstraints { (make) in
-                make.left.right.equalTo(self).inset(24)
-                make.top.equalTo(nameLabel.snp.bottom).inset(10)
-                make.bottom.equalTo(self).inset(10)
+                make.right.equalTo(self).inset(24)
+                make.top.bottom.equalTo(self).inset(10)
             }
         }
 
 
         func render(collection: PlaceCollection) {
             nameLabel.text = collection.name
-            countLabel.text = "\(collection.count ?? 0) Places"
+            countLabel.text = "\(collection.count ?? 0) PLACES"
         }
 
         required init?(coder aDecoder: NSCoder) {

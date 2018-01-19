@@ -56,6 +56,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.cardTableView.dataSource = self
         self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
         self.headerView.heartButton.addTarget(self, action: #selector(onHeartButton(_:)), for: .touchUpInside)
+        self.headerView.moreButton.addTarget(self, action: #selector(onMoreButton(_:)), for: .touchUpInside)
 
         MunchApi.places.cards(id: placeId) { meta, place, cards, liked in
             if let place = place, meta.isOk() {
@@ -136,8 +137,16 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
 
     @objc func onMoreButton(_ sender: Any) {
-        // TODO Implementation Nav to SelectCollectionController
-
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "Like", style: UIAlertActionStyle.default) { alert in
+            self.onHeartButton(sender)
+        })
+        alert.addAction(UIAlertAction(title: "Add To Collection", style: UIAlertActionStyle.default) { alert in
+            let controller = CollectionSelectRootController(placeId: self.placeId)
+            self.present(controller, animated: true)
+        })
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        self.present(alert, animated: true)
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -213,7 +222,7 @@ fileprivate class PlaceHeaderView: UIView {
 
         heartButton.snp.makeConstraints { make in
             make.top.equalTo(self.safeArea.top)
-            make.right.equalTo(moreButton.snp.left).inset(-8)
+            make.right.equalTo(moreButton.snp.left).inset(-10)
             make.bottom.equalTo(self)
             make.width.equalTo(30)
             make.height.equalTo(44)

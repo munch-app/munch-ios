@@ -82,7 +82,7 @@ extension AccountProfileController: UICollectionViewDataSource, UICollectionView
             return cell
         case .collection(let placeCollection):
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AccountDataCollectionCell", for: indexPath) as! AccountDataCollectionCell
-            cell.render(place: placeCollection)
+            cell.render(collection: placeCollection)
             return cell
         case .emptyLike:
             return collectionView.dequeueReusableCell(withReuseIdentifier: "AccountDataEmptyLikeCell", for: indexPath)
@@ -98,16 +98,36 @@ extension AccountProfileController: UICollectionViewDataSource, UICollectionView
 
         switch dataLoader.items[indexPath.row] {
         case .createCollection:
-            // TODO: Create new collection
-            return
+            let alert = UIAlertController(title: "Create New Collection", message: "Enter a name for this new collection", preferredStyle: .alert)
+            alert.addTextField { textField in
+                textField.text = nil
+            }
+            alert.addAction(.init(title: "CANCEL", style: .destructive))
+            alert.addAction(.init(title: "OK", style: .default) { action in
+                let textField = alert.textFields![0]
+                var collection = PlaceCollection()
+                collection.name = textField.text
+
+                MunchApi.collections.post(collection: collection) { meta, collection in
+                    if meta.isOk() {
+                        self.dataLoader.collections.insert([collection], at: 0)
+                        self.collectionView.reloadData()
+                    } else {
+                        self.present(meta.createAlert(), animated: true)
+                    }
+                }
+            })
+            self.present(alert, animated: true, completion: nil)
         case .like(let likedPlace):
             if let placeId = likedPlace.place.id {
                 let controller = PlaceViewController(placeId: placeId)
                 self.navigationController!.pushViewController(controller, animated: true)
             }
         case .collection(let placeCollection):
-            // TODO Next Version
-            return
+            if let collectionId = placeCollection.collectionId {
+                let controller = CollectionPlaceController.init(collectionId: collectionId)
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
         default:
             return
         }
@@ -257,23 +277,60 @@ fileprivate class AccountDataCollectionCell: UICollectionViewCell {
     private let imageView: ShimmerImageView = {
         let view = ShimmerImageView()
         view.layer.cornerRadius = 2
-        view.backgroundColor = UIColor(hex: "F0F0F0")
+        view.backgroundColor = UIColor(hex: "AAAAAA")
         return view
     }()
-
-    // TODO Name, Next Version
+    private let imageGradientView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 2
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+        return view
+    }()
+    private let nameLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.textColor = .white
+        label.font = UIFont.systemFont(ofSize: 16.0, weight: .medium)
+        return label
+    }()
+    private let descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.textColor = .white
+        label.font = UIFont.systemFont(ofSize: 14.0, weight: .regular)
+        return label
+    }()
 
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
         self.addSubview(imageView)
+        self.addSubview(imageGradientView)
+        self.addSubview(nameLabel)
+        self.addSubview(descriptionLabel)
 
         imageView.snp.makeConstraints { make in
             make.edges.equalTo(self)
         }
+
+        imageGradientView.snp.makeConstraints { make in
+            make.edges.equalTo(self)
+        }
+
+        nameLabel.snp.makeConstraints { make in
+            make.top.equalTo(self).inset(8)
+            make.left.right.equalTo(self).inset(11)
+        }
+
+        descriptionLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(self).inset(8)
+            make.left.right.equalTo(self).inset(11)
+        }
     }
 
-    func render(place: PlaceCollection) {
-        imageView.render(images: place.thumbnail)
+    func render(collection: PlaceCollection) {
+        nameLabel.text = collection.name
+        descriptionLabel.text = "\(collection.count ?? 0) Places"
+        imageView.render(images: collection.thumbnail)
     }
 
     required init?(coder aDecoder: NSCoder) {

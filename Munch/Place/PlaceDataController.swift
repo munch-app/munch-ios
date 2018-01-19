@@ -28,7 +28,7 @@ class PlaceDataViewController: UIViewController, UIGestureRecognizerDelegate {
         collectionView.contentInset = UIEdgeInsets(top: 18, left: 24, bottom: 18, right: 24)
         collectionView.register(PlaceDataInstagramCardCell.self, forCellWithReuseIdentifier: "PlaceDataInstagramCardCell")
         collectionView.register(PlaceDataArticleCardCell.self, forCellWithReuseIdentifier: "PlaceDataArticleCardCell")
-        collectionView.register(PlaceDataLoadingCardCell.self, forCellWithReuseIdentifier: "PlaceDataLoadingCardCell") // TODO Reduce height of this card
+        collectionView.register(PlaceDataLoadingCardCell.self, forCellWithReuseIdentifier: "PlaceDataLoadingCardCell")
         collectionView.register(PlaceDataEmptyCardCell.self, forCellWithReuseIdentifier: "PlaceDataEmptyCardCell")
         return collectionView
     }()
@@ -357,7 +357,7 @@ extension PlaceDataViewController: UICollectionViewDataSource, UICollectionViewD
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if indexPath.section == 1 {
-            return CGSize(width: (self.width * 2) + 24, height: self.width)
+            return CGSize(width: (self.width * 2) + 24, height: 40)
         }
 
         switch dataLoader.items[indexPath.row] {
@@ -543,13 +543,14 @@ fileprivate class PlaceDataLoadingCardCell: UICollectionViewCell {
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
 
-        let frame = CGRect(origin: CGPoint.zero, size: CGSize(width: UIScreen.main.bounds.width, height: 25))
-        self.indicator = NVActivityIndicatorView(frame: frame, type: .ballBeat, color: .primary700, padding: 56)
+        let frame = CGRect(origin: CGPoint.zero, size: CGSize(width: UIScreen.main.bounds.width, height: 40))
+        self.indicator = NVActivityIndicatorView(frame: frame, type: .ballBeat, color: .primary700, padding: 0)
         indicator.startAnimating()
         self.addSubview(indicator)
 
         indicator.snp.makeConstraints { make in
-            make.edges.equalTo(self)
+            make.left.right.equalTo(self)
+            make.height.equalTo(40)
         }
     }
 

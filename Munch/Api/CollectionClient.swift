@@ -29,7 +29,7 @@ class CollectionClient {
         }
     }
 
-    func list(maxSortKey: String?, size: Int, callback: @escaping (_ meta: MetaJSON, _ collections: [PlaceCollection]) -> Void) {
+    func list(maxSortKey: Int?, size: Int, callback: @escaping (_ meta: MetaJSON, _ collections: [PlaceCollection]) -> Void) {
         var params = Parameters()
         params["maxSortKey"] = maxSortKey
         params["size"] = size
@@ -63,9 +63,18 @@ class CollectionClient {
         }
     }
 
+    func listPlace(collectionId: String, maxSortKey: Int?, size: Int, callback: @escaping (_ meta: MetaJSON, _ addedPlaces: [PlaceCollection.AddedPlace]) -> Void) {
+        var params = Parameters()
+        params["maxSortKey"] = maxSortKey
+        params["size"] = size
+
+        MunchApi.restful.get("/collections/\(collectionId)/places", parameters: params) { meta, json in
+            callback(meta, json["data"].map({ PlaceCollection.AddedPlace(json: $0.1) }))
+        }
+    }
 
     class LikedClient {
-        func list(maxSortKey: String?, size: Int, callback: @escaping (_ meta: MetaJSON, _ places: [LikedPlace]) -> Void) {
+        func list(maxSortKey: Int?, size: Int, callback: @escaping (_ meta: MetaJSON, _ places: [LikedPlace]) -> Void) {
             var params = Parameters()
             params["maxSortKey"] = maxSortKey
             params["size"] = size
@@ -92,12 +101,12 @@ class CollectionClient {
 
 struct LikedPlace {
     var place: Place
-    var sortKey: String
+    var sortKey: Int
     var createdDate: Date
 
     init(json: JSON) {
         self.place = Place(json: json["place"])!
-        self.sortKey = json["sortKey"].stringValue
+        self.sortKey = json["sortKey"].intValue
         self.createdDate = Date(timeIntervalSince1970: (json["createdDate"].doubleValue / 1000.0))
     }
 }
@@ -106,7 +115,7 @@ struct PlaceCollection {
     var userId: String?
     var collectionId: String?
 
-    var sortKey: String?
+    var sortKey: Int?
 
     var name: String?
     var description: String?
@@ -125,7 +134,7 @@ struct PlaceCollection {
         self.userId = json["userId"].string
         self.collectionId = json["collectionId"].string
 
-        self.sortKey = json["sortKey"].string
+        self.sortKey = json["sortKey"].int
 
         self.name = json["name"].string
         self.description = json["description"].string
@@ -156,12 +165,12 @@ struct PlaceCollection {
 
     struct AddedPlace {
         var place: Place
-        var sortKey: String
+        var sortKey: Int
         var createdDate: Date
 
         init(json: JSON) {
             self.place = Place(json: json["place"])!
-            self.sortKey = json["sortKey"].stringValue
+            self.sortKey = json["sortKey"].intValue
             self.createdDate = Date(timeIntervalSince1970: (json["createdDate"].doubleValue / 1000.0))
         }
     }
