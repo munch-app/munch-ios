@@ -55,7 +55,7 @@ extension AccountProfileController: UICollectionViewDataSource, UICollectionView
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if indexPath.section == 1 {
-            return CGSize(width: UIScreen.main.bounds.width - 24 * 2, height: self.squareWidth)
+            return CGSize(width: UIScreen.main.bounds.width - 24 * 2, height: 40)
         }
 
         switch dataLoader.items[indexPath.row] {
@@ -125,7 +125,7 @@ extension AccountProfileController: UICollectionViewDataSource, UICollectionView
             }
         case .collection(let placeCollection):
             if let collectionId = placeCollection.collectionId {
-                let controller = CollectionPlaceController.init(collectionId: collectionId)
+                let controller = CollectionPlaceController(collectionId: collectionId, placeCollection: placeCollection)
                 self.navigationController?.pushViewController(controller, animated: true)
             }
         default:
