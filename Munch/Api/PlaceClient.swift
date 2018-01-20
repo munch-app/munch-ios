@@ -144,9 +144,10 @@ struct Place: SearchResult, Equatable {
         var street: String?
         var address: String?
         var unitNumber: String?
-        var building: String?
-        var nearestTrain: String?
 
+        var landmarks: [Landmark]?
+
+        var neighbourhood: String?
         var city: String?
         var country: String?
 
@@ -161,14 +162,31 @@ struct Place: SearchResult, Equatable {
             self.street = json["street"].string
             self.address = json["address"].string
             self.unitNumber = json["unitNumber"].string
-            self.building = json["building"].string
-            self.nearestTrain = json["nearestTrain"].string
 
+            self.landmarks = json["landmarks"].flatMap({ Landmark(json: $0.1) })
+
+            self.neighbourhood = json["neighbourhood"].string
             self.city = json["city"].string
             self.country = json["country"].string
 
             self.postal = json["postal"].string
             self.latLng = json["latLng"].string
+        }
+
+        struct Landmark {
+            var name: String?
+            var type: String?
+            var latLng: String?
+
+            init() {
+
+            }
+
+            init(json: JSON) {
+                self.name = json["name"].string
+                self.type = json["type"].string
+                self.latLng = json["latLng"].string
+            }
         }
     }
 

@@ -461,7 +461,7 @@ fileprivate class AddressLabel: UIView {
             for landmark in landmarks {
                 if (landmark["type"].string == "train") {
                     if let name = landmark["name"].string, let latLng = landmark["latLng"].string, let min = MunchLocation.distance(asDuration: latLng){
-                        line.append("\(min) from \(name) MRT")
+                        line.append("\(min) from \(name)")
                         break
                     }
                 }
