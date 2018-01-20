@@ -194,7 +194,7 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
             let line = NSMutableAttributedString()
 
             // Street
-            if let street = card["location"]["street"].string {
+            if let street = card["location"]["neighbourhood"].string {
                 line.append(NSMutableAttributedString(string: street))
             } else {
                 line.append(NSMutableAttributedString(string: "Singapore"))

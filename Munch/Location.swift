@@ -146,6 +146,17 @@ public class MunchLocation {
         }
         return nil
     }
+
+    public class func distance(asDuration latLng: String) -> String? {
+        if let distance = distance(latLng: latLng) {
+            let minute = Int(distance / 70)
+            if (minute <= 1) {
+                return "1 min"
+            }
+            return "\(minute) min"
+        }
+        return nil
+    }
 }
 
 extension CLLocation {
