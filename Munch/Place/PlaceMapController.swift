@@ -9,6 +9,7 @@ import MapKit
 import CoreLocation
 
 import SnapKit
+import TTGTagCollectionView
 
 class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKMapViewDelegate {
     let placeId: String
@@ -308,13 +309,25 @@ fileprivate class PlaceMapViewHeader: UIView {
 fileprivate class PlaceMapViewBottom: UIView {
     private let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 20.0, weight: .medium)
+        label.font = UIFont.systemFont(ofSize: 22.0, weight: .medium)
         label.textColor = UIColor.black.withAlphaComponent(0.9)
         label.numberOfLines = 1
         return label
     }()
-
-    // TODO Name & Address & Tag
+    private let tagCollection: TTGTextTagCollectionView = {
+        let tagCollection = TTGTextTagCollectionView()
+        tagCollection.defaultConfig = DefaultTagConfig()
+        tagCollection.isUserInteractionEnabled = false
+        tagCollection.horizontalSpacing = 8
+        tagCollection.verticalSpacing = 0
+        tagCollection.numberOfLines = 0
+        tagCollection.alignment = .left
+        tagCollection.scrollDirection = .horizontal
+        tagCollection.showsHorizontalScrollIndicator = false
+        tagCollection.contentInset = UIEdgeInsets(top: 4, left: 0, bottom: 3, right: 0)
+        return tagCollection
+    }()
+    private let addressLabel = AddressLabel()
 
     override init(frame: CGRect = CGRect.zero) {
         super.init(frame: frame)
@@ -324,17 +337,35 @@ fileprivate class PlaceMapViewBottom: UIView {
     private func initViews() {
         self.backgroundColor = .white
         self.addSubview(nameLabel)
+        self.addSubview(tagCollection)
+        self.addSubview(addressLabel)
 
-        nameLabel.snp.makeConstraints { make in
+        nameLabel.snp.makeConstraints { (make) in
             make.top.equalTo(self).inset(12)
             make.left.right.equalTo(self).inset(24)
+        }
 
-            make.bottom.equalTo(self.safeArea.bottom)
+        tagCollection.snp.makeConstraints { (make) in
+            make.top.equalTo(nameLabel.snp.bottom).inset(-4)
+            make.left.right.equalTo(self).inset(24)
+        }
+
+        addressLabel.snp.makeConstraints { make in
+            make.top.equalTo(tagCollection.snp.bottom).inset(-8)
+            make.left.right.equalTo(self).inset(24)
+            make.bottom.equalTo(self.safeArea.bottom).inset(8)
         }
     }
 
     func render(place: Place) {
         self.nameLabel.text = place.name
+        self.addressLabel.render(place: place)
+
+        let tags = place.tag.explicits.map({ $0.capitalized }).prefix(3)
+        tagCollection.addTags(Array(tags))
+        tagCollection.reload()
+        tagCollection.setNeedsLayout()
+        tagCollection.layoutIfNeeded()
     }
 
     override func layoutSubviews() {
@@ -344,5 +375,29 @@ fileprivate class PlaceMapViewBottom: UIView {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension PlaceMapViewBottom: TTGTextTagCollectionViewDelegate {
+    class DefaultTagConfig: TTGTextTagConfig {
+        override init() {
+            super.init()
+
+            tagTextFont = UIFont.systemFont(ofSize: 15.0, weight: .regular)
+            tagShadowOffset = CGSize.zero
+            tagShadowRadius = 0
+            tagCornerRadius = 3
+
+            tagBorderWidth = 0
+            tagTextColor = UIColor.black.withAlphaComponent(0.88)
+            tagBackgroundColor = UIColor(hex: "ebebeb")
+
+            tagSelectedBorderWidth = 0
+            tagSelectedTextColor = UIColor.black.withAlphaComponent(0.88)
+            tagSelectedBackgroundColor = UIColor(hex: "ebebeb")
+            tagSelectedCornerRadius = 3
+
+            tagExtraSpace = CGSize(width: 15, height: 8)
+        }
     }
 }

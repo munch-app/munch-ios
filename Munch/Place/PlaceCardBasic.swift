@@ -407,7 +407,7 @@ class PlaceBasicAddressCard: PlaceCardView {
     }
 }
 
-fileprivate class AddressLabel: UIView {
+class AddressLabel: UIView {
     let lineOneLabel = UILabel()
     let lineTwoLabel = UILabel()
 
@@ -434,41 +434,44 @@ fileprivate class AddressLabel: UIView {
     }
 
     func render(card: PlaceCard) {
-        render(lineOne: card)
-        render(lineTwo: card)
+        render(lineOne: card["address"].string)
+        let landmarks = card["landmarks"].flatMap({ Place.Location.Landmark(json: $0.1) })
+        render(lineTwo: card["latLng"].string, landmarks: landmarks)
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+    func render(place: Place) {
+        render(lineOne: place.location.address)
+        render(lineTwo: place.location.latLng, landmarks: place.location.landmarks)
+
     }
 
-    private func render(lineOne card: PlaceCard) {
-        if let address = card["address"].string {
-            lineOneLabel.text = address
-        }
+    private func render(lineOne address: String?) {
+        lineOneLabel.text = address
     }
 
-    private func render(lineTwo card: PlaceCard) {
+    private func render(lineTwo latLng: String?, landmarks: [Place.Location.Landmark]?) {
         var line = [String]()
 
-        if let latLng = card["latLng"].string, MunchLocation.isEnabled {
+        if let latLng = latLng, MunchLocation.isEnabled {
             if let distance = MunchLocation.distance(asMetric: latLng) {
                 line.append(distance)
             }
         }
 
-        if let landmarks = card["landmarks"].array {
+        if let landmarks = landmarks {
             for landmark in landmarks {
-                if (landmark["type"].string == "train") {
-                    if let name = landmark["name"].string, let latLng = landmark["latLng"].string, let min = MunchLocation.distance(asDuration: latLng){
-                        line.append("\(min) from \(name)")
-                        break
-                    }
+                if let name = landmark.name, let latLng = landmark.latLng, let min = MunchLocation.distance(asDuration: latLng) {
+                    line.append("\(min) from \(name)")
+                    break
                 }
             }
         }
 
         lineTwoLabel.text = line.joined(separator: " • ")
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
