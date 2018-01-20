@@ -163,41 +163,49 @@ fileprivate class PlaceBasicImageBannerCardImageCell: UICollectionViewCell {
 }
 
 class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
-    let nameLabel = UILabel()
-    let tagCollection = TTGTextTagCollectionView()
-
-    override func didLoad(card: PlaceCard) {
-        self.addSubview(nameLabel)
-        self.addSubview(tagCollection)
-
-        nameLabel.text = card["name"].string
+    let nameLabel: UILabel = {
+        let nameLabel = UILabel()
         nameLabel.font = UIFont.systemFont(ofSize: 26.0, weight: .medium)
         nameLabel.textColor = UIColor.black.withAlphaComponent(0.9)
         nameLabel.numberOfLines = 0
-        nameLabel.snp.makeConstraints { make in
-            make.top.equalTo(self).inset(topBottom)
-            make.left.right.equalTo(self).inset(leftRight)
-        }
-
+        nameLabel.isUserInteractionEnabled = false
+        return nameLabel
+    }()
+    let tagCollection: TTGTextTagCollectionView = {
+        let tagCollection = TTGTextTagCollectionView()
         tagCollection.defaultConfig = DefaultTagConfig()
         tagCollection.horizontalSpacing = 6
         tagCollection.numberOfLines = 0
         tagCollection.alignment = .left
         tagCollection.scrollDirection = .vertical
         tagCollection.contentInset = UIEdgeInsets(top: 4, left: 0, bottom: 3, right: 0)
-        tagCollection.snp.makeConstraints { (make) in
-            make.top.equalTo(nameLabel.snp.bottom).inset(0)
+        return tagCollection
+    }()
+
+    override func didLoad(card: PlaceCard) {
+        self.addSubview(nameLabel)
+        self.addSubview(tagCollection)
+        self.tagCollection.delegate = self
+
+        nameLabel.snp.makeConstraints { make in
+            make.top.equalTo(self).inset(topBottom)
             make.left.right.equalTo(self).inset(leftRight)
-            make.bottom.equalTo(self).inset(topBottom)
+            make.bottom.equalTo(tagCollection.snp.top)
         }
 
-        let tags = card["tags"].arrayValue.map({ $0.stringValue.capitalized })
-        tagCollection.addTags(tags)
-        tagCollection.reload()
-        tagCollection.setNeedsLayout()
-        tagCollection.layoutIfNeeded()
+        tagCollection.snp.makeConstraints { (make) in
+            make.left.right.equalTo(self).inset(leftRight).priority(999)
+            make.bottom.equalTo(self).inset(topBottom).priority(999)
+        }
 
-        tagCollection.delegate = self
+        self.nameLabel.text = card["name"].string
+
+        let tags = card["tags"].arrayValue.map({ $0.stringValue.capitalized })
+        self.tagCollection.addTags(tags)
+        self.tagCollection.reload()
+
+        tagCollection.needsUpdateConstraints()
+        tagCollection.layoutIfNeeded()
     }
 
     override class var cardId: String? {
@@ -236,7 +244,6 @@ class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
                 searchQuery.filter.tag.positives.insert(tagText)
                 searchController.render(searchQuery: searchQuery)
             }
-
         }
     }
 }
@@ -376,102 +383,6 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
             dayLabels[5].attributedText = createLine(day: "sat", dayText: "Saturday")
             dayLabels[6].attributedText = createLine(day: "sun", dayText: "Sunday")
         }
-    }
-}
-
-class PlaceBasicAddressCard: PlaceCardView {
-    private let addressLabel = AddressLabel()
-    private var address: String?
-
-    override func didLoad(card: PlaceCard) {
-        self.selectionStyle = .default
-        self.addSubview(addressLabel)
-        self.address = card["address"].string
-
-        addressLabel.render(card: card)
-        addressLabel.snp.makeConstraints { make in
-            make.top.bottom.equalTo(self).inset(topBottom)
-            make.left.right.equalTo(self).inset(leftRight)
-        }
-    }
-
-    override func didTap() {
-        if let place = self.controller.place {
-            let controller = PlaceMapViewController.init(place: place)
-            self.controller.navigationController?.pushViewController(controller, animated: true)
-        }
-    }
-
-    override class var cardId: String? {
-        return "basic_Address_20170924"
-    }
-}
-
-class AddressLabel: UIView {
-    let lineOneLabel = UILabel()
-    let lineTwoLabel = UILabel()
-
-    override init(frame: CGRect = .zero) {
-        super.init(frame: frame)
-        lineOneLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.regular)
-        lineOneLabel.numberOfLines = 0
-        self.addSubview(lineOneLabel)
-
-        lineTwoLabel.font = UIFont.systemFont(ofSize: 15.0, weight: UIFont.Weight.regular)
-        lineTwoLabel.numberOfLines = 1
-        self.addSubview(lineTwoLabel)
-
-        lineOneLabel.snp.makeConstraints { make in
-            make.top.equalTo(self)
-            make.left.right.equalTo(self)
-        }
-
-        lineTwoLabel.snp.makeConstraints { make in
-            make.top.equalTo(lineOneLabel.snp.bottom)
-            make.left.right.equalTo(self)
-            make.bottom.equalTo(self)
-        }
-    }
-
-    func render(card: PlaceCard) {
-        render(lineOne: card["address"].string)
-        let landmarks = card["landmarks"].flatMap({ Place.Location.Landmark(json: $0.1) })
-        render(lineTwo: card["latLng"].string, landmarks: landmarks)
-    }
-
-    func render(place: Place) {
-        render(lineOne: place.location.address)
-        render(lineTwo: place.location.latLng, landmarks: place.location.landmarks)
-
-    }
-
-    private func render(lineOne address: String?) {
-        lineOneLabel.text = address
-    }
-
-    private func render(lineTwo latLng: String?, landmarks: [Place.Location.Landmark]?) {
-        var line = [String]()
-
-        if let latLng = latLng, MunchLocation.isEnabled {
-            if let distance = MunchLocation.distance(asMetric: latLng) {
-                line.append(distance)
-            }
-        }
-
-        if let landmarks = landmarks {
-            for landmark in landmarks {
-                if let name = landmark.name, let latLng = landmark.latLng, let min = MunchLocation.distance(asDuration: latLng) {
-                    line.append("\(min) from \(name)")
-                    break
-                }
-            }
-        }
-
-        lineTwoLabel.text = line.joined(separator: " • ")
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 

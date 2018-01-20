@@ -119,7 +119,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
 
     func scrollsToTop(animated: Bool = true) {
         // Scroll to content view
-        cardTableView.scrollToRow(at: .init(row: 0, section: 1), at: .top, animated: animated)
+        cardTableView.scrollToRow(at: .init(row: 0, section: 0), at: .top, animated: animated)
     }
 
     func contentView(search searchQuery: SearchQuery, animated: Bool = true) {
@@ -295,6 +295,7 @@ extension SearchController {
 
         // Register Static Cards
         register(SearchStaticEmptyCard.self)
+        register(SearchStaticHeight16Card.self)
         register(SearchStaticNoResultCard.self)
         register(SearchStaticLoadingCard.self)
 
@@ -320,7 +321,7 @@ extension SearchController {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 0
+        case 0: return 1
         case 1: return cards.count
         case 2: return 1
         default: return 0
@@ -329,6 +330,8 @@ extension SearchController {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
+        case 0:
+            return cardTableView.dequeueReusableCell(withIdentifier: SearchStaticHeight16Card.cardId)!
         case 1:
             let card = cards[indexPath.row]
             if let cardView = cardTableView.dequeueReusableCell(withIdentifier: card.cardId) as? SearchCardView {

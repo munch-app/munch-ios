@@ -214,16 +214,9 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
         ("Hawker Centre", "Hawkers"),
         ("Coffeeshop", "Coffeeshops")
     ]
-    private let iconView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage.init(named: "Search-Container-Big")
-        imageView.tintColor = UIColor.black.withAlphaComponent(0.72)
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 21.0, weight: .semibold)
+        label.font = UIFont.systemFont(ofSize: 24.0, weight: .semibold)
         label.textColor = UIColor.black.withAlphaComponent(0.72)
         return label
     }()
@@ -250,19 +243,12 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
         self.selectionStyle = .none
         self.addSubview(titleLabel)
         self.addSubview(collectionView)
-        self.addSubview(iconView)
 
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
 
-        iconView.snp.makeConstraints { make in
-            make.top.bottom.equalTo(titleLabel)
-            make.left.equalTo(self).inset(leftRight)
-        }
-
         titleLabel.snp.makeConstraints { make in
-            make.right.equalTo(self).inset(leftRight)
-            make.left.equalTo(iconView.snp.right).inset(-5)
+            make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(self).inset(topBottom)
         }
 
@@ -413,7 +399,7 @@ fileprivate class SearchContainersCardContainerCell: UICollectionViewCell {
 class SearchHeaderCard: UITableViewCell, SearchCardView {
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 26.0, weight: .semibold)
+        label.font = UIFont.systemFont(ofSize: 24.0, weight: .semibold)
         label.textColor = UIColor.black.withAlphaComponent(0.72)
         return label
     }()
@@ -426,7 +412,7 @@ class SearchHeaderCard: UITableViewCell, SearchCardView {
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(self).inset(topBottom)
-            make.bottom.equalTo(self)
+            make.bottom.equalTo(self).inset(0)
         }
     }
 

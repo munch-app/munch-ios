@@ -177,17 +177,20 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
 
         private func render(tag card: SearchCard) {
             if let average = card["review"]["average"].double {
-                tagLabel.attributedText = ReviewRatingUtils.create(percent: CGFloat(average), fontSize: 15.0)
-                tagCollection.contentInset.left = 8
+                self.tagLabel.attributedText = ReviewRatingUtils.create(percent: CGFloat(average), fontSize: 15.0)
+                self.tagCollection.contentInset.left = 8
             } else {
-                tagLabel.text = nil
-                tagCollection.contentInset.left = 0
+                self.tagLabel.text = nil
+                self.tagCollection.contentInset.left = 0
             }
 
-            tagCollection.removeAllTags()
+            self.tagCollection.removeAllTags()
             let tags = card["tags"].flatMap({ $0.1.string?.capitalized }).prefix(3)
-            tagCollection.addTags(Array(tags))
-            tagCollection.reload()
+            self.tagCollection.addTags(Array(tags))
+            self.tagCollection.reload()
+
+            self.needsUpdateConstraints()
+            self.layoutIfNeeded()
         }
 
         private func render(location card: SearchCard) {

@@ -194,3 +194,29 @@ class SearchStaticEmptyCard: UITableViewCell, SearchCardView {
         return "static_SearchStaticEmptyCard"
     }
 }
+
+class SearchStaticHeight16Card: UITableViewCell, SearchCardView {
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.backgroundColor = UIColor.clear
+
+        let view = UIView()
+        self.addSubview(view)
+        view.snp.makeConstraints { make in
+            make.height.equalTo(16).priority(999)
+            make.edges.equalTo(self)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func render(card: SearchCard, controller: SearchController) {
+    }
+
+    static var cardId: String {
+        return "static_SearchStaticHeight16Card"
+    }
+}
