@@ -302,6 +302,7 @@ extension SearchController {
         register(SearchShimmerPlaceCard.self)
 
         // Register Search Cards
+        register(SearchHeaderCard.self)
         register(SearchPlaceCard.self)
 
         register(SearchContainersCard.self)

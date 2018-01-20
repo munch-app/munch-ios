@@ -409,3 +409,36 @@ fileprivate class SearchContainersCardContainerCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+class SearchHeaderCard: UITableViewCell, SearchCardView {
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 26.0, weight: .medium)
+        label.textColor = UIColor.black.withAlphaComponent(0.72)
+        return label
+    }()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(titleLabel)
+
+        titleLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(leftRight)
+            make.top.equalTo(self).inset(topBottom)
+            make.bottom.equalTo(self)
+        }
+    }
+
+    func render(card: SearchCard, controller: SearchController) {
+        self.titleLabel.text = card["title"].string
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    static var cardId: String {
+        return "injected_Header_20180120"
+    }
+}

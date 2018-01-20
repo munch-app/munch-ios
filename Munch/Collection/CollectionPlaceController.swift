@@ -263,99 +263,99 @@ extension CollectionPlaceController {
             loadingCell?.stopAnimating()
         }
     }
+}
+
+fileprivate class CollectionPlaceCollectionCell: UICollectionViewCell {
+    private let gradientLayer: CAGradientLayer = {
+        let layer = CAGradientLayer()
+        return layer
+    }()
+
+    private let imageGradientView: UIView = {
+        let imageGradientView = UIView()
+        imageGradientView.layer.cornerRadius = 2
+        imageGradientView.backgroundColor = .clear
+        return imageGradientView
+    }()
+    private let imageView: ShimmerImageView = {
+        let view = ShimmerImageView()
+        view.layer.cornerRadius = 2
+        view.backgroundColor = UIColor(hex: "F0F0F0")
+        return view
+    }()
+    private let nameLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = UIFont.systemFont(ofSize: 13.0, weight: .medium)
+        return label
+    }()
+
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        self.addSubview(imageView)
+        self.addSubview(imageGradientView)
+        self.addSubview(nameLabel)
+
+        imageGradientView.layer.insertSublayer(gradientLayer, at: 0)
+        imageGradientView.snp.makeConstraints { make in
+            make.bottom.equalTo(self)
+            make.left.right.equalTo(self)
+            make.height.equalTo(30)
         }
 
-    fileprivate class CollectionPlaceCollectionCell: UICollectionViewCell {
-        private let gradientLayer: CAGradientLayer = {
-            let layer = CAGradientLayer()
-            layer.frame = CGRect(x: 0, y: 0, width: 50, height: 30)
-            layer.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.55).cgColor]
-            return layer
-        }()
-
-        private let imageGradientView: UIView = {
-            let imageGradientView = UIView()
-            imageGradientView.layer.cornerRadius = 2
-            imageGradientView.backgroundColor = .clear
-            return imageGradientView
-        }()
-        private let imageView: ShimmerImageView = {
-            let view = ShimmerImageView()
-            view.layer.cornerRadius = 2
-            view.backgroundColor = UIColor(hex: "F0F0F0")
-            return view
-        }()
-        private let nameLabel: UILabel = {
-            let label = UILabel()
-            label.textColor = .white
-            label.font = UIFont.systemFont(ofSize: 13.0, weight: .medium)
-            return label
-        }()
-
-        override init(frame: CGRect = .zero) {
-            super.init(frame: frame)
-            self.addSubview(imageView)
-            self.addSubview(imageGradientView)
-            self.addSubview(nameLabel)
-
-            imageGradientView.layer.insertSublayer(gradientLayer, at: 0)
-            imageGradientView.snp.makeConstraints { make in
-                make.bottom.equalTo(self)
-                make.left.right.equalTo(self)
-                make.height.equalTo(30)
-            }
-
-            imageView.snp.makeConstraints { make in
-                make.edges.equalTo(self)
-            }
-
-            nameLabel.snp.makeConstraints { make in
-                make.left.right.equalTo(self).inset(11)
-                make.bottom.equalTo(self).inset(8)
-            }
+        imageView.snp.makeConstraints { make in
+            make.edges.equalTo(self)
         }
 
-        func render(addedPlace: PlaceCollection.AddedPlace) {
-            imageView.render(sourcedImage: addedPlace.place.images?.get(0))
-            nameLabel.text = addedPlace.place.name
-        }
-
-        override func layoutSubviews() {
-            super.layoutSubviews()
-            self.gradientLayer.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: 30)
-        }
-
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
+        nameLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(11)
+            make.bottom.equalTo(self).inset(8)
         }
     }
 
-    fileprivate class CollectionPlaceLoadingCell: UICollectionViewCell {
-        private var indicator: NVActivityIndicatorView!
+    func render(addedPlace: PlaceCollection.AddedPlace) {
+        imageView.render(sourcedImage: addedPlace.place.images?.get(0))
+        nameLabel.text = addedPlace.place.name
+    }
 
-        override init(frame: CGRect = .zero) {
-            super.init(frame: frame)
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.55).cgColor]
+        self.gradientLayer.cornerRadius = 2
+        self.gradientLayer.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: 30)
+    }
 
-            let frame = CGRect(origin: CGPoint.zero, size: CGSize(width: UIScreen.main.bounds.width, height: 40))
-            self.indicator = NVActivityIndicatorView(frame: frame, type: .ballBeat, color: .primary700, padding: 0)
-            indicator.startAnimating()
-            self.addSubview(indicator)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
 
-            indicator.snp.makeConstraints { make in
-                make.left.right.equalTo(self)
-                make.height.equalTo(40)
-            }
-        }
+fileprivate class CollectionPlaceLoadingCell: UICollectionViewCell {
+    private var indicator: NVActivityIndicatorView!
 
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
 
-        func startAnimating() {
-            self.indicator.startAnimating()
-        }
+        let frame = CGRect(origin: CGPoint.zero, size: CGSize(width: UIScreen.main.bounds.width, height: 40))
+        self.indicator = NVActivityIndicatorView(frame: frame, type: .ballBeat, color: .primary700, padding: 0)
+        indicator.startAnimating()
+        self.addSubview(indicator)
 
-        func stopAnimating() {
-            self.indicator.stopAnimating()
+        indicator.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.height.equalTo(40)
         }
     }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func startAnimating() {
+        self.indicator.startAnimating()
+    }
+
+    func stopAnimating() {
+        self.indicator.stopAnimating()
+    }
+}

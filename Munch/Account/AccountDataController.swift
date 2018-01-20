@@ -211,8 +211,6 @@ extension AccountProfileController {
 fileprivate class AccountDataLikedPlaceCell: UICollectionViewCell {
     private let gradientLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
-        layer.frame = CGRect(x: 0, y: 0, width: 50, height: 30)
-        layer.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.55).cgColor]
         return layer
     }()
 
@@ -265,6 +263,8 @@ fileprivate class AccountDataLikedPlaceCell: UICollectionViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
+        self.gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.55).cgColor]
+        self.gradientLayer.cornerRadius = 2
         self.gradientLayer.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: 30)
     }
 
