@@ -103,13 +103,15 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
         self.bottomView.render(place: place)
 
         if let latLng = place.location.latLng, let coordinate = CLLocation(latLng: latLng)?.coordinate {
+            // Set center to place location
             var region = MKCoordinateRegion()
             region.center.latitude = coordinate.latitude
             region.center.longitude = coordinate.longitude
-            region.span.latitudeDelta = 0.006
-            region.span.longitudeDelta = 0.006
+            region.span.latitudeDelta = 0.008
+            region.span.longitudeDelta = 0.008
             mapView.setRegion(region, animated: true)
 
+            // Add place annotation
             let placeAnnotation = MKPointAnnotation()
             placeAnnotation.coordinate = coordinate
             placeAnnotation.title = place.name
@@ -117,20 +119,18 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
 
             if let userCoordinate = MunchLocation.lastCoordinate {
                 self.routeLine = MKPolyline.init(coordinates: [coordinate, userCoordinate], count: 2)
-                mapView.setVisibleMapRect(routeLine.boundingMapRect, animated: false)
                 mapView.add(routeLine)
                 // TODO Updating Polyline
             }
         }
 
+        // Add all the land marks
         if let landmarks = place.location.landmarks {
             for landmark in landmarks {
                 mapView.addAnnotation(LandmarkAnnotation(landmark: landmark))
             }
         }
     }
-
-    // TODO Center of Place
 
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if overlay is MKPolyline {
