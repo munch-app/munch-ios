@@ -15,10 +15,16 @@ import Lock
 
 import NVActivityIndicatorView
 
-class AccountController: UINavigationController {
+class AccountController: UINavigationController, UINavigationControllerDelegate {
     required init() {
         super.init(nibName: nil, bundle: nil)
         self.viewControllers = [AccountProfileController()]
+        self.delegate = self
+    }
+
+    // Fix bug when pop gesture is enabled for the root controller
+    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        self.interactivePopGestureRecognizer?.isEnabled = self.viewControllers.count > 1
     }
 
     required init?(coder aDecoder: NSCoder) {

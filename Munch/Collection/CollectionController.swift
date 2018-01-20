@@ -14,8 +14,6 @@ class CollectionSelectRootController: UINavigationController, UINavigationContro
         self.delegate = self
     }
 
-    // TODO Collection Name
-
     // Fix bug when pop gesture is enabled for the root controller
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
         self.interactivePopGestureRecognizer?.isEnabled = self.viewControllers.count > 1
