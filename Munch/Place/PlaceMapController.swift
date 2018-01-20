@@ -11,7 +11,7 @@ import CoreLocation
 import SnapKit
 import TTGTagCollectionView
 
-class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKMapViewDelegate {
+class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKMapViewDelegate, CLLocationManagerDelegate {
     let placeId: String
     let place: Place
 
@@ -33,7 +33,7 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
         button.layer.cornerRadius = 25
         button.layer.masksToBounds = false
         button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.1
+        button.layer.shadowOpacity = 0.2
         button.layer.shadowOffset = CGSize(width: 4, height: 4)
         button.layer.shadowRadius = 25
         button.layer.shouldRasterize = true
@@ -41,7 +41,15 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
         return button
     }()
 
+    private let locationManager: CLLocationManager = {
+        let manager = CLLocationManager()
+        manager.desiredAccuracy = kCLLocationAccuracyBest
+        return manager
+    }()
+
     private var routeLine: MKPolyline!
+    private var lastCoordinate: CLLocationCoordinate2D?
+    private var placeCoordinate: CLLocationCoordinate2D?
 
     init(place: Place) {
         self.placeId = place.id!
@@ -71,6 +79,8 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
         self.headingButton.addTarget(self, action: #selector(onShowHeading(_:)), for: .touchUpInside)
 
         self.render()
+
+        locationManager.delegate = self
     }
 
     private func initViews() {
@@ -103,6 +113,8 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
         self.bottomView.render(place: place)
 
         if let latLng = place.location.latLng, let coordinate = CLLocation(latLng: latLng)?.coordinate {
+            self.placeCoordinate = coordinate
+
             // Set center to place location
             var region = MKCoordinateRegion()
             region.center.latitude = coordinate.latitude
@@ -116,12 +128,6 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
             placeAnnotation.coordinate = coordinate
             placeAnnotation.title = place.name
             mapView.addAnnotation(placeAnnotation)
-
-            if let userCoordinate = MunchLocation.lastCoordinate {
-                self.routeLine = MKPolyline.init(coordinates: [coordinate, userCoordinate], count: 2)
-                mapView.add(routeLine)
-                // TODO Updating Polyline
-            }
         }
 
         // Add all the land marks
@@ -130,16 +136,34 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
                 mapView.addAnnotation(LandmarkAnnotation(landmark: landmark))
             }
         }
+
+        // Check for Location Services
+        if CLLocationManager.locationServicesEnabled() {
+            MunchLocation.requestLocation()
+            locationManager.startUpdatingLocation()
+        }
     }
 
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if overlay is MKPolyline {
             let renderer = MKPolylineRenderer(polyline: routeLine)
             renderer.lineWidth = 2
-            renderer.strokeColor = UIColor.primary500.withAlphaComponent(0.75)
+            renderer.strokeColor = UIColor.primary500.withAlphaComponent(0.8)
             return renderer
         }
-        return MKOverlayRenderer.init()
+        return MKOverlayRenderer()
+    }
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let routeLine = routeLine {
+            mapView.remove(routeLine)
+            self.routeLine = nil
+        }
+
+        if let placeCoordinate = placeCoordinate, let lastCoordinate = locations.last?.coordinate {
+            self.routeLine = MKPolyline(coordinates: [placeCoordinate, lastCoordinate], count: 2)
+            mapView.add(routeLine)
+        }
     }
 
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
@@ -220,7 +244,6 @@ fileprivate class LandmarkAnnotation: NSObject, MKAnnotation {
 }
 
 fileprivate class LandmarkAnnotationView: MKAnnotationView {
-
     fileprivate let label: UILabel = {
         let label = UILabel()
         label.textColor = .black

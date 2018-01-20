@@ -7,8 +7,9 @@
 //
 
 import Foundation
-import SwiftLocation
 import CoreLocation
+
+import SwiftLocation
 
 /**
  Delegated Munch App User Location tracker
@@ -160,7 +161,6 @@ public class MunchLocation {
 }
 
 extension CLLocation {
-
     convenience init?(latLng: String) {
         let ll = latLng.components(separatedBy: ",")
         if let lat = ll.get(0), let lng = ll.get(1) {
@@ -171,5 +171,4 @@ extension CLLocation {
         }
         return nil
     }
-
 }
