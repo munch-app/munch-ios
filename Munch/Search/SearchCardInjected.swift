@@ -413,7 +413,7 @@ fileprivate class SearchContainersCardContainerCell: UICollectionViewCell {
 class SearchHeaderCard: UITableViewCell, SearchCardView {
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 26.0, weight: .medium)
+        label.font = UIFont.systemFont(ofSize: 26.0, weight: .semibold)
         label.textColor = UIColor.black.withAlphaComponent(0.72)
         return label
     }()

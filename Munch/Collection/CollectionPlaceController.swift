@@ -21,7 +21,7 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
         label.isHidden = true
         return label
     }()
-    private let collectionView: UICollectionView = {
+    fileprivate let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 18
@@ -63,6 +63,7 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
         self.collectionView.dataSource = self
 
         self.headerView.backButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
+        self.headerView.editButton.addTarget(self, action: #selector(actionEdit(_:)), for: .touchUpInside)
         self.headerView.titleView.text = placeCollection?.name
     }
 
@@ -92,8 +93,46 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
         self.navigationController?.popViewController(animated: true)
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    @objc func actionEdit(_ sender: Any) {
+        let alert = UIAlertController(title: "Edit Collection", message: "Enter a new name for this collection", preferredStyle: .alert)
+        alert.addTextField { textField in
+            textField.text = nil
+        }
+        alert.addAction(.init(title: "CANCEL", style: .destructive))
+        alert.addAction(.init(title: "OK", style: .default) { action in
+            let textField = alert.textFields![0]
+            let collectionName = textField.text
+
+            MunchApi.collections.get(collectionId: self.collectionId) { meta, collection in
+                if meta.isOk() {
+                    var editCollection = collection
+                    editCollection.name = collectionName
+                    MunchApi.collections.put(collectionId: self.collectionId, collection: editCollection) { meta, collection in
+                        if meta.isOk() {
+                            self.placeCollection = collection
+                            self.headerView.titleView.text = collection.name
+                        } else {
+                            self.present(meta.createAlert(), animated: true)
+                        }
+                    }
+                } else {
+                    self.present(meta.createAlert(), animated: true)
+                }
+            }
+        })
+
+        self.present(alert, animated: true, completion: nil)
+    }
+
+    func deletePlace(placeId: String) {
+        MunchApi.collections.deletePlace(collectionId: self.collectionId, placeId: placeId) { metaJSON in
+            if metaJSON.isOk() {
+                self.addedPlaces = []
+                self.collectionView.reloadData()
+            } else {
+                self.present(metaJSON.createAlert(), animated: true)
+            }
+        }
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -115,6 +154,15 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
             titleView.textAlignment = .center
             return titleView
         }()
+        fileprivate let editButton: UIButton = {
+            let button = UIButton()
+            button.setTitle("EDIT", for: .normal)
+            button.setTitleColor(UIColor.black.withAlphaComponent(0.7), for: .normal)
+            button.titleLabel?.font = .systemFont(ofSize: 12, weight: .medium)
+            button.titleEdgeInsets.right = 24
+            button.contentHorizontalAlignment = .right
+            return button
+        }()
 
         override init(frame: CGRect = CGRect.zero) {
             super.init(frame: frame)
@@ -125,6 +173,7 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
             self.backgroundColor = .white
             self.addSubview(backButton)
             self.addSubview(titleView)
+            self.addSubview(editButton)
 
             backButton.snp.makeConstraints { make in
                 make.top.equalTo(self.safeArea.top)
@@ -142,6 +191,15 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
                 make.left.equalTo(backButton.snp.right)
                 make.right.equalTo(self).inset(64)
             }
+
+            editButton.snp.makeConstraints { make in
+                make.top.equalTo(self.safeArea.top)
+                make.bottom.equalTo(self)
+                make.right.equalTo(self)
+
+                make.width.equalTo(64)
+                make.height.equalTo(44)
+            }
         }
 
         override func layoutSubviews() {
@@ -152,6 +210,10 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
         required init?(coder aDecoder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -198,7 +260,7 @@ extension CollectionPlaceController: UICollectionViewDataSource, UICollectionVie
 
         let item = self.items[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CollectionPlaceCollectionCell", for: indexPath) as! CollectionPlaceCollectionCell
-        cell.render(addedPlace: item)
+        cell.render(addedPlace: item, controller: self)
         return cell
     }
 
@@ -213,9 +275,6 @@ extension CollectionPlaceController: UICollectionViewDataSource, UICollectionVie
             self.navigationController!.pushViewController(controller, animated: true)
         }
     }
-
-    // TODO: Ability to Remove Item
-    // TODO: Ability to edit Collection Name
 }
 
 // Lazy Append Loading
@@ -270,7 +329,6 @@ fileprivate class CollectionPlaceCollectionCell: UICollectionViewCell {
         let layer = CAGradientLayer()
         return layer
     }()
-
     private let imageGradientView: UIView = {
         let imageGradientView = UIView()
         imageGradientView.layer.cornerRadius = 2
@@ -289,12 +347,22 @@ fileprivate class CollectionPlaceCollectionCell: UICollectionViewCell {
         label.font = UIFont.systemFont(ofSize: 13.0, weight: .medium)
         return label
     }()
+    private let editLabel: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "Account-Three-Dot"), for: .normal)
+        button.tintColor = .white
+        return button
+    }()
+
+    var controller: CollectionPlaceController!
+    var addedPlace: PlaceCollection.AddedPlace!
 
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
         self.addSubview(imageView)
         self.addSubview(imageGradientView)
         self.addSubview(nameLabel)
+        self.addSubview(editLabel)
 
         imageGradientView.layer.insertSublayer(gradientLayer, at: 0)
         imageGradientView.snp.makeConstraints { make in
@@ -311,11 +379,32 @@ fileprivate class CollectionPlaceCollectionCell: UICollectionViewCell {
             make.left.right.equalTo(self).inset(11)
             make.bottom.equalTo(self).inset(8)
         }
+
+        editLabel.snp.makeConstraints { make in
+            make.right.equalTo(self).inset(-1)
+            make.top.equalTo(self).inset(5)
+        }
+
+        editLabel.addTarget(self, action: #selector(onEditButton(_:)), for: .touchUpInside)
     }
 
-    func render(addedPlace: PlaceCollection.AddedPlace) {
+    func render(addedPlace: PlaceCollection.AddedPlace, controller: CollectionPlaceController) {
+        self.addedPlace = addedPlace
+        self.controller = controller
+
         imageView.render(sourcedImage: addedPlace.place.images?.get(0))
         nameLabel.text = addedPlace.place.name
+    }
+
+    @objc func onEditButton(_ sender: Any) {
+        if let placeId = addedPlace?.place.id {
+            let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
+                self.controller.deletePlace(placeId: placeId)
+            })
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            self.controller.present(alert, animated: true)
+        }
     }
 
     override func layoutSubviews() {
