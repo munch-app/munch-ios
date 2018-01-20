@@ -160,8 +160,14 @@ class SearchFilterManager {
             searchQuery.filter.hour.day = dayFormatter.string(from: Date()).lowercased()
             switch name {
             case "Open Now":
-                searchQuery.filter.hour.open = timeFormatter.string(from: Date())
-                searchQuery.filter.hour.close = timeFormatter.string(from: Date().addingTimeInterval(30 * 60)) // 30 Minutes
+                let date = Date()
+                searchQuery.filter.hour.open = timeFormatter.string(from: date)
+                // If time now is 23:00 onwards, OpenNow close time will be set to 23:59
+                if (23 == Calendar.current.component(.hour, from: date)) {
+                    searchQuery.filter.hour.close = "23:59"
+                } else {
+                    searchQuery.filter.hour.close = timeFormatter.string(from: date.addingTimeInterval(30 * 60)) // 30 Minutes
+                }
             case "Breakfast":
                 searchQuery.filter.hour.open = "08:00"
                 searchQuery.filter.hour.close = "10:15"
