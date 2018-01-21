@@ -142,6 +142,10 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
             self.onHeartButton(sender)
         })
         alert.addAction(UIAlertAction(title: "Add To Collection", style: UIAlertActionStyle.default) { alert in
+            guard CredentialsManager(authentication: Auth0.authentication()).hasValid() else {
+                self.present(AccountBoardingController(), animated: true)
+                return
+            }
             let controller = CollectionSelectRootController(placeId: self.placeId)
             self.present(controller, animated: true)
         })
