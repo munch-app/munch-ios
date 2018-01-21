@@ -20,6 +20,7 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
     private let mapView: MKMapView = {
         let mapView = MKMapView()
         mapView.showsPointsOfInterest = false
+        mapView.showsCompass = false
         mapView.showsUserLocation = true
         mapView.register(LandmarkAnnotationView.self, forAnnotationViewWithReuseIdentifier: "LandmarkAnnotationView")
         return mapView
