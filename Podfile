@@ -16,6 +16,12 @@ target 'Munch' do
   pod 'Auth0', '~> 1.9'
   pod 'Lock', '~> 2.4.2'
 
+  # Firebase
+  pod 'Firebase/Core'
+  pod 'Firebase/Performance'
+  pod 'Fabric', '~> 1.7.2'
+  pod 'Crashlytics', '~> 3.9.3'
+  
   # Transition Library
   pod 'KMNavigationBarTransition', '~> 1.1'
 

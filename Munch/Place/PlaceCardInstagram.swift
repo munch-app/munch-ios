@@ -17,7 +17,7 @@ class PlaceHeaderInstagramCard: PlaceTitleCardView {
     }
 
     override func didTap() {
-        let controller = PlaceDataViewController(place: self.controller.place!, selected: "Instagram")
+        let controller = PlaceDataViewController(place: self.controller.place!, selected: "INSTAGRAM")
         self.controller.navigationController!.pushViewController(controller, animated: true)
     }
 

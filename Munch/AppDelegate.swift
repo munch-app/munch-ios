@@ -9,6 +9,7 @@
 import UIKit
 
 import Lock
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -21,6 +22,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.rootViewController = InitialViewProvider.main()
         self.window?.makeKeyAndVisible()
+
+        FirebaseApp.configure()
         return true
     }
     

@@ -194,18 +194,26 @@ class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
         }
 
         tagCollection.snp.makeConstraints { (make) in
-            make.left.right.equalTo(self).inset(leftRight).priority(999)
+            make.left.right.equalTo(self).inset(24).priority(999)
             make.bottom.equalTo(self).inset(topBottom).priority(999)
         }
 
         self.nameLabel.text = card["name"].string
 
+
         let tags = card["tags"].arrayValue.map({ $0.stringValue.capitalized })
-        self.tagCollection.addTags(tags)
-        self.tagCollection.reload()
+        for tag in tags {
+            self.tagCollection.addTag(tag, with: DefaultTagConfig())
+        }
 
         tagCollection.needsUpdateConstraints()
         tagCollection.layoutIfNeeded()
+
+        print(self.tagCollection.actualNumberOfLines)
+    }
+
+    override func layoutIfNeeded() {
+        super.layoutIfNeeded()
     }
 
     override class var cardId: String? {
