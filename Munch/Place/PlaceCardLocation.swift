@@ -162,14 +162,14 @@ class AddressLabel: UIView {
             if let distance = MunchLocation.distance(asMetric: latLng) {
                 attributedText.append(NSAttributedString(string: distance))
             }
-        }
 
-        if let landmarks = landmarks {
-            for landmark in landmarks {
-                if let name = landmark.name, let latLng = landmark.latLng, let min = MunchLocation.distance(asDuration: latLng) {
-                    attributedText.append(NSAttributedString(string: " • \(min) from "))
-                    attributedText.append(NSAttributedString(string: name))
-                    break
+            if let landmarks = landmarks {
+                for landmark in landmarks {
+                    if let name = landmark.name, let min = MunchLocation.distance(asDuration: landmark.latLng, toLatLng: latLng) {
+                        attributedText.append(NSAttributedString(string: " • \(min) from "))
+                        attributedText.append(NSAttributedString(string: name))
+                        break
+                    }
                 }
             }
         }

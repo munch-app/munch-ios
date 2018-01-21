@@ -33,7 +33,7 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(self).inset(26)
+            make.top.equalTo(self).inset(topBottom)
         }
 
         descriptionLabel.text = "You have turned off your location service. Turn it on for better suggestion?"
@@ -104,7 +104,7 @@ class SearchNoResultCard: UITableViewCell, SearchCardView {
         titleLabel.numberOfLines = 0
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(self).inset(26)
+            make.top.equalTo(self).inset(topBottom)
         }
 
         descriptionLabel.text = "We couldn't find anything. Try broadening your search?"
@@ -153,7 +153,7 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(self).inset(26)
+            make.top.equalTo(self).inset(topBottom)
         }
 
         descriptionLabel.text = "We couldn't find anything in that location. Try searching anywhere instead?"

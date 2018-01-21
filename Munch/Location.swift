@@ -17,8 +17,8 @@ import SwiftLocation
 public class MunchLocation {
 
     // Last latLng of userLocation, can be nil
-    private static var lastLatLng: String?
-    private static var lastLocation: CLLocation?
+    public static var lastLatLng: String?
+    public static var lastLocation: CLLocation?
 
     // Expiry every 200 seconds
     private static var expiryIncrement: TimeInterval = 200
@@ -113,8 +113,9 @@ public class MunchLocation {
     /**
      Distance from current location in metres
      */
-    public class func distance(latLng: String) -> Double? {
-        if let locationA = lastLocation, let locationB = CLLocation(latLng: latLng) {
+    public class func distance(latLng: String?, toLatLng: String? = MunchLocation.lastLatLng) -> Double? {
+        if let latLngA = toLatLng, let locationA = CLLocation(latLng: latLngA),
+           let latLngB = latLng, let locationB = CLLocation(latLng: latLngB) {
             return locationA.distance(from: locationB)
         }
         return nil
@@ -148,8 +149,8 @@ public class MunchLocation {
         return nil
     }
 
-    public class func distance(asDuration latLng: String) -> String? {
-        if let distance = distance(latLng: latLng) {
+    public class func distance(asDuration latLng: String?, toLatLng: String? = lastLatLng) -> String? {
+        if let distance = distance(latLng: latLng, toLatLng: toLatLng) {
             let minute = Int(distance / 70)
             if (minute <= 1) {
                 return "1 min"
