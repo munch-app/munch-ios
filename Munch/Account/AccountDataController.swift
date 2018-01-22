@@ -27,7 +27,6 @@ extension AccountProfileController: UICollectionViewDataSource, UICollectionView
         refreshControl.addTarget(self, action: #selector(collectionView(handleRefresh:)), for: .valueChanged)
         refreshControl.tintColor = UIColor.black.withAlphaComponent(0.7)
         self.collectionView.addSubview(refreshControl)
-
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -151,7 +150,7 @@ extension AccountProfileController {
     }
 
     private func appendLoad() {
-        if dataLoader.more {
+        if dataLoader.more, !dataLoader.isLoading {
             let loadingCell = self.collectionView.cellForItem(at: .init(row: 0, section: 1)) as? AccountDataLoadingCell
             loadingCell?.startAnimating()
 
@@ -162,15 +161,11 @@ extension AccountProfileController {
                     }
 
                     if (meta.isOk()) {
-                        if (self.dataLoader.more) {
-                            self.collectionView.reloadData()
-                        } else {
-                            if (self.dataLoader.isEmpty) {
-                                self.collectionView.reloadData()
-                            }
+                        if (!self.dataLoader.more) {
                             let loadingCell = self.collectionView.cellForItem(at: .init(row: 0, section: 1)) as? AccountDataLoadingCell
                             loadingCell?.stopAnimating()
                         }
+                        self.collectionView.reloadData()
                     } else {
                         self.present(meta.createAlert(), animated: true)
                     }
@@ -455,8 +450,10 @@ fileprivate enum UserAccountDataType {
 }
 
 class UserAccountDataLoader {
+    private let defaultSize = 10
     var likes: [[LikedPlace]] = []
     var collections: [[PlaceCollection]] = []
+    var loading = false
 
     var selectedType = "LIKES" // ["LIKES", "COLLECTIONS"]
 
@@ -501,7 +498,12 @@ class UserAccountDataLoader {
     }
 
     var more: Bool {
-        return !(currentList.last?.isEmpty ?? false)
+        if let last = currentList.last {
+            // If last count is same as default size means more to load
+            return last.count == defaultSize
+        }
+        // No last means haven loaded anything
+        return true
     }
 
     func reset() {
@@ -515,24 +517,37 @@ class UserAccountDataLoader {
         }
     }
 
+    func resetAll() {
+        self.likes = []
+        self.collections = []
+    }
+
+    var isLoading: Bool {
+        return loading
+    }
+
     func append(delegate: UIViewController, load completion: @escaping (_ meta: MetaJSON) -> Void) {
+        self.loading = true
+
         switch selectedType {
         case "LIKES":
-            MunchApi.collections.liked.list(maxSortKey: likes.last?.last?.sortKey, size: 10) { meta, likes in
+            MunchApi.collections.liked.list(maxSortKey: likes.last?.last?.sortKey, size: defaultSize) { meta, likes in
                 if meta.isOk() {
                     self.likes.append(likes)
                 } else {
                     delegate.present(meta.createAlert(), animated: true)
                 }
+                self.loading = false
                 completion(meta)
             }
         case "COLLECTIONS":
-            MunchApi.collections.list(maxSortKey: collections.last?.last?.sortKey, size: 10) { meta, collections in
+            MunchApi.collections.list(maxSortKey: collections.last?.last?.sortKey, size: defaultSize) { meta, collections in
                 if meta.isOk() {
                     self.collections.append(collections)
                 } else {
                     delegate.present(meta.createAlert(), animated: true)
                 }
+                self.loading = false
                 completion(meta)
             }
         default: break

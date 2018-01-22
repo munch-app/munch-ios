@@ -67,6 +67,12 @@ class AccountProfileController: UIViewController {
             if UserDatabase.isEmpty {
                 self.reloadProfile()
             }
+
+            // Reload Data because user might have edited the collection
+            if (!self.dataLoader.isLoading) {
+                self.dataLoader.resetAll()
+                self.collectionView.reloadData()
+            }
         } else {
             let controller = AccountBoardingController.init(onAuthenticate: {
                 // On successful authenticate, reload profile
