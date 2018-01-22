@@ -32,7 +32,7 @@ class SearchCardManager {
                     self.query!.from = self.query!.from! + self.query!.size!
                 }
             } else {
-                // TODO Error Card??
+                self.cards = [SearchStaticErrorCard.create(meta: meta)]
             }
             completion(meta, self)
         }
@@ -71,7 +71,7 @@ class SearchCardManager {
                 self.loading = false
                 self.query!.from = self.query!.from! + self.query!.size!
             } else {
-                // TODO Error Card??
+                self.cards = [SearchStaticErrorCard.create(meta: meta)]
             }
             completion(meta, self)
         }

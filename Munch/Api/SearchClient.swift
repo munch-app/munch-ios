@@ -304,9 +304,9 @@ struct SearchCard: Equatable {
     var uniqueId: String?
     private var json: JSON
 
-    init(cardId: String) {
+    init(cardId: String, json: JSON = JSON(parseJSON: "{}")) {
         self.cardId = cardId
-        self.json = JSON(parseJSON: "{}")
+        self.json = json
     }
 
     init(json: JSON) {

@@ -144,12 +144,14 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
                 }
 
                 DispatchQueue.main.asyncAfter(deadline: deadline) {
-                    if (meta.isOk()) {
-                        self.cardTableView.isScrollEnabled = true
-                        self.scrollsToTop(animated: animated)
-                        self.cardTableView.reloadData()
-                    } else {
+                    self.cardTableView.isScrollEnabled = true
+                    self.cardTableView.reloadData()
+                    self.scrollsToTop(animated: animated)
+
+                    // If error, show alert
+                    guard meta.isOk() else {
                         self.present(meta.createAlert(), animated: true)
+                        return
                     }
                 }
             })
@@ -298,6 +300,7 @@ extension SearchController {
         register(SearchStaticHeight16Card.self)
         register(SearchStaticNoResultCard.self)
         register(SearchStaticLoadingCard.self)
+        register(SearchStaticErrorCard.self)
 
         // Register Shimmer Cards
         register(SearchShimmerPlaceCard.self)
