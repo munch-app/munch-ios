@@ -191,6 +191,7 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
 
             self.needsUpdateConstraints()
             self.layoutIfNeeded()
+            self.tagCollection.scrollDirection = .vertical
         }
 
         private func render(location card: SearchCard) {
