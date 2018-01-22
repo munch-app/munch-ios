@@ -118,6 +118,8 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         let tagCollection = TTGTextTagCollectionView()
         let locationLabel = UILabel()
 
+        private var tagLabelWidth: Constraint!
+
         override init(frame: CGRect = CGRect()) {
             super.init(frame: frame)
             self.addSubview(nameLabel)
@@ -139,6 +141,7 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
                 make.height.equalTo(23)
                 make.left.equalTo(self)
                 make.bottom.equalTo(locationLabel.snp.top).inset(-1)
+                make.width.equalTo(0).priority(999)
             }
 
             tagCollection.defaultConfig = DefaultTagConfig()
@@ -176,12 +179,23 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         }
 
         private func render(tag card: SearchCard) {
-            if let average = card["review"]["average"].double {
-                self.tagLabel.attributedText = ReviewRatingUtils.create(percent: CGFloat(average), fontSize: 15.0)
+            if let average = card["review"]["average"].float {
                 self.tagCollection.contentInset.left = 8
+
+                let float = CGFloat(average)
+                self.tagLabel.attributedText = ReviewRatingUtils.create(percent: float, fontSize: 15.0)
+                self.tagLabel.snp.updateConstraints { make in
+                    let width = ReviewRatingUtils.width(percent: float, fontSize: 15.0)
+                    make.width.equalTo(width).priority(999)
+                }
+
             } else {
-                self.tagLabel.text = nil
                 self.tagCollection.contentInset.left = 0
+                self.tagLabel.text = nil
+
+                self.tagLabel.snp.updateConstraints { make in
+                    make.width.equalTo(0).priority(999)
+                }
             }
 
             self.tagCollection.removeAllTags()

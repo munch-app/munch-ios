@@ -570,6 +570,12 @@ class ReviewRatingUtils {
         })
     }
 
+    class func width(percent: CGFloat, fontSize: CGFloat = 14.0) -> CGFloat {
+        let string = create(percent: percent, fontSize: fontSize).string
+        let font = UIFont.systemFont(ofSize: fontSize, weight: .semibold)
+        return UILabel.textWidth(font: font, text: string)
+    }
+
     class func color(percent: CGFloat) -> UIColor {
         let range = percent < 0.6 ? (min, med) : (med, max)
         let red = range.0.0 + (range.1.0 - range.0.0) * percent
