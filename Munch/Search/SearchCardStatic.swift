@@ -232,12 +232,12 @@ class SearchStaticEmptyCard: UITableViewCell, SearchCardView {
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.backgroundColor = UIColor.clear
+        self.backgroundColor = .white
 
         let view = UIView()
         self.addSubview(view)
         view.snp.makeConstraints { make in
-            make.height.equalTo(0.5)
+            make.height.equalTo(1).priority(999)
             make.edges.equalTo(self)
         }
     }
