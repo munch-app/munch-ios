@@ -5,8 +5,19 @@
 
 import Foundation
 import Auth0
+import Crashlytics
 
 public class UserDatabase {
+    public static var sub: String? {
+        get {
+            return UserDefaults.standard.string(forKey: "user.sub")
+        }
+
+        set(value) {
+            UserDefaults.standard.set(value, forKey: "user.sub")
+        }
+    }
+
     public static var name: String? {
         get {
             return UserDefaults.standard.string(forKey: "user.name")
@@ -45,12 +56,18 @@ public class UserDatabase {
     }
 
     public class func update(userInfo: UserInfo) {
+        sub = userInfo.sub
         name = userInfo.name
         email = userInfo.email
         pictureUrl = userInfo.picture?.absoluteString
+
+        Crashlytics.sharedInstance().setUserIdentifier(userInfo.sub)
+        Crashlytics.sharedInstance().setUserName(userInfo.name)
+        Crashlytics.sharedInstance().setUserEmail(userInfo.email)
     }
 
     public class func removeAll() {
+        self.sub = nil
         self.name = nil
         self.email = nil
         self.pictureUrl = nil

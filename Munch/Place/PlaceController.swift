@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 
+import Crashlytics
 import Auth0
 import SnapKit
 import Cosmos
@@ -29,6 +30,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
 
     init(placeId: String) {
         self.placeId = placeId
+        Crashlytics.sharedInstance().setObjectValue(placeId, forKey: "PlaceViewController.placeId")
         super.init(nibName: nil, bundle: nil)
 
         self.hidesBottomBarWhenPushed = true

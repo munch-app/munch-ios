@@ -10,6 +10,7 @@ import UIKit
 
 import Lock
 import Firebase
+import Crashlytics
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

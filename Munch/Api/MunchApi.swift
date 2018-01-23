@@ -9,6 +9,7 @@
 import UIKit
 import Foundation
 
+import Crashlytics
 import Alamofire
 import SwiftyJSON
 import Auth0
@@ -93,8 +94,13 @@ public class RestfulClient {
                         switch response.result {
                         case .success(let value):
                             let json = JSON(value)
-                            callback(MetaJSON(metaJson: json["meta"]), json)
+                            let meta = MetaJSON(metaJson: json["meta"])
+                            if let error = meta.error?.error {
+                                Crashlytics.sharedInstance().recordError(error)
+                            }
+                            callback(meta, json)
                         case .failure(let error):
+                            Crashlytics.sharedInstance().recordError(error)
                             switch response.response?.statusCode ?? 500 {
                             case 502:
                                 let json = JSON(["meta": ["code": 502, "error": [
@@ -121,6 +127,9 @@ public class RestfulClient {
     }
 }
 
+public enum RestfulError: Error {
+    case type(String, String?)
+}
 
 /**
  Meta Json in response
@@ -137,6 +146,13 @@ public struct MetaJSON {
         public init(errorJson: JSON) {
             self.type = errorJson["type"].string
             self.message = errorJson["message"].string
+        }
+
+        public var error: RestfulError? {
+            if let type = self.type {
+                return RestfulError.type(type, message)
+            }
+            return nil
         }
     }
 
