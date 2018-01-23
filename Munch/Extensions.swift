@@ -62,6 +62,14 @@ extension UIView {
         self.shadow(width: width, height: height, radius: 1.0, opacity: 0.52)
     }
 
+    func shadow(vertical height: CGFloat = 1.0) {
+        self.shadow(width: 0, height: height, radius: abs(height), opacity: 0.6, color: UIColor.black.withAlphaComponent(0.25))
+    }
+
+    func shadow(horizontal width: CGFloat = 1.0) {
+        self.shadow(width: width, height: 0, radius: abs(width), opacity: 0.6, color: UIColor.black.withAlphaComponent(0.25))
+    }
+
     func shadow(width: CGFloat, height: CGFloat, radius: CGFloat, opacity: Float, color: UIColor = UIColor.black.withAlphaComponent(0.26)) {
         self.layer.masksToBounds = false
         self.layer.shadowColor = color.cgColor
@@ -172,7 +180,7 @@ extension Double {
 }
 
 extension UICollectionViewLayoutAttributes {
-    func leftAlignFrameWithSectionInset(_ sectionInset:UIEdgeInsets){
+    func leftAlignFrameWithSectionInset(_ sectionInset: UIEdgeInsets) {
         var frame = self.frame
         frame.origin.x = sectionInset.left
         self.frame = frame
@@ -238,7 +246,7 @@ class UICollectionViewLeftAlignedLayout: UICollectionViewFlowLayout {
         return nil
     }
 
-    func evaluatedMinimumInteritemSpacing(at sectionIndex:Int) -> CGFloat {
+    func evaluatedMinimumInteritemSpacing(at sectionIndex: Int) -> CGFloat {
         if let delegate = self.collectionView?.delegate as? UICollectionViewDelegateFlowLayout {
             let inteitemSpacing = delegate.collectionView?(self.collectionView!, layout: self, minimumInteritemSpacingForSectionAt: sectionIndex)
             if let inteitemSpacing = inteitemSpacing {
@@ -249,7 +257,7 @@ class UICollectionViewLeftAlignedLayout: UICollectionViewFlowLayout {
 
     }
 
-    func evaluatedSectionInsetForItem(at index: Int) ->UIEdgeInsets {
+    func evaluatedSectionInsetForItem(at index: Int) -> UIEdgeInsets {
         if let delegate = self.collectionView?.delegate as? UICollectionViewDelegateFlowLayout {
             let insetForSection = delegate.collectionView?(self.collectionView!, layout: self, insetForSectionAt: index)
             if let insetForSectionAt = insetForSection {
