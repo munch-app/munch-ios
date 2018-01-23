@@ -292,6 +292,10 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
     static let closeStyle = Style("close", {
         $0.color = UIColor.primary
     })
+    static let hourStyle = Style("hour", {
+        $0.color = UIColor.black
+        $0.font = FontAttribute.init(font: .systemFont(ofSize: 14, weight: .regular))
+    })
 
     let grid = UIView()
     let indicator = UIButton()
@@ -323,7 +327,7 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
             make.width.equalTo(25)
         }
 
-        openLabel.font = UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.regular)
+        openLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
         openLabel.numberOfLines = 2
         openLabel.snp.makeConstraints { (make) in
             make.top.bottom.equalTo(grid)
@@ -335,11 +339,14 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
         dayView.render(hours: hours)
         dayView.isHidden = true
 
+        let attributedText = NSMutableAttributedString()
         if hours.isOpen() {
-            openLabel.attributedText = "Open Now\n".set(style: PlaceBasicBusinessHourCard.openStyle) + hours.today
+            attributedText.append("Open Now\n".set(style: PlaceBasicBusinessHourCard.openStyle))
         } else {
-            openLabel.attributedText = "Closed Now\n".set(style: PlaceBasicBusinessHourCard.closeStyle) + hours.today
+            attributedText.append("Closed Now\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
         }
+        attributedText.append(hours.today.set(style: PlaceBasicBusinessHourCard.hourStyle))
+        openLabel.attributedText = attributedText
     }
 
     override func didTap() {
@@ -352,7 +359,7 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
             dayView.snp.makeConstraints { (make) in
                 make.top.bottom.equalTo(grid)
                 make.left.right.equalTo(grid)
-                make.height.equalTo(44 * 7).priority(999)
+                make.height.equalTo(39 * 7).priority(999)
             }
         }
 
@@ -378,13 +385,13 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
             self.clipsToBounds = true
 
             for (index, label) in dayLabels.enumerated() {
-                label.font = UIFont.systemFont(ofSize: 16.0, weight: UIFont.Weight.regular)
+                label.font = UIFont.systemFont(ofSize: 14.0, weight: .regular)
                 label.numberOfLines = 2
                 self.addSubview(label)
 
                 label.snp.makeConstraints { make in
                     make.left.right.equalTo(self)
-                    make.height.equalTo(44).priority(998)
+                    make.height.equalTo(39).priority(998)
 
                     if index == 0 {
                         make.top.equalTo(self)

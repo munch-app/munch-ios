@@ -111,7 +111,7 @@ class PlaceBasicPriceCard: PlaceCardView {
         self.addSubview(priceTitleLabel)
         self.addSubview(priceLabel)
 
-        priceTitleLabel.text = "Est. Price"
+        priceTitleLabel.text = "Price"
         priceTitleLabel.font = UIFont.systemFont(ofSize: 15.0, weight: .medium)
         priceTitleLabel.textColor = .black
         priceTitleLabel.textAlignment = .left
@@ -123,7 +123,7 @@ class PlaceBasicPriceCard: PlaceCardView {
         }
 
         if let price = card["price"].double {
-            priceLabel.text = "$\(price) per pax"
+            priceLabel.text = "~$\(price)/pax"
             priceLabel.font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
             priceLabel.textColor = UIColor.black.withAlphaComponent(0.8)
             priceLabel.textAlignment = .right
