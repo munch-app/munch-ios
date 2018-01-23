@@ -262,10 +262,25 @@ fileprivate class PlaceHeaderView: UIView {
 }
 
 fileprivate class PlaceBottomView: UIView {
-    let mainButton = UIButton()
-    let ratingPercentLabel = UILabel()
-    let ratingCountLabel = UILabel()
-    let openingHours = UILabel()
+    private let mainButton = UIButton()
+    private let ratingPercentLabel = UILabel()
+    private let ratingCountLabel = UILabel()
+    private let openLabel: UIButton = {
+        let button = UIButton()
+        button.setTitle("Closed Now", for: .normal)
+        button.setTitleColor(.primary700, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 11.0, weight: .medium)
+
+        button.setImage(UIImage(named: "RIP-Bottom-Clock"), for: .normal)
+        button.tintColor = .primary700
+        button.imageEdgeInsets.left = -8.0
+
+        button.backgroundColor = UIColor(hex: "eeeeee")
+        button.layer.cornerRadius = 3.0
+        button.contentEdgeInsets.left = 10
+        button.contentEdgeInsets.right = 10
+        return button
+    }()
 
     var place: Place?
 
@@ -286,7 +301,7 @@ fileprivate class PlaceBottomView: UIView {
         self.backgroundColor = .white
         self.addSubview(ratingCountLabel)
         self.addSubview(ratingPercentLabel)
-        self.addSubview(openingHours)
+        self.addSubview(openLabel)
         self.addSubview(mainButton)
 
         mainButton.setTitle("ACTION", for: .normal)
@@ -318,11 +333,8 @@ fileprivate class PlaceBottomView: UIView {
             make.top.equalTo(self).inset(12)
         }
 
-        openingHours.text = "No Opening Hour"
-        openingHours.font = UIFont.systemFont(ofSize: 13.0, weight: .regular)
-        openingHours.snp.makeConstraints { make in
+        openLabel.snp.makeConstraints { make in
             make.left.equalTo(self).inset(24)
-            make.right.equalTo(mainButton.snp.left).inset(-12)
             make.bottom.equalTo(self.safeArea.bottom).inset(10)
             make.height.equalTo(20)
         }
@@ -332,7 +344,7 @@ fileprivate class PlaceBottomView: UIView {
         self.mainButton.isHidden = isHidden
         self.ratingPercentLabel.isHidden = isHidden
         self.ratingCountLabel.isHidden = isHidden
-        self.openingHours.isHidden = isHidden
+        self.openLabel.isHidden = isHidden
     }
 
     func render(place: Place) {
@@ -344,7 +356,7 @@ fileprivate class PlaceBottomView: UIView {
             self.ratingCountLabel.text = "\(place.review?.total ?? 0) Reviews"
 
             ratingCountLabel.snp.makeConstraints { (make) in
-                make.left.equalTo(ratingPercentLabel.snp.right).inset(-7)
+                make.left.equalTo(ratingPercentLabel.snp.right).inset(-5)
             }
         } else {
             // No Review
@@ -354,14 +366,20 @@ fileprivate class PlaceBottomView: UIView {
         }
 
         if let hours = place.hours, !hours.isEmpty {
-            let businessHours = BusinessHour(hours: hours)
-            let time = businessHours.todayTime
-            if time.lowercased() == "closed" {
-                openingHours.text = "Closed Now"
+            if BusinessHour(hours: hours).isOpen() {
+                openLabel.tintColor = .secondary700
+                openLabel.setTitleColor(.secondary700, for: .normal)
+                openLabel.setTitle("Open Now", for: .normal)
             } else {
-                openingHours.text = time
+                openLabel.tintColor = .primary700
+                openLabel.setTitleColor(.primary700, for: .normal)
+                openLabel.setTitle("Closed Now", for: .normal)
             }
-
+        } else {
+            // No Opening Hour
+            openLabel.tintColor = UIColor(hex: "222222")
+            openLabel.setTitleColor(UIColor(hex: "222222"), for: .normal)
+            openLabel.setTitle("No Opening Hours", for: .normal)
         }
 
         if place.phone != nil {

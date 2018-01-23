@@ -55,7 +55,7 @@ class PlaceVendorInstagramCard: PlaceCardView {
         if (!medias.isEmpty) {
             collectionView.snp.makeConstraints { make in
                 make.top.bottom.equalTo(self).inset(topBottom)
-                make.height.equalTo(150)
+                make.height.equalTo(150).priority(999)
                 make.left.right.equalTo(self)
             }
         } else {

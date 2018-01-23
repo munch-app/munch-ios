@@ -988,8 +988,7 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
             self.addSubview(averageButton)
             self.addSubview(expensiveButton)
 
-            cheapButton.snp.makeConstraints {
-                make in
+            cheapButton.snp.makeConstraints { make in
                 make.left.equalTo(self)
                 make.right.equalTo(averageButton.snp.left).inset(-18)
                 make.width.equalTo(averageButton.snp.width)
@@ -998,8 +997,7 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
                 make.top.bottom.equalTo(self)
             }
 
-            averageButton.snp.makeConstraints {
-                make in
+            averageButton.snp.makeConstraints { make in
                 make.left.equalTo(cheapButton.snp.right).inset(-18)
                 make.right.equalTo(expensiveButton.snp.left).inset(-18)
                 make.width.equalTo(cheapButton.snp.width)
@@ -1007,8 +1005,7 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
                 make.top.bottom.equalTo(self)
             }
 
-            expensiveButton.snp.makeConstraints {
-                make in
+            expensiveButton.snp.makeConstraints { make in
                 make.left.equalTo(averageButton.snp.right).inset(-18)
                 make.right.equalTo(self)
                 make.width.equalTo(cheapButton.snp.width)

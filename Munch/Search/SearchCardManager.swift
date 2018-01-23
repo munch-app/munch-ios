@@ -71,7 +71,9 @@ class SearchCardManager {
                 self.loading = false
                 self.query!.from = self.query!.from! + self.query!.size!
             } else {
-                self.cards = [SearchStaticErrorCard.create(meta: meta)]
+                self.cards.append(SearchStaticErrorCard.create(meta: meta))
+                self.more = false
+                self.loading = false
             }
             completion(meta, self)
         }

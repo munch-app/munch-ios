@@ -385,15 +385,13 @@ extension SearchController {
                 }
 
                 DispatchQueue.main.async {
-                    if (meta.isOk()) {
-                        if (manager.more) {
-                            self.cardTableView.reloadData()
-                        } else {
-                            let cell = self.cardTableView.cellForRow(at: .init(row: 0, section: 2)) as? SearchStaticLoadingCard
-                            cell?.stopAnimating()
-                        }
+                    // If error, error card will appear, no need to alert
+                    if (manager.more) {
+                        self.cardTableView.reloadData()
                     } else {
-                        self.present(meta.createAlert(), animated: true)
+                        let cell = self.cardTableView.cellForRow(at: .init(row: 0, section: 2)) as? SearchStaticLoadingCard
+                        // TODO double check if this implementation works
+                        cell?.stopAnimating()
                     }
                 }
             })

@@ -169,10 +169,12 @@ struct SearchQuery: Equatable {
 
     var filter: Filter
     var sort: Sort
+    var trigger: Trigger
 
     init() {
         filter = Filter()
         sort = Sort()
+        trigger = Trigger()
     }
 
     init(json: JSON) {
@@ -185,6 +187,7 @@ struct SearchQuery: Equatable {
 
         self.filter = Filter(json: json["filter"])
         self.sort = Sort(json: json["sort"])
+        self.trigger = Trigger(json: json["trigger"])
     }
 
     struct Filter {
@@ -262,6 +265,36 @@ struct SearchQuery: Equatable {
         }
     }
 
+    struct Trigger {
+        var querySearch: Int
+        var placeClick: Int
+        var placeImpression: Int
+        var PlacePosition: Int
+
+        init() {
+            self.querySearch = 0
+            self.placeClick = 0
+            self.placeImpression = 0
+            self.PlacePosition = 0
+        }
+
+        init(json: JSON) {
+            self.querySearch = json["querySearch"].int ?? 0
+            self.placeClick = json["placeClick"].int ?? 0
+            self.placeImpression = json["placeImpression"].int ?? 0
+            self.PlacePosition = json["PlacePosition"].int ?? 0
+        }
+
+        func toParams() -> Parameters {
+            var params = Parameters()
+            params["querySearch"] = querySearch
+            params["placeClick"] = placeClick
+            params["placeImpression"] = placeImpression
+            params["PlacePosition"] = PlacePosition
+            return params
+        }
+    }
+
     /**
      Map to Alamofire supported parameters encoding
      */
@@ -276,6 +309,7 @@ struct SearchQuery: Equatable {
 
         params["filter"] = filter.toParams()
         params["sort"] = sort.toParams()
+        params["trigger"] = trigger.toParams()
         return params
     }
 
