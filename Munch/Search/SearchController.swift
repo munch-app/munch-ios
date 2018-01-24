@@ -145,8 +145,8 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
 
                 DispatchQueue.main.asyncAfter(deadline: deadline) {
                     self.cardTableView.isScrollEnabled = true
-                    self.cardTableView.reloadData()
                     self.scrollsToTop(animated: animated)
+                    self.cardTableView.reloadData()
 
                     // If error, show alert
                     guard meta.isOk() else {
@@ -390,7 +390,6 @@ extension SearchController {
                         self.cardTableView.reloadData()
                     } else {
                         let cell = self.cardTableView.cellForRow(at: .init(row: 0, section: 2)) as? SearchStaticLoadingCard
-                        // TODO double check if this implementation works
                         cell?.stopAnimating()
                     }
                 }
