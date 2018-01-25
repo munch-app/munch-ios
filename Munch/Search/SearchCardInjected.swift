@@ -151,6 +151,7 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
         titleLabel.text = "No Results"
         titleLabel.font = UIFont.systemFont(ofSize: 26.0, weight: .semibold)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
+        titleLabel.numberOfLines = 0
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(self).inset(topBottom)
