@@ -480,6 +480,7 @@ fileprivate class PlaceDataArticleCardCell: UICollectionViewCell {
     private let articleImageView: ShimmerImageView = {
         let imageView = ShimmerImageView()
         imageView.layer.cornerRadius = 2
+        imageView.tintColor = .white
         return imageView
     }()
     private let articleTitleLabel: UILabel = {
@@ -527,7 +528,11 @@ fileprivate class PlaceDataArticleCardCell: UICollectionViewCell {
     }
 
     func render(article: Article) {
-        articleImageView.render(images: article.thumbnail)
+        articleImageView.render(images: article.thumbnail) { (image, error, type, url) -> Void in
+            if image == nil {
+                self.articleImageView.render(named: "RIP-No-Image")
+            }
+        }
         articleTitleLabel.text = article.title
         articleBrandLabel.setTitle(article.brand, for: .normal)
     }

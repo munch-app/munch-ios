@@ -39,7 +39,11 @@ class ShimmerImageView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
+    func render(named: String) {
+        self.imageView.image = UIImage(named: named)
+    }
+
     func render(images: JSON?, completionHandler: CompletionHandler? = nil) {
         render(images: images?.dictionaryObject as? [String: String], completionHandler: completionHandler)
     }

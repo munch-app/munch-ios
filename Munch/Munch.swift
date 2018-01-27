@@ -239,9 +239,7 @@ public class MunchImageView: UIImageView {
     public override func layoutSubviews() {
         super.layoutSubviews()
         self.size = frameSize()
-        if self.image == nil {
-            self.tryRender()
-        }
+        self.tryRender()
     }
 
     /**
