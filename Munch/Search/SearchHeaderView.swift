@@ -99,6 +99,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
             searchQuery.filter.hour.close = nil
             self.controller.render(searchQuery: searchQuery)
         })
+        addAlert(removeAll: alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         self.controller.present(alert, animated: true)
     }
@@ -112,6 +113,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
             searchQuery.filter.price.max = nil
             self.controller.render(searchQuery: searchQuery)
         })
+        addAlert(removeAll: alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         self.controller.present(alert, animated: true)
     }
@@ -123,13 +125,23 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
             searchQuery.filter.tag.positives.remove(name)
             self.controller.render(searchQuery: searchQuery)
         })
+        addAlert(removeAll: alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         self.controller.present(alert, animated: true)
     }
 
+    func addAlert(removeAll alert: UIAlertController) {
+        alert.addAction(UIAlertAction(title: "Remove All", style: .destructive) { action in
+            var searchQuery = SearchQuery()
+            self.controller.contentView(search: searchQuery)
+            self.searchQueryHistories.removeAll()
+            self.render(query: searchQuery)
+        })
+    }
+
     func render(query: SearchQuery) {
         // Save a copy here if don't already exist for navigation
-        if (!searchQueryHistories.contains(query)) {
+        if (searchQueryHistories.last != query) {
             searchQueryHistories.append(query)
         }
 

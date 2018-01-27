@@ -123,7 +123,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     }
 
     func contentView(search searchQuery: SearchQuery, animated: Bool = true) {
-        func reset() {
+        func resetView() {
             self.cardManager = nil
             self.cardTableView.reloadData()
             self.cardTableView.isScrollEnabled = false
@@ -134,7 +134,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
             // Save a copy locally, cannot remove
             self.searchQuery = searchQuery
             // Reset ContentView first
-            reset()
+            resetView()
 
             // 2 Seconds lag for all searches
             let deadline = DispatchTime.now() + 1.5
@@ -158,7 +158,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         }
 
         // Reset ContentView first
-        reset()
+        resetView()
 
         // Check if Location is Enabled
         if MunchLocation.isEnabled {
