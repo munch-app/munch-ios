@@ -210,13 +210,9 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
 }
 
 class SearchContainersCard: UITableViewCell, SearchCardView {
-    private static let preferredOrder = [
-        ("Shopping Mall", "Malls"),
-        ("Hawker Centre", "Hawkers"),
-        ("Coffeeshop", "Coffeeshops")
-    ]
     private let titleLabel: UILabel = {
         let label = UILabel()
+        label.text = "Landmarks"
         label.font = UIFont.systemFont(ofSize: 24.0, weight: .semibold)
         label.textColor = UIColor.black.withAlphaComponent(0.72)
         return label
@@ -263,7 +259,6 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
 
     func render(card: SearchCard, controller: SearchController) {
         self.controller = controller
-        self.titleLabel.text = getTitle(card: card)
 
         let containers = card["containers"].map({ Container(json: $0.1) })
         if self.containers != containers {
@@ -271,36 +266,6 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
             self.collectionView.setContentOffset(.zero, animated: false)
             self.collectionView.reloadData()
         }
-    }
-
-    private func getTitle(card: SearchCard) -> String? {
-        let types = Set(card["types"].map({ $0.1.stringValue }))
-        var typeNames = [String]()
-
-        for preferred in SearchContainersCard.preferredOrder {
-            if (types.contains(preferred.0)) {
-                typeNames.append(preferred.1)
-            }
-        }
-
-        if (typeNames.count < 3) {
-            return typeNames.joined(separator: " and ")
-        }
-
-        var nameBuilder = ""
-
-        for (index, name) in typeNames.enumerated() {
-            if (index == typeNames.count - 1) {
-                // Last
-                nameBuilder = nameBuilder + " and " + name
-            } else if (index == 0) {
-                // First
-                nameBuilder = name
-            } else {
-                nameBuilder = nameBuilder + ", " + name
-            }
-        }
-        return nameBuilder
     }
 
     required init?(coder aDecoder: NSCoder) {

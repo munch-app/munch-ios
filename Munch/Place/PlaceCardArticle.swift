@@ -15,7 +15,7 @@ import SwiftyJSON
 
 class PlaceHeaderArticleCard: PlaceTitleCardView {
     override func didLoad(card: PlaceCard) {
-        self.title = "Articles"
+        self.title = "Notable Articles"
         self.moreButton.isHidden = false
     }
 
