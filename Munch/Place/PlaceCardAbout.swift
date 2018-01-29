@@ -30,13 +30,13 @@ class PlaceBasicDescriptionCard: PlaceCardView {
         self.addSubview(descriptionLabel)
         descriptionLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
-            make.top.bottom.equalTo(self).inset(topBottom)
+            make.top.bottom.equalTo(self).inset(topBottom).priority(999)
         }
 
         descriptionLabel.text = card["description"].string
         descriptionLabel.font = UIFont.systemFont(ofSize: 14.0, weight: .regular)
         descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
-        descriptionLabel.numberOfLines = 0
+        descriptionLabel.numberOfLines = 4
     }
 
     func countLines(label: UILabel) -> Int {
@@ -49,6 +49,16 @@ class PlaceBasicDescriptionCard: PlaceCardView {
         return Int(ceil(CGFloat(labelSize.height) / label.font.lineHeight))
     }
 
+    override func didTap() {
+        super.didTap()
+        if descriptionLabel.numberOfLines == 0 {
+            descriptionLabel.numberOfLines = 4
+        } else {
+            descriptionLabel.numberOfLines = 0
+        }
+
+    }
+
     override class var cardId: String? {
         return "basic_Description_20171109"
     }
@@ -56,7 +66,7 @@ class PlaceBasicDescriptionCard: PlaceCardView {
 
 class PlaceBasicPhoneCard: PlaceCardView, SFSafariViewControllerDelegate {
     private let phoneTitleLabel = UILabel()
-    private let phoneLabel = UILabel()
+    private let phoneLabel = SRCopyableLabel()
     private var phone: String?
 
     override func didLoad(card: PlaceCard) {
@@ -143,7 +153,7 @@ class PlaceBasicPriceCard: PlaceCardView {
 
 class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
     private let websiteTitleLabel = UILabel()
-    private let websiteLabel = UILabel()
+    private let websiteLabel = SRCopyableLabel()
     private var websiteUrl: String?
 
     override func didLoad(card: PlaceCard) {

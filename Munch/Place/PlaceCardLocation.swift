@@ -113,7 +113,7 @@ class PlaceBasicAddressCard: PlaceCardView {
     }
 }
 
-class AddressLabel: UIView {
+class AddressLabel: SRCopyableView {
     let lineOneLabel = UILabel()
     let lineTwoLabel = UILabel()
 
@@ -139,6 +139,10 @@ class AddressLabel: UIView {
         }
     }
 
+    override var copyableText: String? {
+        return self.lineOneLabel.text
+    }
+
     func render(card: PlaceCard) {
         render(lineOne: card["address"].string)
         let landmarks = card["landmarks"].flatMap({ Place.Location.Landmark(json: $0.1) })
@@ -148,7 +152,6 @@ class AddressLabel: UIView {
     func render(place: Place) {
         render(lineOne: place.location.address)
         render(lineTwo: place.location.latLng, landmarks: place.location.landmarks)
-
     }
 
     private func render(lineOne address: String?) {
