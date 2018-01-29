@@ -35,8 +35,8 @@ class SearchLocationController: UIViewController, UIGestureRecognizerDelegate {
         self.onExtensionDismiss = extensionDismiss
         super.init(nibName: nil, bundle: nil)
 
-        self.registerCell()
         self.initViews()
+        self.registerCell()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -47,6 +47,12 @@ class SearchLocationController: UIViewController, UIGestureRecognizerDelegate {
         navigationController?.navigationBar.shadowImage = UIImage()
 
         self.headerView.textField.becomeFirstResponder()
+
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.tableView.reloadData()
     }
 
     override func viewWillDisappear(_ animated: Bool) {

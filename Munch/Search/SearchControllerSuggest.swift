@@ -69,6 +69,7 @@ class SearchSuggestController: UIViewController {
         if suggestResults != nil {
             self.headerView.textField.becomeFirstResponder()
         }
+        self.tableView.reloadData()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -127,7 +128,7 @@ class SearchSuggestController: UIViewController {
 
     @objc func textFieldDidCommit(textField: UITextField) {
         if let text = textField.text, text.count >= 2 {
-            MunchApi.search.suggest(text: text, size: 20, callback: { (meta, results) in
+            MunchApi.search.suggest(text: text, size: 20, latLng: MunchLocation.lastLatLng, callback: { (meta, results) in
                 self.suggestResults = results.flatMap({ SuggestType.map(result: $0) })
                 self.tableView.reloadData()
             })
@@ -210,7 +211,11 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
 
         switch item {
         case let .place(place):
-            cell.render(title: place.name, type: "RESTAURANT")
+            if let neighbourhood = place.location.neighbourhood {
+                cell.render(title: "\(place.name ?? "") (\(neighbourhood))", type: "RESTAURANT")
+            } else {
+                cell.render(title: place.name, type: "RESTAURANT")
+            }
         case let .location(location):
             cell.render(title: location.name, type: "LOCATION")
         case let .tag(tag):

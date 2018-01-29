@@ -308,6 +308,7 @@ extension SearchController {
         // Register Search Cards
         register(SearchHeaderCard.self)
         register(SearchPlaceCard.self)
+        register(SearchSmallPlaceCard.self)
 
         register(SearchContainersCard.self)
         register(SearchNoLocationCard.self)
@@ -354,11 +355,17 @@ extension SearchController {
         switch indexPath.section {
         case 1:
             let card = cards[indexPath.row]
-            if card.cardId == SearchPlaceCard.cardId, let placeId = card["placeId"].string {
-                DispatchQueue.main.async {
-                    let controller = PlaceViewController(placeId: placeId)
-                    self.navigationController!.pushViewController(controller, animated: true)
+            switch card.cardId {
+            case SearchPlaceCard.cardId:
+                fallthrough
+            case SearchSmallPlaceCard.cardId:
+                if let placeId = card["placeId"].string {
+                    DispatchQueue.main.async {
+                        let controller = PlaceViewController(placeId: placeId)
+                        self.navigationController!.pushViewController(controller, animated: true)
+                    }
                 }
+            default: break
             }
         default: break
         }

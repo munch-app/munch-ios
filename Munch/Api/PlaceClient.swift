@@ -173,6 +173,22 @@ struct Place: SearchResult, Equatable {
             self.latLng = json["latLng"].string
         }
 
+        func toParams() -> Parameters {
+            // This is not completed
+            var params = Parameters()
+            params["street"] = street
+            params["address"] = address
+            params["unitNumber"] = unitNumber
+
+            params["neighbourhood"] = neighbourhood
+            params["city"] = city
+            params["country"] = country
+
+            params["postal"] = postal
+            params["latLng"] = latLng
+            return params
+        }
+
         struct Landmark {
             var name: String?
             var type: String?
@@ -348,6 +364,7 @@ struct Place: SearchResult, Equatable {
         var params = Parameters()
         params["id"] = id
         params["name"] = name
+        params["location"] = location.toParams()
         params["dataType"] = "Place"
         return params
     }
