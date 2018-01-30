@@ -47,12 +47,6 @@ class SearchLocationController: UIViewController, UIGestureRecognizerDelegate {
         navigationController?.navigationBar.shadowImage = UIImage()
 
         self.headerView.textField.becomeFirstResponder()
-
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        self.tableView.reloadData()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -212,6 +206,10 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
         case .recentLocation(let location):
             select(result: location)
         }
+    }
+
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        self.headerView.textField.resignFirstResponder()
     }
 }
 

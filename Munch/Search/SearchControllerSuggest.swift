@@ -64,14 +64,6 @@ class SearchSuggestController: UIViewController {
         }
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if suggestResults != nil {
-            self.headerView.textField.becomeFirstResponder()
-        }
-        self.tableView.reloadData()
-    }
-
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.headerView.textField.resignFirstResponder()
@@ -257,6 +249,10 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
             self.onExtensionDismiss(searchQuery)
             self.dismiss(animated: true)
         }
+    }
+
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        self.headerView.textField.resignFirstResponder()
     }
 }
 
