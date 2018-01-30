@@ -51,6 +51,11 @@ class SearchCardManager {
         }
     }
 
+    public func replace(query: SearchQuery) {
+        self.query = query
+        self.more = true
+    }
+
     private func append(contents cards: [SearchCard]) {
         let filtered = cards.filter {
             !self.cards.contains($0)

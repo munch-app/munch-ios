@@ -29,7 +29,7 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
         self.addSubview(actionButton)
 
         titleLabel.text = "No Location"
-        titleLabel.font = UIFont.systemFont(ofSize: 26.0, weight: .semibold)
+        titleLabel.font = UIFont.systemFont(ofSize: 24.0, weight: .semibold)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
@@ -99,7 +99,7 @@ class SearchNoResultCard: UITableViewCell, SearchCardView {
         self.addSubview(descriptionLabel)
 
         titleLabel.text = "No Results"
-        titleLabel.font = UIFont.systemFont(ofSize: 26.0, weight: .semibold)
+        titleLabel.font = UIFont.systemFont(ofSize: 24.0, weight: .semibold)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
         titleLabel.numberOfLines = 0
         titleLabel.snp.makeConstraints { make in
@@ -132,7 +132,6 @@ class SearchNoResultCard: UITableViewCell, SearchCardView {
 }
 
 class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
-    private let titleImage = UIImageView()
     private let titleLabel = UILabel()
     private let descriptionLabel = UILabel()
     private let actionButton = UIButton()
@@ -143,13 +142,11 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
-        self.addSubview(titleImage)
         self.addSubview(titleLabel)
         self.addSubview(descriptionLabel)
-        self.addSubview(actionButton)
 
         titleLabel.text = "No Results"
-        titleLabel.font = UIFont.systemFont(ofSize: 26.0, weight: .semibold)
+        titleLabel.font = UIFont.systemFont(ofSize: 24.0, weight: .semibold)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
         titleLabel.numberOfLines = 0
         titleLabel.snp.makeConstraints { make in
@@ -164,26 +161,8 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
         descriptionLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(titleLabel.snp.bottom).inset(-20)
+            make.bottom.equalTo(self).inset(topBottom)
         }
-
-        actionButton.layer.cornerRadius = 3
-        actionButton.backgroundColor = .primary
-        actionButton.setTitle("Search Anywhere", for: .normal)
-        actionButton.contentEdgeInsets.left = 32
-        actionButton.contentEdgeInsets.right = 32
-        actionButton.setTitleColor(.white, for: .normal)
-        actionButton.titleLabel!.font = UIFont.systemFont(ofSize: 18, weight: .medium)
-        actionButton.snp.makeConstraints { (make) in
-            make.left.equalTo(self).inset(leftRight)
-            make.top.equalTo(descriptionLabel.snp.bottom).inset(-26)
-            make.height.equalTo(48)
-            make.bottom.equalTo(self).inset(24)
-        }
-        actionButton.addTarget(self, action: #selector(onAction(button:)), for: .touchUpInside)
-    }
-
-    @objc func onAction(button: UIButton) {
-        controller.render(searchQuery: self.searchQuery)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -191,16 +170,14 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
     }
 
     func render(card: SearchCard, controller: SearchController) {
-        self.searchQuery = SearchQuery(json: card["searchQuery"])
         self.controller = controller
 
-        let locationName = card["locationName"].string ?? "Location"
-        if (locationName == "Nearby") {
-            titleLabel.text = "No Results found Nearby"
-            descriptionLabel.text = "We couldn't find anything near you. Try searching anywhere instead?"
+        if let locationName = card["locationName"].string {
+            titleLabel.text = "No Results in ‘\(locationName)’"
+            descriptionLabel.text = "We could find results in ‘\(locationName)’ here are results for ‘Anywhere’"
         } else {
-            titleLabel.text = "No Results in \(locationName)"
-            descriptionLabel.text = "We couldn't find anything in \(locationName). Try searching anywhere instead?"
+            titleLabel.text = "No Results found ‘Nearby’"
+            descriptionLabel.text = "We could find results in ‘Nearby’ here are results for ‘Anywhere’"
         }
     }
 
@@ -392,5 +369,33 @@ class SearchHeaderCard: UITableViewCell, SearchCardView {
 
     static var cardId: String {
         return "injected_Header_20180120"
+    }
+}
+
+class SearchQueryReplaceCard: UITableViewCell, SearchCardView {
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+
+        let view = UIView()
+        self.addSubview(view)
+        view.snp.makeConstraints { make in
+            make.height.equalTo(1).priority(999)
+            make.edges.equalTo(self)
+        }
+    }
+
+    func render(card: SearchCard, controller: SearchController) {
+        let query = SearchQuery(json: card["searchQuery"])
+        controller.cardManager?.replace(query: query)
+
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    static var cardId: String {
+        return "injected_QueryReplace_20180130"
     }
 }

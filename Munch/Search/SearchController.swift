@@ -30,7 +30,7 @@ class SearchNavigationalController: UINavigationController, UINavigationControll
 
 class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     private let cardTableView = UITableView()
-    private var headerView = SearchHeaderView()
+    let headerView = SearchHeaderView()
     private let refreshControl = UIRefreshControl()
 
     private let backIndicatorView = BackIndicatorView()
@@ -314,6 +314,7 @@ extension SearchController {
         register(SearchNoLocationCard.self)
         register(SearchNoResultCard.self)
         register(SearchNoResultLocationCard.self)
+        register(SearchQueryReplaceCard.self)
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -337,10 +338,12 @@ extension SearchController {
         case 0:
             return cardTableView.dequeueReusableCell(withIdentifier: SearchStaticHeight16Card.cardId)!
         case 1:
-            let card = cards[indexPath.row]
-            if let cardView = cardTableView.dequeueReusableCell(withIdentifier: card.cardId) as? SearchCardView {
-                cardView.render(card: card, controller: self)
-                return cardView as! UITableViewCell
+            // Index out of bound in debug mode
+            if let card = cards.get(indexPath.row) {
+                if let cardView = cardTableView.dequeueReusableCell(withIdentifier: card.cardId) as? SearchCardView {
+                    cardView.render(card: card, controller: self)
+                    return cardView as! UITableViewCell
+                }
             }
         case 2: // Loading card
             return cardTableView.dequeueReusableCell(withIdentifier: SearchStaticLoadingCard.cardId)!
