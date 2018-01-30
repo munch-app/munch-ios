@@ -20,7 +20,7 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         let label = UIButton()
         label.titleLabel?.font = UIFont.systemFont(ofSize: 13.0, weight: .regular)
         label.setTitleColor(.white, for: .normal)
-        label.backgroundColor = UIColor.black.withAlphaComponent(0.55)
+        label.backgroundColor = UIColor.black.withAlphaComponent(0.35)
         label.contentEdgeInsets.top = 3
         label.contentEdgeInsets.bottom = 3
         label.contentEdgeInsets.left = 7
