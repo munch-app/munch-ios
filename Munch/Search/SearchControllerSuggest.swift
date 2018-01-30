@@ -204,7 +204,7 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
         switch item {
         case let .place(place):
             if let neighbourhood = place.location.neighbourhood {
-                cell.render(title: "\(place.name ?? "") (\(neighbourhood))", type: "RESTAURANT")
+                cell.render(title: place.name, type: neighbourhood.uppercased())
             } else {
                 cell.render(title: place.name, type: "RESTAURANT")
             }
