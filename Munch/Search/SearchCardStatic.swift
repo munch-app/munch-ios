@@ -232,6 +232,7 @@ class SearchStaticEmptyCard: UITableViewCell, SearchCardView {
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
         self.backgroundColor = .white
 
         let view = UIView()
@@ -259,7 +260,7 @@ class SearchStaticHeight16Card: UITableViewCell, SearchCardView {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
-        self.backgroundColor = UIColor.clear
+        self.backgroundColor = .white
 
         let view = UIView()
         self.addSubview(view)
