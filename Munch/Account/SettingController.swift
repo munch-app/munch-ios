@@ -128,6 +128,7 @@ enum SettingCellType {
     // Profile: Images, Person Name
     case loading
     case instagramConnect
+    case feedback
     case logout
 }
 
@@ -139,12 +140,16 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
 
         register(cellClass: SettingInstagramCell.self)
         register(cellClass: SettingLogoutCell.self)
+        register(cellClass: SettingFeedbackCell.self)
     }
 
     private var items: [(String?, [SettingCellType])] {
         return [
             ("Content Partner", [SettingCellType.instagramConnect]),
-            ("Account", [SettingCellType.logout])
+            ("Account", [
+                SettingCellType.feedback,
+                SettingCellType.logout,
+            ])
         ]
     }
 
@@ -163,7 +168,7 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header = view as! UITableViewHeaderFooterView
         header.tintColor = .white
-        header.textLabel!.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.medium)
+        header.textLabel!.font = UIFont.systemFont(ofSize: 22, weight: .medium)
         header.textLabel!.textColor = UIColor.black.withAlphaComponent(0.85)
     }
 
@@ -180,6 +185,8 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
             return dequeue(cellClass: SettingInstagramCell.self)
         case .logout:
             return dequeue(cellClass: SettingLogoutCell.self)
+        case .feedback:
+            return dequeue(cellClass: SettingFeedbackCell.self)
         default:
             return UITableViewCell()
         }
@@ -197,6 +204,10 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
             let safari = SFSafariViewController(url: URL(string: "http://partner.munchapp.co")!)
             safari.delegate = self
             present(safari, animated: true, completion: nil)
+        case .feedback:
+            if let url = URL(string: "mailto:feedback@munchapp.co") {
+                UIApplication.shared.open(url)
+            }
         default:
             return
         }
@@ -205,26 +216,37 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
 
 fileprivate class SettingInstagramCell: UITableViewCell {
     let titleView = UILabel()
-    let connectLabel = UILabel()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.addSubview(titleView)
-        self.addSubview(connectLabel)
 
-        titleView.text = "Instagram Account"
-        titleView.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        titleView.text = "Manage Instagram Partner"
+        titleView.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         titleView.textColor = .black
         titleView.snp.makeConstraints { make in
             make.left.equalTo(self).inset(24)
             make.top.bottom.equalTo(self).inset(12)
         }
+    }
 
-        connectLabel.text = "Manage"
-        connectLabel.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-        connectLabel.textColor = .primary
-        connectLabel.snp.makeConstraints { make in
-            make.right.equalTo(self).inset(24)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+fileprivate class SettingFeedbackCell: UITableViewCell {
+    let titleView = UILabel()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.addSubview(titleView)
+
+        titleView.text = "Send Feedback"
+        titleView.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        titleView.textColor = .black
+        titleView.snp.makeConstraints { make in
+            make.left.equalTo(self).inset(24)
             make.top.bottom.equalTo(self).inset(12)
         }
     }
@@ -242,7 +264,7 @@ fileprivate class SettingLogoutCell: UITableViewCell {
         self.addSubview(titleView)
 
         titleView.text = "Logout"
-        titleView.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        titleView.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         titleView.textColor = .black
         titleView.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
