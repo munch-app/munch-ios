@@ -259,6 +259,13 @@ struct Place: SearchResult, Equatable {
             private let outFormatter = DateFormatter()
             private let dayFormatter = DateFormatter()
 
+            public enum Open {
+                case open
+                case opening
+                case closed
+                case none
+            }
+
             init() {
                 inFormatter.locale = Locale(identifier: "en_US_POSIX")
                 inFormatter.dateFormat = "HH:mm"
@@ -299,23 +306,23 @@ struct Place: SearchResult, Equatable {
                 return Int(time.replacingOccurrences(of: ":", with: ""))
             }
 
-            class func isBetween(hour: Place.Hour, date: Date) -> Bool {
+            class func isBetween(hour: Place.Hour, date: Date, opening: Int = 0) -> Bool {
                 let now = timeAs(int: instance.inFormatter.string(from: date))!
                 let open = timeAs(int: hour.open)
                 let close = timeAs(int: hour.close)
 
                 if let open = open, let close = close {
                     if (close < open) {
-                        return open <= now && now <= 2400
+                        return open - opening <= now && now <= 2400
                     }
-                    return open <= now && now <= close
+                    return open - opening <= now && now <= close
                 }
                 return false
             }
 
-            class func isOpen(hours: [Hour]) -> Bool? {
+            class func isOpen(hours: [Hour], opening: Int = 30) -> Open {
                 if (hours.isEmpty) {
-                    return nil
+                    return Open.none
                 }
 
                 let date = Date()
@@ -327,24 +334,13 @@ struct Place: SearchResult, Equatable {
 
                 for hour in currentHours {
                     if (isBetween(hour: hour, date: date)) {
-                        return true
+                        return Open.open
+                    } else if isBetween(hour: hour, date: date, opening: 30) {
+                        return Open.opening
                     }
                 }
 
-                let ytdDay = day(addingDay: -1).lowercased()
-                let ytdHours = hours.filter {
-                    $0.day == ytdDay
-                }
-                for hour in ytdHours {
-                    let open = timeAs(int: hour.open)
-                    let close = timeAs(int: hour.close)
-                    if let open = open, let close = close {
-                        if (close < open) {
-                            return 0 <= now && now <= close
-                        }
-                    }
-                }
-                return false
+                return Open.closed
             }
         }
     }
@@ -352,11 +348,11 @@ struct Place: SearchResult, Equatable {
     /**
      Check whether place is open now based on hours in Place
      */
-    func isOpen() -> Bool? {
+    func isOpen() -> Hour.Formatter.Open {
         if let hours = hours {
             return Hour.Formatter.isOpen(hours: hours)
         }
-        return nil
+        return .none
     }
 
     func toParams() -> Parameters {
@@ -408,8 +404,8 @@ class BusinessHour {
         return day == Place.Hour.Formatter.dayNow().lowercased()
     }
 
-    func isOpen() -> Bool {
-        return Place.Hour.Formatter.isOpen(hours: hours) ?? false
+    func isOpen() -> Place.Hour.Formatter.Open {
+        return Place.Hour.Formatter.isOpen(hours: hours)
     }
 
     var today: String {

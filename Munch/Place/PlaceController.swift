@@ -368,11 +368,17 @@ fileprivate class PlaceBottomView: UIView {
         }
 
         if let hours = place.hours, !hours.isEmpty {
-            if BusinessHour(hours: hours).isOpen() {
+            switch BusinessHour(hours: hours).isOpen() {
+            case .open:
                 openLabel.tintColor = .secondary700
                 openLabel.setTitleColor(.secondary700, for: .normal)
                 openLabel.setTitle("Open Now", for: .normal)
-            } else {
+            case .opening:
+                openLabel.tintColor = .secondary700
+                openLabel.setTitleColor(.secondary700, for: .normal)
+                openLabel.setTitle("Opening Soon", for: .normal)
+            case .closed:fallthrough
+            case .none:
                 openLabel.tintColor = .primary700
                 openLabel.setTitleColor(.primary700, for: .normal)
                 openLabel.setTitle("Closed Now", for: .normal)

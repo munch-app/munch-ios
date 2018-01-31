@@ -340,10 +340,15 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
         dayView.isHidden = true
 
         let attributedText = NSMutableAttributedString()
-        if hours.isOpen() {
+        switch hours.isOpen() {
+        case .opening:
+            attributedText.append("Opening Soon\n".set(style: PlaceBasicBusinessHourCard.openStyle))
+        case .open:
             attributedText.append("Open Now\n".set(style: PlaceBasicBusinessHourCard.openStyle))
-        } else {
+        case .closed:fallthrough
+        case .none:
             attributedText.append("Closed Now\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
+
         }
         attributedText.append(hours.today.set(style: PlaceBasicBusinessHourCard.hourStyle))
         openLabel.attributedText = attributedText
@@ -409,9 +414,14 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
         func render(hours: BusinessHour) {
             func createLine(day: String, dayText: String) -> NSAttributedString {
                 if hours.isToday(day: day) {
-                    if hours.isOpen() {
+                    switch hours.isOpen() {
+                    case .opening:
+                        fallthrough
+                    case .open:
                         return "\(dayText)\n" + hours[day].set(style: PlaceBasicBusinessHourCard.openStyle)
-                    } else {
+                    case .closed:
+                        fallthrough
+                    case .none:
                         return "\(dayText)\n" + hours[day].set(style: PlaceBasicBusinessHourCard.closeStyle)
                     }
                 } else {

@@ -258,20 +258,20 @@ class SearchPlaceCardBottomView: UIView {
         }
 
         // Open Now
-        let hours = card["hours"].flatMap {
-            Place.Hour(json: $0.1)
+        let hours = card["hours"].flatMap({ Place.Hour(json: $0.1) })
+        switch Place.Hour.Formatter.isOpen(hours: hours) {
+        case .opening:
+            line.append(NSMutableAttributedString(string: " • ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: .ultraLight)]))
+            line.append(NSMutableAttributedString(string: "Opening Soon", attributes: [NSAttributedStringKey.foregroundColor: UIColor.secondary]))
+        case .open:
+            line.append(NSMutableAttributedString(string: " • ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: .ultraLight)]))
+            line.append(NSMutableAttributedString(string: "Open Now", attributes: [NSAttributedStringKey.foregroundColor: UIColor.secondary]))
+        case .closed:
+            line.append(NSMutableAttributedString(string: " • ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: .ultraLight)]))
+            line.append(NSMutableAttributedString(string: "Closed Now", attributes: [NSAttributedStringKey.foregroundColor: UIColor.primary]))
+        case .none:
+            break
         }
-        if let open = Place.Hour.Formatter.isOpen(hours: hours) {
-            line.append(NSMutableAttributedString(string: " • ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.ultraLight)]))
-            if (open) {
-                let onFormat = [NSAttributedStringKey.foregroundColor: UIColor.secondary]
-                line.append(NSMutableAttributedString(string: "Open Now", attributes: onFormat))
-            } else {
-                let onFormat = [NSAttributedStringKey.foregroundColor: UIColor.primary]
-                line.append(NSMutableAttributedString(string: "Closed Now", attributes: onFormat))
-            }
-        }
-
         self.locationLabel.attributedText = line
     }
 
