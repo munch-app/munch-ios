@@ -86,17 +86,26 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
             SourcedImage(json: $0.1)
         }
 
-        if controller.searchQuery.filter.containers?.isEmpty ?? true, let containerName = containers.get(0)?.name {
-            containerLabel.setTitle(containerName, for: .normal)
-            containerLabel.isHidden = false
-        } else {
-            containerLabel.isHidden = true
-        }
+        self.render(containers: containers)
 
         topImageView.render(sourcedImage: images.get(0))
         bottomView.render(card: card)
         setNeedsLayout()
         layoutIfNeeded()
+    }
+
+    private func render(containers: [Container]) {
+        if controller.searchQuery.filter.containers?.isEmpty ?? true {
+            for container in containers {
+                if let type = container.type, type == "polygon", let name = container.name {
+                    containerLabel.setTitle(name, for: .normal)
+                    containerLabel.isHidden = false
+                    return
+                }
+            }
+        }
+
+        containerLabel.isHidden = true
     }
 
     @objc func onContainerApply(_ sender: Any) {

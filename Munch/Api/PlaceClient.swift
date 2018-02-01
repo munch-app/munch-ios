@@ -326,7 +326,6 @@ struct Place: SearchResult, Equatable {
                 }
 
                 let date = Date()
-                let now = timeAs(int: instance.inFormatter.string(from: date))!
                 let currentDay = day().lowercased()
                 let currentHours = hours.filter {
                     $0.day == currentDay
