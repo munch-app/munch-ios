@@ -345,6 +345,8 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
             attributedText.append("Opening Soon\n".set(style: PlaceBasicBusinessHourCard.openStyle))
         case .open:
             attributedText.append("Open Now\n".set(style: PlaceBasicBusinessHourCard.openStyle))
+        case .closing:
+            attributedText.append("Closing Soon\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
         case .closed:fallthrough
         case .none:
             attributedText.append("Closed Now\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
@@ -417,6 +419,8 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
                     switch hours.isOpen() {
                     case .opening:
                         fallthrough
+                    case .closing:
+                         fallthrough
                     case .open:
                         return "\(dayText)\n" + hours[day].set(style: PlaceBasicBusinessHourCard.openStyle)
                     case .closed:

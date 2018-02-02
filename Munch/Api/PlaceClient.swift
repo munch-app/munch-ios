@@ -263,6 +263,7 @@ struct Place: SearchResult, Equatable {
                 case open
                 case opening
                 case closed
+                case closing
                 case none
             }
 
@@ -306,16 +307,16 @@ struct Place: SearchResult, Equatable {
                 return Int(time.replacingOccurrences(of: ":", with: ""))
             }
 
-            class func isBetween(hour: Place.Hour, date: Date, opening: Int = 0) -> Bool {
+            class func isBetween(hour: Place.Hour, date: Date, opening: Int = 0, closing: Int = 0) -> Bool {
                 let now = timeAs(int: instance.inFormatter.string(from: date))!
                 let open = timeAs(int: hour.open)
                 let close = timeAs(int: hour.close)
 
                 if let open = open, let close = close {
                     if (close < open) {
-                        return open - opening <= now && now <= 2400
+                        return open - opening <= now && now + closing <= 2400
                     }
-                    return open - opening <= now && now <= close
+                    return open - opening <= now && now + closing <= close
                 }
                 return false
             }
@@ -333,6 +334,9 @@ struct Place: SearchResult, Equatable {
 
                 for hour in currentHours {
                     if (isBetween(hour: hour, date: date)) {
+                        if (!isBetween(hour: hour, date: date, closing: 30)) {
+                            return Open.closing
+                        }
                         return Open.open
                     } else if isBetween(hour: hour, date: date, opening: 30) {
                         return Open.opening

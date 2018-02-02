@@ -377,6 +377,10 @@ fileprivate class PlaceBottomView: UIView {
                 openLabel.tintColor = .secondary700
                 openLabel.setTitleColor(.secondary700, for: .normal)
                 openLabel.setTitle("Opening Soon", for: .normal)
+            case .closing:
+                openLabel.tintColor = .primary700
+                openLabel.setTitleColor(.primary700, for: .normal)
+                openLabel.setTitle("Closing Soon", for: .normal)
             case .closed:fallthrough
             case .none:
                 openLabel.tintColor = .primary700

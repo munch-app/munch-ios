@@ -278,6 +278,9 @@ class SearchPlaceCardBottomView: UIView {
         case .closed:
             line.append(NSMutableAttributedString(string: " • ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: .ultraLight)]))
             line.append(NSMutableAttributedString(string: "Closed Now", attributes: [NSAttributedStringKey.foregroundColor: UIColor.primary]))
+        case .closing:
+            line.append(NSMutableAttributedString(string: " • ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: .ultraLight)]))
+            line.append(NSMutableAttributedString(string: "Closing Soon", attributes: [NSAttributedStringKey.foregroundColor: UIColor.primary]))
         case .none:
             break
         }
