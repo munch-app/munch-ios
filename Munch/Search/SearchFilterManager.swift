@@ -178,8 +178,7 @@ class SearchFilterManager {
                 searchQuery.filter.hour.open = "18:30"
                 searchQuery.filter.hour.close = "20:00"
             case "Supper":
-                searchQuery.filter.hour.open = "22:00"
-                searchQuery.filter.hour.close = "23:59"
+                fallthrough
             default:
                 break
             }
