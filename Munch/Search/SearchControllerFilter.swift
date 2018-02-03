@@ -784,13 +784,6 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
         label.textColor = UIColor.black.withAlphaComponent(0.75)
         return label
     }()
-    private let averageLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Average price in selected area is $25 per pax"
-        label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        label.textColor = UIColor.black.withAlphaComponent(0.75)
-        return label
-    }()
     private let loadingIndicator: NVActivityIndicatorView = {
         let indicator = NVActivityIndicatorView(frame: .zero, type: .ballBeat, color: .primary700, padding: 10)
         indicator.startAnimating()
@@ -812,7 +805,6 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
         self.selectionStyle = .none
         self.addSubview(priceSlider)
         self.addSubview(headerLabel)
-        self.addSubview(averageLabel)
         self.addSubview(priceButtons)
         self.addSubview(loadingIndicator)
 
@@ -824,11 +816,6 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
         headerLabel.snp.makeConstraints { (make) in
             make.left.right.equalTo(self).inset(24)
             make.top.equalTo(self).inset(12)
-        }
-
-        averageLabel.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(24)
-            make.top.equalTo(headerLabel.snp.bottom).inset(-10)
             make.bottom.equalTo(priceSlider.snp.top).inset(-12)
         }
 
@@ -856,15 +843,12 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
         self.priceRangeInArea = nil
         self.setLoading(true)
 
-        let deadline = DispatchTime.now() + 1
+        let deadline = DispatchTime.now() + 0.5
         filterManager.getPriceInArea { metaJSON, priceRangeInArea in
             self.priceRangeInArea = priceRangeInArea
 
             if metaJSON.isOk(), let priceRangeInArea = priceRangeInArea {
                 DispatchQueue.main.asyncAfter(deadline: deadline) {
-                    let averagePrice = String(format: "%.0f", priceRangeInArea.avg)
-                    self.averageLabel.text = "Average price in selected area is $\(averagePrice) per pax"
-
                     self.priceSlider.minValue = CGFloat(priceRangeInArea.min)
                     self.priceSlider.maxValue = CGFloat(priceRangeInArea.max)
 
@@ -917,7 +901,6 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
     }
 
     private func setLoading(_ hidden: Bool) {
-        averageLabel.isHidden = hidden
         priceSlider.isHidden = hidden
         priceButtons.isHidden = hidden
         loadingIndicator.isHidden = !hidden
