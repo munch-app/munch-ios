@@ -155,7 +155,6 @@ class SearchSmallPlaceCard: UITableViewCell, SearchCardView {
 
 class SearchPlaceCardBottomView: UIView {
     let nameLabel = UILabel()
-    let tagLabel = UILabel()
     let tagCollection = TTGTextTagCollectionView()
     let locationLabel = UILabel()
 
@@ -164,7 +163,6 @@ class SearchPlaceCardBottomView: UIView {
     override init(frame: CGRect = CGRect()) {
         super.init(frame: frame)
         self.addSubview(nameLabel)
-        self.addSubview(tagLabel)
         self.addSubview(tagCollection)
         self.addSubview(locationLabel)
 
@@ -173,16 +171,7 @@ class SearchPlaceCardBottomView: UIView {
         nameLabel.snp.makeConstraints { make in
             make.height.equalTo(26)
             make.left.right.equalTo(self)
-            make.bottom.equalTo(tagLabel.snp.top)
-        }
-
-        tagLabel.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.regular)
-        tagLabel.textColor = UIColor.black.withAlphaComponent(0.75)
-        tagLabel.snp.makeConstraints { make in
-            make.height.equalTo(23)
-            make.left.equalTo(self)
-            make.bottom.equalTo(locationLabel.snp.top).inset(-1)
-            make.width.equalTo(0).priority(999)
+            make.bottom.equalTo(tagCollection.snp.top)
         }
 
         tagCollection.defaultConfig = DefaultTagConfig()
@@ -195,7 +184,7 @@ class SearchPlaceCardBottomView: UIView {
         tagCollection.showsHorizontalScrollIndicator = false
         tagCollection.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         tagCollection.snp.makeConstraints { (make) in
-            make.left.equalTo(tagLabel.snp.right)
+            make.left.equalTo(self)
             make.right.equalTo(self)
             make.bottom.equalTo(locationLabel.snp.top).inset(-1)
         }
@@ -220,26 +209,15 @@ class SearchPlaceCardBottomView: UIView {
     }
 
     private func render(tag card: SearchCard) {
+        self.tagCollection.removeAllTags()
+
         if let average = card["review"]["average"].float {
-            self.tagCollection.contentInset.left = 8
-
             let float = CGFloat(average)
-            self.tagLabel.attributedText = ReviewRatingUtils.create(percent: float, fontSize: 15.0)
-            self.tagLabel.snp.updateConstraints { make in
-                let width = ReviewRatingUtils.width(percent: float, fontSize: 15.0)
-                make.width.equalTo(width).priority(999)
-            }
-
-        } else {
-            self.tagCollection.contentInset.left = 0
-            self.tagLabel.text = nil
-
-            self.tagLabel.snp.updateConstraints { make in
-                make.width.equalTo(0).priority(999)
-            }
+            let color = ReviewRatingUtils.color(percent: float)
+            let text = ReviewRatingUtils.text(percent: float)
+            self.tagCollection.addTag(text, with: RatingTagConfig(color: color))
         }
 
-        self.tagCollection.removeAllTags()
         let tags = card["tags"].flatMap({ $0.1.string?.capitalized }).prefix(3)
         self.tagCollection.addTags(Array(tags))
         self.tagCollection.reload()
@@ -300,6 +278,23 @@ class SearchPlaceCardBottomView: UIView {
             tagBorderWidth = 0
             tagTextColor = UIColor.black.withAlphaComponent(0.88)
             tagBackgroundColor = UIColor(hex: "ebebeb")
+
+            tagExtraSpace = CGSize(width: 14, height: 7)
+        }
+    }
+
+    class RatingTagConfig: TTGTextTagConfig {
+        init(color: UIColor) {
+            super.init()
+
+            tagTextFont = UIFont.systemFont(ofSize: 13.0, weight: .semibold)
+            tagShadowOffset = CGSize.zero
+            tagShadowRadius = 0
+            tagCornerRadius = 3
+
+            tagBorderWidth = 0
+            tagTextColor = .white
+            tagBackgroundColor = color
 
             tagExtraSpace = CGSize(width: 14, height: 7)
         }

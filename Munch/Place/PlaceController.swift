@@ -265,7 +265,7 @@ fileprivate class PlaceHeaderView: UIView {
 
 fileprivate class PlaceBottomView: UIView {
     private let mainButton = UIButton()
-    private let ratingPercentLabel = UILabel()
+    private let ratingPercentLabel = ReviewRatingLabel()
     private let ratingCountLabel = UILabel()
     private let openLabel: UIButton = {
         let button = UIButton()
@@ -320,8 +320,6 @@ fileprivate class PlaceBottomView: UIView {
             make.height.equalTo(40)
         }
 
-        ratingPercentLabel.font = UIFont.systemFont(ofSize: 14.0, weight: .semibold)
-        ratingPercentLabel.textColor = .primary300
         ratingPercentLabel.snp.makeConstraints { (make) in
             make.left.equalTo(self).inset(24)
             make.top.equalTo(self).inset(10)
@@ -353,8 +351,9 @@ fileprivate class PlaceBottomView: UIView {
         self.setHidden(isHidden: false)
         self.place = place
 
-        if let text = ReviewRatingUtils.create(review: place.review) {
-            self.ratingPercentLabel.attributedText = text
+        if let average = place.review?.average {
+            self.ratingPercentLabel.render(average: average)
+
             self.ratingCountLabel.text = "\(place.review?.total ?? 0) Reviews"
 
             ratingCountLabel.snp.makeConstraints { (make) in
@@ -600,6 +599,11 @@ class ReviewRatingUtils {
         })
     }
 
+    class func text(percent: CGFloat) -> String {
+        let fixedPercent: CGFloat = percent > 1.0 ? 1.0 : percent
+        return String(format: "%.1f", fixedPercent * 10)
+    }
+
     class func width(percent: CGFloat, fontSize: CGFloat = 14.0) -> CGFloat {
         let string = create(percent: percent, fontSize: fontSize).string
         let font = UIFont.systemFont(ofSize: fontSize, weight: .semibold)
@@ -613,5 +617,31 @@ class ReviewRatingUtils {
         let blue = range.0.2 + (range.1.2 - range.0.2) * percent
 
         return UIColor(red: red, green: green, blue: blue, alpha: 1.0)
+    }
+}
+
+class ReviewRatingLabel: UIButton {
+
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        self.isUserInteractionEnabled = false
+        self.setTitleColor(.white, for: .normal)
+        self.titleLabel?.font = UIFont.systemFont(ofSize: 11.0, weight: .semibold)
+
+        self.contentEdgeInsets = UIEdgeInsets.init(top: 2, left: 6, bottom: 2, right: 6)
+        self.layer.cornerRadius = 3.0
+    }
+
+    func render(average: Double) {
+        let float = CGFloat(average)
+        let color = ReviewRatingUtils.color(percent: float)
+        let text = ReviewRatingUtils.text(percent: float)
+
+        self.setTitle(text, for: .normal)
+        self.backgroundColor = color
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

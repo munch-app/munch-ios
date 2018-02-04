@@ -189,7 +189,7 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
 class SearchContainersCard: UITableViewCell, SearchCardView {
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Landmarks"
+        label.text = "Locations"
         label.font = UIFont.systemFont(ofSize: 24.0, weight: .semibold)
         label.textColor = UIColor.black.withAlphaComponent(0.72)
         return label
