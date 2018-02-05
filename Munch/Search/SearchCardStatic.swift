@@ -255,7 +255,7 @@ class SearchStaticEmptyCard: UITableViewCell, SearchCardView {
     }
 }
 
-class SearchStaticHeight16Card: UITableViewCell, SearchCardView {
+class SearchStaticTopCard: UITableViewCell, SearchCardView {
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -265,7 +265,7 @@ class SearchStaticHeight16Card: UITableViewCell, SearchCardView {
         let view = UIView()
         self.addSubview(view)
         view.snp.makeConstraints { make in
-            make.height.equalTo(16).priority(999)
+            make.height.equalTo(self.topBottom).priority(999)
             make.edges.equalTo(self)
         }
     }

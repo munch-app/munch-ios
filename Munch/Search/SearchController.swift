@@ -297,7 +297,7 @@ extension SearchController {
 
         // Register Static Cards
         register(SearchStaticEmptyCard.self)
-        register(SearchStaticHeight16Card.self)
+        register(SearchStaticTopCard.self)
         register(SearchStaticNoResultCard.self)
         register(SearchStaticLoadingCard.self)
         register(SearchStaticErrorCard.self)
@@ -311,6 +311,8 @@ extension SearchController {
         register(SearchSmallPlaceCard.self)
 
         register(SearchContainersCard.self)
+        register(SearchNewestPlaceCard.self)
+
         register(SearchNoLocationCard.self)
         register(SearchNoResultCard.self)
         register(SearchNoResultLocationCard.self)
@@ -336,7 +338,7 @@ extension SearchController {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0:
-            return cardTableView.dequeueReusableCell(withIdentifier: SearchStaticHeight16Card.cardId)!
+            return cardTableView.dequeueReusableCell(withIdentifier: SearchStaticTopCard.cardId)!
         case 1:
             // Index out of bound in debug mode
             if let card = cards.get(indexPath.row) {
@@ -362,17 +364,20 @@ extension SearchController {
             case SearchPlaceCard.cardId:
                 fallthrough
             case SearchSmallPlaceCard.cardId:
-                if let placeId = card["placeId"].string {
-                    DispatchQueue.main.async {
-                        let controller = PlaceViewController(placeId: placeId)
-                        self.navigationController!.pushViewController(controller, animated: true)
-                    }
-                }
+                self.select(placeId: card["placeId"].string)
             default: break
             }
         default: break
         }
+    }
 
+    func select(placeId: String?) {
+        if let placeId = placeId {
+            DispatchQueue.main.async {
+                let controller = PlaceViewController(placeId: placeId)
+                self.navigationController!.pushViewController(controller, animated: true)
+            }
+        }
     }
 }
 

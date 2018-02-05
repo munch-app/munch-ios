@@ -100,7 +100,7 @@ extension SearchCardView {
     }
 
     var topBottom: CGFloat {
-        return 16.0
+        return 12.0
     }
 
     static var card: SearchCard {

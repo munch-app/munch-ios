@@ -336,16 +336,19 @@ struct SearchQuery: Equatable {
 struct SearchCard: Equatable {
     var cardId: String
     var uniqueId: String?
+    var instanceId: String
     private var json: JSON
 
     init(cardId: String, json: JSON = JSON(parseJSON: "{}")) {
         self.cardId = cardId
+        self.instanceId = String(arc4random())
         self.json = json
     }
 
     init(json: JSON) {
         self.cardId = json["_cardId"].stringValue
         self.uniqueId = json["_uniqueId"].string
+        self.instanceId = String(arc4random())
         self.json = json
     }
 
