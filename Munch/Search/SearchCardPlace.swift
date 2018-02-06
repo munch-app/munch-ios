@@ -12,7 +12,7 @@ import SwiftyJSON
 class SearchNewestPlaceCard: UITableViewCell, SearchCardView {
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Recently Open"
+        label.text = "Recently Opened"
         label.font = UIFont.systemFont(ofSize: 20.0, weight: .semibold)
         label.textColor = UIColor.black.withAlphaComponent(0.72)
         return label

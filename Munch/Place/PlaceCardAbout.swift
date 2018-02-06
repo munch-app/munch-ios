@@ -87,7 +87,6 @@ class PlaceBasicPhoneCard: PlaceCardView, SFSafariViewControllerDelegate {
         }
 
         phoneLabel.attributedText = phone?.set(style: .default { make in
-//            make.underline = UnderlineAttribute(color: UIColor.black.withAlphaComponent(0.4), style: NSUnderlineStyle.styleSingle)
             make.font = FontAttribute(font: UIFont.systemFont(ofSize: 15.0, weight: .regular))
             make.color = UIColor.black.withAlphaComponent(0.8)
         })
@@ -101,7 +100,7 @@ class PlaceBasicPhoneCard: PlaceCardView, SFSafariViewControllerDelegate {
     }
 
     override func didTap() {
-        if let phone = self.phone {
+        if let phone = self.phone?.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression, range: nil) {
             if let url = URL(string: "tel://\(phone)"), UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url)
             }
@@ -174,7 +173,6 @@ class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
         }
 
         websiteLabel.attributedText = websiteUrl?.set(style: .default { make in
-//            make.underline = UnderlineAttribute(color: UIColor.black.withAlphaComponent(0.4), style: NSUnderlineStyle.styleSingle)
             make.font = FontAttribute(font: UIFont.systemFont(ofSize: 15.0, weight: .regular))
             make.color = UIColor.black.withAlphaComponent(0.8)
         })
