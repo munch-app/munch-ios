@@ -61,7 +61,7 @@ class PlaceStaticEmptyCard: PlaceCardView {
         let view = UIView()
         self.addSubview(view)
         view.snp.makeConstraints { make in
-            make.height.equalTo(0.5)
+            make.height.equalTo(1).priority(999)
             make.edges.equalTo(self)
         }
     }

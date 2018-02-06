@@ -43,7 +43,7 @@ class PlaceBasicLocationCard: PlaceCardView {
             make.top.equalTo(self).inset(4)
             make.bottom.equalTo(self)
             make.left.right.equalTo(self)
-            make.height.equalTo(230)
+            make.height.equalTo(230).priority(999)
         }
 
         pinImageView.snp.makeConstraints { make in

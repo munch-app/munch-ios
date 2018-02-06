@@ -201,17 +201,17 @@ class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
         }
 
         tagCollection.snp.makeConstraints { (make) in
-            make.left.equalTo(collectionHolderView).inset(24).priority(999)
-            make.right.equalTo(collectionHolderView).inset(24).priority(999)
-            make.top.equalTo(collectionHolderView).priority(999)
+            make.left.equalTo(collectionHolderView).inset(24)
+            make.right.equalTo(collectionHolderView).inset(24)
+            make.top.equalTo(collectionHolderView)
         }
 
         // Collection View is added because of problem with using TTGTextTagCollectionView
         collectionHolderView.snp.makeConstraints { make in
             make.left.right.equalTo(self)
-            make.top.equalTo(nameLabel.snp.bottom).priority(999)
+            make.top.equalTo(nameLabel.snp.bottom)
             make.bottom.equalTo(self).inset(topBottom)
-            make.height.equalTo(self.numberOfLines(tags: tags) * 34)
+            make.height.equalTo(self.numberOfLines(tags: tags) * 34).priority(999)
         }
 
         tagCollection.needsUpdateConstraints()
