@@ -237,7 +237,7 @@ struct SearchQuery: Equatable {
 
         func toParams() -> Parameters {
             var params = Parameters()
-            params["price"] = ["name": price.name, "min": price.min, "max": price.max]
+            params["price"] = ["name": price.name as Any, "min": price.min as Any, "max": price.max as Any]
             params["tag"] = ["positives": Array(tag.positives)]
             params["hour"] = ["name": hour.name, "day": hour.day, "open": hour.open, "close": hour.close]
             params["location"] = location?.toParams()

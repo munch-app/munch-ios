@@ -10,8 +10,6 @@ import Foundation
 import UIKit
 
 import SnapKit
-import Auth0
-import Lock
 
 import NVActivityIndicatorView
 
@@ -47,7 +45,6 @@ class AccountProfileController: UIViewController {
         return collectionView
     }()
 
-    let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
     let dataLoader = UserAccountDataLoader()
 
     override func viewWillAppear(_ animated: Bool) {
@@ -61,27 +58,25 @@ class AccountProfileController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        if AccountAuthentication.isAuthenticated() {
+            self.dataLoader.resetAll()
+            self.collectionView.reloadData()
+            return
+        }
+
         // Check if user is logged in, push to AccountBoardingController if not
         // Only reload profile if is empty, to reduce network requests
-        if credentialsManager.hasValid() {
-            if UserDatabase.isEmpty {
-                self.reloadProfile()
-            }
-
-            // Reload Data because user might have edited the collection
-            if (!self.dataLoader.isLoading) {
+        AccountAuthentication.requireAuthentication(controller: self) { state in
+            switch state {
+            case .loggedIn:
+                // Reload HeaderView on load
+                self.headerView.render()
                 self.dataLoader.resetAll()
                 self.collectionView.reloadData()
-            }
-        } else {
-            let controller = AccountBoardingController.init(onAuthenticate: {
-                // On successful authenticate, reload profile
-                self.reloadProfile()
-            }, onCancel: {
-                // On Cancel go to tab bar controller index = 0
+            default:
+                // Change to first tab if failed
                 self.tabBarController?.selectedIndex = 0
-            })
-            self.present(controller, animated: true)
+            }
         }
     }
 
@@ -120,26 +115,6 @@ class AccountProfileController: UIViewController {
     @objc fileprivate func onActionSelectTab(selected: AccountTabButton) {
         self.dataLoader.select(type: selected.name)
         self.collectionView.reloadData()
-    }
-
-    func reloadProfile() {
-        credentialsManager.credentials { error, credentials in
-            guard let accessToken = credentials?.accessToken else {
-                return
-            }
-
-            Auth0.authentication()
-                    .userInfo(withAccessToken: accessToken)
-                    .start { result in
-                        switch (result) {
-                        case .success(let userInfo):
-                            UserDatabase.update(userInfo: userInfo)
-                            self.headerView.render()
-                        case .failure(let error):
-                            self.alert(title: "Fetch Profile Error", error: error)
-                        }
-                    }
-        }
     }
 }
 
@@ -274,11 +249,11 @@ class AccountHeaderView: UIView {
     }
 
     func render() {
-        if let pictureUrl = UserDatabase.pictureUrl {
+        if let pictureUrl = UserAccount.pictureUrl {
             self.profileImageView.render(images: ["original": pictureUrl])
         }
-        self.nameLabel.text = UserDatabase.name
-        self.emailLabel.text = UserDatabase.email
+        self.nameLabel.text = UserAccount.name
+        self.emailLabel.text = UserAccount.email
     }
 
     @objc fileprivate func onSelectTab(selected: AccountTabButton) {

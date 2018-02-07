@@ -10,20 +10,19 @@ import Foundation
 import UIKit
 import ESTabBarController_swift
 
-import Auth0
 
 /**
  Initial view provider
  */
 enum InitialViewProvider {
-    
+
     /**
      Main tab controllers for Munch App
      */
     static func main() -> TabBarController {
         return TabBarController()
     }
-    
+
     fileprivate static func search() -> UIViewController {
         let controller = SearchNavigationalController()
         controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "SEARCH", image: UIImage(named: "TabBar-Search"))
@@ -43,7 +42,7 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
 
     let searchController = InitialViewProvider.search()
     let accountController = InitialViewProvider.account()
-    
+
     init() {
         super.init(nibName: nil, bundle: nil)
         tabBar.isTranslucent = false
@@ -52,28 +51,29 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
         tabBar.backgroundImage = UIImage()
         tabBar.shadow(vertical: -1.0)
         tabBar.frame = tabBar.frame.offsetBy(dx: 0, dy: -10)
-        
+
         self.delegate = self
         self.viewControllers = [searchController, accountController]
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         if (viewController is AccountController) {
-            if (CredentialsManager(authentication: Auth0.authentication()).hasValid()) {
+            if AccountAuthentication.isAuthenticated() {
                 return true
             }
 
-            // If user not authenticated, show boarding controller
-            let controller = AccountBoardingController.init(onAuthenticate: {
-                // If user is authenticated, assign account controller
-                tabBarController.selectedViewController = self.accountController
-            }, onCancel: nil)
-            self.present(controller, animated: true)
-            return false
+            AccountAuthentication.requireAuthentication(controller: self) { state in
+                switch state {
+                case .loggedIn:
+                    tabBarController.selectedViewController = self.accountController
+                default:
+                    return
+                }
+            }
         }
 
         if let navigation = viewController as? UINavigationController {
@@ -111,7 +111,7 @@ class MunchTabBarContentView: ESTabBarItemContentView {
         highlightIconColor = UIColor.primary500
 
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

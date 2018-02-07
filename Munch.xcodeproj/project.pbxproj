@@ -55,6 +55,7 @@
 		B4B732A48087AEDBC0BCB2D9 /* PlaceCardLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738EF6EA67EF16E54F617 /* PlaceCardLocation.swift */; };
 		B4B732DD92904EA6B71DC806 /* SettingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73CEBAA298AA8928EA653 /* SettingController.swift */; };
 		B4B733066D6686ED5223F7E6 /* SearchCardLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B733A73EEB474161B4526F /* SearchCardLocation.swift */; };
+		B4B735A57EF2C7D7303D057F /* AccountAuthentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73734DDE87E53A16337E2 /* AccountAuthentication.swift */; };
 		B4B7379631A03DB830487460 /* PlaceCardInstagram.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B733FC3F034246C4E19D67 /* PlaceCardInstagram.swift */; };
 		B4B7380CD92347AB225B54EB /* PlaceCardAbout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737B2890DCC10B0DF0304 /* PlaceCardAbout.swift */; };
 		B4B7382DD1DAFD428F8CD49F /* SearchControllerLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73D8E2703243215F8AC5D /* SearchControllerLocation.swift */; };
@@ -66,7 +67,6 @@
 		B4B73BA7FADE13E2517C71F8 /* CollectionClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B735022631764CC931E8CA /* CollectionClient.swift */; };
 		B4B73BC5986706C80ED5438A /* SearchFilterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7371930D34FD52F67C2ED /* SearchFilterManager.swift */; };
 		B4B73C2A60EE351F094AED22 /* AccountDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7318BCB00B96424E50D14 /* AccountDataController.swift */; };
-		B4B73EAB12AD310BA8628C7C /* UserDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7351D3C250D88C269C4D0 /* UserDatabase.swift */; };
 		B4B73FE5E010EDBC83209A55 /* BoardingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B730E3D2F989A8CA95B67F /* BoardingController.swift */; };
 		B4B73FECE8D26C31A28E9DE9 /* PlaceCardReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737A0379DB051FD36C86D /* PlaceCardReview.swift */; };
 		DB136C8B43E175A72028D87F /* Pods_MunchUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2CE8E9F738C2A64071DD8B3 /* Pods_MunchUITests.framework */; };
@@ -131,6 +131,7 @@
 		039C393E1E8D47F500A28533 /* MXSegmentedPager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXSegmentedPager.framework; path = Carthage/Build/iOS/MXSegmentedPager.framework; sourceTree = "<group>"; };
 		039C39411E8D485400A28533 /* MXPagerView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXPagerView.framework; path = Carthage/Build/iOS/MXPagerView.framework; sourceTree = "<group>"; };
 		039C39431E8D485800A28533 /* MXParallaxHeader.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXParallaxHeader.framework; path = Carthage/Build/iOS/MXParallaxHeader.framework; sourceTree = "<group>"; };
+		03B1EACD202AC15800217189 /* Munch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Munch.entitlements; sourceTree = "<group>"; };
 		03B65F1B1F6C4A8C0030D12B /* SearchHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchHeaderView.swift; sourceTree = "<group>"; };
 		03BB67F51F6FA9B500F17A1A /* SearchControllerSuggest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchControllerSuggest.swift; sourceTree = "<group>"; };
 		03BB67F71F6FA9C400F17A1A /* SearchControllerFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchControllerFilter.swift; sourceTree = "<group>"; };
@@ -168,8 +169,8 @@
 		B4B733DCA665CD29B03D26BB /* PlaceCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCard.swift; sourceTree = "<group>"; };
 		B4B733FC3F034246C4E19D67 /* PlaceCardInstagram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardInstagram.swift; sourceTree = "<group>"; };
 		B4B735022631764CC931E8CA /* CollectionClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionClient.swift; sourceTree = "<group>"; };
-		B4B7351D3C250D88C269C4D0 /* UserDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDatabase.swift; sourceTree = "<group>"; };
 		B4B7371930D34FD52F67C2ED /* SearchFilterManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchFilterManager.swift; sourceTree = "<group>"; };
+		B4B73734DDE87E53A16337E2 /* AccountAuthentication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountAuthentication.swift; sourceTree = "<group>"; };
 		B4B737A0379DB051FD36C86D /* PlaceCardReview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardReview.swift; sourceTree = "<group>"; };
 		B4B737B2890DCC10B0DF0304 /* PlaceCardAbout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardAbout.swift; sourceTree = "<group>"; };
 		B4B738EF6EA67EF16E54F617 /* PlaceCardLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardLocation.swift; sourceTree = "<group>"; };
@@ -246,6 +247,7 @@
 		032F88FA1E82DFA300AD3818 /* Munch */ = {
 			isa = PBXGroup;
 			children = (
+				03B1EACD202AC15800217189 /* Munch.entitlements */,
 				0348472D1F9D21780049BDF7 /* Api */,
 				032F88FB1E82DFA300AD3818 /* AppDelegate.swift */,
 				03E1A5A71F6D4FA4005A6E58 /* TabBarController.swift */,
@@ -330,7 +332,6 @@
 				03D2335B1F9D3851000F5F05 /* AccountController.swift */,
 				B4B730E3D2F989A8CA95B67F /* BoardingController.swift */,
 				B4B73CEBAA298AA8928EA653 /* SettingController.swift */,
-				B4B7351D3C250D88C269C4D0 /* UserDatabase.swift */,
 				B4B7318BCB00B96424E50D14 /* AccountDataController.swift */,
 			);
 			path = Account;
@@ -365,6 +366,7 @@
 				031478691F6A18CC00246BCD /* LocationClient.swift */,
 				B4B73924CDDEE30BE2E2AF8A /* AccountClient.swift */,
 				B4B735022631764CC931E8CA /* CollectionClient.swift */,
+				B4B73734DDE87E53A16337E2 /* AccountAuthentication.swift */,
 			);
 			path = Api;
 			sourceTree = "<group>";
@@ -492,6 +494,11 @@
 						DevelopmentTeam = 7G635T5DK8;
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 1;
+							};
+						};
 					};
 					032F890B1E82DFA300AD3818 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -666,16 +673,17 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Munch/Pods-Munch-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
-				"${BUILT_PRODUCTS_DIR}/Auth0/Auth0.framework",
 				"${BUILT_PRODUCTS_DIR}/BEMCheckBox/BEMCheckBox.framework",
+				"${BUILT_PRODUCTS_DIR}/Bolts/Bolts.framework",
 				"${BUILT_PRODUCTS_DIR}/Cosmos/Cosmos.framework",
 				"${BUILT_PRODUCTS_DIR}/ESTabBarController-swift/ESTabBarController_swift.framework",
+				"${BUILT_PRODUCTS_DIR}/FBSDKCoreKit/FBSDKCoreKit.framework",
+				"${BUILT_PRODUCTS_DIR}/FBSDKLoginKit/FBSDKLoginKit.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMOAuth2/GTMOAuth2.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
-				"${BUILT_PRODUCTS_DIR}/IHKeyboardAvoiding/IHKeyboardAvoiding.framework",
 				"${BUILT_PRODUCTS_DIR}/KMNavigationBarTransition/KMNavigationBarTransition.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
-				"${BUILT_PRODUCTS_DIR}/Lock/Lock.framework",
 				"${BUILT_PRODUCTS_DIR}/NVActivityIndicatorView/NVActivityIndicatorView.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/RangeSeekSlider/RangeSeekSlider.framework",
@@ -683,7 +691,6 @@
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SKPhotoBrowser/SKPhotoBrowser.framework",
 				"${BUILT_PRODUCTS_DIR}/Shimmer/Shimmer.framework",
-				"${BUILT_PRODUCTS_DIR}/SimpleKeychain/SimpleKeychain.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftLocation/SwiftLocation.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftRichString/SwiftRichString.framework",
@@ -695,16 +702,17 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Auth0.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BEMCheckBox.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bolts.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cosmos.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ESTabBarController_swift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKCoreKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKLoginKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMOAuth2.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/IHKeyboardAvoiding.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KMNavigationBarTransition.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Lock.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NVActivityIndicatorView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RangeSeekSlider.framework",
@@ -712,7 +720,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SKPhotoBrowser.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Shimmer.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SimpleKeychain.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftLocation.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftRichString.framework",
@@ -762,9 +769,14 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Munch/Pods-Munch-resources.sh",
+				"$PODS_CONFIGURATION_BUILD_DIR/FirebaseUI/FirebaseAuthUI.bundle",
+				"$PODS_CONFIGURATION_BUILD_DIR/FirebaseUI/FirebaseFacebookAuthUI.bundle",
+				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -816,13 +828,13 @@
 				B4B73BA7FADE13E2517C71F8 /* CollectionClient.swift in Sources */,
 				B4B7328EA1644B7350AB75A5 /* CollectionController.swift in Sources */,
 				B4B730544AF1361565440B2C /* PlaceMapController.swift in Sources */,
-				B4B73EAB12AD310BA8628C7C /* UserDatabase.swift in Sources */,
 				B4B73C2A60EE351F094AED22 /* AccountDataController.swift in Sources */,
 				B4B73A8BD16561824718B41D /* CollectionPlaceController.swift in Sources */,
 				B4B7380CD92347AB225B54EB /* PlaceCardAbout.swift in Sources */,
 				B4B732A48087AEDBC0BCB2D9 /* PlaceCardLocation.swift in Sources */,
 				B4B733066D6686ED5223F7E6 /* SearchCardLocation.swift in Sources */,
 				B4B7305298D0BD615402C69A /* SearchCardPlace.swift in Sources */,
+				B4B735A57EF2C7D7303D057F /* AccountAuthentication.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -967,6 +979,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Munch/Munch.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 7G635T5DK8;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -989,6 +1002,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Munch/Munch.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 7G635T5DK8;
 				FRAMEWORK_SEARCH_PATHS = (

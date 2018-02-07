@@ -8,8 +8,6 @@ import UIKit
 import SafariServices
 
 import SnapKit
-import Auth0
-import Lock
 
 class AccountSettingController: UIViewController, UIGestureRecognizerDelegate, SFSafariViewControllerDelegate {
     private let headerView = HeaderView()
@@ -61,12 +59,7 @@ class AccountSettingController: UIViewController, UIGestureRecognizerDelegate, S
     }
 
     private func logout() {
-        let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
-        if (credentialsManager.clear()) {
-            print("Removed Credentials")
-            UserDatabase.removeAll()
-        }
-        self.navigationController?.popViewController(animated: true)
+        AccountAuthentication.logout()
     }
 
     @objc func onBackButton(_ sender: Any) {

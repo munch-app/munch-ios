@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 
 import Crashlytics
-import Auth0
 import SnapKit
 import Cosmos
 import SwiftRichString
@@ -111,29 +110,31 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
 
     @objc func onHeartButton(_ sender: Any) {
-        guard CredentialsManager(authentication: Auth0.authentication()).hasValid() else {
-            self.present(AccountBoardingController(), animated: true)
-            return
-        }
+        AccountAuthentication.requireAuthentication(controller: self) { state in
+            switch state {
+            case .loggedIn:
+                if let place = self.place, let liked = self.liked {
+                    self.liked = !liked
+                    self.headerView.render(place: place, liked: self.liked)
 
-        if let place = self.place, let liked = self.liked {
-            self.liked = !liked
-            self.headerView.render(place: place, liked: self.liked)
-
-            if self.liked! {
-                MunchApi.collections.liked.put(placeId: placeId) { meta in
-                    guard meta.isOk() else {
-                        self.present(meta.createAlert(), animated: true)
-                        return
+                    if self.liked! {
+                        MunchApi.collections.liked.put(placeId: self.placeId) { meta in
+                            guard meta.isOk() else {
+                                self.present(meta.createAlert(), animated: true)
+                                return
+                            }
+                        }
+                    } else {
+                        MunchApi.collections.liked.delete(placeId: self.placeId) { meta in
+                            guard meta.isOk() else {
+                                self.present(meta.createAlert(), animated: true)
+                                return
+                            }
+                        }
                     }
                 }
-            } else {
-                MunchApi.collections.liked.delete(placeId: placeId) { meta in
-                    guard meta.isOk() else {
-                        self.present(meta.createAlert(), animated: true)
-                        return
-                    }
-                }
+            default:
+                return
             }
         }
     }
@@ -144,12 +145,15 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
             self.onHeartButton(sender)
         })
         alert.addAction(UIAlertAction(title: "Add To Collection", style: UIAlertActionStyle.default) { alert in
-            guard CredentialsManager(authentication: Auth0.authentication()).hasValid() else {
-                self.present(AccountBoardingController(), animated: true)
-                return
+            AccountAuthentication.requireAuthentication(controller: self) { state in
+                switch state {
+                case .loggedIn:
+                    let controller = CollectionSelectRootController(placeId: self.placeId)
+                    self.present(controller, animated: true)
+                default:
+                    return
+                }
             }
-            let controller = CollectionSelectRootController(placeId: self.placeId)
-            self.present(controller, animated: true)
         })
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         self.present(alert, animated: true)

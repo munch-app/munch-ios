@@ -2,9 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>MunchApi-Url</key>
-	<string>https://api.munchapp.co</string>
-	<key>MunchApi-Beta-Url</key>
-	<string>https://api.beta.munchapp.co</string>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)co.munch.MunchApp</string>
+		<string>$(AppIdentifierPrefix)fb1834184803561011</string>
+	</array>
 </dict>
 </plist>

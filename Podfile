@@ -12,13 +12,12 @@ target 'Munch' do
   pod 'SnapKit', '~> 4.0'
   pod 'SwiftRichString', '~> 1.0'
 
-  # Service Library
-  pod 'Auth0', '~> 1.9'
-  pod 'Lock', '~> 2.4.2'
-
   # Firebase
   pod 'Firebase/Core'
   pod 'Firebase/Performance'
+  pod 'Firebase/Auth'
+  pod 'FirebaseUI/Facebook'
+  pod 'GoogleSignIn'
   pod 'Fabric', '~> 1.7.2'
   pod 'Crashlytics', '~> 3.9.3'
   
@@ -51,7 +50,7 @@ end
 
 post_install do |installer|
   # List of Pods to use as Swift 3.2
-  targetSwift32 = ['Lock', 'RangeSeekSlider']
+  targetSwift32 = ['RangeSeekSlider']
 
   installer.pods_project.targets.each do |target|
     if targetSwift32.include? target.name

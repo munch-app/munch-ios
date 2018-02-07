@@ -132,7 +132,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
 
     func addAlert(removeAll alert: UIAlertController) {
         alert.addAction(UIAlertAction(title: "Remove All", style: .destructive) { action in
-            var searchQuery = SearchQuery()
+            let searchQuery = SearchQuery()
             self.controller.contentView(search: searchQuery)
             self.searchQueryHistories.removeAll()
             self.render(query: searchQuery)

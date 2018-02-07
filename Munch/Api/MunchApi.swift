@@ -12,13 +12,13 @@ import Foundation
 import Crashlytics
 import Alamofire
 import SwiftyJSON
-import Auth0
+
+import Firebase
 
 let MunchApi = MunchClient()
-let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
 
 public class MunchClient {
-    public static let url = MunchPlist.get(asString: "MunchApi-Url")!
+    public static let url = MunchPlist.get(asString: "MunchApi-Beta-Url")!
 
     let restful = RestfulClient()
     let search = SearchClient()
@@ -73,7 +73,7 @@ public class RestfulClient {
      encoding: encoding of paramters
      callback: Meta and Json
      */
-    fileprivate func request(method: HTTPMethod, path: String, parameters: Parameters, encoding: ParameterEncoding, callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
+    fileprivate func request(method: Alamofire.HTTPMethod, path: String, parameters: Parameters, encoding: ParameterEncoding, callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
         var headers = [String: String]()
         headers["Application-Version"] = version
         headers["Application-Build"] = build
@@ -84,9 +84,9 @@ public class RestfulClient {
             headers["Location-LatLng"] = latLng
         }
 
-        credentialsManager.credentials { error, credentials in
-            if let accessToken = credentials?.accessToken {
-                headers["Authorization"] = "Bearer \(accessToken)"
+        AccountAuthentication.getToken { token in
+            if let token = token {
+                headers["Authorization"] = "Bearer \(token)"
             }
 
             Alamofire.request(self.url + path, method: method, parameters: parameters, encoding: encoding, headers: headers)
@@ -123,6 +123,7 @@ public class RestfulClient {
                             }
                         }
                     }
+
         }
     }
 }

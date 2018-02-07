@@ -6,12 +6,36 @@
 import Foundation
 import UIKit
 
+import Crashlytics
 import Kingfisher
 import SnapKit
-import Auth0
-import Lock
 
-class AccountBoardingController: UIViewController {
+import FBSDKCoreKit
+import FBSDKLoginKit
+import GoogleSignIn
+
+class AccountRootBoardingController: UINavigationController, UINavigationControllerDelegate {
+
+    private let withCompletion: (AuthenticationState) -> Void
+
+    init(withCompletion: @escaping (AuthenticationState) -> Void) {
+        self.withCompletion = withCompletion
+        super.init(nibName: nil, bundle: nil)
+        self.viewControllers = [AccountBoardingController(withCompletion: withCompletion)]
+        self.delegate = self
+    }
+
+    // Fix bug when pop gesture is enabled for the root controller
+    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        self.interactivePopGestureRecognizer?.isEnabled = self.viewControllers.count > 1
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignInDelegate {
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = .zero
@@ -45,12 +69,10 @@ class AccountBoardingController: UIViewController {
     private let headerView = HeaderView()
     private let bottomView = BottomView()
 
-    private let onAuthenticate: (() -> ())?
-    private let onCancel: (() -> ())?
+    private let withCompletion: (AuthenticationState) -> Void
 
-    init(onAuthenticate: (() -> ())? = nil, onCancel: (() -> ())? = nil) {
-        self.onAuthenticate = onAuthenticate
-        self.onCancel = onCancel
+    init(withCompletion: @escaping (AuthenticationState) -> Void) {
+        self.withCompletion = withCompletion
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -59,8 +81,17 @@ class AccountBoardingController: UIViewController {
         self.initViews()
 
         headerView.cancelButton.addTarget(self, action: #selector(action(_:)), for: .touchUpInside)
-        bottomView.signIn.addTarget(self, action: #selector(action(_:)), for: .touchUpInside)
-        bottomView.signUp.addTarget(self, action: #selector(action(_:)), for: .touchUpInside)
+        bottomView.facebookButton.addTarget(self, action: #selector(action(_:)), for: .touchUpInside)
+        bottomView.googleButton.addTarget(self, action: #selector(action(_:)), for: .touchUpInside)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        // Make navigation bar transparent, bar must be hidden
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.shadowImage = UIImage()
     }
 
     override open var preferredStatusBarStyle: UIStatusBarStyle {
@@ -68,7 +99,7 @@ class AccountBoardingController: UIViewController {
     }
 
     private func initViews() {
-        self.view.backgroundColor = .black
+        self.view.backgroundColor = .white
         self.view.addSubview(collectionView)
         self.view.addSubview(headerView)
         self.view.addSubview(headerIconLabel)
@@ -94,92 +125,154 @@ class AccountBoardingController: UIViewController {
 
         bottomView.snp.makeConstraints { make in
             make.left.right.equalTo(self.view)
-            make.bottom.equalTo(self.view.safeArea.bottom)
+            make.bottom.equalTo(self.view)
         }
+    }
+
+    private func dismiss(state: AuthenticationState) {
+        self.withCompletion(state)
+        self.dismiss(animated: true)
     }
 
     @objc func action(_ sender: UIButton) {
         if sender == self.headerView.cancelButton {
-            self.onCancel?()
-            self.dismiss(animated: true)
-        } else if sender == self.bottomView.signIn {
-            lock(screen: .login).present(from: self)
-        } else if sender == self.bottomView.signUp {
-            lock(screen: .signup).present(from: self)
+            self.dismiss(state: .cancel)
+        } else if sender == self.bottomView.facebookButton {
+            FBSDKLoginManager().logIn(withReadPermissions: ["email", "public_profile", "user_friends"], from: self) { (result: FBSDKLoginManagerLoginResult!, error: Error!) in
+                if let error = error {
+                    Crashlytics.sharedInstance().recordError(error)
+                    self.dismiss(state: .fail(error))
+                    return
+                }
+
+                if result?.isCancelled ?? true {
+                    self.dismiss(state: .cancel)
+                    return
+                }
+
+                if result!.grantedPermissions.contains("email") && result!.grantedPermissions.contains("public_profile") {
+                    if let token = FBSDKAccessToken.current()?.tokenString {
+                        AccountAuthentication.login(facebook: token) { state in
+                            self.dismiss(state: state)
+                        }
+                    } else {
+                        self.dismiss(state: .cancel)
+                    }
+                }
+            }
+        } else if sender == self.bottomView.googleButton {
+            GIDSignIn.sharedInstance().delegate = self
+            GIDSignIn.sharedInstance().uiDelegate = self
+            GIDSignIn.sharedInstance().signIn()
         }
     }
 
-    private func lock(screen: DatabaseScreen) -> Lock {
-        return Lock.classic()
-                .withConnections { connections in
-                    connections.database(name: "Username-Password-Authentication", requiresUsername: false)
-                    connections.social(name: "facebook", style: .Facebook)
-                }
-                .withOptions {
-                    $0.initialScreen = screen
-                    $0.closable = true
-                    $0.oidcConformant = true
-                    $0.scope = "openid profile email offline_access"
-                    $0.audience = "https://api.munchapp.co/"
+    // MARK: Google Sign In
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error?) {
+        if let error = error {
+            Crashlytics.sharedInstance().recordError(error)
+            self.dismiss(state: .fail(error))
+            return
+        }
 
-                }
-                .withStyle {
-                    $0.headerColor = .white
-                    $0.headerCloseIcon = LazyImage(name: "Account-Close")
-                    $0.title = "Munch Account"
-                    $0.logo = LazyImage(name: "AppIcon")
-                    $0.primaryColor = .primary
-                }
-                .onAuth { credentials in
-                    let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
-                    if (credentialsManager.store(credentials: credentials)) {
-                        self.onAuthenticate?()
-                        self.dismiss(animated: true)
-                    } else {
-                        self.alert(title: "Login Failure", message: "Unable to store the user credentials.")
-                    }
-                }
+        if let authentication = user.authentication {
+            AccountAuthentication.login(google: authentication.idToken, accessToken: authentication.accessToken) { state in
+                self.dismiss(state: state)
+            }
+        } else {
+            self.dismiss(state: .cancel)
+        }
+    }
+
+    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
+        AccountAuthentication.logout()
+        self.dismiss(state: .cancel)
     }
 
     class BottomView: UIView {
-        let signIn: UIButton = {
-            let button = UIButton()
-            button.setTitle("SIGN IN", for: .normal)
-            button.setTitleColor(.white, for: .normal)
-            button.backgroundColor = .primary
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        let facebookButton: ContinueButton = {
+            let button = ContinueButton()
+            button.labelView.text = "Continue with Facebook"
+            button.labelView.textColor = .white
+
+            button.iconView.image = UIImage(named: "Boarding-Facebook")
+            button.iconView.tintColor = .white
+
+            button.backgroundColor = UIColor(hex: "#4267b2")
+            button.layer.cornerRadius = 3
             return button
         }()
 
-        let signUp: UIButton = {
-            let button = UIButton()
-            button.setTitle("SIGN UP", for: .normal)
-            button.setTitleColor(.black, for: .normal)
+        let googleButton: ContinueButton = {
+            let button = ContinueButton()
+            button.labelView.text = "Continue with Google"
+            button.labelView.textColor = UIColor.black.withAlphaComponent(0.85)
+
+            button.iconView.image = UIImage(named: "Boarding-Google")
+            button.iconView.tintColor = .white
+
             button.backgroundColor = .white
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+            button.layer.cornerRadius = 3
+            button.layer.borderWidth = 1.0
+            button.layer.borderColor = UIColor.black.withAlphaComponent(0.7).cgColor
             return button
         }()
 
         override init(frame: CGRect = CGRect.zero) {
             super.init(frame: frame)
-            self.backgroundColor = .black
-            self.addSubview(signUp)
-            self.addSubview(signIn)
+            self.backgroundColor = .white
+            self.addSubview(facebookButton)
+            self.addSubview(googleButton)
 
-            signIn.snp.makeConstraints { make in
-                make.left.equalTo(self)
-                make.right.equalTo(signUp.snp.left)
-                make.width.equalTo(signUp.snp.width).priority(999)
-                make.top.bottom.equalTo(self)
-                make.height.equalTo(56)
+            facebookButton.snp.makeConstraints { make in
+                make.top.equalTo(self).inset(18)
+                make.left.right.equalTo(self).inset(24)
+                make.height.equalTo(44)
             }
 
-            signUp.snp.makeConstraints { make in
-                make.right.equalTo(self)
-                make.left.equalTo(signIn.snp.right)
-                make.width.equalTo(signIn.snp.width).priority(999)
-                make.top.bottom.equalTo(self)
-                make.height.equalTo(56)
+            googleButton.snp.makeConstraints { make in
+                make.left.right.equalTo(self).inset(24)
+                make.height.equalTo(44)
+
+                make.top.equalTo(facebookButton.snp.bottom).inset(-12)
+                make.bottom.equalTo(self.safeArea.bottom).inset(18)
+            }
+        }
+
+        class ContinueButton: UIButton {
+            let iconView: UIImageView = {
+                let imageView = UIImageView()
+                imageView.contentMode = .scaleAspectFit
+                return imageView
+            }()
+            let labelView: UILabel = {
+                let label = UILabel()
+                label.textAlignment = .center
+                label.font = .systemFont(ofSize: 15, weight: .regular)
+                label.textColor = UIColor.black.withAlphaComponent(0.9)
+                return label
+            }()
+
+            override init(frame: CGRect = .zero) {
+                super.init(frame: frame)
+                self.addSubview(iconView)
+                self.addSubview(labelView)
+
+                iconView.snp.makeConstraints { make in
+                    make.top.bottom.equalTo(self)
+                    make.left.equalTo(self).inset(10)
+                    make.width.equalTo(26).priority(999)
+                }
+
+                labelView.snp.makeConstraints { make in
+                    make.top.bottom.equalTo(self)
+                    make.right.equalTo(self)
+                    make.left.equalTo(iconView.snp.right)
+                }
+            }
+
+            required init?(coder aDecoder: NSCoder) {
+                fatalError("init(coder:) has not been implemented")
             }
         }
 
@@ -204,7 +297,8 @@ class AccountBoardingController: UIViewController {
             self.addSubview(cancelButton)
 
             self.backgroundColor = .clear
-            cancelButton.snp.makeConstraints { make in
+            cancelButton.snp.makeConstraints {
+                make in
                 make.top.equalTo(self.safeArea.top)
                 make.bottom.equalTo(self)
                 make.height.equalTo(44)
@@ -223,7 +317,12 @@ class AccountBoardingController: UIViewController {
     }
 }
 
-extension AccountBoardingController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension AccountBoardingController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let bottomHeight = self.bottomView.frame.height
+        return CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - bottomHeight)
+    }
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 1
     }
@@ -272,7 +371,7 @@ fileprivate class BoardingCardCell: UICollectionViewCell {
         descriptionLabel.textColor = UIColor.white
         descriptionLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
-            make.bottom.equalTo(self).inset(64)
+            make.bottom.equalTo(self).inset(44)
         }
     }
 
