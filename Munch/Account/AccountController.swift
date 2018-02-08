@@ -57,6 +57,7 @@ class AccountProfileController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        self.headerView.render()
 
         if AccountAuthentication.isAuthenticated() {
             self.dataLoader.resetAll()

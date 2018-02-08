@@ -130,8 +130,14 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
     }
 
     private func dismiss(state: AuthenticationState) {
-        self.withCompletion(state)
-        self.dismiss(animated: true)
+        switch state {
+        case .loggedIn: fallthrough
+        case .cancel:
+            self.withCompletion(state)
+            self.dismiss(animated: true)
+        case .fail(let error):
+            self.alert(error: error)
+        }
     }
 
     @objc func action(_ sender: UIButton) {

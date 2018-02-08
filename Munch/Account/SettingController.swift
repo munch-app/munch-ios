@@ -60,6 +60,7 @@ class AccountSettingController: UIViewController, UIGestureRecognizerDelegate, S
 
     private func logout() {
         AccountAuthentication.logout()
+        self.navigationController?.popToRootViewController(animated: true)
     }
 
     @objc func onBackButton(_ sender: Any) {
