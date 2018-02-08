@@ -214,7 +214,7 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
             button.backgroundColor = .white
             button.layer.cornerRadius = 3
             button.layer.borderWidth = 1.0
-            button.layer.borderColor = UIColor.black.withAlphaComponent(0.7).cgColor
+            button.layer.borderColor = UIColor.black.withAlphaComponent(0.6).cgColor
             return button
         }()
 

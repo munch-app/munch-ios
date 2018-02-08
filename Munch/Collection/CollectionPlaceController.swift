@@ -15,7 +15,7 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
     private let headerView = HeaderView()
     fileprivate let emptyLabel: UILabel = {
         let label = UILabel()
-        label.text = "You haven added any places."
+        label.text = "You haven't added any places."
         label.font = .systemFont(ofSize: 18, weight: .regular)
         label.textAlignment = .center
         label.isHidden = true
