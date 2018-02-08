@@ -319,8 +319,7 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
 
 extension AccountBoardingController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let bottomHeight = self.bottomView.frame.height
-        return CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - bottomHeight)
+        return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -371,7 +370,7 @@ fileprivate class BoardingCardCell: UICollectionViewCell {
         descriptionLabel.textColor = UIColor.white
         descriptionLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
-            make.bottom.equalTo(self).inset(44)
+            make.bottom.equalTo(self).inset(30)
         }
     }
 
