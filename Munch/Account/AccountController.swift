@@ -45,6 +45,7 @@ class AccountProfileController: UIViewController {
         return collectionView
     }()
 
+    var loadedDate: Date?
     let dataLoader = UserAccountDataLoader()
 
     override func viewWillAppear(_ animated: Bool) {
@@ -60,8 +61,11 @@ class AccountProfileController: UIViewController {
         self.headerView.render()
 
         if AccountAuthentication.isAuthenticated() {
-            self.dataLoader.resetAll()
-            self.collectionView.reloadData()
+            if loadedDate == nil || loadedDate! != MunchApi.collections.changedDate {
+                self.dataLoader.resetAll()
+                self.collectionView.reloadData()
+                loadedDate = MunchApi.collections.changedDate
+            }
             return
         }
 

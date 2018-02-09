@@ -8,6 +8,9 @@ import Alamofire
 import SwiftyJSON
 
 class CollectionClient {
+    // Temporary solution to track collection changed date
+    var changedDate = Date()
+
     let liked = LikedClient()
     let recent = RecentClient()
 
@@ -15,6 +18,7 @@ class CollectionClient {
      Create new PlaceCollection
      */
     func post(collection: PlaceCollection, callback: @escaping (_ meta: MetaJSON, _ collection: PlaceCollection) -> Void) {
+        self.changedDate = Date()
         MunchApi.restful.post("/collections", parameters: collection.toParams()) { meta, json in
             callback(meta, PlaceCollection(json: json["data"]))
         }
@@ -24,6 +28,7 @@ class CollectionClient {
      Update existing PlaceCollection
      */
     func put(collectionId: String, collection: PlaceCollection, callback: @escaping (_ meta: MetaJSON, _ collection: PlaceCollection) -> Void) {
+        self.changedDate = Date()
         MunchApi.restful.put("/collections/\(collectionId)", parameters: collection.toParams()) { meta, json in
             callback(meta, PlaceCollection(json: json["data"]))
         }
@@ -46,18 +51,21 @@ class CollectionClient {
     }
 
     func delete(collectionId: String, callback: @escaping (_ meta: MetaJSON) -> Void) {
+        self.changedDate = Date()
         MunchApi.restful.delete("/collections/\(collectionId)") { meta, json in
             callback(meta)
         }
     }
 
     func putPlace(collectionId: String, placeId: String, callback: @escaping (_ meta: MetaJSON) -> Void) {
+        self.changedDate = Date()
         MunchApi.restful.put("/collections/\(collectionId)/places/\(placeId)") { meta, json in
             callback(meta)
         }
     }
 
     func deletePlace(collectionId: String, placeId: String, callback: @escaping (_ meta: MetaJSON) -> Void) {
+        self.changedDate = Date()
         MunchApi.restful.delete("/collections/\(collectionId)/places/\(placeId)") { meta, json in
             callback(meta)
         }
@@ -85,12 +93,14 @@ class CollectionClient {
         }
 
         func put(placeId: String, callback: @escaping (_ meta: MetaJSON) -> Void) {
+            MunchApi.collections.changedDate = Date()
             MunchApi.restful.put("/collections/likes/\(placeId)") { meta, json in
                 callback(meta)
             }
         }
 
         func delete(placeId: String, callback: @escaping (_ meta: MetaJSON) -> Void) {
+            MunchApi.collections.changedDate = Date()
             MunchApi.restful.delete("/collections/likes/\(placeId)") { meta, json in
                 callback(meta)
             }
