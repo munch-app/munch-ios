@@ -343,9 +343,8 @@ extension SearchController {
         case 1:
             // Index out of bound in debug mode
             if let card = cards.get(indexPath.row) {
-                if let cardView = cardTableView.dequeueReusableCell(withIdentifier: card.cardId) as? SearchCardView {
-                    cardView.render(card: card, controller: self)
-                    return cardView as! UITableViewCell
+                if let cardView = cardTableView.dequeueReusableCell(withIdentifier: card.cardId) {
+                    return cardView
                 }
             }
         case 2: // Loading card
@@ -355,6 +354,20 @@ extension SearchController {
 
         // Else Static Empty CardView
         return cardTableView.dequeueReusableCell(withIdentifier: SearchStaticEmptyCard.cardId)!
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        switch indexPath.section {
+        case 1:
+            if let card = cards.get(indexPath.row) {
+                if let cell = cell as? SearchCardView {
+                    cell.render(card: card, controller: self)
+                }
+            }
+        case 2:
+            self.appendLoad()
+        default: break
+        }
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -384,15 +397,6 @@ extension SearchController {
 
 // Lazy Append Loading
 extension SearchController {
-
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        switch indexPath {
-        case [2, 0]:
-            self.appendLoad()
-        default: break
-        }
-    }
-
     func appendLoad() {
         if let manager = self.cardManager, manager.more {
             manager.append(load: { meta, manager in
