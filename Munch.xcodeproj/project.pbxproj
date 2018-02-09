@@ -19,7 +19,6 @@
 		032F89111E82DFA300AD3818 /* MunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F89101E82DFA300AD3818 /* MunchTests.swift */; };
 		032F891C1E82DFA300AD3818 /* MunchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F891B1E82DFA300AD3818 /* MunchUITests.swift */; };
 		033E62F81F1D381F00AE97FA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 033E62F71F1D381F00AE97FA /* Main.storyboard */; };
-		034FCEFD1F6C24D000D353F1 /* VersionClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCEFC1F6C24D000D353F1 /* VersionClient.swift */; };
 		034FCF0A1F6C282E00D353F1 /* SearchCardBasic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCF041F6C282E00D353F1 /* SearchCardBasic.swift */; };
 		034FCF0B1F6C282E00D353F1 /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCF051F6C282E00D353F1 /* SearchController.swift */; };
 		034FCF0C1F6C282E00D353F1 /* SearchCardStatic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCF061F6C282E00D353F1 /* SearchCardStatic.swift */; };
@@ -115,7 +114,6 @@
 		033E62F71F1D381F00AE97FA /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		034820551E9CB3C400B0076A /* ImageViewer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageViewer.framework; path = Carthage/Build/iOS/ImageViewer.framework; sourceTree = "<group>"; };
 		034820571E9CB92A00B0076A /* SKPhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SKPhotoBrowser.framework; path = Carthage/Build/iOS/SKPhotoBrowser.framework; sourceTree = "<group>"; };
-		034FCEFC1F6C24D000D353F1 /* VersionClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VersionClient.swift; sourceTree = "<group>"; };
 		034FCF041F6C282E00D353F1 /* SearchCardBasic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardBasic.swift; sourceTree = "<group>"; };
 		034FCF051F6C282E00D353F1 /* SearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
 		034FCF061F6C282E00D353F1 /* SearchCardStatic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardStatic.swift; sourceTree = "<group>"; };
@@ -360,7 +358,6 @@
 			isa = PBXGroup;
 			children = (
 				03CF0AA11E97AA3C00A3FD1F /* MunchApi.swift */,
-				034FCEFC1F6C24D000D353F1 /* VersionClient.swift */,
 				031478631F6A16ED00246BCD /* PlaceClient.swift */,
 				031478651F6A16F900246BCD /* SearchClient.swift */,
 				031478691F6A18CC00246BCD /* LocationClient.swift */,
@@ -770,8 +767,8 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Munch/Pods-Munch-resources.sh",
-				"$PODS_CONFIGURATION_BUILD_DIR/FirebaseUI/FirebaseAuthUI.bundle",
-				"$PODS_CONFIGURATION_BUILD_DIR/FirebaseUI/FirebaseFacebookAuthUI.bundle",
+				$PODS_CONFIGURATION_BUILD_DIR/FirebaseUI/FirebaseAuthUI.bundle,
+				$PODS_CONFIGURATION_BUILD_DIR/FirebaseUI/FirebaseFacebookAuthUI.bundle,
 				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
@@ -792,7 +789,6 @@
 			files = (
 				038275781F03B7A700C5954A /* Munch.swift in Sources */,
 				034FCF0C1F6C282E00D353F1 /* SearchCardStatic.swift in Sources */,
-				034FCEFD1F6C24D000D353F1 /* VersionClient.swift in Sources */,
 				03D2335C1F9D3851000F5F05 /* AccountController.swift in Sources */,
 				0314786A1F6A18CC00246BCD /* LocationClient.swift in Sources */,
 				03B65F1C1F6C4A8C0030D12B /* SearchHeaderView.swift in Sources */,

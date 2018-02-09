@@ -75,6 +75,9 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
                 self.present(meta.createAlert(), animated: true)
             }
         }
+
+        MunchApi.collections.recent.put(placeId: placeId) { meta in
+        }
     }
 
     private func initViews() {

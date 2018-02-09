@@ -311,7 +311,8 @@ extension SearchController {
         register(SearchSmallPlaceCard.self)
 
         register(SearchContainersCard.self)
-        register(SearchNewestPlaceCard.self)
+        register(SearchNewPlaceCard.self)
+        register(SearchRecentPlaceCard.self)
 
         register(SearchNoLocationCard.self)
         register(SearchNoResultCard.self)

@@ -3,8 +3,6 @@
 <plist version="1.0">
 <dict>
 	<key>MunchApi-Url</key>
-	<string>https://api.munchapp.co</string>
-	<key>MunchApi-Beta-Url</key>
-	<string>https://api.beta.munchapp.co</string>
+	<string>https://api.munchapp.co/v0.5.2</string>
 </dict>
 </plist>

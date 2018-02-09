@@ -18,7 +18,7 @@ import Firebase
 let MunchApi = MunchClient()
 
 public class MunchClient {
-    public static let url = MunchPlist.get(asString: "MunchApi-Beta-Url")!
+    public static let url = MunchPlist.get(asString: "MunchApi-Url")!
 
     let restful = RestfulClient()
     let search = SearchClient()
@@ -137,6 +137,8 @@ public enum RestfulError: Error {
  {meta: {}}
  */
 public struct MetaJSON {
+    public static let ok = MetaJSON(metaJson: JSON(["code": 200]))
+
     public let code: Int!
     public let error: Error?
 

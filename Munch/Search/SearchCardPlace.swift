@@ -9,10 +9,10 @@ import UIKit
 import SnapKit
 import SwiftyJSON
 
-class SearchNewestPlaceCard: UITableViewCell, SearchCardView {
+class SearchNewPlaceCard: UITableViewCell, SearchCardView {
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Recently Opened"
+        label.text = "Newly Opened"
         label.font = UIFont.systemFont(ofSize: 20.0, weight: .semibold)
         label.textColor = UIColor.black.withAlphaComponent(0.72)
         return label
@@ -79,11 +79,103 @@ class SearchNewestPlaceCard: UITableViewCell, SearchCardView {
     }
 
     static var cardId: String {
-        return "injected_NewestPlaces_20180205"
+        return "injected_NewPlace_20180209"
     }
 }
 
-extension SearchNewestPlaceCard: UICollectionViewDataSource, UICollectionViewDelegate {
+extension SearchNewPlaceCard: UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return places.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let place = places[indexPath.row]
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchPlaceCardPlaceCell", for: indexPath) as! SearchPlaceCardPlaceCell
+        cell.render(place: place)
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let place = places[indexPath.row]
+        controller.select(placeId: place.id)
+    }
+}
+
+class SearchRecentPlaceCard: UITableViewCell, SearchCardView {
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Recently Viewed"
+        label.font = UIFont.systemFont(ofSize: 20.0, weight: .semibold)
+        label.textColor = UIColor.black.withAlphaComponent(0.72)
+        return label
+    }()
+    private let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+        layout.itemSize = CGSize(width: 110, height: 120)
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 16
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.backgroundColor = UIColor.white
+        collectionView.register(SearchPlaceCardPlaceCell.self, forCellWithReuseIdentifier: "SearchPlaceCardPlaceCell")
+        return collectionView
+    }()
+
+    private var controller: SearchController!
+    private var places = [Place]()
+    private var card: SearchCard?
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(titleLabel)
+        self.addSubview(collectionView)
+
+        self.collectionView.dataSource = self
+        self.collectionView.delegate = self
+
+        titleLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(leftRight)
+            make.top.equalTo(self).inset(topBottom)
+        }
+
+        collectionView.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-topBottom)
+            make.bottom.equalTo(self).inset(topBottom)
+            make.height.equalTo(120)
+        }
+    }
+
+    func render(card: SearchCard, controller: SearchController) {
+        if self.card?.instanceId == card.instanceId {
+            return
+        }
+
+        self.controller = controller
+        self.card = card
+
+        let places = card["places"].flatMap({ Place(json: $0.1) })
+        if self.places != places {
+            self.places = places
+            self.collectionView.setContentOffset(.zero, animated: false)
+            self.collectionView.reloadData()
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    static var cardId: String {
+        return "injected_RecentPlace_20180209"
+    }
+}
+
+extension SearchRecentPlaceCard: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return places.count
     }

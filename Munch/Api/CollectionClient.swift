@@ -8,8 +8,8 @@ import Alamofire
 import SwiftyJSON
 
 class CollectionClient {
-
     let liked = LikedClient()
+    let recent = RecentClient()
 
     /**
      Create new PlaceCollection
@@ -92,6 +92,14 @@ class CollectionClient {
 
         func delete(placeId: String, callback: @escaping (_ meta: MetaJSON) -> Void) {
             MunchApi.restful.delete("/collections/likes/\(placeId)") { meta, json in
+                callback(meta)
+            }
+        }
+    }
+
+    class RecentClient {
+        func put(placeId: String, callback: @escaping (_ meta: MetaJSON) -> Void) {
+            MunchApi.restful.put("/collections/recents/\(placeId)") { meta, json in
                 callback(meta)
             }
         }
