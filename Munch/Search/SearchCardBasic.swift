@@ -97,7 +97,7 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
     private func render(containers: [Container]) {
         if controller.searchQuery.filter.containers?.isEmpty ?? true {
             for container in containers {
-                if let type = container.type, type == "polygon", let name = container.name {
+                if let type = container.type, type != "polygon", let name = container.name {
                     containerLabel.setTitle(name, for: .normal)
                     containerLabel.isHidden = false
                     return
