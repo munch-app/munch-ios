@@ -19,8 +19,8 @@ target 'Munch' do
   pod 'FirebaseUI/Facebook'
   pod 'GoogleSignIn'
   pod 'Fabric', '~> 1.7.2'
-  pod 'Crashlytics', '~> 3.9.3'
-  
+  pod 'Crashlytics', '~> 3.10.0'
+
   # Transition Library
   pod 'KMNavigationBarTransition', '~> 1.1'
 
@@ -29,7 +29,7 @@ target 'Munch' do
   pod 'NVActivityIndicatorView', '~> 4.0'
   pod 'ESTabBarController-swift', '~> 2.5'
   pod 'Shimmer', '~> 1.0'
-  pod 'TTGTagCollectionView', '~> 1.8'
+  pod 'TTGTagCollectionView', :git=> 'https://github.com/Fuxingloh/TTGTagCollectionView.git', :branch => 'master'
   pod 'SKPhotoBrowser', '~> 5.0'
   pod 'Cosmos', '~> 13.0'
   pod 'BEMCheckBox', '~> 1.4'

@@ -1,44 +1,44 @@
 PODS:
   - Alamofire (4.6.0)
   - BEMCheckBox (1.4.1)
-  - Bolts (1.8.4):
-    - Bolts/AppLinks (= 1.8.4)
-    - Bolts/Tasks (= 1.8.4)
-  - Bolts/AppLinks (1.8.4):
+  - Bolts (1.9.0):
+    - Bolts/AppLinks (= 1.9.0)
+    - Bolts/Tasks (= 1.9.0)
+  - Bolts/AppLinks (1.9.0):
     - Bolts/Tasks
-  - Bolts/Tasks (1.8.4)
+  - Bolts/Tasks (1.9.0)
   - Cosmos (13.0.0)
-  - Crashlytics (3.9.3):
-    - Fabric (~> 1.7.2)
+  - Crashlytics (3.10.0):
+    - Fabric (~> 1.7.3)
   - ESTabBarController-swift (2.5)
-  - Fabric (1.7.2)
-  - FBSDKCoreKit (4.29.0):
+  - Fabric (1.7.3)
+  - FBSDKCoreKit (4.30.0):
     - Bolts (~> 1.7)
-  - FBSDKLoginKit (4.29.0):
+  - FBSDKLoginKit (4.30.0):
     - FBSDKCoreKit
-  - Firebase/Auth (4.8.0):
+  - Firebase/Auth (4.8.2):
     - Firebase/Core
-    - FirebaseAuth (= 4.4.1)
-  - Firebase/Core (4.8.0):
-    - FirebaseAnalytics (= 4.0.5)
-    - FirebaseCore (= 4.0.13)
-  - Firebase/Performance (4.8.0):
+    - FirebaseAuth (= 4.4.2)
+  - Firebase/Core (4.8.2):
+    - FirebaseAnalytics (= 4.0.9)
+    - FirebaseCore (= 4.0.14)
+  - Firebase/Performance (4.8.2):
     - Firebase/Core
-    - FirebasePerformance (= 1.1.0)
-  - FirebaseAnalytics (4.0.5):
+    - FirebasePerformance (= 1.1.1)
+  - FirebaseAnalytics (4.0.9):
     - FirebaseCore (~> 4.0)
     - FirebaseInstanceID (~> 2.0)
     - GoogleToolboxForMac/NSData+zlib (~> 2.1)
     - nanopb (~> 0.3)
-  - FirebaseAuth (4.4.1):
+  - FirebaseAuth (4.4.2):
     - FirebaseAnalytics (~> 4.0)
     - GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)
     - GTMSessionFetcher/Core (~> 1.1)
-  - FirebaseCore (4.0.13):
+  - FirebaseCore (4.0.14):
     - GoogleToolboxForMac/NSData+zlib (~> 2.1)
   - FirebaseInstanceID (2.0.8):
     - FirebaseCore (~> 4.0)
-  - FirebasePerformance (1.1.0):
+  - FirebasePerformance (1.1.1):
     - FirebaseAnalytics (~> 4.0)
     - FirebaseInstanceID (~> 2.0)
     - FirebaseSwizzlingUtilities (~> 1.0)
@@ -47,12 +47,12 @@ PODS:
     - GTMSessionFetcher/Core (~> 1.1)
     - Protobuf (~> 3.1)
   - FirebaseSwizzlingUtilities (1.0.0)
-  - FirebaseUI/Auth (4.5.0):
+  - FirebaseUI/Auth (4.5.1):
     - Firebase/Auth (~> 4.2)
-  - FirebaseUI/Facebook (4.5.0):
+  - FirebaseUI/Facebook (4.5.1):
     - FBSDKLoginKit (~> 4.0)
     - FirebaseUI/Auth
-  - GoogleSignIn (4.1.1):
+  - GoogleSignIn (4.1.2):
     - GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)
     - GoogleToolboxForMac/NSString+URLArguments (~> 2.1)
     - GTMOAuth2 (~> 1.0)
@@ -71,12 +71,12 @@ PODS:
   - GoogleToolboxForMac/NSString+URLArguments (2.1.3)
   - GTMOAuth2 (1.1.6):
     - GTMSessionFetcher (~> 1.1)
-  - GTMSessionFetcher (1.1.12):
-    - GTMSessionFetcher/Full (= 1.1.12)
-  - GTMSessionFetcher/Core (1.1.12)
-  - GTMSessionFetcher/Full (1.1.12):
-    - GTMSessionFetcher/Core (= 1.1.12)
-  - Kingfisher (4.6.0)
+  - GTMSessionFetcher (1.1.13):
+    - GTMSessionFetcher/Full (= 1.1.13)
+  - GTMSessionFetcher/Core (1.1.13)
+  - GTMSessionFetcher/Full (1.1.13):
+    - GTMSessionFetcher/Core (= 1.1.13)
+  - Kingfisher (4.6.1)
   - KMNavigationBarTransition (1.1.5)
   - nanopb (0.3.8):
     - nanopb/decode (= 0.3.8)
@@ -88,17 +88,17 @@ PODS:
   - NVActivityIndicatorView/Presenter (4.1.1)
   - Protobuf (3.5.0)
   - RangeSeekSlider (1.7.0)
-  - Realm (3.0.2):
-    - Realm/Headers (= 3.0.2)
-  - Realm/Headers (3.0.2)
-  - RealmSwift (3.0.2):
-    - Realm (= 3.0.2)
+  - Realm (3.1.1):
+    - Realm/Headers (= 3.1.1)
+  - Realm/Headers (3.1.1)
+  - RealmSwift (3.1.1):
+    - Realm (= 3.1.1)
   - Shimmer (1.0.2)
-  - SKPhotoBrowser (5.0.3)
+  - SKPhotoBrowser (5.0.5)
   - SnapKit (4.0.0)
   - SwiftLocation (3.1.0):
     - SwiftyJSON (~> 4.0.0-alpha.1)
-  - SwiftRichString (1.0.1)
+  - SwiftRichString (1.1.0)
   - SwiftyJSON (4.0.0)
   - TPKeyboardAvoiding (1.3.2)
   - TTGTagCollectionView (1.8.2)
@@ -107,7 +107,7 @@ DEPENDENCIES:
   - Alamofire (~> 4.5)
   - BEMCheckBox (~> 1.4)
   - Cosmos (~> 13.0)
-  - Crashlytics (~> 3.9.3)
+  - Crashlytics (~> 3.10.0)
   - ESTabBarController-swift (~> 2.5)
   - Fabric (~> 1.7.2)
   - Firebase/Auth
@@ -127,47 +127,57 @@ DEPENDENCIES:
   - SwiftRichString (~> 1.0)
   - SwiftyJSON (~> 4.0)
   - TPKeyboardAvoiding (~> 1.3)
-  - TTGTagCollectionView (~> 1.8)
+  - TTGTagCollectionView (from `https://github.com/Fuxingloh/TTGTagCollectionView.git`, branch `master`)
+
+EXTERNAL SOURCES:
+  TTGTagCollectionView:
+    :branch: master
+    :git: https://github.com/Fuxingloh/TTGTagCollectionView.git
+
+CHECKOUT OPTIONS:
+  TTGTagCollectionView:
+    :commit: dfb112b11c3657f053d76f3aad6141bf67b1b904
+    :git: https://github.com/Fuxingloh/TTGTagCollectionView.git
 
 SPEC CHECKSUMS:
   Alamofire: f41a599bd63041760b26d393ec1069d9d7b917f4
   BEMCheckBox: 5ba6e37ade3d3657b36caecc35c8b75c6c2b1a4e
-  Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
+  Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
   Cosmos: af3973becc045af335b64498c9812034876b7661
-  Crashlytics: dbb07d01876c171c5ccbdf7826410380189e452c
+  Crashlytics: a989ef242b66605577a425733797f810bd2725eb
   ESTabBarController-swift: 8daa432f2a9be8ebd25101dc46c84472fd760512
-  Fabric: 9cd6a848efcf1b8b07497e0b6a2e7d336353ba15
-  FBSDKCoreKit: 6f139173dc63a1deaff4430a55f2fe5bb222d2af
-  FBSDKLoginKit: 56a057ca6822535ea0faa25f57a7c41edb697fd4
-  Firebase: 710decbbc6d9d48530e9a5dba3209740c3532e05
-  FirebaseAnalytics: 5b02a63ead2c3f0259cfc7f15e053e440587ecf8
-  FirebaseAuth: dc0dd403beca5b2b016aac89c2d0b8dad1c81926
-  FirebaseCore: 3c02ec652db3d03fdc8bc6d9154af3e20d64b6f5
+  Fabric: bb495bb9a7a7677c6d03a1f8b83d95bc49b47e41
+  FBSDKCoreKit: 7c4bba2877781a131ab5d54c0a78c405d4307b62
+  FBSDKLoginKit: fe7a7e82373dc5daad92e1623219e86224ab1fb1
+  Firebase: 7d3b8cd837ad9fcd391657734c0d56dab8e9a5a3
+  FirebaseAnalytics: 388b630c15713f5dbf364071f5f3d6077fb52f4e
+  FirebaseAuth: bd2738c5c1e92b108ba5f7f7335908097a4e50bb
+  FirebaseCore: 2e0b98fb2d64ca8140136beff15772bdd14d2dd7
   FirebaseInstanceID: 81df5805a08001e69138664bdd02c6719a9ac80f
-  FirebasePerformance: 3877d097c59956aa2d7a317dbae503c2b4e78459
+  FirebasePerformance: 4e1f8091e400eaf88505234caef5718313653709
   FirebaseSwizzlingUtilities: f1c49a5a372ac852c853722a5891a0a5e2344a6c
-  FirebaseUI: 883482fea73b73bbb488c55176f4c6ad128957eb
-  GoogleSignIn: 3fdaa34a2ba04dbd7a25d7db39aecb0da98d5bdc
+  FirebaseUI: 1dc9c8a87a776b488a28a28541f029e60c824cfd
+  GoogleSignIn: d9ef55b10f0aa401a5de2747f59b725e4b9732ac
   GoogleToolboxForMac: 2501e2ad72a52eb3dfe7bd9aee7dad11b858bd20
   GTMOAuth2: c77fe325e4acd453837e72d91e3b5f13116857b2
-  GTMSessionFetcher: ebaa1f79a5366922c1735f1566901f50beba23b7
-  Kingfisher: 1ea13a1b18297ae8afa0965e83ecdb68e1b71987
+  GTMSessionFetcher: 5bb1eae636127de695590f50e7d248483eb891e6
+  Kingfisher: 1f9157d9c02b380cbd0b7cc890161195164eb634
   KMNavigationBarTransition: 7a52c9bc25b39b6e3343e980b453facee1591b82
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   NVActivityIndicatorView: 60109b9bf46efc2e71ab81453196ccdfdfeea870
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
   RangeSeekSlider: 0386c5a9aa5ebcb2fa5238e8a627280cf46c7c0a
-  Realm: 6f23fd1f178a09342eac21bfa7c2bf4312a7a180
-  RealmSwift: 695393add1b8f9d5fa75dd16e6355cf3935f71e2
+  Realm: 42d1c38a5b1bbcc828b48a7ce702cb86fc68adf4
+  RealmSwift: d31937ca6a6ee54acde64ec839523c0a3c04924b
   Shimmer: c5374be1c2b0c9e292fb05b339a513cf291cac86
-  SKPhotoBrowser: 6de77f7004442e79059f19d86e2e7e6a03b43a13
+  SKPhotoBrowser: 5969c3813727f11fe37bea74a40425cafcb32f61
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
   SwiftLocation: 8f5ef4f510a45e43239de57a3145b3669301e898
-  SwiftRichString: 2111627a29af277094a9e5d4d1bf6bfe0b8212ac
+  SwiftRichString: 49c75726140c7f780fad1d067f804491d51188fa
   SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
   TPKeyboardAvoiding: cb69d5ddbe90ce0170e4bc2db1e5e41d4a3ad9a4
   TTGTagCollectionView: 20cf236b538ea9a17d1f0538968148c8d304414a
 
-PODFILE CHECKSUM: 460ac0ad67484511cc5be89f12c04fc6f5bafd6a
+PODFILE CHECKSUM: bea5d5c7f8c0915efde927306e62bc8a87156f1a
 
 COCOAPODS: 1.3.1

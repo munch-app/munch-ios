@@ -57,6 +57,7 @@
 		B4B735A57EF2C7D7303D057F /* AccountAuthentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73734DDE87E53A16337E2 /* AccountAuthentication.swift */; };
 		B4B7379631A03DB830487460 /* PlaceCardInstagram.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B733FC3F034246C4E19D67 /* PlaceCardInstagram.swift */; };
 		B4B7380CD92347AB225B54EB /* PlaceCardAbout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737B2890DCC10B0DF0304 /* PlaceCardAbout.swift */; };
+		B4B7380CEE70044FE930F722 /* module.modulemap in Sources */ = {isa = PBXBuildFile; fileRef = B4B73D56D29ADB145295DB94 /* module.modulemap */; };
 		B4B7382DD1DAFD428F8CD49F /* SearchControllerLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73D8E2703243215F8AC5D /* SearchControllerLocation.swift */; };
 		B4B7383023B0469B2430E41F /* PlaceCardArticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B730979285E2CEAED9B41C /* PlaceCardArticle.swift */; };
 		B4B7385BBBEB7A119E93D402 /* AccountClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73924CDDEE30BE2E2AF8A /* AccountClient.swift */; };
@@ -180,6 +181,7 @@
 		B4B73C04AEC75362CDFAC648 /* RecentDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentDatabase.swift; sourceTree = "<group>"; };
 		B4B73CEBAA298AA8928EA653 /* SettingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingController.swift; sourceTree = "<group>"; };
 		B4B73D105B16A6AD87C50DAA /* Auth0.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Auth0.plist; sourceTree = "<group>"; };
+		B4B73D56D29ADB145295DB94 /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		B4B73D8E2703243215F8AC5D /* SearchControllerLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchControllerLocation.swift; sourceTree = "<group>"; };
 		B4B73EBA645A014851F10D53 /* CollectionPlaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionPlaceController.swift; sourceTree = "<group>"; };
 		D2CE8E9F738C2A64071DD8B3 /* Pods_MunchUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MunchUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -265,6 +267,7 @@
 				B4B73D105B16A6AD87C50DAA /* Auth0.plist */,
 				032548612014831500F51D85 /* GoogleService-Info.plist */,
 				B4B7312EC0B6525AB7EC438B /* Collection */,
+				B4B7378B383CC0C6448D2AB0 /* Sources */,
 			);
 			path = Munch;
 			sourceTree = "<group>";
@@ -408,6 +411,22 @@
 				B4B73EBA645A014851F10D53 /* CollectionPlaceController.swift */,
 			);
 			path = Collection;
+			sourceTree = "<group>";
+		};
+		B4B7378B383CC0C6448D2AB0 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				B4B738FC2B0C2DC1D543F043 /* CCommonCrypto */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		B4B738FC2B0C2DC1D543F043 /* CCommonCrypto */ = {
+			isa = PBXGroup;
+			children = (
+				B4B73D56D29ADB145295DB94 /* module.modulemap */,
+			);
+			path = CCommonCrypto;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -831,6 +850,7 @@
 				B4B733066D6686ED5223F7E6 /* SearchCardLocation.swift in Sources */,
 				B4B7305298D0BD615402C69A /* SearchCardPlace.swift in Sources */,
 				B4B735A57EF2C7D7303D057F /* AccountAuthentication.swift in Sources */,
+				B4B7380CEE70044FE930F722 /* module.modulemap in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -987,6 +1007,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = co.munch.MunchApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				"SWIFT_INCLUDE_PATHS[arch=*]" = "${SRCROOT}/Sources/CCommonCrypto";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
 			};
@@ -1010,6 +1031,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = co.munch.MunchApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				"SWIFT_INCLUDE_PATHS[arch=*]" = "${SRCROOT}/Sources/CCommonCrypto";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
 			};

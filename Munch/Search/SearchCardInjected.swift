@@ -31,6 +31,7 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
         titleLabel.text = "No Location"
         titleLabel.font = UIFont.systemFont(ofSize: 24.0, weight: .semibold)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
+        titleLabel.backgroundColor = .white
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(self).inset(topBottom)
@@ -40,6 +41,7 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
         descriptionLabel.font = UIFont.systemFont(ofSize: 17.0, weight: .regular)
         descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         descriptionLabel.numberOfLines = 0
+        descriptionLabel.backgroundColor = .white
         descriptionLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(titleLabel.snp.bottom).inset(-20)
@@ -191,6 +193,7 @@ class SearchHeaderCard: UITableViewCell, SearchCardView {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 20.0, weight: .semibold)
         label.textColor = UIColor.black.withAlphaComponent(0.72)
+        label.backgroundColor = .white
         return label
     }()
 

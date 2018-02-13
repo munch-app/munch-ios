@@ -15,6 +15,7 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
         label.text = "Locations"
         label.font = UIFont.systemFont(ofSize: 20.0, weight: .semibold)
         label.textColor = UIColor.black.withAlphaComponent(0.72)
+        label.backgroundColor = .white
         return label
     }()
     private let collectionView: UICollectionView = {
@@ -104,7 +105,7 @@ fileprivate class SearchContainersCardContainerCell: UICollectionViewCell {
     let imageView: MunchImageView = {
         let imageView = MunchImageView()
         imageView.contentMode = .scaleAspectFill
-        imageView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        imageView.backgroundColor = UIColor(hex: "dedede")
         return imageView
     }()
 
@@ -112,6 +113,7 @@ fileprivate class SearchContainersCardContainerCell: UICollectionViewCell {
         let nameLabel = UITextView()
         nameLabel.font = UIFont.systemFont(ofSize: 13.0, weight: .semibold)
         nameLabel.textColor = UIColor.black.withAlphaComponent(0.72)
+        nameLabel.backgroundColor = .white
 
         nameLabel.textContainer.maximumNumberOfLines = 2
         nameLabel.textContainer.lineBreakMode = .byTruncatingTail

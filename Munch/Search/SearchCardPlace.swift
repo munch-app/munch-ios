@@ -15,6 +15,7 @@ class SearchNewPlaceCard: UITableViewCell, SearchCardView {
         label.text = "Newly Opened"
         label.font = UIFont.systemFont(ofSize: 20.0, weight: .semibold)
         label.textColor = UIColor.black.withAlphaComponent(0.72)
+        label.backgroundColor = .white
         return label
     }()
     private let collectionView: UICollectionView = {
@@ -107,6 +108,7 @@ class SearchRecentPlaceCard: UITableViewCell, SearchCardView {
         label.text = "Recently Viewed"
         label.font = UIFont.systemFont(ofSize: 20.0, weight: .semibold)
         label.textColor = UIColor.black.withAlphaComponent(0.72)
+        label.backgroundColor = .white
         return label
     }()
     private let collectionView: UICollectionView = {
@@ -119,7 +121,7 @@ class SearchRecentPlaceCard: UITableViewCell, SearchCardView {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
-        collectionView.backgroundColor = UIColor.white
+        collectionView.backgroundColor = .white
         collectionView.register(SearchPlaceCardPlaceCell.self, forCellWithReuseIdentifier: "SearchPlaceCardPlaceCell")
         return collectionView
     }()
@@ -197,8 +199,7 @@ fileprivate class SearchPlaceCardPlaceCell: UICollectionViewCell {
     let imageView: MunchImageView = {
         let imageView = MunchImageView()
         imageView.contentMode = .scaleAspectFill
-        imageView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
-
+        imageView.backgroundColor = UIColor(hex: "dedede")
         return imageView
     }()
     let typeLabel: UILabel = {
@@ -206,12 +207,14 @@ fileprivate class SearchPlaceCardPlaceCell: UICollectionViewCell {
         label.font = UIFont.systemFont(ofSize: 10.0, weight: .medium)
         label.textColor = UIColor.black.withAlphaComponent(0.85)
         label.isUserInteractionEnabled = false
+        label.backgroundColor = .white
         return label
     }()
     let nameLabel: UITextView = {
         let nameLabel = UITextView()
         nameLabel.font = UIFont.systemFont(ofSize: 12.0, weight: .bold)
         nameLabel.textColor = UIColor.black.withAlphaComponent(0.75)
+        nameLabel.backgroundColor = .white
 
         nameLabel.textContainer.maximumNumberOfLines = 2
         nameLabel.textContainer.lineBreakMode = .byTruncatingTail
