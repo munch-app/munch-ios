@@ -489,6 +489,10 @@ extension PlaceViewController {
         register(PlaceBasicPhoneCard.self)
         register(PlaceBasicPriceCard.self)
         register(PlaceBasicWebsiteCard.self)
+
+        // Register Experimental UGC Features
+        register(PlaceHeaderUGCCard.self)
+        register(PlaceUGCSuggestedTagCard.self)
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
