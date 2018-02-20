@@ -92,6 +92,14 @@ struct PriceRangeInArea {
         self.averageRange = .init(json: json["averageRange"])
         self.expensiveRange = .init(json: json["expensiveRange"])
     }
+
+    var minRounded: Double {
+        return (min / 5).rounded(.down) * 5
+    }
+
+    var maxRounded: Double {
+        return (max / 5).rounded(.up) * 5
+    }
 }
 
 /**

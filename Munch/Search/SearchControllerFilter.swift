@@ -843,14 +843,15 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
         self.priceRangeInArea = nil
         self.setLoading(true)
 
+
         let deadline = DispatchTime.now() + 0.5
         filterManager.getPriceInArea { metaJSON, priceRangeInArea in
             self.priceRangeInArea = priceRangeInArea
 
             if metaJSON.isOk(), let priceRangeInArea = priceRangeInArea {
                 DispatchQueue.main.asyncAfter(deadline: deadline) {
-                    self.priceSlider.minValue = CGFloat(priceRangeInArea.min)
-                    self.priceSlider.maxValue = CGFloat(priceRangeInArea.max)
+                    self.priceSlider.minValue = CGFloat(priceRangeInArea.minRounded)
+                    self.priceSlider.maxValue = CGFloat(priceRangeInArea.maxRounded)
 
                     self.filterManager.resetPrice()
                     self.updateSelected()
@@ -910,8 +911,8 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
         if let priceRangeInArea = priceRangeInArea {
             priceButtons.select(name: filterManager.searchQuery.filter.price.name)
             let price = self.filterManager.searchQuery.filter.price
-            self.priceSlider.selectedMinValue = CGFloat(price.min ?? priceRangeInArea.min)
-            self.priceSlider.selectedMaxValue = CGFloat(price.max ?? priceRangeInArea.max)
+            self.priceSlider.selectedMinValue = CGFloat(price.min ?? priceRangeInArea.minRounded)
+            self.priceSlider.selectedMaxValue = CGFloat(price.max ?? priceRangeInArea.maxRounded)
             priceSlider.setNeedsLayout()
         }
     }
@@ -933,6 +934,9 @@ fileprivate class SearchFilterPriceCell: UITableViewCell {
             lineHeight = 3.0
 
             minDistance = 5
+
+            enableStep = true
+            step = 5.0
         }
     }
 
