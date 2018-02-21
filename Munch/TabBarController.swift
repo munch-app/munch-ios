@@ -25,13 +25,13 @@ enum InitialViewProvider {
 
     fileprivate static func search() -> UIViewController {
         let controller = SearchNavigationalController()
-        controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "SEARCH", image: UIImage(named: "TabBar-Search"))
+        controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "Discover", image: UIImage(named: "TabBar-Search"))
         return controller
     }
 
     fileprivate static func account() -> UIViewController {
         let controller = AccountController()
-        controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "PROFILE", image: UIImage(named: "TabBar-Profile"))
+        controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "Profile", image: UIImage(named: "TabBar-Profile"))
         return controller
     }
 }
@@ -100,14 +100,14 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
 class MunchTabBarContentView: ESTabBarItemContentView {
     override init(frame: CGRect) {
         super.init(frame: frame)
-        titleLabel.font = UIFont.systemFont(ofSize: 8, weight: .bold)
+        titleLabel.font = UIFont.systemFont(ofSize: 9, weight: .semibold)
         insets.bottom = 4
         insets.top = 5
 
-        textColor = UIColor.black.withAlphaComponent(0.63)
+        textColor = UIColor(hex: "A0A0A0")
         highlightTextColor = UIColor.primary500
 
-        iconColor = UIColor.black.withAlphaComponent(0.6)
+        iconColor = UIColor(hex: "A0A0A0")
         highlightIconColor = UIColor.primary500
 
     }
