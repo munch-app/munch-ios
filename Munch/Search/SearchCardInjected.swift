@@ -189,11 +189,9 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
 }
 
 class SearchHeaderCard: UITableViewCell, SearchCardView {
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 20.0, weight: .semibold)
-        label.textColor = UIColor.black.withAlphaComponent(0.72)
-        label.backgroundColor = .white
+    private let titleLabel: SearchHeaderCardLabel = {
+        let label = SearchHeaderCardLabel()
+        label.text = "Discover"
         return label
     }()
 
@@ -205,12 +203,13 @@ class SearchHeaderCard: UITableViewCell, SearchCardView {
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(self).inset(topBottom)
-            make.bottom.equalTo(self).inset(0)
+            make.bottom.equalTo(self)
         }
     }
 
     func render(card: SearchCard, controller: SearchController) {
         self.titleLabel.text = card["title"].string
+        self.layoutIfNeeded()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -219,6 +218,51 @@ class SearchHeaderCard: UITableViewCell, SearchCardView {
 
     static var cardId: String {
         return "injected_Header_20180120"
+    }
+}
+
+class SearchHeaderCardLabel: UIView {
+    private let label: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 20.0, weight: .semibold)
+        label.textColor = UIColor.black.withAlphaComponent(0.72)
+        label.backgroundColor = .white
+        label.text = " "
+        return label
+    }()
+    private let indicator: UIView = {
+        let view = UIView()
+        view.backgroundColor = .primary500
+        return view
+    }()
+
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+
+        self.addSubview(label)
+        self.addSubview(indicator)
+        self.label.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.top.equalTo(self)
+            make.bottom.equalTo(self.indicator).inset(5)
+        }
+
+        self.indicator.snp.makeConstraints { make in
+            make.height.equalTo(2)
+            make.width.equalTo(80)
+            make.left.equalTo(self)
+            make.bottom.equalTo(self)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    var text: String? {
+        didSet {
+            self.label.text = text
+        }
     }
 }
 

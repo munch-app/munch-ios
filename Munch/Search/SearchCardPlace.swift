@@ -103,12 +103,9 @@ extension SearchNewPlaceCard: UICollectionViewDataSource, UICollectionViewDelega
 }
 
 class SearchRecentPlaceCard: UITableViewCell, SearchCardView {
-    private let titleLabel: UILabel = {
-        let label = UILabel()
+    private let titleLabel: SearchHeaderCardLabel = {
+        let label = SearchHeaderCardLabel()
         label.text = "Recently Viewed"
-        label.font = UIFont.systemFont(ofSize: 20.0, weight: .semibold)
-        label.textColor = UIColor.black.withAlphaComponent(0.72)
-        label.backgroundColor = .white
         return label
     }()
     private let collectionView: UICollectionView = {
