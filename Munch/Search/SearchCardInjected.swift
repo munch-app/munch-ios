@@ -244,7 +244,7 @@ class SearchHeaderCardLabel: UIView {
         self.label.snp.makeConstraints { make in
             make.left.right.equalTo(self)
             make.top.equalTo(self)
-            make.bottom.equalTo(self.indicator).inset(5)
+            make.bottom.equalTo(self.indicator).inset(4)
         }
 
         self.indicator.snp.makeConstraints { make in
