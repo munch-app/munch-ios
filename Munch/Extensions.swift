@@ -178,6 +178,7 @@ extension UIView {
     }
 
     func roundCorners(_ corners: UIRectCorner, radius: CGFloat) {
+        // self.layer.cornerRadius = 3, if all corner same radius
         let path = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
         let mask = CAShapeLayer()
         mask.path = path.cgPath

@@ -21,39 +21,42 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
 
     let backButton = SearchBackButton()
     let textButton = SearchTextButton()
-    let filterButton = SearchFilterButton()
+    let mapButton = SearchFilterButton()
     let tagCollection = SearchFilterTagCollection()
 
     var topConstraint: Constraint! = nil
 
     var searchQueryHistories = [SearchQuery]()
 
-    required init() {
+    required init(showMapBtn: Bool = true) {
         super.init(frame: .zero)
         self.tagCollection.delegate = self
-        self.initViews()
+        self.initViews(showMapBtn: showMapBtn)
     }
 
-    private func initViews() {
+    private func initViews(showMapBtn: Bool) {
         self.backgroundColor = .white
 
         self.addSubview(tagCollection)
         self.addSubview(textButton)
-        self.addSubview(filterButton)
         self.addSubview(backButton)
 
-        filterButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
-        filterButton.snp.makeConstraints { make in
-            make.width.equalTo(72)
-            make.right.equalTo(self)
-            make.height.equalTo(52)
-            make.top.equalTo(self.safeArea.top)
+        if (showMapBtn) {
+            self.addSubview(mapButton)
+
+            mapButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
+            mapButton.snp.makeConstraints { make in
+                make.width.equalTo(72)
+                make.right.equalTo(self)
+                make.height.equalTo(52)
+                make.top.equalTo(self.safeArea.top)
+            }
         }
 
         textButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
         textButton.snp.makeConstraints { make in
             make.left.equalTo(self).inset(24)
-            make.right.equalTo(filterButton.snp.left)
+            make.right.equalTo(showMapBtn ? mapButton.snp.left : self)
             make.height.equalTo(52)
             make.top.equalTo(self.safeArea.top)
         }
@@ -86,7 +89,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
     }
 
     func tagCollection(selectedLocation name: String, for tagCollection: SearchFilterTagCollection) {
-        controller.goTo(extension: SearchLocationController.self)
+        // TODO
     }
 
     func tagCollection(selectedHour name: String, for tagCollection: SearchFilterTagCollection) {
@@ -346,10 +349,6 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
         }
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     class DefaultTagConfig: TTGTextTagConfig {
         override init() {
             super.init()
@@ -384,6 +383,10 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
         case let .tag(name):
             delegate?.tagCollection(selectedTag: name, for: self)
         }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 

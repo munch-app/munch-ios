@@ -118,6 +118,10 @@ struct Tag: SearchResult {
     var id: String?
     var name: String?
 
+    init(name: String) {
+        self.name = name
+    }
+
     init(json: JSON) {
         self.id = json["id"].string
         self.name = json["name"].string

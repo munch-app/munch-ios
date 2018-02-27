@@ -76,8 +76,8 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        // Filter Testing
-//        self.goTo(extension: SearchFilterController.self)
+        // Suggest Testing
+        self.goTo(extension: SearchSuggestController.self)
         // Place Testing
 //         self.navigationController!.pushViewController(PlaceViewController(placeId: "9512d8fd-5123-49be-b223-5d7e469d28b7"), animated: true)
     }

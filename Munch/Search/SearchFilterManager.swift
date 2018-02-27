@@ -268,13 +268,13 @@ extension SearchFilterManager {
 }
 
 extension SearchFilterManager {
-    private class func readPopularLocations() -> [LocationType]? {
+    class func readPopularLocations() -> [LocationType]? {
         return readJson(forResource: "locations-popular")?
                 .flatMap({ Location(json: $0.1) })
                 .map({ LocationType.location($0) })
     }
 
-    private class func readRecentLocations(database: RecentDatabase) -> [LocationType] {
+    class func readRecentLocations(database: RecentDatabase) -> [LocationType] {
         return database.get()
                 .flatMap({ $1 })
                 .flatMap({ SearchClient.parseResult(result: $0) })
@@ -289,7 +289,7 @@ extension SearchFilterManager {
                 }
     }
 
-    private class func readJson(forResource resourceName: String) -> JSON? {
+    class func readJson(forResource resourceName: String) -> JSON? {
         if let path = Bundle.main.path(forResource: resourceName, ofType: "json") {
             do {
                 let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .alwaysMapped)
