@@ -175,7 +175,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.shadow(vertical: 1.0)
+        self.shadow(vertical: 1.5)
     }
 
     required init?(coder aDecoder: NSCoder) {

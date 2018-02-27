@@ -164,6 +164,8 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         if MunchLocation.isEnabled {
             MunchLocation.waitFor(completion: { latLng, error in
                 if let error = error {
+                    // TODO Better way to handle error like this
+
                     self.alert(title: "Location Error", error: error)
                 } else if let latLng = latLng {
                     var updatedQuery = searchQuery

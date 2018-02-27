@@ -49,7 +49,7 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
         tabBar.backgroundColor = UIColor.white
         tabBar.shadowImage = UIImage()
         tabBar.backgroundImage = UIImage()
-        tabBar.shadow(vertical: -1.0)
+        tabBar.shadow(vertical: -1.5)
         tabBar.frame = tabBar.frame.offsetBy(dx: 0, dy: -10)
 
         self.delegate = self
