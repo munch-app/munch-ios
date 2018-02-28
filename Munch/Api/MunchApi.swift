@@ -139,6 +139,10 @@ public enum RestfulError: Error {
 public struct MetaJSON {
     public static let ok = MetaJSON(metaJson: JSON(["code": 200]))
 
+    public static func error(type: String, message: String) -> MetaJSON {
+        return MetaJSON(metaJson: JSON(["code": 200, "error": ["type": type, "message": message]]))
+    }
+
     public let code: Int!
     public let error: Error?
 

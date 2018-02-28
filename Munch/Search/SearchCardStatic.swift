@@ -184,6 +184,11 @@ class SearchStaticErrorCard: UITableViewCell, SearchCardView {
         return self.card
     }
 
+    class func create(type: String, message: String) -> SearchCard {
+        let json = JSON(["type": type, "message": message])
+        return SearchCard(cardId: self.cardId, json: json)
+    }
+
     static var cardId: String {
         return "static_SearchStaticErrorCard"
     }

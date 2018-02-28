@@ -23,18 +23,41 @@ class SearchCardManager {
         let shimmerCard = SearchShimmerPlaceCard.card
         self.init(query: query, cards: [shimmerCard, shimmerCard, shimmerCard])
 
-        MunchApi.search.search(query: query) { (meta, cards) in
-            if (meta.isOk()) {
-                if (cards.isEmpty) {
-                    self.cards = [SearchStaticNoResultCard.card]
+        func search() {
+            MunchApi.search.search(query: self.query!) { (meta, cards) in
+                if (meta.isOk()) {
+                    if (cards.isEmpty) {
+                        self.cards = [SearchStaticNoResultCard.card]
+                    } else {
+                        self.cards = cards
+                        self.query!.from = self.query!.from! + self.query!.size!
+                    }
                 } else {
-                    self.cards = cards
-                    self.query!.from = self.query!.from! + self.query!.size!
+                    self.cards = [SearchStaticErrorCard.create(meta: meta)]
                 }
-            } else {
-                self.cards = [SearchStaticErrorCard.create(meta: meta)]
+                completion(meta, self)
             }
-            completion(meta, self)
+        }
+
+        // Check if Location is Enabled, Inject Location
+        if MunchLocation.isEnabled {
+            MunchLocation.waitFor(completion: { latLng, error in
+                if let error = error {
+                    let meta = MetaJSON.error(type: "Location Error", message: error.localizedDescription)
+                    self.cards = [SearchStaticErrorCard.create(meta: meta)]
+                    completion(meta, self)
+                } else if let latLng = latLng {
+                    self.query?.latLng = latLng
+                    search()
+                } else {
+                    let meta = MetaJSON.error(type: "Location Error", message: "No Error or Location Data")
+                    self.cards = [SearchStaticErrorCard.create(meta: meta)]
+                    completion(meta, self)
+                }
+            })
+        } else {
+            self.query?.latLng = nil
+            search()
         }
     }
 
