@@ -41,8 +41,8 @@ class SearchSuggestController: UIViewController {
         tableView.estimatedRowHeight = 50
 
         tableView.tableFooterView = UIView(frame: CGRect.zero)
-        tableView.contentInset.top = 14
-        tableView.contentInset.bottom = 14
+        tableView.contentInset.top = 7
+        tableView.contentInset.bottom = 7
         tableView.separatorStyle = .none
         return tableView
     }()
@@ -114,13 +114,13 @@ class SearchSuggestController: UIViewController {
         if let text = textField.text, text.count >= 2 {
             // TODO Multi Search and Convert
         } else {
-
             self.tableView.reloadData()
         }
     }
 
     @objc func textFieldShouldReturn(_ sender: Any) -> Bool {
-        // TODO Apply Immediately
+        NSObject.cancelPreviousPerformRequests(withTarget: self)
+        textFieldDidCommit(textField: headerView.textField)
         return true
     }
 
@@ -135,7 +135,6 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
         tableView.register(SearchSuggestCellLocation.self, forCellReuseIdentifier: SearchSuggestCellLocation.id)
         tableView.register(SearchSuggestCellTag.self, forCellReuseIdentifier: SearchSuggestCellTag.id)
         tableView.register(SearchSuggestCellTiming.self, forCellReuseIdentifier: SearchSuggestCellTiming.id)
-        // TODO everything
     }
 
     var items: [SearchSuggestType] {
@@ -250,13 +249,12 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
     }
 
     func tagCollection(selectedLocation name: String, for tagCollection: SearchFilterTagCollection) {
-        // TODO
     }
 
     func tagCollection(selectedHour name: String, for tagCollection: SearchFilterTagCollection) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
-            // TODO
+            self.controller.manager.select(hour: name)
         })
         addAlert(removeAll: alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -266,7 +264,7 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
     func tagCollection(selectedPrice name: String, for tagCollection: SearchFilterTagCollection) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
-            // TODO
+            self.controller.manager.resetPrice()
         })
         addAlert(removeAll: alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -276,7 +274,7 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
     func tagCollection(selectedTag name: String, for tagCollection: SearchFilterTagCollection) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
-            // TODO
+            self.controller.manager.reset(tags: [name.lowercased()])
         })
         addAlert(removeAll: alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -285,7 +283,7 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
 
     func addAlert(removeAll alert: UIAlertController) {
         alert.addAction(UIAlertAction(title: "Remove All", style: .destructive) { action in
-            // TODO
+            self.controller.manager.reset()
         })
     }
 

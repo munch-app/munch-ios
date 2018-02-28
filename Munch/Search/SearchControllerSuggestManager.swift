@@ -7,7 +7,7 @@ import Foundation
 
 enum SearchSuggestType {
     case header(String)
-    case location([SearchLocationType]) // TODO Container data also
+    case location([SearchLocationType])
     case price(PriceRangeInArea)
     case priceLoading
     case time([SearchTimingType])
@@ -44,16 +44,17 @@ class SearchControllerSuggestManager {
 
     var searchQuery: SearchQuery
 
-    let recentLocationDatabase = RecentDatabase(name: "SearchLocation", maxItems: 6)
+    let recentLocationDatabase = RecentDatabase(name: "SearchLocation", maxItems: 8)
+    private var updateHooks = [(SearchQuery) -> Void]()
 
     var fixedSuggestions: [SearchSuggestType] = {
-        let locationDatabase = RecentDatabase(name: "SearchLocation", maxItems: 6)
+        let locationDatabase = RecentDatabase(name: "SearchLocation", maxItems: 8)
         let recentLocations = SearchControllerSuggestManager.readRecentLocations(database: locationDatabase)
 
         var list = [SearchSuggestType]()
         list.append(SearchSuggestType.header("LOCATIONS"))
         list.append(SearchSuggestType.location([SearchLocationType.nearby, SearchLocationType.anywhere(SearchFilterManager.anywhere)] + recentLocations))
-        list.append(SearchSuggestType.header("PRICE RANGE"))
+//        list.append(SearchSuggestType.header("PRICE RANGE"))
         // TODO Price Range
         list.append(SearchSuggestType.header("TIMING"))
         list.append(SearchSuggestType.time([SearchTimingType.now, SearchTimingType.breakfast, SearchTimingType.lunch, SearchTimingType.dinner, SearchTimingType.supper]))
@@ -72,8 +73,18 @@ class SearchControllerSuggestManager {
         self.searchQuery = searchQuery
     }
 
+    func addUpdateHook(hook: @escaping (SearchQuery) -> Void){
+        updateHooks.append(hook)
+    }
+
     var items: [SearchSuggestType] {
         return fixedSuggestions
+    }
+
+    private func runHooks() {
+        for hook in updateHooks {
+            hook(self.searchQuery)
+        }
     }
 
     func select(location: Location?, save: Bool = true) {
@@ -82,6 +93,7 @@ class SearchControllerSuggestManager {
         }
         searchQuery.filter.location = location
         searchQuery.filter.containers = []
+        runHooks()
     }
 
     func select(container: Container, save: Bool = true) {
@@ -90,6 +102,7 @@ class SearchControllerSuggestManager {
         }
         searchQuery.filter.location = nil
         searchQuery.filter.containers = [container]
+        runHooks()
     }
 
     func select(tag: String, selected: Bool) {
@@ -98,6 +111,7 @@ class SearchControllerSuggestManager {
         } else {
             searchQuery.filter.tag.positives.remove(tag)
         }
+        runHooks()
     }
 
     func select(hour name: String) {
@@ -132,6 +146,7 @@ class SearchControllerSuggestManager {
                 break
             }
         }
+        runHooks()
     }
 
     func select(price name: String?, min: Double?, max: Double?) {
@@ -144,12 +159,43 @@ class SearchControllerSuggestManager {
             searchQuery.filter.price.min = min
             searchQuery.filter.price.max = max
         }
+        runHooks()
     }
 
     func resetPrice() {
         searchQuery.filter.price.name = nil
         searchQuery.filter.price.min = nil
         searchQuery.filter.price.max = nil
+        runHooks()
+    }
+
+    /**
+     Reset everything except for location and containers
+     */
+    func reset() {
+        searchQuery.filter.tag.positives = []
+
+        // Filters Hour
+        searchQuery.filter.hour.name = nil
+        searchQuery.filter.hour.day = nil
+        searchQuery.filter.hour.open = nil
+        searchQuery.filter.hour.close = nil
+
+        // Filters Price
+        searchQuery.filter.price.name = nil
+        searchQuery.filter.price.min = nil
+        searchQuery.filter.price.max = nil
+
+        // Sort
+        searchQuery.sort.type = nil
+        runHooks()
+    }
+
+    func reset(tags: [String]) {
+        for tag in tags {
+            searchQuery.filter.tag.positives.remove(tag)
+        }
+        runHooks()
     }
 
     func isSelected(tag: String) -> Bool {
@@ -176,33 +222,6 @@ class SearchControllerSuggestManager {
 
     func isSelected(price name: String) -> Bool {
         return searchQuery.filter.price.name == name
-    }
-
-    /**
-     Reset everything except for location and containers
-     */
-    func reset() {
-        searchQuery.filter.tag.positives = []
-
-        // Filters Hour
-        searchQuery.filter.hour.name = nil
-        searchQuery.filter.hour.day = nil
-        searchQuery.filter.hour.open = nil
-        searchQuery.filter.hour.close = nil
-
-        // Filters Price
-        searchQuery.filter.price.name = nil
-        searchQuery.filter.price.min = nil
-        searchQuery.filter.price.max = nil
-
-        // Sort
-        searchQuery.sort.type = nil
-    }
-
-    func reset(tags: [String]) {
-        for tag in tags {
-            searchQuery.filter.tag.positives.remove(tag)
-        }
     }
 }
 

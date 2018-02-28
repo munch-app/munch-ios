@@ -49,9 +49,9 @@ class SearchSuggestCellLocation: UITableViewCell {
     fileprivate let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
-        layout.itemSize = CGSize(width: 100, height: 90)
+        layout.itemSize = CGSize(width: 95, height: 90)
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 18
+        layout.minimumLineSpacing = 16
 
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.showsVerticalScrollIndicator = false
@@ -77,7 +77,7 @@ class SearchSuggestCellLocation: UITableViewCell {
             make.left.right.equalTo(self)
             make.top.equalTo(self).inset(1)
             make.bottom.equalTo(self).inset(1)
-            make.height.equalTo(100)
+            make.height.equalTo(94)
         }
     }
 
@@ -113,10 +113,10 @@ extension SearchSuggestCellLocation: UICollectionViewDataSource, UICollectionVie
             cell.render(text: "Anywhere", image: UIImage(named: "Search-Location-Anywhere"), selected: selected)
         case let .location(location):
             let selected = controller.manager.isSelected(location: location)
-            cell.render(text: location.name, image: nil, selected: selected)
+            cell.render(text: location.name, image: UIImage(named: "Search-Location-Pin"), selected: selected)
         case let .container(container):
             let selected = controller.manager.isSelected(container: container)
-            cell.render(text: container.name, image: nil, selected: selected)
+            cell.render(text: container.name, image: UIImage(named: "Search-Location-Pin"), selected: selected)
         }
         return cell
     }
@@ -133,9 +133,6 @@ extension SearchSuggestCellLocation: UICollectionViewDataSource, UICollectionVie
             controller.manager.select(container: container)
         }
         collectionView.reloadData()
-        // TODO reload price cell
-//        self.controller.applyView.render(searchQuery: self.controller.filterManager.searchQuery)
-//        self.controller.filterPriceCell.reload()
     }
 
     fileprivate class SearchSuggestCellLocationGridCell: UICollectionViewCell {
@@ -147,21 +144,17 @@ extension SearchSuggestCellLocation: UICollectionViewDataSource, UICollectionVie
         let imageView: MunchImageView = {
             let imageView = MunchImageView()
             imageView.tintColor = UIColor(hex: "333333")
-            imageView.contentMode = .scaleAspectFit
+            imageView.contentMode = .scaleAspectFill
+            imageView.clipsToBounds = true
             return imageView
         }()
-
-        let nameLabel: UITextView = {
-            let nameLabel = UITextView()
-            nameLabel.backgroundColor = .white
-            nameLabel.font = UIFont.systemFont(ofSize: 13.0, weight: .semibold)
-            nameLabel.textColor = UIColor.black.withAlphaComponent(0.72)
-
-            nameLabel.textContainer.maximumNumberOfLines = 1
-            nameLabel.textContainer.lineBreakMode = .byTruncatingTail
-            nameLabel.textContainerInset = UIEdgeInsets(topBottom: 6, leftRight: 4)
-            nameLabel.isUserInteractionEnabled = false
-            return nameLabel
+        let nameLabel: UILabel = {
+            let label = UILabel()
+            label.font = UIFont.systemFont(ofSize: 13.0, weight: .semibold)
+            label.textColor = UIColor(hex: "444444")
+            label.textAlignment = .center
+            label.numberOfLines = 2
+            return label
         }()
 
         override init(frame: CGRect = .zero) {
@@ -171,15 +164,16 @@ extension SearchSuggestCellLocation: UICollectionViewDataSource, UICollectionVie
             containerView.addSubview(nameLabel)
 
             imageView.snp.makeConstraints { make in
-                make.left.right.equalTo(containerView).inset(35)
-                make.top.equalTo(containerView)
+                make.top.equalTo(containerView).inset(12)
                 make.bottom.equalTo(nameLabel.snp.top)
+                make.centerX.equalTo(containerView)
+                make.height.equalTo(imageView.snp.width)
             }
 
             nameLabel.snp.makeConstraints { make in
                 make.left.right.equalTo(containerView)
                 make.bottom.equalTo(containerView)
-                make.height.equalTo(30)
+                make.height.equalTo(40)
             }
 
             containerView.snp.makeConstraints { make in
@@ -190,26 +184,26 @@ extension SearchSuggestCellLocation: UICollectionViewDataSource, UICollectionVie
 
         fileprivate override func layoutSubviews() {
             super.layoutSubviews()
-            nameLabel.roundCorners([.bottomLeft, .bottomRight], radius: 3.0)
             containerView.layer.cornerRadius = 3.0
-            containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.5)
+            containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
         }
 
         func render(text: String?, image: UIImage?, selected: Bool) {
             nameLabel.text = text
             imageView.image = image
 
-            if selected {
-                containerView.backgroundColor = .primary030
+            containerView.backgroundColor = selected ? .primary400 : UIColor(hex: "F0F0F0")
+            imageView.tintColor = selected ? .white : UIColor(hex: "444444")
+            nameLabel.textColor = selected ? .white : UIColor(hex: "444444")
+        }
 
-                nameLabel.textColor = .white
-                nameLabel.backgroundColor = .primary400
-            } else {
-                containerView.backgroundColor = UIColor(hex: "F0F0F0")
+        func render(text: String?, sourcedImage: SourcedImage?, selected: Bool) {
+            nameLabel.text = text
+            imageView.render(sourcedImage: sourcedImage)
 
-                nameLabel.textColor = UIColor.black.withAlphaComponent(0.72)
-                nameLabel.backgroundColor = .white
-            }
+            containerView.backgroundColor = selected ? .primary400 : UIColor(hex: "F0F0F0")
+            imageView.tintColor = selected ? .white : UIColor(hex: "444444")
+            nameLabel.textColor = selected ? .white : UIColor(hex: "444444")
         }
 
         required init?(coder aDecoder: NSCoder) {
@@ -376,15 +370,15 @@ extension SearchSuggestCellTiming: UICollectionViewDataSource, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         switch timings[indexPath.row] {
         case .now:
-            return CGSize(width: SearchSuggestCellTimingGridCell.textWidth(text: "Open Now") + 36 + 20, height: 34)
+            return CGSize(width: SearchSuggestCellTimingGridCell.textWidth(text: "Open Now") + 36 + 20, height: 36)
         case .breakfast:
-            return CGSize(width: SearchSuggestCellTimingGridCell.textWidth(text: "Breakfast") + 36, height: 34)
+            return CGSize(width: SearchSuggestCellTimingGridCell.textWidth(text: "Breakfast") + 36, height: 36)
         case .lunch:
-            return CGSize(width: SearchSuggestCellTimingGridCell.textWidth(text: "Lunch") + 36, height: 34)
+            return CGSize(width: SearchSuggestCellTimingGridCell.textWidth(text: "Lunch") + 36, height: 36)
         case .dinner:
-            return CGSize(width: SearchSuggestCellTimingGridCell.textWidth(text: "Dinner") + 36, height: 34)
+            return CGSize(width: SearchSuggestCellTimingGridCell.textWidth(text: "Dinner") + 36, height: 36)
         case .supper:
-            return CGSize(width: SearchSuggestCellTimingGridCell.textWidth(text: "Supper") + 36, height: 34)
+            return CGSize(width: SearchSuggestCellTimingGridCell.textWidth(text: "Supper") + 36, height: 36)
         }
     }
 
@@ -402,7 +396,6 @@ extension SearchSuggestCellTiming: UICollectionViewDataSource, UICollectionViewD
             controller.manager.select(hour: "Supper")
         }
         collectionView.reloadData()
-        // TODO Apply
     }
 
     fileprivate class SearchSuggestCellTimingGridCell: UICollectionViewCell {
@@ -447,11 +440,11 @@ extension SearchSuggestCellTiming: UICollectionViewDataSource, UICollectionViewD
                 make.top.bottom.equalTo(containerView)
                 make.left.equalTo(containerView)
 
-                make.height.equalTo(34)
+                make.height.equalTo(36)
             }
 
             imageView.snp.makeConstraints { make in
-                make.top.bottom.equalTo(containerView).inset(7)
+                make.top.bottom.equalTo(containerView).inset(8)
                 make.left.equalTo(containerView).inset(11)
                 make.width.height.equalTo(20)
             }

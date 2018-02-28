@@ -158,6 +158,8 @@ struct Container: SearchResult, Equatable {
         params["id"] = id
         params["type"] = type
         params["name"] = name
+        params["images"] = images?.map({$0.toParams()})
+        params["ranking"] = ranking
         params["dataType"] = "Container"
         return params
     }

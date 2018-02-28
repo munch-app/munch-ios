@@ -21,7 +21,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
 
     let backButton = SearchBackButton()
     let textButton = SearchTextButton()
-    let mapButton = SearchFilterButton()
+    let mapButton = SearchMapButton()
     let tagCollection = SearchFilterTagCollection()
 
     var topConstraint: Constraint! = nil
@@ -83,13 +83,11 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
         } else if view is SearchBackButton {
             // When back button is clicked
             renderPrevious()
-        } else if view is SearchFilterButton {
-            controller.goTo(extension: SearchFilterController.self)
         }
     }
 
     func tagCollection(selectedLocation name: String, for tagCollection: SearchFilterTagCollection) {
-        // TODO
+        controller.goTo(extension: SearchSuggestController.self)
     }
 
     func tagCollection(selectedHour name: String, for tagCollection: SearchFilterTagCollection) {
@@ -186,7 +184,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
     }
 }
 
-class SearchFilterButton: UIButton {
+class SearchMapButton: UIButton {
     override init(frame: CGRect = CGRect()) {
         super.init(frame: frame)
 

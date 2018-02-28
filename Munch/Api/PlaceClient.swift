@@ -517,4 +517,13 @@ struct SourcedImage {
         self.sourceName = json["sourceName"].string
         self.images = json["images"].dictionaryObject as! [String: String]
     }
+
+    func toParams() -> Parameters {
+        var params = Parameters()
+        params["source"] = source
+        params["sourceId"] = sourceId
+        params["sourceName"] = sourceName
+        params["images"] = images
+        return params
+    }
 }
