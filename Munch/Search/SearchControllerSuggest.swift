@@ -46,6 +46,7 @@ class SearchSuggestController: UIViewController {
         tableView.separatorStyle = .none
         return tableView
     }()
+    private var suggests: [SearchSuggestType] = []
 
     init(searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
         self.onExtensionDismiss = extensionDismiss
@@ -106,13 +107,24 @@ class SearchSuggestController: UIViewController {
     }
 
     @objc func textFieldDidChange(_ sender: Any) {
+        // Reset View
+        self.suggests = []
+        self.tableView.reloadData()
+
         NSObject.cancelPreviousPerformRequests(withTarget: self)
         self.perform(#selector(textFieldDidCommit(textField:)), with: headerView.textField, afterDelay: 1.0)
     }
 
     @objc func textFieldDidCommit(textField: UITextField) {
-        if let text = textField.text, text.count >= 2 {
-            // TODO Multi Search and Convert
+        if let text = textField.text, text.count >= 3 {
+            MunchApi.search.suggest(text: text, query: self.manager.searchQuery) { meta, query, places, results, tags in
+                if meta.isOk() {
+                    self.suggests = SearchControllerSuggestManager.map(assumedSearchQuery: query, places: places, locationContainers: results, tags: tags)
+                    self.tableView.reloadData()
+                } else {
+                    self.present(meta.createAlert(), animated: true)
+                }
+            }
         } else {
             self.tableView.reloadData()
         }
@@ -135,10 +147,21 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
         tableView.register(SearchSuggestCellLocation.self, forCellReuseIdentifier: SearchSuggestCellLocation.id)
         tableView.register(SearchSuggestCellTag.self, forCellReuseIdentifier: SearchSuggestCellTag.id)
         tableView.register(SearchSuggestCellTiming.self, forCellReuseIdentifier: SearchSuggestCellTiming.id)
+        tableView.register(SearchSuggestCellNoResult.self, forCellReuseIdentifier: SearchSuggestCellNoResult.id)
+        tableView.register(SearchSuggestCellPlace.self, forCellReuseIdentifier: SearchSuggestCellPlace.id)
     }
 
     var items: [SearchSuggestType] {
-        return manager.items
+        if let text = headerView.textField.text {
+            if text.isEmpty {
+                return self.manager.suggestions
+            } else if text.count < 3 {
+                return []
+            } else if text.count >= 3 {
+                return suggests
+            }
+        }
+        return []
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -147,6 +170,8 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch items[indexPath.row] {
+        case .empty:
+            return tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellNoResult.id) as! SearchSuggestCellNoResult
         case .header(let title):
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellHeader.id) as! SearchSuggestCellHeader
             cell.render(title: title)
@@ -167,6 +192,10 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
             cell.render(timings: timings, controller: self)
             return cell
 
+        case .place(let place):
+            let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellPlace.id) as! SearchSuggestCellPlace
+            cell.render(place: place)
+            return cell
         default: return UITableViewCell()
         }
     }
@@ -179,6 +208,11 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
             let text = tag.name ?? ""
             manager.select(tag: text, selected: !manager.isSelected(tag: text))
             tableView.reloadRows(at: [indexPath], with: .none)
+        case .place(let place):
+            if let placeId = place.id {
+                let placeController = PlaceViewController(placeId: placeId)
+                self.navigationController?.pushViewController(placeController, animated: true)
+            }
         default: return
         }
     }

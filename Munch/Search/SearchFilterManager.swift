@@ -263,7 +263,7 @@ class SearchFilterManager {
 
 extension SearchFilterManager {
     public func getPriceInArea(callback: @escaping (_ meta: MetaJSON, _ priceRangeInArea: PriceRangeInArea?) -> Void) {
-        MunchApi.search.priceRange(query: self.searchQuery, callback: callback)
+        MunchApi.search.suggestPriceRange(query: self.searchQuery, callback: callback)
     }
 }
 

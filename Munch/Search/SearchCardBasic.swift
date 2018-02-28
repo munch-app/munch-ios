@@ -244,7 +244,7 @@ class SearchPlaceCardBottomView: UIView {
     private func render(location card: SearchCard) {
         let line = NSMutableAttributedString()
 
-        // Street
+        // Neighbourhood
         if let street = card["location"]["neighbourhood"].string {
             line.append(NSMutableAttributedString(string: street))
         } else {

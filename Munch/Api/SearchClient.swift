@@ -15,19 +15,32 @@ import SwiftyJSON
  DiscoveryClient from DiscoveryService in munch-core/munch-api
  */
 class SearchClient {
-    func suggest(text: String, size: Int, latLng: String? = nil, callback: @escaping (_ meta: MetaJSON, _ results: [SearchResult]) -> Void) {
+    func suggest(text: String, query: SearchQuery, callback: @escaping (_ meta: MetaJSON,
+                                                                        _ assumedSearchQuery: AssumedSearchQuery?,
+                                                                        _ places: [Place],
+                                                                        _ locationContainers: [SearchResult],
+                                                                        _ tags: [Tag]) -> Void) {
         var params = Parameters()
         params["text"] = text
-        params["size"] = size
-        params["latLng"] = latLng
+        params["query"] = query.toParams()
+        params["latLng"] = MunchLocation.lastLatLng
+        params["types"] = [
+            "Place": 40,
+            "Location,Container": 10,
+            "Tag": 4
+        ]
 
         MunchApi.restful.post("/search/suggest", parameters: params) { meta, json in
-            callback(meta, json["data"].flatMap({ SearchClient.parseResult(result: $0.1) }))
+            let assumed = AssumedSearchQuery(json: json["data"]["Assumption"])
+            let places = json["data"]["Place"].flatMap({ SearchClient.parseResult(result: $0.1) as? Place })
+            let locationContainers = json["data"]["Location,Container"].flatMap({ SearchClient.parseResult(result: $0.1) })
+            let tags = json["data"]["Tag"].flatMap({ SearchClient.parseResult(result: $0.1) as? Tag })
+            callback(meta, assumed, places, locationContainers, tags)
         }
     }
 
     func search(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ results: [SearchCard]) -> Void) {
-        MunchApi.restful.post("/search/search", parameters: query.toParams()) { meta, json in
+        MunchApi.restful.post("/search", parameters: query.toParams()) { meta, json in
             callback(meta, json["data"].map({ SearchCard(json: $0.1) }))
         }
     }
@@ -38,8 +51,8 @@ class SearchClient {
         }
     }
 
-    func priceRange(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ priceRangeInArea: PriceRangeInArea?) -> Void) {
-        MunchApi.restful.post("/search/filter/price_range", parameters: query.toParams()) { metaJSON, json in
+    func suggestPriceRange(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ priceRangeInArea: PriceRangeInArea?) -> Void) {
+        MunchApi.restful.post("/search/suggest/price/range", parameters: query.toParams()) { metaJSON, json in
             callback(metaJSON, PriceRangeInArea.init(json: json["data"]))
         }
     }
@@ -158,7 +171,7 @@ struct Container: SearchResult, Equatable {
         params["id"] = id
         params["type"] = type
         params["name"] = name
-        params["images"] = images?.map({$0.toParams()})
+        params["images"] = images?.map({ $0.toParams() })
         params["ranking"] = ranking
         params["dataType"] = "Container"
         return params
@@ -167,6 +180,43 @@ struct Container: SearchResult, Equatable {
     static func ==(lhs: Container, rhs: Container) -> Bool {
         return lhs.id == rhs.id
     }
+}
+
+struct AssumedSearchQuery {
+    var text: String
+    var tokens: [SearchQueryToken]
+    var searchQuery: SearchQuery
+    var resultCount: Int
+
+    init(json: JSON) {
+        self.text = json["text"].string ?? ""
+        self.tokens = json["tokens"].flatMap({ AssumedSearchQuery.parseToken(result: $0.1) })
+        self.searchQuery = SearchQuery(json: json["searchQuery"])
+        self.resultCount = json["resultCount"].int ?? 0
+    }
+
+    struct TextToken: SearchQueryToken {
+        var text: String
+    }
+
+    struct TagToken: SearchQueryToken {
+        var text: String
+    }
+
+    public static func parseToken(result json: JSON?) -> SearchQueryToken? {
+        if let json = json {
+            switch json["type"].stringValue {
+            case "text": return TextToken(text: json["text"].string ?? "")
+            case "tag": return TagToken(text: json["text"].string ?? "")
+            default: return nil
+            }
+        }
+        return nil
+    }
+}
+
+protocol SearchQueryToken {
+
 }
 
 /**

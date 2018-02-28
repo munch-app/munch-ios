@@ -45,6 +45,39 @@ class SearchSuggestCellHeader: UITableViewCell {
     }
 }
 
+class SearchSuggestCellNoResult: UITableViewCell {
+    private let label: UILabel = {
+        let label = UILabel()
+        label.backgroundColor = .white
+        label.text = "No Results"
+        label.font = UIFont.systemFont(ofSize: 15.0, weight: .medium)
+        label.textColor = UIColor(hex: "333333")
+        label.textAlignment = .center
+        return label
+    }()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+
+        self.addSubview(label)
+
+        label.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.top.equalTo(self).inset(20)
+            make.bottom.equalTo(self).inset(20)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    class var id: String {
+        return "SearchSuggestCellNoResult"
+    }
+}
+
 class SearchSuggestCellLocation: UITableViewCell {
     fileprivate let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -171,7 +204,7 @@ extension SearchSuggestCellLocation: UICollectionViewDataSource, UICollectionVie
             }
 
             nameLabel.snp.makeConstraints { make in
-                make.left.right.equalTo(containerView)
+                make.left.right.equalTo(containerView).inset(4)
                 make.bottom.equalTo(containerView)
                 make.height.equalTo(40)
             }
@@ -480,5 +513,98 @@ extension SearchSuggestCellTiming: UICollectionViewDataSource, UICollectionViewD
         required init?(coder aDecoder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
+    }
+}
+
+class SearchSuggestCellPlace: UITableViewCell {
+    private let nameLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+        label.textColor = UIColor(hex: "404040")
+        return label
+    }()
+    private let locationLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 13, weight: .medium)
+        label.textColor = UIColor(hex: "535353")
+        return label
+    }()
+    private let placeImageView: ShimmerImageView = {
+        let imageView = ShimmerImageView()
+        return imageView
+    }()
+
+    private let containerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(hex: "F0F0F0")
+        return view
+    }()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(containerView)
+        containerView.addSubview(placeImageView)
+        containerView.addSubview(nameLabel)
+        containerView.addSubview(locationLabel)
+
+        containerView.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(24)
+            make.top.bottom.equalTo(self).inset(2)
+        }
+
+        placeImageView.snp.makeConstraints { make in
+            make.left.top.bottom.equalTo(containerView).inset(8)
+            make.height.equalTo(40)
+            make.width.equalTo(50)
+        }
+
+        nameLabel.snp.makeConstraints { make in
+            make.left.equalTo(placeImageView.snp.right).inset(-12)
+            make.right.equalTo(containerView).inset(8)
+            make.top.equalTo(containerView).inset(11)
+        }
+
+        locationLabel.snp.makeConstraints { make in
+            make.left.equalTo(placeImageView.snp.right).inset(-12)
+            make.right.equalTo(containerView).inset(8)
+            make.bottom.equalTo(containerView).inset(11)
+        }
+    }
+
+    func render(place: Place) {
+        placeImageView.render(sourcedImage: place.images?.get(0))
+        nameLabel.text = place.name
+
+
+        let locationName = place.location.neighbourhood ?? ""
+        if let latLng = place.location.latLng, let distance = MunchLocation.distance(asMetric: latLng) {
+            let string = NSMutableAttributedString()
+            string.append(distance.set(style: .default { make in
+                make.color = UIColor(hex: "606060")
+            }))
+            string.append(NSAttributedString(string: ", "))
+            string.append(locationName.set(style: .default { make in
+                make.color = UIColor(hex: "505050")
+            }))
+            locationLabel.attributedText = string
+        } else {
+            locationLabel.text = locationName
+        }
+
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        containerView.layer.cornerRadius = 3
+        containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    class var id: String {
+        return "SearchSuggestCellPlace"
     }
 }

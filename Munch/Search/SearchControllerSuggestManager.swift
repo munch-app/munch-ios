@@ -7,6 +7,7 @@ import Foundation
 
 enum SearchSuggestType {
     case header(String)
+    case empty
     case location([SearchLocationType])
     case price(PriceRangeInArea)
     case priceLoading
@@ -43,11 +44,12 @@ class SearchControllerSuggestManager {
     }()
 
     var searchQuery: SearchQuery
+    var text: String?
 
     let recentLocationDatabase = RecentDatabase(name: "SearchLocation", maxItems: 8)
     private var updateHooks = [(SearchQuery) -> Void]()
 
-    var fixedSuggestions: [SearchSuggestType] = {
+    var suggestions: [SearchSuggestType] = {
         let locationDatabase = RecentDatabase(name: "SearchLocation", maxItems: 8)
         let recentLocations = SearchControllerSuggestManager.readRecentLocations(database: locationDatabase)
 
@@ -73,12 +75,8 @@ class SearchControllerSuggestManager {
         self.searchQuery = searchQuery
     }
 
-    func addUpdateHook(hook: @escaping (SearchQuery) -> Void){
+    func addUpdateHook(hook: @escaping (SearchQuery) -> Void) {
         updateHooks.append(hook)
-    }
-
-    var items: [SearchSuggestType] {
-        return fixedSuggestions
     }
 
     private func runHooks() {
@@ -257,5 +255,39 @@ extension SearchControllerSuggestManager {
 
     private class func map(type: String) -> [SearchSuggestType] {
         return priorityTypes[type.lowercased()]!.map({ SearchSuggestType.tag(Tag(name: $0)) })
+    }
+
+    class func map(assumedSearchQuery: AssumedSearchQuery?, places: [Place], locationContainers: [SearchResult], tags: [Tag]) -> [SearchSuggestType] {
+        var list = [SearchSuggestType]()
+        // TODO Assumption
+
+        if !locationContainers.isEmpty {
+            list.append(SearchSuggestType.header("LOCATIONS"))
+            list.append(SearchSuggestType.location(locationContainers.flatMap({
+                if let location = $0 as? Location {
+                    return SearchLocationType.location(location)
+                } else if let container = $0 as? Container {
+                    return SearchLocationType.container(container)
+                } else {
+                    return nil
+                }
+            })))
+        }
+
+        if !tags.isEmpty {
+            list.append(SearchSuggestType.header("TAG"))
+            list.append(contentsOf: tags.map({ SearchSuggestType.tag($0) }))
+        }
+
+        if !places.isEmpty {
+            list.append(SearchSuggestType.header("RESTAURANT"))
+            list.append(contentsOf: places.map({ SearchSuggestType.place($0) }))
+        }
+
+        if list.isEmpty {
+            list.append(SearchSuggestType.empty)
+        }
+
+        return list
     }
 }
