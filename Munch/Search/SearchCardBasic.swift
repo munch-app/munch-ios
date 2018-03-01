@@ -169,7 +169,7 @@ class SearchSmallPlaceCard: UITableViewCell, SearchCardView {
 
 class SearchPlaceCardBottomView: UIView {
     let nameLabel = UILabel()
-    let tagCollection = TTGTextTagCollectionView()
+    let tagCollection = MunchTagCollectionView(showFullyVisibleOnly: true)
     let locationLabel = UILabel()
 
     private var tagLabelWidth: Constraint!
@@ -180,7 +180,7 @@ class SearchPlaceCardBottomView: UIView {
         self.addSubview(tagCollection)
         self.addSubview(locationLabel)
 
-        nameLabel.font = UIFont.systemFont(ofSize: 18, weight: UIFont.Weight.semibold)
+        nameLabel.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
         nameLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         nameLabel.backgroundColor = .white
         nameLabel.snp.makeConstraints { make in
@@ -189,21 +189,11 @@ class SearchPlaceCardBottomView: UIView {
             make.bottom.equalTo(tagCollection.snp.top)
         }
 
-        tagCollection.defaultConfig = DefaultTagConfig()
-        tagCollection.isOpaque = true
-        tagCollection.isUserInteractionEnabled = false
-        tagCollection.horizontalSpacing = 8
-        tagCollection.verticalSpacing = 0
-        tagCollection.numberOfLines = 0
-        tagCollection.alignment = .left
-        tagCollection.scrollDirection = .horizontal
-        tagCollection.showsHorizontalScrollIndicator = false
-        tagCollection.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        tagCollection.backgroundColor = .white
         tagCollection.snp.makeConstraints { (make) in
             make.left.equalTo(self)
             make.right.equalTo(self)
-            make.bottom.equalTo(locationLabel.snp.top).inset(-1)
+            make.height.equalTo(24)
+            make.bottom.equalTo(locationLabel.snp.top)
         }
 
         locationLabel.font = UIFont.systemFont(ofSize: 13, weight: UIFont.Weight.regular)
@@ -227,18 +217,17 @@ class SearchPlaceCardBottomView: UIView {
     }
 
     private func render(tag card: SearchCard) {
-        self.tagCollection.removeAllTags()
+        var types = [MunchTagCollectionType]()
 
         if let average = card["review"]["average"].float {
-            let float = CGFloat(average)
-            let color = ReviewRatingUtils.color(percent: float)
-            let text = ReviewRatingUtils.text(percent: float)
-            self.tagCollection.addTag(text, with: RatingTagConfig(color: color))
+            types.append(.rating(average))
         }
 
-        let tags = card["tags"].flatMap({ $0.1.string?.capitalized }).prefix(3)
-        self.tagCollection.addTags(Array(tags))
-        self.tagCollection.reload()
+        types.append(contentsOf: card["tags"].prefix(3)
+                .flatMap({ $0.1.string?.capitalized })
+                .flatMap({ MunchTagCollectionType.tag($0) }))
+
+        self.tagCollection.replaceAll(types: types)
     }
 
     private func render(location card: SearchCard) {
@@ -252,7 +241,7 @@ class SearchPlaceCardBottomView: UIView {
         }
 
         // Distance
-        if let latLng = card["location"]["latLng"].string, MunchLocation.isEnabled {
+        if let latLng = card["location"]["latLng"].string {
             if let distance = MunchLocation.distance(asMetric: latLng) {
                 line.append(NSMutableAttributedString(string: " - \(distance)"))
             }
@@ -277,48 +266,5 @@ class SearchPlaceCardBottomView: UIView {
             break
         }
         self.locationLabel.attributedText = line
-    }
-
-
-    class DefaultTagConfig: TTGTextTagConfig {
-        override init() {
-            super.init()
-            tagShouldUseGradientBackgrounds = false
-
-            tagTextFont = UIFont.systemFont(ofSize: 13.0, weight: .regular)
-            tagShadowOffset = CGSize.zero
-            tagShadowRadius = 0
-            tagShadowColor = .white
-            tagShadowOpacity = 0
-            tagCornerRadius = 3
-
-            tagBorderWidth = 0
-            tagTextColor = UIColor(hex: "222222")
-            tagBackgroundColor = UIColor(hex: "ebebeb")
-            tagSelectedBackgroundColor = UIColor(hex: "ebebeb")
-
-            tagExtraSpace = CGSize(width: 14, height: 7)
-        }
-    }
-
-    class RatingTagConfig: TTGTextTagConfig {
-        init(color: UIColor) {
-            super.init()
-            tagShouldUseGradientBackgrounds = false
-
-            tagTextFont = UIFont.systemFont(ofSize: 13.0, weight: .semibold)
-            tagShadowOffset = CGSize.zero
-            tagShadowRadius = 0
-            tagShadowColor = .white
-            tagShadowOpacity = 1.0
-            tagCornerRadius = 3
-
-            tagBorderWidth = 0
-            tagTextColor = .white
-            tagBackgroundColor = color
-            tagSelectedBackgroundColor = color
-
-            tagExtraSpace = CGSize(width: 14, height: 7)
-        }
     }
 }

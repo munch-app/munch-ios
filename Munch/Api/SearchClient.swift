@@ -194,7 +194,10 @@ struct AssumedSearchQuery {
     var searchQuery: SearchQuery
     var resultCount: Int
 
-    init(json: JSON) {
+    init?(json: JSON) {
+        guard json.exists() else {
+            return nil
+        }
         self.text = json["text"].string ?? ""
         self.tokens = json["tokens"].flatMap({ AssumedSearchQuery.parseToken(result: $0.1) })
         self.searchQuery = SearchQuery(json: json["searchQuery"])

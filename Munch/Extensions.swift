@@ -55,6 +55,21 @@ extension UILabel {
         let labelSize = myText.boundingRect(with: rect, options: .usesLineFragmentOrigin, attributes: [NSAttributedStringKey.font: font], context: nil)
         return ceil(labelSize.width)
     }
+
+    class func textSize(font: UIFont, text: String) -> CGSize {
+        let myText = text as NSString
+
+        let rect = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        let labelSize = myText.boundingRect(with: rect, options: .usesLineFragmentOrigin, attributes: [NSAttributedStringKey.font: font], context: nil)
+        return labelSize.size
+    }
+
+    class func textSize(font: UIFont, text: String, extra: CGSize) -> CGSize {
+        var size = textSize(font: font, text: text)
+        size.width = size.width + extra.width
+        size.height = size.height + extra.height
+        return size
+    }
 }
 
 class SRCopyableLabel: UILabel {

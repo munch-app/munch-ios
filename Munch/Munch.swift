@@ -185,6 +185,9 @@ public class MunchImageView: UIImageView {
         self.tryRender()
     }
 
+    /**
+     This try render code might be giving performance issues
+     */
     private func tryRender() {
         if let size = size, let images = self.images {
             let fitting = images.filter {

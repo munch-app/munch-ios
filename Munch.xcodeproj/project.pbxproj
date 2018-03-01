@@ -48,6 +48,7 @@
 		B4B730544AF1361565440B2C /* PlaceMapController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73B4027BDB40E3CC44F31 /* PlaceMapController.swift */; };
 		B4B730D92CC36AD63D76C190 /* PlaceDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73B9E1E79F626D02B9A75 /* PlaceDataController.swift */; };
 		B4B73163CB5F4AE3B4425B56 /* SearchControllerSuggestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73AE61B5E68D3CB127949 /* SearchControllerSuggestCell.swift */; };
+		B4B73186CECEE6F9A52F7336 /* MunchTagCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73FCDF170A5A1D388ED3D /* MunchTagCollectionView.swift */; };
 		B4B7319B6239909F0C37875F /* PlaceCardMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B739295503DBF1CB674F6E /* PlaceCardMenu.swift */; };
 		B4B7321A7BF0F1FDE9D9A007 /* Auth0.plist in Resources */ = {isa = PBXBuildFile; fileRef = B4B73D105B16A6AD87C50DAA /* Auth0.plist */; };
 		B4B732371A580E8A5F7BB44B /* locations-popular.json in Resources */ = {isa = PBXBuildFile; fileRef = B4B738FC6C7F484B97FA825F /* locations-popular.json */; };
@@ -190,6 +191,7 @@
 		B4B73D56D29ADB145295DB94 /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		B4B73D8E2703243215F8AC5D /* SearchControllerLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchControllerLocation.swift; sourceTree = "<group>"; };
 		B4B73EBA645A014851F10D53 /* CollectionPlaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionPlaceController.swift; sourceTree = "<group>"; };
+		B4B73FCDF170A5A1D388ED3D /* MunchTagCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchTagCollectionView.swift; sourceTree = "<group>"; };
 		D2CE8E9F738C2A64071DD8B3 /* Pods_MunchUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MunchUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9422C7B675412F67AA5C66F /* Pods-MunchTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MunchTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MunchTests/Pods-MunchTests.debug.xcconfig"; sourceTree = "<group>"; };
 		E4B94E5940E649F3C926D27A /* Pods-MunchUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MunchUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MunchUITests/Pods-MunchUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -274,6 +276,7 @@
 				032548612014831500F51D85 /* GoogleService-Info.plist */,
 				B4B7312EC0B6525AB7EC438B /* Collection */,
 				B4B7378B383CC0C6448D2AB0 /* Sources */,
+				B4B7397E027B7859767C21AF /* Design */,
 			);
 			path = Munch;
 			sourceTree = "<group>";
@@ -436,6 +439,14 @@
 				B4B73D56D29ADB145295DB94 /* module.modulemap */,
 			);
 			path = CCommonCrypto;
+			sourceTree = "<group>";
+		};
+		B4B7397E027B7859767C21AF /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				B4B73FCDF170A5A1D388ED3D /* MunchTagCollectionView.swift */,
+			);
+			path = Design;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -863,6 +874,7 @@
 				B4B73994A58E6A119A38712B /* PlaceCardUGC.swift in Sources */,
 				B4B73163CB5F4AE3B4425B56 /* SearchControllerSuggestCell.swift in Sources */,
 				B4B7371F9449BA9324A537B5 /* SearchControllerSuggestManager.swift in Sources */,
+				B4B73186CECEE6F9A52F7336 /* MunchTagCollectionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

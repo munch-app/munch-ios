@@ -254,7 +254,6 @@ enum SearchFilterTagType {
 class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
     let tagCollection = TTGTextTagCollectionView()
     let defaultTagConfig = DefaultTagConfig()
-    let plusTagConfig = DefaultTagConfig()
 
     var delegate: SearchFilterTagDelegate?
     var tags: [SearchFilterTagType]!
@@ -262,9 +261,6 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
     override init(frame: CGRect = CGRect()) {
         super.init(frame: frame)
         self.addSubview(tagCollection)
-        plusTagConfig.tagTextFont = UIFont.systemFont(ofSize: 17.0, weight: .light)
-        plusTagConfig.tagExtraSpace = CGSize(width: 13, height: 8)
-
         tagCollection.delegate = self
         tagCollection.defaultConfig = defaultTagConfig
         tagCollection.horizontalSpacing = 10
@@ -354,7 +350,6 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
     class DefaultTagConfig: TTGTextTagConfig {
         override init() {
             super.init()
-
             tagTextFont = UIFont.systemFont(ofSize: 14.0, weight: .regular)
             tagShadowOffset = CGSize.zero
             tagShadowRadius = 0

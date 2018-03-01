@@ -15,21 +15,61 @@ class SearchSuggestCellAssumption: UITableViewCell {
         view.backgroundColor = UIColor(hex: "F0F0F0")
         return view
     }()
+    private let tagCollection: MunchTagCollectionView = {
+        let tagCollection = MunchTagCollectionView(backgroundColor: UIColor(hex: "F0F0F0"), showFullyVisibleOnly: false)
+        tagCollection.isUserInteractionEnabled = false
+        return tagCollection
+    }()
+    private let applyButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .clear
+        button.setTitleColor(UIColor(hex: "202020"), for: .normal)
+        button.titleLabel!.font = UIFont.systemFont(ofSize: 13, weight: .medium)
+
+        button.isUserInteractionEnabled = false
+        button.layer.cornerRadius = 3
+        return button
+    }()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         self.addSubview(containerView)
+        containerView.addSubview(tagCollection)
+        containerView.addSubview(applyButton)
 
         containerView.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
             make.top.bottom.equalTo(self).inset(14)
-            make.height.equalTo(40)
+        }
+
+        tagCollection.snp.makeConstraints { make in
+            make.left.right.equalTo(containerView).inset(10)
+            make.top.equalTo(containerView).inset(10)
+            make.height.equalTo(34)
+        }
+
+        applyButton.snp.makeConstraints { (make) in
+            make.top.equalTo(tagCollection.snp.bottom).inset(-1)
+            make.bottom.equalTo(containerView).inset(2)
+            make.right.equalTo(containerView).inset(12)
         }
     }
 
     func render(query: AssumedSearchQuery) {
-        // TODO
+        var types = [MunchTagCollectionType]()
+        types.append(.assumptionPlus)
+
+        for token in query.tokens {
+            if let token = token as? AssumedSearchQuery.TagToken {
+                types.append(.assumptionTag(token.text))
+            } else if let token = token as? AssumedSearchQuery.TextToken {
+                types.append(.assumptionText(token.text))
+            }
+        }
+
+        tagCollection.replaceAll(types: types)
+        applyButton.setTitle(SearchSuggestBottomView.countTitle(count: query.resultCount), for: .normal)
     }
 
     override func layoutSubviews() {

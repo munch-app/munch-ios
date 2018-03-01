@@ -383,7 +383,7 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
     }
 }
 
-fileprivate class SearchSuggestBottomView: UIView {
+class SearchSuggestBottomView: UIView {
     fileprivate let applyBtn: UIButton = {
         let applyBtn = UIButton()
         applyBtn.layer.cornerRadius = 3
@@ -417,18 +417,22 @@ fileprivate class SearchSuggestBottomView: UIView {
     @objc fileprivate func renderDidCommit(_ sender: Any) {
         MunchApi.search.count(query: searchQuery, callback: { (meta, count) in
             if let count = count {
-                if count == 0 {
-                    self.applyBtn.setTitle("No result", for: .normal)
-                } else if count > 100 {
-                    self.applyBtn.setTitle("See 100+ places", for: .normal)
-                } else if count <= 10 {
-                    self.applyBtn.setTitle("See \(count) places", for: .normal)
-                } else {
-                    let rounded = count / 10 * 10
-                    self.applyBtn.setTitle("See \(rounded)+ places", for: .normal)
-                }
+                self.applyBtn.setTitle(SearchSuggestBottomView.countTitle(count: count), for: .normal)
             }
         })
+    }
+
+    class func countTitle(count: Int) -> String {
+        if count == 0 {
+            return "No Results"
+        } else if count > 100 {
+            return "See 100+ Restaurants"
+        } else if count <= 10 {
+            return "See \(count) Restaurants"
+        } else {
+            let rounded = count / 10 * 10
+            return "See \(rounded)+ Restaurants"
+        }
     }
 
     override func layoutSubviews() {
