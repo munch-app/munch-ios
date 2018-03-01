@@ -23,8 +23,8 @@ class SearchSuggestCellAssumption: UITableViewCell {
 
         containerView.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
-            make.top.bottom.equalTo(self).inset(2)
-            // TODO
+            make.top.bottom.equalTo(self).inset(14)
+            make.height.equalTo(40)
         }
     }
 
@@ -44,6 +44,53 @@ class SearchSuggestCellAssumption: UITableViewCell {
 
     class var id: String {
         return "SearchSuggestCellAssumption"
+    }
+}
+
+class SearchSuggestCellLoading: UITableViewCell {
+    private let containerView: ShimmerView = {
+        let view = ShimmerView(color: UIColor(hex: "F3F3F3"))
+        return view
+    }()
+
+    private let tagView: ShimmerView = {
+        let view = ShimmerView(color: UIColor(hex: "E6E6E6"))
+        return view
+    }()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(containerView)
+        self.addSubview(tagView)
+
+        containerView.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(24)
+            make.top.bottom.equalTo(self).inset(14)
+        }
+
+        tagView.snp.makeConstraints { make in
+            make.left.equalTo(containerView).inset(16)
+            make.top.bottom.equalTo(containerView).inset(16)
+            make.width.equalTo(130)
+            make.height.equalTo(24)
+        }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        containerView.contentView.layer.cornerRadius = 3
+        containerView.contentView.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
+
+        tagView.contentView.layer.cornerRadius = 3
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    class var id: String {
+        return "SearchSuggestCellLoading"
     }
 }
 

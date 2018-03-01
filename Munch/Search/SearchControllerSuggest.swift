@@ -43,7 +43,7 @@ class SearchSuggestController: UIViewController {
 
         tableView.tableFooterView = UIView(frame: CGRect.zero)
         tableView.contentInset.top = 7
-        tableView.contentInset.bottom = 7
+        tableView.contentInset.bottom = 14
         tableView.separatorStyle = .none
         return tableView
     }()
@@ -134,7 +134,7 @@ class SearchSuggestController: UIViewController {
 
     @objc func textFieldDidChange(_ sender: Any) {
         // Reset View
-        self.suggests = nil
+        self.suggests = []
         self.tableView.reloadData()
 
         NSObject.cancelPreviousPerformRequests(withTarget: self)
@@ -143,6 +143,10 @@ class SearchSuggestController: UIViewController {
 
     @objc func textFieldDidCommit(textField: UITextField) {
         if let text = textField.text, text.count >= 3 {
+            // Change to null when get commited
+            self.suggests = nil
+            self.tableView.reloadData()
+
             MunchApi.search.suggest(text: text, query: self.manager.searchQuery) { meta, query, places, results, tags in
                 if meta.isOk() {
                     self.suggests = SearchControllerSuggestManager.map(assumedSearchQuery: query, places: places, locationContainers: results, tags: tags)
@@ -176,8 +180,7 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
         tableView.register(SearchSuggestCellNoResult.self, forCellReuseIdentifier: SearchSuggestCellNoResult.id)
         tableView.register(SearchSuggestCellPlace.self, forCellReuseIdentifier: SearchSuggestCellPlace.id)
         tableView.register(SearchSuggestCellAssumption.self, forCellReuseIdentifier: SearchSuggestCellAssumption.id)
-        // TODO Loading
-        // TODO Assumption
+        tableView.register(SearchSuggestCellLoading.self, forCellReuseIdentifier: SearchSuggestCellLoading.id)
         // TODO Price Range
     }
 
@@ -205,6 +208,15 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
         switch items[indexPath.row] {
         case .empty:
             return tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellNoResult.id) as! SearchSuggestCellNoResult
+
+        case .loading:
+            return tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellLoading.id) as! SearchSuggestCellLoading
+
+        case .assumption(let query):
+            let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellAssumption.id) as! SearchSuggestCellAssumption
+            cell.render(query: query)
+            return cell
+
         case .header(let title):
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellHeader.id) as! SearchSuggestCellHeader
             cell.render(title: title)
@@ -246,6 +258,9 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
                 let placeController = PlaceViewController(placeId: placeId)
                 self.navigationController?.pushViewController(placeController, animated: true)
             }
+        case .assumption(let query):
+            self.onExtensionDismiss(query.searchQuery)
+            self.dismiss(animated: true)
         default: return
         }
     }

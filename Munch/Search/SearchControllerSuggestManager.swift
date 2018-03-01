@@ -109,7 +109,7 @@ class SearchControllerSuggestManager {
         if (selected) {
             searchQuery.filter.tag.positives.insert(tag)
         } else {
-            searchQuery.filter.tag.positives.remove(tag)
+            reset(tags: [tag])
         }
         runHooks()
     }
@@ -265,7 +265,7 @@ extension SearchControllerSuggestManager {
     class func map(assumedSearchQuery: AssumedSearchQuery?, places: [Place], locationContainers: [SearchResult], tags: [Tag]) -> [SearchSuggestType] {
         var list = [SearchSuggestType]()
         if let query = assumedSearchQuery {
-//            list.append(.assumption(query))
+            list.append(.assumption(query))
         }
 
         if !locationContainers.isEmpty {
