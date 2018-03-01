@@ -34,8 +34,9 @@ class SearchSuggestController: UIViewController {
     private let onExtensionDismiss: ((SearchQuery?) -> Void)
     let manager: SearchControllerSuggestManager
 
-    private let headerView = SearchSuggestHeaderView()
-    private let tableView: UITableView = {
+    fileprivate let headerView = SearchSuggestHeaderView()
+    fileprivate let bottomView = SearchSuggestBottomView()
+    fileprivate let tableView: UITableView = {
         let tableView = UITableView()
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 50
@@ -46,7 +47,8 @@ class SearchSuggestController: UIViewController {
         tableView.separatorStyle = .none
         return tableView
     }()
-    private var suggests: [SearchSuggestType] = []
+    private var suggests: [SearchSuggestType]?
+    private var firstLoad: Bool = true
 
     init(searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
         self.onExtensionDismiss = extensionDismiss
@@ -63,6 +65,11 @@ class SearchSuggestController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
+
+        if firstLoad {
+            self.headerView.textField.becomeFirstResponder()
+            self.firstLoad = false
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -74,26 +81,40 @@ class SearchSuggestController: UIViewController {
         super.viewDidLoad()
         self.view.addSubview(tableView)
         self.view.addSubview(headerView)
+        self.view.addSubview(bottomView)
 
         self.tableView.delegate = self
         self.tableView.dataSource = self
 
-        self.headerView.cancelButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
+        self.headerView.controller = self
 
+        self.headerView.cancelButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
         self.headerView.textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         self.headerView.textField.addTarget(self, action: #selector(textFieldShouldReturn(_:)), for: .editingDidEndOnExit)
 
+        self.bottomView.applyBtn.addTarget(self, action: #selector(actionApply(_:)), for: .touchUpInside)
+
         self.headerView.tagCollection.render(query: manager.searchQuery)
+        self.bottomView.render(searchQuery: manager.searchQuery)
+        self.manager.addUpdateHook { query in
+            self.headerView.tagCollection.render(query: query)
+            self.bottomView.render(searchQuery: query)
+        }
 
         self.headerView.snp.makeConstraints { make in
             make.top.equalTo(self.view)
             make.left.right.equalTo(self.view)
         }
 
+        self.bottomView.snp.makeConstraints { make in
+            make.bottom.equalTo(self.view)
+            make.left.right.equalTo(self.view)
+        }
+
         self.tableView.snp.makeConstraints { make in
             make.left.right.equalTo(self.view)
             make.top.equalTo(self.headerView.snp.bottom)
-            make.bottom.equalTo(self.view)
+            make.bottom.equalTo(self.bottomView.snp.top)
         }
     }
 
@@ -106,9 +127,14 @@ class SearchSuggestController: UIViewController {
         self.dismiss(animated: true)
     }
 
+    @objc func actionApply(_ sender: Any) {
+        self.onExtensionDismiss(manager.searchQuery)
+        self.dismiss(animated: true)
+    }
+
     @objc func textFieldDidChange(_ sender: Any) {
         // Reset View
-        self.suggests = []
+        self.suggests = nil
         self.tableView.reloadData()
 
         NSObject.cancelPreviousPerformRequests(withTarget: self)
@@ -149,6 +175,10 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
         tableView.register(SearchSuggestCellTiming.self, forCellReuseIdentifier: SearchSuggestCellTiming.id)
         tableView.register(SearchSuggestCellNoResult.self, forCellReuseIdentifier: SearchSuggestCellNoResult.id)
         tableView.register(SearchSuggestCellPlace.self, forCellReuseIdentifier: SearchSuggestCellPlace.id)
+        tableView.register(SearchSuggestCellAssumption.self, forCellReuseIdentifier: SearchSuggestCellAssumption.id)
+        // TODO Loading
+        // TODO Assumption
+        // TODO Price Range
     }
 
     var items: [SearchSuggestType] {
@@ -158,7 +188,10 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
             } else if text.count < 3 {
                 return []
             } else if text.count >= 3 {
-                return suggests
+                if let suggests = self.suggests {
+                    return suggests
+                }
+                return [SearchSuggestType.loading]
             }
         }
         return []
@@ -256,6 +289,7 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
         self.addSubview(textField)
         self.addSubview(cancelButton)
         self.addSubview(tagCollection)
+        self.tagCollection.delegate = self
 
         self.backgroundColor = .white
 
@@ -273,7 +307,6 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
             make.height.equalTo(36)
         }
 
-        tagCollection.delegate = self
         tagCollection.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
             make.top.equalTo(textField.snp.bottom).inset(-9)
@@ -289,6 +322,7 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
             self.controller.manager.select(hour: name)
+            self.controller.tableView.reloadData()
         })
         addAlert(removeAll: alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -299,6 +333,7 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
             self.controller.manager.resetPrice()
+            self.controller.tableView.reloadData()
         })
         addAlert(removeAll: alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -308,7 +343,8 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
     func tagCollection(selectedTag name: String, for tagCollection: SearchFilterTagCollection) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
-            self.controller.manager.reset(tags: [name.lowercased()])
+            self.controller.manager.reset(tags: [name])
+            self.controller.tableView.reloadData()
         })
         addAlert(removeAll: alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -318,12 +354,71 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
     func addAlert(removeAll alert: UIAlertController) {
         alert.addAction(UIAlertAction(title: "Remove All", style: .destructive) { action in
             self.controller.manager.reset()
+            self.controller.tableView.reloadData()
         })
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
         self.shadow(vertical: 1.5)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+fileprivate class SearchSuggestBottomView: UIView {
+    fileprivate let applyBtn: UIButton = {
+        let applyBtn = UIButton()
+        applyBtn.layer.cornerRadius = 3
+        applyBtn.backgroundColor = .primary
+        applyBtn.setTitle("Loading...", for: .normal)
+        applyBtn.setTitleColor(.white, for: .normal)
+        applyBtn.titleLabel!.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+        return applyBtn
+    }()
+    fileprivate var searchQuery: SearchQuery!
+
+    override init(frame: CGRect = CGRect.zero) {
+        super.init(frame: frame)
+        self.backgroundColor = .white
+        self.addSubview(applyBtn)
+
+        applyBtn.snp.makeConstraints { (make) in
+            make.top.equalTo(self).inset(12)
+            make.bottom.equalTo(self.safeArea.bottom).inset(12)
+            make.right.left.equalTo(self).inset(24)
+            make.height.equalTo(46)
+        }
+    }
+
+    func render(searchQuery: SearchQuery) {
+        applyBtn.setTitle("Loading...", for: .normal)
+        self.searchQuery = searchQuery
+        self.perform(#selector(renderDidCommit(_:)), with: nil, afterDelay: 1.0)
+    }
+
+    @objc fileprivate func renderDidCommit(_ sender: Any) {
+        MunchApi.search.count(query: searchQuery, callback: { (meta, count) in
+            if let count = count {
+                if count == 0 {
+                    self.applyBtn.setTitle("No result", for: .normal)
+                } else if count > 100 {
+                    self.applyBtn.setTitle("See 100+ places", for: .normal)
+                } else if count <= 10 {
+                    self.applyBtn.setTitle("See \(count) places", for: .normal)
+                } else {
+                    let rounded = count / 10 * 10
+                    self.applyBtn.setTitle("See \(rounded)+ places", for: .normal)
+                }
+            }
+        })
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.shadow(vertical: -1.5)
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -6,8 +6,10 @@
 import Foundation
 
 enum SearchSuggestType {
-    case header(String)
     case empty
+    case loading
+    case assumption(AssumedSearchQuery)
+    case header(String)
     case location([SearchLocationType])
     case price(PriceRangeInArea)
     case priceLoading
@@ -54,7 +56,7 @@ class SearchControllerSuggestManager {
         let recentLocations = SearchControllerSuggestManager.readRecentLocations(database: locationDatabase)
 
         var list = [SearchSuggestType]()
-        list.append(SearchSuggestType.header("LOCATIONS"))
+        list.append(SearchSuggestType.header("LOCATION"))
         list.append(SearchSuggestType.location([SearchLocationType.nearby, SearchLocationType.anywhere(SearchFilterManager.anywhere)] + recentLocations))
 //        list.append(SearchSuggestType.header("PRICE RANGE"))
         // TODO Price Range
@@ -118,7 +120,7 @@ class SearchControllerSuggestManager {
             searchQuery.filter.hour.day = nil
             searchQuery.filter.hour.open = nil
             searchQuery.filter.hour.close = nil
-            reset(tags: ["breakfast", "lunch", "dinner", "supper"])
+            reset(tags: ["Breakfast", "Lunch", "Dinner", "Supper"])
         } else {
             switch name {
             case "Open Now":
@@ -133,13 +135,13 @@ class SearchControllerSuggestManager {
                     searchQuery.filter.hour.close = timeFormatter.string(from: date.addingTimeInterval(30 * 60)) // 30 Minutes
                 }
             case "Breakfast":
-                select(tag: "breakfast", selected: true)
+                select(tag: "Breakfast", selected: true)
             case "Lunch":
-                select(tag: "lunch", selected: true)
+                select(tag: "Lunch", selected: true)
             case "Dinner":
-                select(tag: "dinner", selected: true)
+                select(tag: "Dinner", selected: true)
             case "Supper":
-                select(tag: "supper", selected: true)
+                select(tag: "Supper", selected: true)
             default:
                 break
             }
@@ -191,13 +193,16 @@ class SearchControllerSuggestManager {
 
     func reset(tags: [String]) {
         for tag in tags {
+            // Delete Both Lower and Normal Case In Case of Bugs
             searchQuery.filter.tag.positives.remove(tag)
+            searchQuery.filter.tag.positives.remove(tag.lowercased())
         }
         runHooks()
     }
 
     func isSelected(tag: String) -> Bool {
         return searchQuery.filter.tag.positives.contains(tag)
+                || searchQuery.filter.tag.positives.contains(tag.lowercased())
     }
 
     func isSelected(location: Location?) -> Bool {
@@ -215,7 +220,7 @@ class SearchControllerSuggestManager {
     }
 
     func isSelected(hour name: String) -> Bool {
-        return searchQuery.filter.hour.name == name || searchQuery.filter.tag.positives.contains(name.lowercased())
+        return searchQuery.filter.hour.name == name || isSelected(tag: name)
     }
 
     func isSelected(price name: String) -> Bool {
@@ -259,10 +264,12 @@ extension SearchControllerSuggestManager {
 
     class func map(assumedSearchQuery: AssumedSearchQuery?, places: [Place], locationContainers: [SearchResult], tags: [Tag]) -> [SearchSuggestType] {
         var list = [SearchSuggestType]()
-        // TODO Assumption
+        if let query = assumedSearchQuery {
+//            list.append(.assumption(query))
+        }
 
         if !locationContainers.isEmpty {
-            list.append(SearchSuggestType.header("LOCATIONS"))
+            list.append(.header("LOCATION"))
             list.append(SearchSuggestType.location(locationContainers.flatMap({
                 if let location = $0 as? Location {
                     return SearchLocationType.location(location)
@@ -275,17 +282,17 @@ extension SearchControllerSuggestManager {
         }
 
         if !tags.isEmpty {
-            list.append(SearchSuggestType.header("TAG"))
+            list.append(.header("TAG"))
             list.append(contentsOf: tags.map({ SearchSuggestType.tag($0) }))
         }
 
         if !places.isEmpty {
-            list.append(SearchSuggestType.header("RESTAURANT"))
+            list.append(.header("RESTAURANT"))
             list.append(contentsOf: places.map({ SearchSuggestType.place($0) }))
         }
 
         if list.isEmpty {
-            list.append(SearchSuggestType.empty)
+            list.append(.empty)
         }
 
         return list

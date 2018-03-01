@@ -46,13 +46,19 @@ class SearchClient {
     }
 
     func count(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ count: Int?) -> Void) {
-        MunchApi.restful.post("/search/count", parameters: query.toParams()) { meta, json in
+        var searchQuery = query
+        searchQuery.latLng = MunchLocation.lastLatLng
+
+        MunchApi.restful.post("/search/count", parameters: searchQuery.toParams()) { meta, json in
             callback(meta, json["data"].int)
         }
     }
 
     func suggestPriceRange(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ priceRangeInArea: PriceRangeInArea?) -> Void) {
-        MunchApi.restful.post("/search/suggest/price/range", parameters: query.toParams()) { metaJSON, json in
+        var searchQuery = query
+        searchQuery.latLng = MunchLocation.lastLatLng
+
+        MunchApi.restful.post("/search/suggest/price/range", parameters: searchQuery.toParams()) { metaJSON, json in
             callback(metaJSON, PriceRangeInArea.init(json: json["data"]))
         }
     }

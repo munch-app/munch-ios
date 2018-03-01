@@ -9,6 +9,44 @@ import UIKit
 import SnapKit
 import BEMCheckBox
 
+class SearchSuggestCellAssumption: UITableViewCell {
+    private let containerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(hex: "F0F0F0")
+        return view
+    }()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(containerView)
+
+        containerView.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(24)
+            make.top.bottom.equalTo(self).inset(2)
+            // TODO
+        }
+    }
+
+    func render(query: AssumedSearchQuery) {
+        // TODO
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        containerView.layer.cornerRadius = 3
+        containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    class var id: String {
+        return "SearchSuggestCellAssumption"
+    }
+}
+
 class SearchSuggestCellHeader: UITableViewCell {
     private let label: UILabel = {
         let label = UILabel()
@@ -428,7 +466,8 @@ extension SearchSuggestCellTiming: UICollectionViewDataSource, UICollectionViewD
         case .supper:
             controller.manager.select(hour: "Supper")
         }
-        collectionView.reloadData()
+        // Note: It only Reload Current Item
+        collectionView.reloadItems(at: [indexPath])
     }
 
     fileprivate class SearchSuggestCellTimingGridCell: UICollectionViewCell {

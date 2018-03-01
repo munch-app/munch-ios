@@ -30,7 +30,7 @@ class SearchNavigationalController: UINavigationController, UINavigationControll
 
 class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     private let cardTableView = UITableView()
-    let headerView = SearchHeaderView()
+    let headerView = SearchHeaderView(showMapBtn: false)
     private let refreshControl = UIRefreshControl()
 
     private let backIndicatorView = BackIndicatorView()

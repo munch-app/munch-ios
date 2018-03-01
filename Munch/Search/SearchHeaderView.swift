@@ -56,7 +56,11 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
         textButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
         textButton.snp.makeConstraints { make in
             make.left.equalTo(self).inset(24)
-            make.right.equalTo(showMapBtn ? mapButton.snp.left : self)
+            if showMapBtn {
+                make.right.equalTo(mapButton.snp.left)
+            } else {
+                make.right.equalTo(self).inset(24)
+            }
             make.height.equalTo(52)
             make.top.equalTo(self.safeArea.top)
         }
