@@ -138,7 +138,7 @@ class SearchControllerSuggestManager {
             searchQuery.filter.hour.day = nil
             searchQuery.filter.hour.open = nil
             searchQuery.filter.hour.close = nil
-            reset(tags: ["Breakfast", "Lunch", "Dinner", "Supper"])
+            reset(tags: [name])
         } else {
             switch name {
             case "Open Now":

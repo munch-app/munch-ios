@@ -838,6 +838,10 @@ extension SearchSuggestCellTiming: UICollectionViewDataSource, UICollectionViewD
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         switch timings[indexPath.row] {
+        case .now:
+            let cell = cell as! SearchSuggestCellTimingGridCellOpenNow
+            let selected = controller.manager.isSelected(hour: "Open Now")
+            cell.render(text: "Open Now", selected: selected)
         case .breakfast:
             let cell = cell as! SearchSuggestCellTimingGridCellTitle
             let selected = controller.manager.isSelected(hour: "Breakfast")
@@ -854,8 +858,6 @@ extension SearchSuggestCellTiming: UICollectionViewDataSource, UICollectionViewD
             let cell = cell as! SearchSuggestCellTimingGridCellTitle
             let selected = controller.manager.isSelected(hour: "Supper")
             cell.render(text: "Supper", selected: selected)
-
-        default: break
         }
     }
 
@@ -901,8 +903,8 @@ extension SearchSuggestCellTiming: UICollectionViewDataSource, UICollectionViewD
             view.backgroundColor = UIColor(hex: "F0F0F0")
             return view
         }()
-        let imageView: MunchImageView = {
-            let imageView = MunchImageView()
+        let imageView: UIImageView = {
+            let imageView = UIImageView()
             imageView.tintColor = UIColor(hex: "444444")
             imageView.image = UIImage(named: "Search-Timing-Present")
             imageView.contentMode = .scaleAspectFit
