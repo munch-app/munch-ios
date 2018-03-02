@@ -12,8 +12,7 @@ enum SearchSuggestType {
     case header(String)
     case headerMore(String)
     case location([SearchLocationType])
-    case price(PriceRangeInArea)
-    case priceLoading
+    case priceRange
     case time([SearchTimingType])
     case tag(Tag)
     case place(Place)
@@ -59,8 +58,8 @@ class SearchControllerSuggestManager {
         var list = [SearchSuggestType]()
         list.append(SearchSuggestType.header("LOCATION"))
         list.append(SearchSuggestType.location([SearchLocationType.nearby, SearchLocationType.anywhere(SearchFilterManager.anywhere)] + recentLocations))
-//        list.append(SearchSuggestType.header("PRICE RANGE"))
-        // TODO Price Range
+        list.append(SearchSuggestType.header("PRICE RANGE"))
+        list.append(SearchSuggestType.priceRange)
         list.append(SearchSuggestType.header("TIMING"))
         list.append(SearchSuggestType.time([SearchTimingType.now, SearchTimingType.breakfast, SearchTimingType.lunch, SearchTimingType.dinner, SearchTimingType.supper]))
         list.append(SearchSuggestType.headerMore("CUISINE"))
@@ -319,5 +318,31 @@ extension SearchControllerSuggestManager {
         }
 
         return list
+    }
+}
+
+extension SearchControllerSuggestManager {
+    public func getPriceInArea(callback: @escaping (_ meta: MetaJSON, _ priceRangeInArea: PriceRangeInArea?) -> Void) {
+        MunchApi.search.suggestPriceRange(query: self.searchQuery, callback: callback)
+    }
+
+    public func getLocationName() -> String {
+        if let containers = searchQuery.filter.containers, !containers.isEmpty {
+            for container in containers {
+                if let name = container.name {
+                    return name
+                }
+            }
+        }
+
+        if let locationName = searchQuery.filter.location?.name {
+            return locationName
+        }
+
+        if MunchLocation.isEnabled {
+            return "Nearby"
+        }
+
+        return "Singapore"
     }
 }

@@ -183,7 +183,7 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
         tableView.register(SearchSuggestCellPlace.self, forCellReuseIdentifier: SearchSuggestCellPlace.id)
         tableView.register(SearchSuggestCellAssumption.self, forCellReuseIdentifier: SearchSuggestCellAssumption.id)
         tableView.register(SearchSuggestCellLoading.self, forCellReuseIdentifier: SearchSuggestCellLoading.id)
-        // TODO Price Range
+        tableView.register(SearchSuggestCellPriceRange.self, forCellReuseIdentifier: SearchSuggestCellPriceRange.id)
     }
 
     var items: [SearchSuggestType] {
@@ -234,6 +234,11 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
             cell.render(locations: locations, controller: self)
             return cell
 
+        case .priceRange:
+            let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellPriceRange.id) as! SearchSuggestCellPriceRange
+            cell.controller = self
+            return cell
+
         case .tag(let tag):
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellTag.id) as! SearchSuggestCellTag
             let text = tag.name ?? ""
@@ -249,8 +254,6 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellPlace.id) as! SearchSuggestCellPlace
             cell.render(place: place)
             return cell
-
-        default: return UITableViewCell()
         }
     }
 

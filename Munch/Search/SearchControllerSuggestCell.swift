@@ -8,6 +8,7 @@ import UIKit
 
 import SnapKit
 import BEMCheckBox
+import RangeSeekSlider
 
 class SearchSuggestCellAssumption: UITableViewCell {
     private let containerView: UIView = {
@@ -427,74 +428,339 @@ extension SearchSuggestCellLocation: UICollectionViewDataSource, UICollectionVie
     }
 }
 
-class SearchSuggestCellTag: UITableViewCell {
-    private let titleLabel: UILabel = {
-        let titleLabel = UILabel()
-        titleLabel.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-        titleLabel.textColor = UIColor(hex: "444444")
-        return titleLabel
-    }()
-    private let checkButton: BEMCheckBox = {
-        let checkButton = BEMCheckBox(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
-        checkButton.boxType = .circle
-        checkButton.lineWidth = 1.5
-        checkButton.tintColor = UIColor(hex: "444444")
-        checkButton.animationDuration = 0.25
-        checkButton.isEnabled = false
-
-        checkButton.onCheckColor = .white
-        checkButton.onTintColor = .primary
-        checkButton.onFillColor = .primary
-        return checkButton
-    }()
-    private let containerView: UIView = {
+class SearchSuggestCellPriceRange: UITableViewCell {
+    private let loadingIndicator: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(hex: "F0F0F0")
+
+        let lineView = ShimmerView(color: UIColor(hex: "D0D0D0"))
+        lineView.shimmeringAnimationOpacity = 0.8
+        lineView.shimmeringOpacity = 0.3
+        lineView.shimmeringSpeed = 100
+
+        let priceButton = PriceButtonShimmerView()
+        view.addSubview(lineView)
+        view.addSubview(priceButton)
+
+        lineView.snp.makeConstraints { make in
+            make.left.right.equalTo(view)
+            make.bottom.equalTo(priceButton.snp.top).inset(-24).priority(999)
+            make.height.equalTo(3)
+        }
+
+        priceButton.snp.makeConstraints { make in
+            make.left.right.equalTo(view)
+            make.bottom.equalTo(view)
+        }
+
         return view
     }()
+    private let containerView: UIView = {
+        return UIView()
+    }()
+
+    private let priceButtons = PriceButtonGroup()
+    private let priceSlider = PriceRangeSlider()
+
+    private var isHookSet: Bool = false
+    private var locationName: String?
+    private var priceRangeInArea: PriceRangeInArea?
+
+    var controller: SearchSuggestController! {
+        didSet {
+            if !isHookSet {
+                self.reload()
+                controller.manager.addUpdateHook { query in
+                    self.reload()
+                }
+                isHookSet = true
+            }
+        }
+    }
+
+    var isLoading: Bool = true {
+        didSet {
+            priceSlider.isHidden = isLoading
+            priceButtons.isHidden = isLoading
+            loadingIndicator.isHidden = !isLoading
+        }
+    }
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         self.addSubview(containerView)
-        containerView.addSubview(titleLabel)
-        containerView.addSubview(checkButton)
+        containerView.addSubview(priceSlider)
+        containerView.addSubview(priceButtons)
+        containerView.addSubview(loadingIndicator)
+
+        priceButtons.cheapButton.addTarget(self, action: #selector(onPriceButton(for:)), for: .touchUpInside)
+        priceButtons.averageButton.addTarget(self, action: #selector(onPriceButton(for:)), for: .touchUpInside)
+        priceButtons.expensiveButton.addTarget(self, action: #selector(onPriceButton(for:)), for: .touchUpInside)
+        priceSlider.addTarget(self, action: #selector(onPriceSlider(_:)), for: .touchUpInside)
 
         containerView.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
-            make.top.bottom.equalTo(self).inset(2)
+            make.top.bottom.equalTo(self).inset(14)
         }
 
-        titleLabel.snp.makeConstraints { (make) in
-            make.top.bottom.equalTo(containerView).inset(12)
-            make.left.equalTo(containerView).inset(18)
-            make.right.equalTo(checkButton.snp.left).inset(-12)
+        priceSlider.snp.makeConstraints { make in
+            make.left.right.equalTo(containerView).inset(-8).priority(999)
+            make.top.equalTo(containerView).inset(-12).priority(999)
+            make.bottom.equalTo(priceButtons.snp.top).inset(6).priority(999)
         }
 
-        checkButton.snp.makeConstraints { make in
-            make.top.bottom.equalTo(containerView).inset(10)
-            make.right.equalTo(containerView).inset(18)
+        priceButtons.snp.makeConstraints { make in
+            make.left.right.equalTo(containerView)
+            make.bottom.equalTo(containerView)
+        }
+
+        loadingIndicator.snp.makeConstraints { make in
+            make.edges.equalTo(containerView)
+        }
+
+        self.layoutIfNeeded()
+        self.isLoading = true
+    }
+
+    fileprivate func reload() {
+        let locationName = controller.manager.getLocationName()
+        if locationName == self.locationName {
+            return
+        }
+
+        self.priceRangeInArea = nil
+        self.isLoading = true
+        self.locationName = locationName
+
+        let deadline = DispatchTime.now() + 0.75
+        controller.manager.getPriceInArea { metaJSON, priceRangeInArea in
+            self.priceRangeInArea = priceRangeInArea
+
+            if metaJSON.isOk(), let priceRangeInArea = priceRangeInArea {
+                DispatchQueue.main.asyncAfter(deadline: deadline) {
+                    self.priceSlider.minValue = CGFloat(priceRangeInArea.minRounded)
+                    self.priceSlider.maxValue = CGFloat(priceRangeInArea.maxRounded)
+
+                    self.priceSlider.enableStep = false
+                    self.updateSelected()
+                    self.isLoading = false
+                    self.controller.manager.resetPrice()
+                    self.priceSlider.enableStep = true
+                }
+            } else {
+                self.controller.present(metaJSON.createAlert(), animated: true)
+            }
         }
     }
 
-    func render(title: String, selected: Bool) {
-        titleLabel.text = title
-        checkButton.setOn(selected, animated: false)
+    @objc fileprivate func onPriceButton(for button: UIButton) {
+        if let priceRangeInArea = priceRangeInArea, let name = button.title(for: .normal) {
+            switch name {
+            case "$":
+                let min = priceRangeInArea.cheapRange.min
+                let max = priceRangeInArea.cheapRange.max
+                controller.manager.select(price: name, min: min, max: max)
+            case "$$":
+                let min = priceRangeInArea.averageRange.min
+                let max = priceRangeInArea.averageRange.max
+                controller.manager.select(price: name, min: min, max: max)
+            case "$$$":
+                let min = priceRangeInArea.expensiveRange.min
+                let max = priceRangeInArea.expensiveRange.max
+                controller.manager.select(price: name, min: min, max: max)
+            default: break
+            }
+
+            self.updateSelected()
+        } else {
+            controller.manager.select(price: nil, min: nil, max: nil)
+        }
     }
 
-    /**
-     Flip the switch on check button
-     */
-    func flip() -> Bool {
-        let flip = !checkButton.on
-        checkButton.setOn(flip, animated: true)
-        return flip
+    @objc fileprivate func onPriceSlider(_ priceSlider: PriceRangeSlider) {
+        let min = Double(priceSlider.selectedMinValue)
+        let max = Double(priceSlider.selectedMaxValue)
+        priceButtons.select(name: nil)
+
+        if priceRangeInArea?.min == min && priceRangeInArea?.max == max {
+            controller.manager.select(price: nil, min: nil, max: nil)
+        } else {
+            controller.manager.select(price: nil, min: min, max: max)
+        }
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        containerView.layer.cornerRadius = 3
-        containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
+    private func updateSelected() {
+        if let priceRangeInArea = priceRangeInArea {
+            priceButtons.select(name: controller.manager.searchQuery.filter.price.name)
+            let price = self.controller.manager.searchQuery.filter.price
+
+            self.priceSlider.selectedMinValue = CGFloat(price.min ?? priceRangeInArea.minRounded)
+            self.priceSlider.selectedMaxValue = CGFloat(price.max ?? priceRangeInArea.maxRounded)
+            priceSlider.setNeedsLayout()
+        }
+    }
+
+    class PriceRangeSlider: RangeSeekSlider {
+        override func setupStyle() {
+            colorBetweenHandles = .primary200
+            handleColor = .primary600
+            tintColor = UIColor(hex: "CCCCCC")
+            minLabelColor = UIColor.black.withAlphaComponent(0.65)
+            maxLabelColor = UIColor.black.withAlphaComponent(0.65)
+            minLabelFont = UIFont.systemFont(ofSize: 14, weight: .semibold)
+            maxLabelFont = UIFont.systemFont(ofSize: 14, weight: .semibold)
+
+            numberFormatter.numberStyle = .currency
+
+            handleDiameter = 18
+            selectedHandleDiameterMultiplier = 1.3
+            lineHeight = 3.0
+
+            minDistance = 5
+
+//            enableStep = true
+            step = 5.0
+        }
+    }
+
+    class PriceButtonGroup: UIButton {
+        fileprivate let cheapButton: UIButton = {
+            let button = UIButton()
+            button.backgroundColor = UIColor(hex: "F0F0F0")
+            button.setTitle("$", for: .normal)
+            button.setTitleColor(UIColor.black.withAlphaComponent(0.75), for: .normal)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 15.0, weight: .semibold)
+            return button
+        }()
+        fileprivate let averageButton: UIButton = {
+            let button = UIButton()
+            button.backgroundColor = UIColor(hex: "F0F0F0")
+            button.setTitle("$$", for: .normal)
+            button.setTitleColor(UIColor.black.withAlphaComponent(0.75), for: .normal)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 15.0, weight: .semibold)
+            return button
+        }()
+        fileprivate let expensiveButton: UIButton = {
+            let button = UIButton()
+            button.backgroundColor = UIColor(hex: "F0F0F0")
+            button.setTitle("$$$", for: .normal)
+            button.setTitleColor(UIColor.black.withAlphaComponent(0.75), for: .normal)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 15.0, weight: .semibold)
+            return button
+        }()
+        fileprivate var buttons: [UIButton] {
+            return [cheapButton, averageButton, expensiveButton]
+        }
+
+        required init() {
+            super.init(frame: .zero)
+            self.addSubview(cheapButton)
+            self.addSubview(averageButton)
+            self.addSubview(expensiveButton)
+
+            cheapButton.snp.makeConstraints { make in
+                make.left.equalTo(self)
+                make.right.equalTo(averageButton.snp.left).inset(-18)
+                make.width.equalTo(averageButton.snp.width)
+                make.width.equalTo(expensiveButton.snp.width)
+                make.height.equalTo(32)
+                make.top.bottom.equalTo(self)
+            }
+
+            averageButton.snp.makeConstraints { make in
+                make.left.equalTo(cheapButton.snp.right).inset(-18)
+                make.right.equalTo(expensiveButton.snp.left).inset(-18)
+                make.width.equalTo(cheapButton.snp.width)
+                make.width.equalTo(expensiveButton.snp.width)
+                make.top.bottom.equalTo(self)
+            }
+
+            expensiveButton.snp.makeConstraints { make in
+                make.left.equalTo(averageButton.snp.right).inset(-18)
+                make.right.equalTo(self)
+                make.width.equalTo(cheapButton.snp.width)
+                make.width.equalTo(averageButton.snp.width)
+                make.top.bottom.equalTo(self)
+            }
+        }
+
+        fileprivate func select(name: String?) {
+            for button in buttons {
+                if (button.title(for: .normal) == name) {
+                    button.backgroundColor = .primary400
+                    button.setTitleColor(.white, for: .normal)
+                } else {
+                    button.backgroundColor = UIColor(hex: "F0F0F0")
+                    button.setTitleColor(UIColor.black.withAlphaComponent(0.75), for: .normal)
+                }
+            }
+        }
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            cheapButton.layer.cornerRadius = 3.0
+            averageButton.layer.cornerRadius = 3.0
+            expensiveButton.layer.cornerRadius = 3.0
+            cheapButton.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
+            averageButton.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
+            expensiveButton.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
+        }
+
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+
+    class PriceButtonShimmerView: UIView {
+        fileprivate let cheapButton = ShimmerView(color: UIColor(hex: "E6E6E6"))
+        fileprivate let averageButton = ShimmerView(color: UIColor(hex: "E6E6E6"))
+        fileprivate let expensiveButton = ShimmerView(color: UIColor(hex: "E6E6E6"))
+
+        required init() {
+            super.init(frame: .zero)
+            self.addSubview(cheapButton)
+            self.addSubview(averageButton)
+            self.addSubview(expensiveButton)
+
+            cheapButton.snp.makeConstraints { make in
+                make.left.equalTo(self)
+                make.right.equalTo(averageButton.snp.left).inset(-18)
+                make.width.equalTo(averageButton.snp.width)
+                make.width.equalTo(expensiveButton.snp.width)
+                make.height.equalTo(32)
+                make.top.bottom.equalTo(self)
+            }
+
+            averageButton.snp.makeConstraints { make in
+                make.left.equalTo(cheapButton.snp.right).inset(-18)
+                make.right.equalTo(expensiveButton.snp.left).inset(-18)
+                make.width.equalTo(cheapButton.snp.width)
+                make.width.equalTo(expensiveButton.snp.width)
+                make.top.bottom.equalTo(self)
+            }
+
+            expensiveButton.snp.makeConstraints { make in
+                make.left.equalTo(averageButton.snp.right).inset(-18)
+                make.right.equalTo(self)
+                make.width.equalTo(cheapButton.snp.width)
+                make.width.equalTo(averageButton.snp.width)
+                make.top.bottom.equalTo(self)
+            }
+        }
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            cheapButton.contentView.layer.cornerRadius = 3.0
+            averageButton.contentView.layer.cornerRadius = 3.0
+            expensiveButton.contentView.layer.cornerRadius = 3.0
+            cheapButton.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
+            averageButton.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
+            expensiveButton.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
+        }
+
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -502,7 +768,7 @@ class SearchSuggestCellTag: UITableViewCell {
     }
 
     class var id: String {
-        return "SearchSuggestCellTag"
+        return "SearchSuggestCellPriceRange"
     }
 }
 
@@ -770,6 +1036,85 @@ extension SearchSuggestCellTiming: UICollectionViewDataSource, UICollectionViewD
         required init?(coder aDecoder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
+    }
+}
+
+class SearchSuggestCellTag: UITableViewCell {
+    private let titleLabel: UILabel = {
+        let titleLabel = UILabel()
+        titleLabel.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        titleLabel.textColor = UIColor(hex: "444444")
+        return titleLabel
+    }()
+    private let checkButton: BEMCheckBox = {
+        let checkButton = BEMCheckBox(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
+        checkButton.boxType = .circle
+        checkButton.lineWidth = 1.5
+        checkButton.tintColor = UIColor(hex: "444444")
+        checkButton.animationDuration = 0.25
+        checkButton.isEnabled = false
+
+        checkButton.onCheckColor = .white
+        checkButton.onTintColor = .primary
+        checkButton.onFillColor = .primary
+        return checkButton
+    }()
+    private let containerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(hex: "F0F0F0")
+        return view
+    }()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(containerView)
+        containerView.addSubview(titleLabel)
+        containerView.addSubview(checkButton)
+
+        containerView.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(24)
+            make.top.bottom.equalTo(self).inset(2)
+        }
+
+        titleLabel.snp.makeConstraints { (make) in
+            make.top.bottom.equalTo(containerView).inset(12)
+            make.left.equalTo(containerView).inset(18)
+            make.right.equalTo(checkButton.snp.left).inset(-12)
+        }
+
+        checkButton.snp.makeConstraints { make in
+            make.top.bottom.equalTo(containerView).inset(10)
+            make.right.equalTo(containerView).inset(18)
+        }
+    }
+
+    func render(title: String, selected: Bool) {
+        titleLabel.text = title
+        checkButton.setOn(selected, animated: false)
+    }
+
+    /**
+     Flip the switch on check button
+     */
+    func flip() -> Bool {
+        let flip = !checkButton.on
+        checkButton.setOn(flip, animated: true)
+        return flip
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        containerView.layer.cornerRadius = 3
+        containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    class var id: String {
+        return "SearchSuggestCellTag"
     }
 }
 
