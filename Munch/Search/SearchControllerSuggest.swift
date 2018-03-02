@@ -49,9 +49,11 @@ class SearchSuggestController: UIViewController {
     }()
     private var suggests: [SearchSuggestType]?
     private var firstLoad: Bool = true
+    private var searchQuery: SearchQuery
 
     init(searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
         self.onExtensionDismiss = extensionDismiss
+        self.searchQuery = searchQuery
         self.manager = .init(searchQuery: searchQuery)
         super.init(nibName: nil, bundle: nil)
 
@@ -100,6 +102,10 @@ class SearchSuggestController: UIViewController {
             self.headerView.tagCollection.render(query: query)
             self.bottomView.render(searchQuery: query)
             self.tableView.reloadData()
+
+            if self.searchQuery != query{
+                self.headerView.textField.resignFirstResponder()
+            }
         }
 
         self.headerView.snp.makeConstraints { make in
