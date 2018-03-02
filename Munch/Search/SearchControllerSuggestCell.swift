@@ -343,7 +343,7 @@ extension SearchSuggestCellLocation: UICollectionViewDataSource, UICollectionVie
         case .nearby:
             controller.manager.select(location: nil, save: false)
         case .anywhere:
-            controller.manager.select(location: SearchFilterManager.anywhere, save: false)
+            controller.manager.select(location: SearchControllerSuggestManager.anywhere, save: false)
         case let .location(location):
             controller.manager.select(location: location)
         case let .container(container):

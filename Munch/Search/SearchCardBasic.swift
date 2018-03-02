@@ -189,6 +189,7 @@ class SearchPlaceCardBottomView: UIView {
             make.bottom.equalTo(tagCollection.snp.top)
         }
 
+        tagCollection.isUserInteractionEnabled = false
         tagCollection.snp.makeConstraints { (make) in
             make.left.equalTo(self)
             make.right.equalTo(self)

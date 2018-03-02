@@ -185,20 +185,6 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
                 }
             }
             self.present(controller, animated: true)
-        } else if type == SearchFilterController.self {
-            let controller = SearchFilterRootController(searchQuery: self.searchQuery) { searchQuery in
-                if let searchQuery = searchQuery {
-                    self.render(searchQuery: searchQuery)
-                }
-            }
-            self.present(controller, animated: true)
-        } else if type == SearchLocationController.self {
-            let controller = SearchFilterRootController(startWithLocation: self.searchQuery) { searchQuery in
-                if let searchQuery = searchQuery {
-                    self.render(searchQuery: searchQuery)
-                }
-            }
-            self.present(controller, animated: true)
         }
     }
 
