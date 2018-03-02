@@ -10,6 +10,7 @@ enum SearchSuggestType {
     case loading
     case assumption(AssumedSearchQuery)
     case header(String)
+    case headerMore(String)
     case location([SearchLocationType])
     case price(PriceRangeInArea)
     case priceLoading
@@ -45,13 +46,13 @@ class SearchControllerSuggestManager {
         return formatter
     }()
 
-    var searchQuery: SearchQuery
+    private(set) var searchQuery: SearchQuery
     var text: String?
 
     let recentLocationDatabase = RecentDatabase(name: "SearchLocation", maxItems: 8)
     private var updateHooks = [(SearchQuery) -> Void]()
 
-    var suggestions: [SearchSuggestType] = {
+    lazy var suggestions: [SearchSuggestType] = {
         let locationDatabase = RecentDatabase(name: "SearchLocation", maxItems: 8)
         let recentLocations = SearchControllerSuggestManager.readRecentLocations(database: locationDatabase)
 
@@ -62,19 +63,37 @@ class SearchControllerSuggestManager {
         // TODO Price Range
         list.append(SearchSuggestType.header("TIMING"))
         list.append(SearchSuggestType.time([SearchTimingType.now, SearchTimingType.breakfast, SearchTimingType.lunch, SearchTimingType.dinner, SearchTimingType.supper]))
+        list.append(SearchSuggestType.headerMore("CUISINE"))
+        list.append(contentsOf: SearchControllerSuggestManager.map(priority: "cuisine"))
+        list.append(SearchSuggestType.headerMore("ESTABLISHMENT"))
+        list.append(contentsOf: SearchControllerSuggestManager.map(priority: "establishment"))
+        list.append(SearchSuggestType.headerMore("AMENITIES"))
+        list.append(contentsOf: SearchControllerSuggestManager.map(priority: "amenities"))
+        list.append(SearchSuggestType.headerMore("OCCASION"))
+        list.append(contentsOf: SearchControllerSuggestManager.map(priority: "occasion"))
+        return list
+    }()
+
+    lazy var tags: [SearchSuggestType] = {
+        var list = [SearchSuggestType]()
         list.append(SearchSuggestType.header("CUISINE"))
-        list.append(contentsOf: SearchControllerSuggestManager.map(type: "cuisine"))
+        list.append(contentsOf: SearchControllerSuggestManager.map(all: "cuisine"))
         list.append(SearchSuggestType.header("ESTABLISHMENT"))
-        list.append(contentsOf: SearchControllerSuggestManager.map(type: "establishment"))
+        list.append(contentsOf: SearchControllerSuggestManager.map(all: "establishment"))
         list.append(SearchSuggestType.header("AMENITIES"))
-        list.append(contentsOf: SearchControllerSuggestManager.map(type: "amenities"))
+        list.append(contentsOf: SearchControllerSuggestManager.map(all: "amenities"))
         list.append(SearchSuggestType.header("OCCASION"))
-        list.append(contentsOf: SearchControllerSuggestManager.map(type: "occasion"))
+        list.append(contentsOf: SearchControllerSuggestManager.map(all: "occasion"))
         return list
     }()
 
     init(searchQuery: SearchQuery) {
         self.searchQuery = searchQuery
+    }
+
+    func setSearchQuery(searchQuery: SearchQuery) {
+        self.searchQuery = searchQuery
+        runHooks()
     }
 
     func addUpdateHook(hook: @escaping (SearchQuery) -> Void) {
@@ -258,8 +277,12 @@ extension SearchControllerSuggestManager {
                 }
     }
 
-    private class func map(type: String) -> [SearchSuggestType] {
+    private class func map(priority type: String) -> [SearchSuggestType] {
         return priorityTypes[type.lowercased()]!.map({ SearchSuggestType.tag(Tag(name: $0)) })
+    }
+
+    private class func map(all type: String) -> [SearchSuggestType] {
+        return types[type.lowercased()]!.map({ SearchSuggestType.tag(Tag(name: $0)) })
     }
 
     class func map(assumedSearchQuery: AssumedSearchQuery?, places: [Place], locationContainers: [SearchResult], tags: [Tag]) -> [SearchSuggestType] {

@@ -99,6 +99,7 @@ class SearchSuggestController: UIViewController {
         self.manager.addUpdateHook { query in
             self.headerView.tagCollection.render(query: query)
             self.bottomView.render(searchQuery: query)
+            self.tableView.reloadData()
         }
 
         self.headerView.snp.makeConstraints { make in
@@ -143,7 +144,7 @@ class SearchSuggestController: UIViewController {
 
     @objc func textFieldDidCommit(textField: UITextField) {
         if let text = textField.text, text.count >= 3 {
-            // Change to null when get commited
+            // Change to null when get committed
             self.suggests = nil
             self.tableView.reloadData()
 
@@ -174,6 +175,7 @@ class SearchSuggestController: UIViewController {
 extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
     func registerCell() {
         tableView.register(SearchSuggestCellHeader.self, forCellReuseIdentifier: SearchSuggestCellHeader.id)
+        tableView.register(SearchSuggestCellHeaderMore.self, forCellReuseIdentifier: SearchSuggestCellHeaderMore.id)
         tableView.register(SearchSuggestCellLocation.self, forCellReuseIdentifier: SearchSuggestCellLocation.id)
         tableView.register(SearchSuggestCellTag.self, forCellReuseIdentifier: SearchSuggestCellTag.id)
         tableView.register(SearchSuggestCellTiming.self, forCellReuseIdentifier: SearchSuggestCellTiming.id)
@@ -221,6 +223,12 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellHeader.id) as! SearchSuggestCellHeader
             cell.render(title: title)
             return cell
+
+        case .headerMore(let title):
+            let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellHeaderMore.id) as! SearchSuggestCellHeaderMore
+            cell.render(title: title)
+            return cell
+
         case .location(let locations):
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellLocation.id) as! SearchSuggestCellLocation
             cell.render(locations: locations, controller: self)
@@ -241,6 +249,7 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellPlace.id) as! SearchSuggestCellPlace
             cell.render(place: place)
             return cell
+
         default: return UITableViewCell()
         }
     }
@@ -252,15 +261,25 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
         case .tag(let tag):
             let text = tag.name ?? ""
             manager.select(tag: text, selected: !manager.isSelected(tag: text))
-            tableView.reloadRows(at: [indexPath], with: .none)
+
+        case .assumption(let query):
+            self.onExtensionDismiss(query.searchQuery)
+            self.dismiss(animated: true)
+
+        case .headerMore(let title):
+            let controller = SearchSuggestTagController(searchQuery: manager.searchQuery, type: title) { query in
+                if let query = query {
+                    self.manager.setSearchQuery(searchQuery: query)
+                }
+            }
+            self.navigationController?.pushViewController(controller, animated: true)
+
         case .place(let place):
             if let placeId = place.id {
                 let placeController = PlaceViewController(placeId: placeId)
                 self.navigationController?.pushViewController(placeController, animated: true)
             }
-        case .assumption(let query):
-            self.onExtensionDismiss(query.searchQuery)
-            self.dismiss(animated: true)
+
         default: return
         }
     }
@@ -337,7 +356,6 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
             self.controller.manager.select(hour: name)
-            self.controller.tableView.reloadData()
         })
         addAlert(removeAll: alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -348,7 +366,6 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
             self.controller.manager.resetPrice()
-            self.controller.tableView.reloadData()
         })
         addAlert(removeAll: alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -359,7 +376,6 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
             self.controller.manager.reset(tags: [name])
-            self.controller.tableView.reloadData()
         })
         addAlert(removeAll: alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -369,7 +385,6 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
     func addAlert(removeAll alert: UIAlertController) {
         alert.addAction(UIAlertAction(title: "Remove All", style: .destructive) { action in
             self.controller.manager.reset()
-            self.controller.tableView.reloadData()
         })
     }
 

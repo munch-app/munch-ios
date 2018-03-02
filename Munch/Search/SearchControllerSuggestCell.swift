@@ -112,7 +112,7 @@ class SearchSuggestCellLoading: UITableViewCell {
         tagView.snp.makeConstraints { make in
             make.left.equalTo(containerView).inset(16)
             make.top.bottom.equalTo(containerView).inset(16)
-            make.width.equalTo(130)
+            make.width.equalTo(150)
             make.height.equalTo(24)
         }
     }
@@ -167,6 +167,64 @@ class SearchSuggestCellHeader: UITableViewCell {
 
     class var id: String {
         return "SearchSuggestCellHeader"
+    }
+}
+
+class SearchSuggestCellHeaderMore: UITableViewCell {
+    private let label: UILabel = {
+        let label = UILabel()
+        label.backgroundColor = .white
+        label.font = UIFont.systemFont(ofSize: 12.0, weight: .bold)
+        label.textColor = UIColor(hex: "555555")
+        label.textAlignment = .center
+        return label
+    }()
+    private let moreButton: UIButton = {
+        let button = UIButton()
+        button.tintColor = UIColor(hex: "333333")
+        button.setImage(UIImage(named: "Search-Right-Arrow"), for: .normal)
+
+        button.setTitle("MORE", for: .normal)
+        button.setTitleColor(UIColor(hex: "333333"), for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 10, weight: .medium)
+        button.contentEdgeInsets.right = 0
+        button.titleEdgeInsets.right = -1
+
+        button.contentHorizontalAlignment = .right
+        button.semanticContentAttribute = .forceRightToLeft
+        button.isUserInteractionEnabled = false
+        return button
+    }()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+
+        self.addSubview(label)
+        self.addSubview(moreButton)
+
+        label.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.top.equalTo(self).inset(14)
+            make.bottom.equalTo(self).inset(14)
+        }
+
+        moreButton.snp.makeConstraints { make in
+            make.right.equalTo(self).inset(24)
+            make.centerY.equalTo(self)
+        }
+    }
+
+    func render(title: String) {
+        label.text = title
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    class var id: String {
+        return "SearchSuggestCellHeaderMore"
     }
 }
 
@@ -290,7 +348,6 @@ extension SearchSuggestCellLocation: UICollectionViewDataSource, UICollectionVie
         case let .container(container):
             controller.manager.select(container: container)
         }
-        collectionView.reloadData()
     }
 
     fileprivate class SearchSuggestCellLocationGridCell: UICollectionViewCell {
@@ -460,7 +517,9 @@ class SearchSuggestCellTiming: UITableViewCell {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.backgroundColor = UIColor.white
-        collectionView.register(SearchSuggestCellTimingGridCell.self, forCellWithReuseIdentifier: "SearchSuggestCellTimingGridCell")
+        collectionView.contentInset = .zero
+        collectionView.register(SearchSuggestCellTimingGridCellOpenNow.self, forCellWithReuseIdentifier: "SearchSuggestCellTimingGridCellOpenNow")
+        collectionView.register(SearchSuggestCellTimingGridCellTitle.self, forCellWithReuseIdentifier: "SearchSuggestCellTimingGridCellTitle")
         return collectionView
     }()
 
@@ -503,40 +562,49 @@ extension SearchSuggestCellTiming: UICollectionViewDataSource, UICollectionViewD
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchSuggestCellTimingGridCell", for: indexPath) as! SearchSuggestCellTimingGridCell
-
         switch timings[indexPath.row] {
         case .now:
-            let selected = controller.manager.isSelected(hour: "Open Now")
-            cell.render(text: "Open Now", image: UIImage(named: "Search-Timing-Present"), selected: selected)
-        case .breakfast:
-            let selected = controller.manager.isSelected(hour: "Breakfast")
-            cell.render(text: "Breakfast", image: nil, selected: selected)
-        case .lunch:
-            let selected = controller.manager.isSelected(hour: "Lunch")
-            cell.render(text: "Lunch", image: nil, selected: selected)
-        case .dinner:
-            let selected = controller.manager.isSelected(hour: "Dinner")
-            cell.render(text: "Dinner", image: nil, selected: selected)
-        case .supper:
-            let selected = controller.manager.isSelected(hour: "Supper")
-            cell.render(text: "Supper", image: nil, selected: selected)
+            return collectionView.dequeueReusableCell(withReuseIdentifier: "SearchSuggestCellTimingGridCellOpenNow", for: indexPath)
+        default:
+            return collectionView.dequeueReusableCell(withReuseIdentifier: "SearchSuggestCellTimingGridCellTitle", for: indexPath)
         }
-        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        switch timings[indexPath.row] {
+        case .breakfast:
+            let cell = cell as! SearchSuggestCellTimingGridCellTitle
+            let selected = controller.manager.isSelected(hour: "Breakfast")
+            cell.render(text: "Breakfast", selected: selected)
+        case .lunch:
+            let cell = cell as! SearchSuggestCellTimingGridCellTitle
+            let selected = controller.manager.isSelected(hour: "Lunch")
+            cell.render(text: "Lunch", selected: selected)
+        case .dinner:
+            let cell = cell as! SearchSuggestCellTimingGridCellTitle
+            let selected = controller.manager.isSelected(hour: "Dinner")
+            cell.render(text: "Dinner", selected: selected)
+        case .supper:
+            let cell = cell as! SearchSuggestCellTimingGridCellTitle
+            let selected = controller.manager.isSelected(hour: "Supper")
+            cell.render(text: "Supper", selected: selected)
+
+        default: break
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         switch timings[indexPath.row] {
         case .now:
-            return CGSize(width: SearchSuggestCellTimingGridCell.textWidth(text: "Open Now") + 36 + 20, height: 36)
+            return CGSize(width: SearchSuggestCellTimingGridCellTitle.textWidth(text: "Open Now") + 36 + 20, height: 36)
         case .breakfast:
-            return CGSize(width: SearchSuggestCellTimingGridCell.textWidth(text: "Breakfast") + 36, height: 36)
+            return CGSize(width: SearchSuggestCellTimingGridCellTitle.textWidth(text: "Breakfast") + 36, height: 36)
         case .lunch:
-            return CGSize(width: SearchSuggestCellTimingGridCell.textWidth(text: "Lunch") + 36, height: 36)
+            return CGSize(width: SearchSuggestCellTimingGridCellTitle.textWidth(text: "Lunch") + 36, height: 36)
         case .dinner:
-            return CGSize(width: SearchSuggestCellTimingGridCell.textWidth(text: "Dinner") + 36, height: 36)
+            return CGSize(width: SearchSuggestCellTimingGridCellTitle.textWidth(text: "Dinner") + 36, height: 36)
         case .supper:
-            return CGSize(width: SearchSuggestCellTimingGridCell.textWidth(text: "Supper") + 36, height: 36)
+            return CGSize(width: SearchSuggestCellTimingGridCellTitle.textWidth(text: "Supper") + 36, height: 36)
         }
     }
 
@@ -553,11 +621,9 @@ extension SearchSuggestCellTiming: UICollectionViewDataSource, UICollectionViewD
         case .supper:
             controller.manager.select(hour: "Supper")
         }
-        // Note: It only Reload Current Item
-        collectionView.reloadItems(at: [indexPath])
     }
 
-    fileprivate class SearchSuggestCellTimingGridCell: UICollectionViewCell {
+    fileprivate class SearchSuggestCellTimingGridCellOpenNow: UICollectionViewCell {
         static let labelFont = UIFont.systemFont(ofSize: 14.0, weight: .semibold)
 
         class func textWidth(text: String) -> CGFloat {
@@ -572,6 +638,7 @@ extension SearchSuggestCellTiming: UICollectionViewDataSource, UICollectionViewD
         let imageView: MunchImageView = {
             let imageView = MunchImageView()
             imageView.tintColor = UIColor(hex: "444444")
+            imageView.image = UIImage(named: "Search-Timing-Present")
             imageView.contentMode = .scaleAspectFit
             return imageView
         }()
@@ -585,6 +652,7 @@ extension SearchSuggestCellTiming: UICollectionViewDataSource, UICollectionViewD
             nameLabel.isUserInteractionEnabled = false
 
             nameLabel.textAlignment = .right
+            nameLabel.text = "Open Now"
             return nameLabel
         }()
 
@@ -619,11 +687,8 @@ extension SearchSuggestCellTiming: UICollectionViewDataSource, UICollectionViewD
             containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
         }
 
-        func render(text: String?, image: UIImage?, selected: Bool) {
+        func render(text: String?, selected: Bool) {
             nameLabel.text = text
-            DispatchQueue.main.async {
-                self.imageView.image = image
-            }
 
             if selected {
                 containerView.backgroundColor = .primary400
@@ -633,6 +698,72 @@ extension SearchSuggestCellTiming: UICollectionViewDataSource, UICollectionViewD
                 containerView.backgroundColor = UIColor(hex: "F0F0F0")
                 nameLabel.textColor = UIColor.black.withAlphaComponent(0.72)
                 imageView.tintColor = UIColor(hex: "444444")
+            }
+        }
+
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+
+    fileprivate class SearchSuggestCellTimingGridCellTitle: UICollectionViewCell {
+        static let labelFont = UIFont.systemFont(ofSize: 14.0, weight: .semibold)
+
+        class func textWidth(text: String) -> CGFloat {
+            return UILabel.textWidth(font: labelFont, text: text)
+        }
+
+        let containerView: UIView = {
+            let view = UIView()
+            view.backgroundColor = UIColor(hex: "F0F0F0")
+            return view
+        }()
+        let nameLabel: UILabel = {
+            let nameLabel = UILabel()
+            nameLabel.backgroundColor = .clear
+            nameLabel.font = labelFont
+            nameLabel.textColor = UIColor.black.withAlphaComponent(0.72)
+
+            nameLabel.numberOfLines = 1
+            nameLabel.isUserInteractionEnabled = false
+
+            nameLabel.textAlignment = .right
+            return nameLabel
+        }()
+
+        override init(frame: CGRect = .zero) {
+            super.init(frame: frame)
+            self.addSubview(containerView)
+            containerView.addSubview(nameLabel)
+
+            nameLabel.snp.makeConstraints { make in
+                make.right.equalTo(containerView).inset(18)
+                make.top.bottom.equalTo(containerView)
+                make.left.equalTo(containerView)
+
+                make.height.equalTo(36)
+            }
+
+            containerView.snp.makeConstraints { make in
+                make.edges.equalTo(self)
+            }
+        }
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            containerView.layer.cornerRadius = 3.0
+            containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
+        }
+
+        func render(text: String?, selected: Bool) {
+            nameLabel.text = text
+
+            if selected {
+                containerView.backgroundColor = .primary400
+                nameLabel.textColor = .white
+            } else {
+                containerView.backgroundColor = UIColor(hex: "F0F0F0")
+                nameLabel.textColor = UIColor.black.withAlphaComponent(0.72)
             }
         }
 
