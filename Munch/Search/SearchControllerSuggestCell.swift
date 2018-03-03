@@ -428,7 +428,7 @@ extension SearchSuggestCellLocation: UICollectionViewDataSource, UICollectionVie
     }
 }
 
-class SearchSuggestCellPriceRange: UITableViewCell {
+class SearchSuggestCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
     private let loadingIndicator: UIView = {
         let view = UIView()
 
@@ -496,7 +496,7 @@ class SearchSuggestCellPriceRange: UITableViewCell {
         priceButtons.cheapButton.addTarget(self, action: #selector(onPriceButton(for:)), for: .touchUpInside)
         priceButtons.averageButton.addTarget(self, action: #selector(onPriceButton(for:)), for: .touchUpInside)
         priceButtons.expensiveButton.addTarget(self, action: #selector(onPriceButton(for:)), for: .touchUpInside)
-        priceSlider.addTarget(self, action: #selector(onPriceSlider(_:)), for: .touchUpInside)
+        priceSlider.delegate = self
 
         containerView.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
@@ -545,7 +545,6 @@ class SearchSuggestCellPriceRange: UITableViewCell {
                     self.updateSelected()
                     self.isLoading = false
                     self.controller.manager.resetPrice()
-                    self.priceSlider.enableStep = true
                 }
             } else {
                 self.controller.present(metaJSON.createAlert(), animated: true)
@@ -577,7 +576,7 @@ class SearchSuggestCellPriceRange: UITableViewCell {
         }
     }
 
-    @objc fileprivate func onPriceSlider(_ priceSlider: PriceRangeSlider) {
+    func didEndTouches(in slider: RangeSeekSlider) {
         let min = Double(priceSlider.selectedMinValue)
         let max = Double(priceSlider.selectedMaxValue)
         priceButtons.select(name: nil)
@@ -587,6 +586,10 @@ class SearchSuggestCellPriceRange: UITableViewCell {
         } else {
             controller.manager.select(price: nil, min: min, max: max)
         }
+    }
+
+    func didStartTouches(in slider: RangeSeekSlider) {
+        slider.enableStep = true
     }
 
     private func updateSelected() {
@@ -618,7 +621,7 @@ class SearchSuggestCellPriceRange: UITableViewCell {
 
             minDistance = 5
 
-//            enableStep = true
+            enableStep = false
             step = 5.0
         }
     }
