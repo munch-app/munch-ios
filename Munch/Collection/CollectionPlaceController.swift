@@ -9,7 +9,9 @@ import UIKit
 import NVActivityIndicatorView
 
 class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
+    var userId: String?
     let collectionId: String
+
     var placeCollection: PlaceCollection?
 
     private let headerView = HeaderView()
@@ -37,9 +39,22 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
     }()
     var addedPlaces: [[PlaceCollection.AddedPlace]] = []
 
+    init(collectionId: String) {
+        self.userId = nil
+        self.collectionId = collectionId
+        super.init(nibName: nil, bundle: nil)
+    }
+
     init(collectionId: String, placeCollection: PlaceCollection) {
+        self.userId = placeCollection.userId
         self.collectionId = collectionId
         self.placeCollection = placeCollection
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    init(userId: String, collectionId: String) {
+        self.userId = userId
+        self.collectionId = collectionId
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -64,7 +79,37 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
 
         self.headerView.backButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
         self.headerView.editButton.addTarget(self, action: #selector(actionEdit(_:)), for: .touchUpInside)
-        self.headerView.titleView.text = placeCollection?.name
+
+
+        if let userId = self.userId, UserAccount.sub != userId {
+            // Load Public
+            self.headerView.editButton.isHidden = true
+
+            MunchApi.collections.get(userId: userId, collectionId: self.collectionId) { meta, collection in
+                if meta.isOk() {
+                    self.placeCollection = collection
+                    self.headerView.titleView.text = collection?.name
+                    self.collectionView.reloadData()
+                } else {
+                    self.present(meta.createAlert(), animated: true)
+                }
+            }
+        } else if let placeCollection = self.placeCollection {
+            // Load Personal
+            self.headerView.titleView.text = placeCollection.name
+        } else {
+            // Load Personal with Collection Id
+            self.userId = nil
+            MunchApi.collections.get(collectionId: self.collectionId) { meta, collection in
+                if meta.isOk() {
+                    self.placeCollection = collection
+                    self.headerView.titleView.text = collection?.name
+                    self.collectionView.reloadData()
+                } else {
+                    self.present(meta.createAlert(), animated: true)
+                }
+            }
+        }
     }
 
     private func initViews() {
@@ -94,6 +139,9 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
     }
 
     @objc func actionEdit(_ sender: Any) {
+        guard UserAccount.sub == userId else {
+            return
+        }
         let alert = UIAlertController(title: "Edit Collection", message: "Enter a new name for this collection", preferredStyle: .alert)
         alert.addTextField { textField in
             textField.text = nil
@@ -104,11 +152,11 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
             let collectionName = textField.text
 
             MunchApi.collections.get(collectionId: self.collectionId) { meta, collection in
-                if meta.isOk() {
+                if meta.isOk(), let collection = collection {
                     var editCollection = collection
                     editCollection.name = collectionName
                     MunchApi.collections.put(collectionId: self.collectionId, collection: editCollection) { meta, collection in
-                        if meta.isOk() {
+                        if meta.isOk(), let collection = collection {
                             self.placeCollection = collection
                             self.headerView.titleView.text = collection.name
                         } else {
@@ -204,7 +252,7 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
 
         override func layoutSubviews() {
             super.layoutSubviews()
-            self.hairlineShadow(height: 1.0)
+            self.shadow(vertical: 1.5)
         }
 
         required init?(coder aDecoder: NSCoder) {
@@ -292,12 +340,12 @@ extension CollectionPlaceController {
     }
 
     private func appendLoad() {
-        if self.more {
+        if self.placeCollection != nil && self.more {
             let loadingCell = self.collectionView.cellForItem(at: .init(row: 0, section: 1)) as? CollectionPlaceLoadingCell
             loadingCell?.startAnimating()
 
             let maxSortKey = self.addedPlaces.last?.last?.sortKey ?? nil
-            MunchApi.collections.listPlace(collectionId: self.collectionId, maxSortKey: maxSortKey, size: 10) { meta, addedPlaces in
+            MunchApi.collections.listPlace(userId: userId, collectionId: self.collectionId, maxSortKey: maxSortKey, size: 10) { meta, addedPlaces in
                 DispatchQueue.main.async {
                     if meta.isOk() {
                         self.addedPlaces.append(addedPlaces)
@@ -368,7 +416,7 @@ fileprivate class CollectionPlaceCollectionCell: UICollectionViewCell {
         imageGradientView.snp.makeConstraints { make in
             make.bottom.equalTo(self)
             make.left.right.equalTo(self)
-            make.height.equalTo(30)
+            make.height.equalTo(40)
         }
 
         imageView.snp.makeConstraints { make in
@@ -394,6 +442,11 @@ fileprivate class CollectionPlaceCollectionCell: UICollectionViewCell {
 
         imageView.render(sourcedImage: addedPlace.place.images?.get(0))
         nameLabel.text = addedPlace.place.name
+
+        if controller.userId != nil {
+            editLabel.isHidden = true
+            editLabel.isUserInteractionEnabled = false
+        }
     }
 
     @objc func onEditButton(_ sender: Any) {
@@ -409,9 +462,9 @@ fileprivate class CollectionPlaceCollectionCell: UICollectionViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.55).cgColor]
+        self.gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.33).cgColor]
         self.gradientLayer.cornerRadius = 2
-        self.gradientLayer.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: 30)
+        self.gradientLayer.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: 40)
     }
 
     required init?(coder aDecoder: NSCoder) {

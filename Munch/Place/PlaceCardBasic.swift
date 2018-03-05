@@ -202,7 +202,7 @@ class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
 
         tagCollection.snp.makeConstraints { (make) in
             make.left.equalTo(collectionHolderView).inset(24)
-            make.right.equalTo(collectionHolderView).inset(24)
+            make.right.equalTo(collectionHolderView).inset(16)
             make.top.equalTo(collectionHolderView)
         }
 
@@ -237,14 +237,14 @@ class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
 
             tagBorderWidth = 0
             tagTextColor = UIColor.black.withAlphaComponent(0.88)
-            tagBackgroundColor = UIColor(hex: "ebebeb")
+            tagBackgroundColor = UIColor(hex: "F0F0F7")
 
             tagSelectedBorderWidth = 0
             tagSelectedTextColor = UIColor.black.withAlphaComponent(0.88)
-            tagSelectedBackgroundColor = UIColor(hex: "ebebeb")
+            tagSelectedBackgroundColor = UIColor(hex: "F0F0F7")
             tagSelectedCornerRadius = 3
 
-            tagExtraSpace = CGSize(width: 15, height: 8)
+            tagExtraSpace = CGSize(width: 18, height: 8)
         }
     }
 

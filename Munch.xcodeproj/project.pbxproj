@@ -69,6 +69,7 @@
 		B4B73A8BD16561824718B41D /* CollectionPlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73EBA645A014851F10D53 /* CollectionPlaceController.swift */; };
 		B4B73BA7FADE13E2517C71F8 /* CollectionClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B735022631764CC931E8CA /* CollectionClient.swift */; };
 		B4B73C2A60EE351F094AED22 /* AccountDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7318BCB00B96424E50D14 /* AccountDataController.swift */; };
+		B4B73E1C452DF2E4B4DF4DA2 /* PlaceCardAward.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7393EC9371A4BF34117EE /* PlaceCardAward.swift */; };
 		B4B73FE5E010EDBC83209A55 /* BoardingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B730E3D2F989A8CA95B67F /* BoardingController.swift */; };
 		B4B73FECE8D26C31A28E9DE9 /* PlaceCardReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737A0379DB051FD36C86D /* PlaceCardReview.swift */; };
 		DB136C8B43E175A72028D87F /* Pods_MunchUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2CE8E9F738C2A64071DD8B3 /* Pods_MunchUITests.framework */; };
@@ -176,6 +177,7 @@
 		B4B738FC6C7F484B97FA825F /* locations-popular.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "locations-popular.json"; sourceTree = "<group>"; };
 		B4B73924CDDEE30BE2E2AF8A /* AccountClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountClient.swift; sourceTree = "<group>"; };
 		B4B739295503DBF1CB674F6E /* PlaceCardMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardMenu.swift; sourceTree = "<group>"; };
+		B4B7393EC9371A4BF34117EE /* PlaceCardAward.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardAward.swift; sourceTree = "<group>"; };
 		B4B73A91A35296A0F8E94C42 /* PlaceCardUGC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardUGC.swift; sourceTree = "<group>"; };
 		B4B73AE61B5E68D3CB127949 /* SearchControllerSuggestCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchControllerSuggestCell.swift; sourceTree = "<group>"; };
 		B4B73B4027BDB40E3CC44F31 /* PlaceMapController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceMapController.swift; sourceTree = "<group>"; };
@@ -359,6 +361,7 @@
 				B4B737B2890DCC10B0DF0304 /* PlaceCardAbout.swift */,
 				B4B738EF6EA67EF16E54F617 /* PlaceCardLocation.swift */,
 				B4B73A91A35296A0F8E94C42 /* PlaceCardUGC.swift */,
+				B4B7393EC9371A4BF34117EE /* PlaceCardAward.swift */,
 			);
 			path = Place;
 			sourceTree = "<group>";
@@ -867,6 +870,7 @@
 				B4B7371F9449BA9324A537B5 /* SearchControllerSuggestManager.swift in Sources */,
 				B4B73186CECEE6F9A52F7336 /* MunchTagCollectionView.swift in Sources */,
 				B4B7374EC3A5CD8609928070 /* SearchControllerSuggestTag.swift in Sources */,
+				B4B73E1C452DF2E4B4DF4DA2 /* PlaceCardAward.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

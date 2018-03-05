@@ -17,7 +17,7 @@ class CollectionClient {
     /**
      Create new PlaceCollection
      */
-    func post(collection: PlaceCollection, callback: @escaping (_ meta: MetaJSON, _ collection: PlaceCollection) -> Void) {
+    func post(collection: PlaceCollection, callback: @escaping (_ meta: MetaJSON, _ collection: PlaceCollection?) -> Void) {
         self.changedDate = Date()
         MunchApi.restful.post("/collections", parameters: collection.toParams()) { meta, json in
             callback(meta, PlaceCollection(json: json["data"]))
@@ -27,7 +27,7 @@ class CollectionClient {
     /**
      Update existing PlaceCollection
      */
-    func put(collectionId: String, collection: PlaceCollection, callback: @escaping (_ meta: MetaJSON, _ collection: PlaceCollection) -> Void) {
+    func put(collectionId: String, collection: PlaceCollection, callback: @escaping (_ meta: MetaJSON, _ collection: PlaceCollection?) -> Void) {
         self.changedDate = Date()
         MunchApi.restful.put("/collections/\(collectionId)", parameters: collection.toParams()) { meta, json in
             callback(meta, PlaceCollection(json: json["data"]))
@@ -40,13 +40,22 @@ class CollectionClient {
         params["size"] = size
 
         MunchApi.restful.get("/collections", parameters: params) { meta, json in
-            callback(meta, json["data"].map({ PlaceCollection(json: $0.1) }))
+            callback(meta, json["data"].flatMap({ PlaceCollection(json: $0.1) }))
         }
     }
 
-    func get(collectionId: String, callback: @escaping (_ meta: MetaJSON, _ collection: PlaceCollection) -> Void) {
-        MunchApi.restful.get("/collections/\(collectionId)") { meta, json in
-            callback(meta, PlaceCollection(json: json["data"]))
+    /**
+     if userId is given, user is accessing the public collection endpoint
+     */
+    func get(userId: String? = nil, collectionId: String, callback: @escaping (_ meta: MetaJSON, _ collection: PlaceCollection?) -> Void) {
+        if let userId = userId {
+            MunchApi.restful.get("/public/collections/\(userId)/\(collectionId)") { meta, json in
+                callback(meta, PlaceCollection(json: json["data"]))
+            }
+        } else {
+            MunchApi.restful.get("/collections/\(collectionId)") { meta, json in
+                callback(meta, PlaceCollection(json: json["data"]))
+            }
         }
     }
 
@@ -71,13 +80,22 @@ class CollectionClient {
         }
     }
 
-    func listPlace(collectionId: String, maxSortKey: Int?, size: Int, callback: @escaping (_ meta: MetaJSON, _ addedPlaces: [PlaceCollection.AddedPlace]) -> Void) {
+    /**
+     if userId is given, user is accessing the public collection endpoint
+     */
+    func listPlace(userId: String? = nil, collectionId: String, maxSortKey: Int?, size: Int, callback: @escaping (_ meta: MetaJSON, _ addedPlaces: [PlaceCollection.AddedPlace]) -> Void) {
         var params = Parameters()
         params["maxSortKey"] = maxSortKey
         params["size"] = size
 
-        MunchApi.restful.get("/collections/\(collectionId)/places", parameters: params) { meta, json in
-            callback(meta, json["data"].map({ PlaceCollection.AddedPlace(json: $0.1) }))
+        if let userId = userId {
+            MunchApi.restful.get("/public/collections/\(userId)/\(collectionId)/places", parameters: params) { meta, json in
+                callback(meta, json["data"].map({ PlaceCollection.AddedPlace(json: $0.1) }))
+            }
+        } else {
+            MunchApi.restful.get("/collections/\(collectionId)/places", parameters: params) { meta, json in
+                callback(meta, json["data"].map({ PlaceCollection.AddedPlace(json: $0.1) }))
+            }
         }
     }
 
@@ -148,7 +166,10 @@ struct PlaceCollection {
 
     }
 
-    init(json: JSON) {
+    init?(json: JSON) {
+        guard json.exists() else {
+            return nil
+        }
         self.userId = json["userId"].string
         self.collectionId = json["collectionId"].string
 

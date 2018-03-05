@@ -108,7 +108,7 @@ extension AccountProfileController: UICollectionViewDataSource, UICollectionView
                 collection.name = textField.text
 
                 MunchApi.collections.post(collection: collection) { meta, collection in
-                    if meta.isOk() {
+                    if meta.isOk(), let collection = collection {
                         self.dataLoader.collections.insert([collection], at: 0)
                         self.collectionView.reloadData()
                     } else {

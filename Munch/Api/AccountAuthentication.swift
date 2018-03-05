@@ -90,6 +90,7 @@ public class AccountAuthentication {
 }
 
 public class UserAccount {
+    // Sub is JWT version of UserId
     public static var sub: String? {
         get {
             return UserDefaults.standard.string(forKey: "user.sub")

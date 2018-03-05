@@ -140,7 +140,7 @@ class CollectionSelectListController: UIViewController {
             collection.name = textField.text
 
             MunchApi.collections.post(collection: collection) { meta, collection in
-                if meta.isOk() {
+                if meta.isOk(), let collection = collection {
                     self.items = [collection] + self.items
                     self.emptyLabel.isHidden = true
                     self.tableView.reloadData()

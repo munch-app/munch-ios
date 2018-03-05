@@ -490,6 +490,9 @@ extension PlaceViewController {
         register(PlaceBasicPriceCard.self)
         register(PlaceBasicWebsiteCard.self)
 
+        // Register Extended Loaded Cards
+        register(PlaceExtendedPlaceAwardCard.self)
+
         // Register Experimental UGC Features
         register(PlaceHeaderUGCCard.self)
         register(PlaceUGCSuggestedTagCard.self)
