@@ -35,40 +35,41 @@ class PlaceVendorMenuImageCard: PlaceCardView, SFSafariViewControllerDelegate {
         collectionView.alwaysBounceHorizontal = true
         collectionView.backgroundColor = UIColor.white
         collectionView.register(PlaceMenuImageCardCell.self, forCellWithReuseIdentifier: "PlaceMenuImageCardCell")
+        collectionView.register(PlaceMenuURLCardCell.self, forCellWithReuseIdentifier: "PlaceMenuURLCardCell")
         return collectionView
     }()
 
-    private var menus = [JSON]()
+    private var menus = [MenuType]()
 
     override func didLoad(card: PlaceCard) {
-        self.menus = card["menus"].array ?? []
-        self.addSubview(collectionView)
+        if let url = card["menuUrl"].string {
+            menus.append(.url(url))
+        }
+        if let images = card["images"].array {
+            for image in images {
+                menus.append(.image(image))
+            }
+        }
 
+        self.addSubview(collectionView)
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
 
-        if (!menus.isEmpty) {
-            collectionView.snp.makeConstraints { make in
-                make.top.bottom.equalTo(self).inset(topBottom)
-                make.height.equalTo(120)
-                make.left.right.equalTo(self)
-            }
-        } else {
-            let titleView = UILabel()
-            titleView.text = "Error Loading Menus"
-            titleView.textColor = .primary
-            self.addSubview(titleView)
-
-            titleView.snp.makeConstraints { make in
-                make.top.bottom.equalTo(self).inset(topBottom)
-                make.centerX.equalTo(self)
-            }
+        collectionView.snp.makeConstraints { make in
+            make.top.bottom.equalTo(self).inset(topBottom)
+            make.height.equalTo(120)
+            make.left.right.equalTo(self)
         }
     }
 
     override class var cardId: String? {
-        return "vendor_MenuImage_20171219"
+        return "extended_PlaceMenu_20180306"
     }
+}
+
+fileprivate enum MenuType {
+    case url(String)
+    case image(JSON)
 }
 
 extension PlaceVendorMenuImageCard: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -77,39 +78,39 @@ extension PlaceVendorMenuImageCard: UICollectionViewDataSource, UICollectionView
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let menu = menus[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PlaceMenuImageCardCell", for: indexPath) as! PlaceMenuImageCardCell
-        cell.render(menu: menu)
-        return cell
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let menu = menus[indexPath.row]
-
-        if let images = menu["images"].dictionaryObject as? [String: String],
-           let imageUrl = getLargestImage(images: images),
-           let url = URL(string: imageUrl) {
-            let safari = SFSafariViewController(url: url)
-            safari.delegate = self
-            controller.present(safari, animated: true, completion: nil)
+        switch menus[indexPath.row] {
+        case .url:
+            return collectionView.dequeueReusableCell(withReuseIdentifier: "PlaceMenuURLCardCell", for: indexPath) as! PlaceMenuURLCardCell
+        case .image(let json):
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PlaceMenuImageCardCell", for: indexPath) as! PlaceMenuImageCardCell
+            cell.render(menu: json)
+            return cell
         }
     }
 
-    private func getLargestImage(images: [String: String]) -> String? {
-        return images["original"]
-                ?? images["1080x1080"]
-                ?? images["640x640"]
-                ?? images["320x320"]
-                ?? images["150x150"]
-                ?? nil
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        switch menus[indexPath.row] {
+        case .url(let url):
+            if let url = URL(string: url) {
+                let safari = SFSafariViewController(url: url)
+                safari.delegate = self
+                controller.present(safari, animated: true, completion: nil)
+            }
+        case .image(let json):
+            if let imageUrl = json["url"].string, let url = URL(string: imageUrl) {
+                let safari = SFSafariViewController(url: url)
+                safari.delegate = self
+                controller.present(safari, animated: true, completion: nil)
+            }
+        }
     }
 }
 
 fileprivate class PlaceMenuImageCardCell: UICollectionViewCell {
     let imageView: MunchImageView = {
         let imageView = MunchImageView()
-        imageView.layer.cornerRadius = 2
-        imageView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        imageView.layer.cornerRadius = 3
+        imageView.backgroundColor = UIColor(hex: "F0F0F7")
         return imageView
     }()
 
@@ -123,8 +124,33 @@ fileprivate class PlaceMenuImageCardCell: UICollectionViewCell {
     }
 
     func render(menu: JSON) {
-        let images = menu["images"].dictionaryObject as? [String: String]
+        let images = menu["thumbnail"].dictionaryObject as? [String: String]
         imageView.render(images: images)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+fileprivate class PlaceMenuURLCardCell: UICollectionViewCell {
+    private let imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.tintColor = UIColor(hex: "666666")
+        imageView.image = UIImage(named: "RIP-Safari")
+        return imageView
+    }()
+
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        self.addSubview(imageView)
+        self.layer.cornerRadius = 3
+        self.backgroundColor = UIColor(hex: "F0F0F7")
+
+        imageView.snp.makeConstraints { make in
+            make.center.equalTo(self)
+            make.width.height.equalTo(60)
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
