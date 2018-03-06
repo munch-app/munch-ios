@@ -295,9 +295,10 @@ extension SearchControllerSuggestManager {
         return types[type.lowercased()]!.map({ SearchSuggestType.tag(Tag(name: $0)) })
     }
 
-    class func map(assumedSearchQuery: AssumedSearchQuery?, places: [Place], locationContainers: [SearchResult], tags: [Tag]) -> [SearchSuggestType] {
+    class func map(assumptions: [AssumedSearchQuery], places: [Place], locationContainers: [SearchResult], tags: [Tag]) -> [SearchSuggestType] {
         var list = [SearchSuggestType]()
-        if let query = assumedSearchQuery {
+
+        for query in assumptions {
             list.append(.assumption(query))
         }
 

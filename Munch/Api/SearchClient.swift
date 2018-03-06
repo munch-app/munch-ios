@@ -16,7 +16,7 @@ import SwiftyJSON
  */
 class SearchClient {
     func suggest(text: String, query: SearchQuery, callback: @escaping (_ meta: MetaJSON,
-                                                                        _ assumedSearchQuery: AssumedSearchQuery?,
+                                                                        _ assumptions: [AssumedSearchQuery],
                                                                         _ places: [Place],
                                                                         _ locationContainers: [SearchResult],
                                                                         _ tags: [Tag]) -> Void) {
@@ -31,11 +31,11 @@ class SearchClient {
         ]
 
         MunchApi.restful.post("/search/suggest", parameters: params) { meta, json in
-            let assumed = AssumedSearchQuery(json: json["data"]["Assumption"])
+            let assumptions = json["data"]["Assumption"].flatMap({ AssumedSearchQuery(json: $0.1)})
             let places = json["data"]["Place"].flatMap({ SearchClient.parseResult(result: $0.1) as? Place })
             let locationContainers = json["data"]["Location,Container"].flatMap({ SearchClient.parseResult(result: $0.1) })
             let tags = json["data"]["Tag"].flatMap({ SearchClient.parseResult(result: $0.1) as? Tag })
-            callback(meta, assumed, places, locationContainers, tags)
+            callback(meta, assumptions, places, locationContainers, tags)
         }
     }
 
