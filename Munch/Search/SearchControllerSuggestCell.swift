@@ -78,7 +78,17 @@ class SearchSuggestCellAssumption: UITableViewCell {
         }
 
         tagCollection.replaceAll(types: types)
-        applyButton.setTitle(SearchSuggestBottomView.countTitle(count: query.resultCount), for: .normal)
+        let title = SearchSuggestBottomView.countTitle(count: query.resultCount)
+
+        if title.lowercased() == "no results" {
+            applyButton.setTitleColor(UIColor.primary600, for: .normal)
+            applyButton.tintColor = UIColor.primary600
+            applyButton.setTitle("No Results", for: .normal)
+        } else {
+            applyButton.setTitleColor(UIColor(hex: "202020"), for: .normal)
+            applyButton.tintColor = UIColor(hex: "202020")
+            applyButton.setTitle(title, for: .normal)
+        }
     }
 
     override func layoutSubviews() {
