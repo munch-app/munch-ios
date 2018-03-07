@@ -103,7 +103,8 @@ class SearchSuggestController: UIViewController {
             self.bottomView.render(searchQuery: query)
             self.tableView.reloadData()
 
-            if self.searchQuery != query{
+            if self.searchQuery != query {
+                self.headerView.textField.text = nil
                 self.headerView.textField.resignFirstResponder()
             }
         }

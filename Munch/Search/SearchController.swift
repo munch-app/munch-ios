@@ -77,7 +77,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         super.viewDidAppear(animated)
 
         // Suggest Testing
-        self.goTo(extension: SearchSuggestController.self)
+//        self.goTo(extension: SearchSuggestController.self)
         // Place Testing
 //         self.navigationController!.pushViewController(PlaceViewController(placeId: "9512d8fd-5123-49be-b223-5d7e469d28b7"), animated: true)
     }
