@@ -20,22 +20,27 @@ class SearchClient {
                                                                         _ places: [Place],
                                                                         _ locationContainers: [SearchResult],
                                                                         _ tags: [Tag]) -> Void) {
-        var params = Parameters()
-        params["text"] = text
-        params["query"] = query.toParams()
-        params["latLng"] = MunchLocation.lastLatLng
-        params["types"] = [
-            "Place": 40,
-            "Location,Container": 10,
-            "Tag": 4
-        ]
+        MunchLocation.waitFor { latLng, error in
+            var query = query
+            query.latLng = MunchLocation.lastLatLng
 
-        MunchApi.restful.post("/search/suggest", parameters: params) { meta, json in
-            let assumptions = json["data"]["Assumption"].flatMap({ AssumedSearchQuery(json: $0.1)})
-            let places = json["data"]["Place"].flatMap({ SearchClient.parseResult(result: $0.1) as? Place })
-            let locationContainers = json["data"]["Location,Container"].flatMap({ SearchClient.parseResult(result: $0.1) })
-            let tags = json["data"]["Tag"].flatMap({ SearchClient.parseResult(result: $0.1) as? Tag })
-            callback(meta, assumptions, places, locationContainers, tags)
+            var params = Parameters()
+            params["text"] = text
+            params["query"] = query.toParams()
+            params["latLng"] = MunchLocation.lastLatLng
+            params["types"] = [
+                "Place": 40,
+                "Location,Container": 10,
+                "Tag": 4
+            ]
+
+            MunchApi.restful.post("/search/suggest", parameters: params) { meta, json in
+                let assumptions = json["data"]["Assumption"].flatMap({ AssumedSearchQuery(json: $0.1) })
+                let places = json["data"]["Place"].flatMap({ SearchClient.parseResult(result: $0.1) as? Place })
+                let locationContainers = json["data"]["Location,Container"].flatMap({ SearchClient.parseResult(result: $0.1) })
+                let tags = json["data"]["Tag"].flatMap({ SearchClient.parseResult(result: $0.1) as? Tag })
+                callback(meta, assumptions, places, locationContainers, tags)
+            }
         }
     }
 
@@ -46,10 +51,10 @@ class SearchClient {
     }
 
     func count(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ count: Int?) -> Void) {
-        var searchQuery = query
-        searchQuery.latLng = MunchLocation.lastLatLng
+        var query = query
+        query.latLng = MunchLocation.lastLatLng
 
-        MunchApi.restful.post("/search/count", parameters: searchQuery.toParams()) { meta, json in
+        MunchApi.restful.post("/search/count", parameters: query.toParams()) { meta, json in
             callback(meta, json["data"].int)
         }
     }
