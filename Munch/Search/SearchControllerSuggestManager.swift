@@ -109,17 +109,23 @@ class SearchControllerSuggestManager {
         if save, let name = location?.name {
             recentLocationDatabase.put(text: name, dictionary: location!.toParams())
         }
-        searchQuery.filter.location = location
-        searchQuery.filter.containers = []
-        runHooks()
+        update(location: location, containers: [])
     }
 
     func select(container: Container, save: Bool = true) {
         if save, let name = container.name {
             recentLocationDatabase.put(text: name, dictionary: container.toParams())
         }
-        searchQuery.filter.location = nil
-        searchQuery.filter.containers = [container]
+        update(location: nil, containers: [container])
+    }
+
+    private func update(location: Location?, containers: [Container]) {
+        searchQuery.filter.location = location
+        searchQuery.filter.containers = containers
+
+        // Update suggestions location card
+        let recentLocations = SearchControllerSuggestManager.readRecentLocations(database: recentLocationDatabase)
+        suggestions[1] = SearchSuggestType.location([SearchLocationType.nearby, SearchLocationType.anywhere(SearchControllerSuggestManager.anywhere)] + recentLocations)
         runHooks()
     }
 

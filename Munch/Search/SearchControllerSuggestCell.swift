@@ -46,8 +46,8 @@ class SearchSuggestCellAssumption: UITableViewCell {
 
         tagCollection.snp.makeConstraints { make in
             make.left.right.equalTo(containerView).inset(10)
-            make.top.equalTo(containerView).inset(10)
-            make.height.equalTo(34)
+            make.top.equalTo(containerView).inset(8)
+            make.height.equalTo(32)
         }
 
         applyButton.snp.makeConstraints { (make) in
@@ -59,7 +59,6 @@ class SearchSuggestCellAssumption: UITableViewCell {
 
     func render(query: AssumedSearchQuery) {
         var types = [MunchTagCollectionType]()
-        types.append(.assumptionPlus)
 
         for token in query.tokens {
             if let token = token as? AssumedSearchQuery.TagToken {
@@ -278,8 +277,20 @@ class SearchSuggestCellLocation: UITableViewCell {
         return collectionView
     }()
 
-    var controller: SearchSuggestController!
     var locations: [SearchLocationType]!
+    private var isHookSet: Bool = false
+
+    var controller: SearchSuggestController! {
+        didSet {
+            if !isHookSet {
+                controller.manager.addUpdateHook { query in
+                    self.collectionView.setContentOffset(.zero, animated: false)
+                    self.collectionView.reloadData()
+                }
+                isHookSet = true
+            }
+        }
+    }
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
