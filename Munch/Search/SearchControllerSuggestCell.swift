@@ -17,18 +17,25 @@ class SearchSuggestCellAssumption: UITableViewCell {
         return view
     }()
     private let tagCollection: MunchTagCollectionView = {
-        let tagCollection = MunchTagCollectionView(backgroundColor: UIColor(hex: "F0F0F0"), showFullyVisibleOnly: false)
+        let tagCollection = MunchTagCollectionView(horizontalSpacing: 6, backgroundColor: UIColor(hex: "F0F0F0"), showFullyVisibleOnly: false)
         tagCollection.isUserInteractionEnabled = false
         return tagCollection
     }()
     private let applyButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .clear
+        button.tintColor = UIColor(hex: "202020")
+        button.setImage(UIImage(named: "Search-Right-Arrow"), for: .normal)
+
         button.setTitleColor(UIColor(hex: "202020"), for: .normal)
         button.titleLabel!.font = UIFont.systemFont(ofSize: 13, weight: .medium)
+        button.contentEdgeInsets.right = 0
+        button.titleEdgeInsets.bottom = 2
+        button.titleEdgeInsets.right = -1
 
+        button.contentHorizontalAlignment = .right
+        button.semanticContentAttribute = .forceRightToLeft
         button.isUserInteractionEnabled = false
-        button.layer.cornerRadius = 3
         return button
     }()
 
@@ -41,19 +48,21 @@ class SearchSuggestCellAssumption: UITableViewCell {
 
         containerView.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
-            make.top.bottom.equalTo(self).inset(14)
+            make.top.equalTo(self).inset(10)
+            make.bottom.equalTo(self).inset(4)
         }
 
         tagCollection.snp.makeConstraints { make in
-            make.left.right.equalTo(containerView).inset(10)
+            make.left.equalTo(containerView).inset(10)
+            make.right.equalTo(containerView)
             make.top.equalTo(containerView).inset(8)
             make.height.equalTo(32)
         }
 
         applyButton.snp.makeConstraints { (make) in
-            make.top.equalTo(tagCollection.snp.bottom).inset(-1)
-            make.bottom.equalTo(containerView).inset(2)
-            make.right.equalTo(containerView).inset(12)
+            make.top.equalTo(tagCollection.snp.bottom).inset(-8)
+            make.bottom.equalTo(containerView).inset(8)
+            make.right.equalTo(containerView).inset(8)
         }
     }
 

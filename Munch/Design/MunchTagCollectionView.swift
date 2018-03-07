@@ -329,7 +329,6 @@ class MunchTagCollectionViewCellAssumptionText: UICollectionViewCell, MunchTagCo
         label.textColor = UIColor(hex: "303030")
         label.backgroundColor = .clear
         label.textAlignment = .center
-        label.layer.cornerRadius = 4
         label.clipsToBounds = true
         return label
     }()
