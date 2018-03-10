@@ -82,6 +82,7 @@ struct PlaceCard {
  */
 struct Place: SearchResult, Equatable {
     var id: String?
+    var open: Bool?
 
     // Basic
     var name: String?
@@ -105,6 +106,7 @@ struct Place: SearchResult, Equatable {
         }
 
         self.id = json["id"].string
+        self.open = json["open"].bool
 
         self.name = json["name"].string
         self.phone = json["phone"].string
@@ -351,7 +353,7 @@ struct Place: SearchResult, Equatable {
     /**
      Check whether place is open now based on hours in Place
      */
-    func isOpen() -> Hour.Formatter.Open {
+    func isHourOpen() -> Hour.Formatter.Open {
         if let hours = hours {
             return Hour.Formatter.isOpen(hours: hours)
         }

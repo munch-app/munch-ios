@@ -458,8 +458,9 @@ extension PlaceViewController {
         register(PlaceShimmerNameTagCard.self)
 
         // Register Place Cards
-        register(PlaceBasicNameTagCard.self)
         register(PlaceBasicImageBannerCard.self)
+        register(PlaceBasicClosedCard.self)
+        register(PlaceBasicNameTagCard.self)
         register(PlaceBasicAddressCard.self)
         register(PlaceBasicBusinessHourCard.self)
 

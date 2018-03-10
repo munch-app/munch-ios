@@ -1213,22 +1213,28 @@ class SearchSuggestCellPlace: UITableViewCell {
         placeImageView.render(sourcedImage: place.images?.get(0))
         nameLabel.text = place.name
 
+        let string = NSMutableAttributedString()
 
-        let locationName = place.location.neighbourhood ?? ""
         if let latLng = place.location.latLng, let distance = MunchLocation.distance(asMetric: latLng) {
-            let string = NSMutableAttributedString()
             string.append(distance.set(style: .default { make in
                 make.color = UIColor(hex: "606060")
             }))
             string.append(NSAttributedString(string: ", "))
-            string.append(locationName.set(style: .default { make in
-                make.color = UIColor(hex: "505050")
-            }))
-            locationLabel.attributedText = string
-        } else {
-            locationLabel.text = locationName
         }
 
+        let locationName = place.location.neighbourhood ?? ""
+        string.append(locationName.set(style: .default { make in
+            make.color = UIColor(hex: "505050")
+        }))
+
+        if !(place.open ?? true) {
+            string.append(NSAttributedString(string: ", "))
+            string.append("Perm Closed".set(style: .default { make in
+                make.color = UIColor.primary500
+            }))
+        }
+
+        locationLabel.attributedText = string
     }
 
     override func layoutSubviews() {

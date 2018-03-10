@@ -162,6 +162,32 @@ fileprivate class PlaceBasicImageBannerCardImageCell: UICollectionViewCell {
     }
 }
 
+class PlaceBasicClosedCard: PlaceCardView {
+    private let label: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 22.0, weight: .medium)
+        label.text = "Permanently Closed"
+        label.textColor = UIColor.white
+        label.numberOfLines = 1
+        label.isUserInteractionEnabled = false
+        return label
+    }()
+
+    override func didLoad(card: PlaceCard) {
+        backgroundColor = UIColor.primary400
+        self.addSubview(label)
+
+        label.snp.makeConstraints { make in
+            make.top.bottom.equalTo(self).inset(topBottom + 2)
+            make.left.right.equalTo(self).inset(leftRight)
+        }
+    }
+
+    override class var cardId: String? {
+        return "basic_Closed_20180311"
+    }
+}
+
 class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
     let nameLabel: UILabel = {
         let nameLabel = UILabel()
