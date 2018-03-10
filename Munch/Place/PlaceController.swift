@@ -8,13 +8,14 @@
 
 import Foundation
 import UIKit
+import SafariServices
 
 import Crashlytics
 import SnapKit
 import Cosmos
 import SwiftRichString
 
-class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
+class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, SFSafariViewControllerDelegate {
     let placeId: String
     var place: Place?
     var liked: Bool?
@@ -153,6 +154,27 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
                 case .loggedIn:
                     let controller = CollectionSelectRootController(placeId: self.placeId)
                     self.present(controller, animated: true)
+                default:
+                    return
+                }
+            }
+        })
+        alert.addAction(UIAlertAction(title: "Suggest Edit", style: UIAlertActionStyle.default) { alert in
+            AccountAuthentication.requireAuthentication(controller: self) { state in
+                switch state {
+                case .loggedIn:
+                    if let place = self.place {
+                        let urlComps = NSURLComponents(string: "https://airtable.com/shrfxcHiCwlSl1rjk")!
+                        urlComps.queryItems = [
+                            URLQueryItem(name: "prefill_Place.id", value: self.placeId),
+                            URLQueryItem(name: "prefill_Place.status", value: "Open"),
+                            URLQueryItem(name: "prefill_Place.name", value: place.name),
+                            URLQueryItem(name: "prefill_Place.Location.address", value: place.location.address)
+                        ]
+                        let safari = SFSafariViewController(url: urlComps.url!)
+                        safari.delegate = self
+                        self.present(safari, animated: true, completion: nil)
+                    }
                 default:
                     return
                 }
