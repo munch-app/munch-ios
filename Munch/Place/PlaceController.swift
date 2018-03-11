@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import SafariServices
 
+import Firebase
 import Crashlytics
 import SnapKit
 import Cosmos
@@ -72,12 +73,25 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
                 self.cardTableView.isScrollEnabled = true
                 self.cardTableView.reloadData()
                 self.scrollViewDidScroll(self.cardTableView)
+
+                Analytics.logEvent(AnalyticsEventViewItem, parameters: [
+                    AnalyticsParameterItemID: "place-\(self.placeId)" as NSObject,
+                    AnalyticsParameterItemName: place.name! as NSObject,
+                    AnalyticsParameterItemCategory: "place" as NSObject
+                ])
             } else {
                 self.present(meta.createAlert(), animated: true)
             }
         }
 
         MunchApi.collections.recent.put(placeId: placeId) { meta in
+        }
+
+        NotificationCenter.default.addObserver(forName: .UIApplicationUserDidTakeScreenshot, object: nil, queue: .main) { notification in
+            Analytics.logEvent(AnalyticsEventShare, parameters: [
+                AnalyticsParameterItemID: "place-\(self.placeId)" as NSObject,
+                AnalyticsParameterContentType: "screenshot" as NSObject
+            ])
         }
     }
 
@@ -191,6 +205,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
 }
 
 fileprivate class PlaceHeaderView: UIView {
@@ -440,6 +455,12 @@ fileprivate class PlaceBottomView: UIView {
     @objc func actionCall(_ sender: Any) {
         if let phone = place?.phone?.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression, range: nil) {
             if let url = URL(string: "tel://\(phone)"), UIApplication.shared.canOpenURL(url) {
+                Analytics.logEvent("action_cta", parameters: [
+                    AnalyticsParameterItemID: "place-\(self.place?.id ?? "")" as NSObject,
+                    "name": "CALL" as NSObject,
+                    "full_text": "action_call" as NSObject
+                ])
+
                 UIApplication.shared.open(url)
             }
         }
@@ -447,6 +468,12 @@ fileprivate class PlaceBottomView: UIView {
 
     @objc func actionDirection(_ sender: Any) {
         if let address = place?.location.address?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
+            Analytics.logEvent("action_cta", parameters: [
+                AnalyticsParameterItemID: "place-\(self.place?.id ?? "")" as NSObject,
+                "name": "DIRECTIONS" as NSObject,
+                "full_text": "action_direction" as NSObject
+            ])
+
             // Monster Jobs uses comgooglemap url scheme, those fuckers
             if (UIApplication.shared.canOpenURL(URL(string: "https://www.google.com/maps/")!)) {
                 UIApplication.shared.open(URL(string: "https://www.google.com/maps/?daddr=\(address)")!)

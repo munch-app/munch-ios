@@ -9,6 +9,8 @@
 import Foundation
 import UIKit
 
+import Firebase
+
 class SearchCardManager {
     var query: SearchQuery?
     var time = Date()

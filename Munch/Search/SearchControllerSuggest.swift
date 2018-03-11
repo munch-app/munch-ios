@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 
+import Firebase
 import SnapKit
 import SwiftyJSON
 import TPKeyboardAvoiding
@@ -273,6 +274,10 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
             manager.select(tag: text, selected: !manager.isSelected(tag: text))
 
         case .assumption(let query):
+            Analytics.logEvent(AnalyticsEventSearch, parameters: [
+                AnalyticsParameterSearchTerm: query.text as NSObject,
+                "result_count": query.resultCount as NSObject
+            ])
             self.onExtensionDismiss(query.searchQuery)
             self.dismiss(animated: true)
 

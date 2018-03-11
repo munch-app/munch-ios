@@ -240,8 +240,8 @@ protocol SearchQueryToken {
 struct SearchQuery: Equatable {
     var from: Int? = 0
     var size: Int? = 20
+    var query: String? // Visual Representation of SearchQuery
 
-    var query: String?
     var latLng: String?
     var radius: Double?
 
@@ -380,8 +380,8 @@ struct SearchQuery: Equatable {
         var params = Parameters()
         params["from"] = from
         params["size"] = size
-
         params["query"] = query
+
         params["latLng"] = latLng
         params["radius"] = radius
 

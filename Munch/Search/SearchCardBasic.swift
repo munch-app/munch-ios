@@ -14,6 +14,8 @@ import SwiftyJSON
 import SwiftRichString
 import TTGTagCollectionView
 
+import Firebase
+
 class SearchPlaceCard: UITableViewCell, SearchCardView {
     let topImageView = ShimmerImageView()
     let containerLabel: UIButton = {
@@ -106,6 +108,10 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         bottomView.render(card: card)
         setNeedsLayout()
         layoutIfNeeded()
+
+        Analytics.logEvent(AnalyticsEventViewSearchResults, parameters: [
+            AnalyticsParameterSearchTerm: "" as NSObject,
+        ])
     }
 
     private func render(containers: [Container]) {
