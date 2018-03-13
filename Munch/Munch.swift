@@ -44,10 +44,10 @@ extension UIColor {
         self.init(red: r, green: g, blue: b, alpha: a)
     }
 
+    static let bgTag = UIColor(hex: "F0F0F7")
+
     // MARK: Color Palette of Munch App
-    class var primary: UIColor {
-        return .primary500
-    }
+    static let primary = UIColor.primary500
 
     class var primary010: UIColor {
         return UIColor(hex: "ffedea")
@@ -85,9 +85,7 @@ extension UIColor {
         return UIColor(hex: "ff644d")
     }
 
-    class var primary500: UIColor {
-        return UIColor(hex: "ff5339")
-    }
+    static let primary500 = UIColor(hex: "ff5339")
 
     class var primary600: UIColor {
         return UIColor(hex: "ff4225")

@@ -217,7 +217,7 @@ class MunchTagCollectionViewCellTag: UICollectionViewCell, MunchTagCollectionVie
         let label = UILabel()
         label.font = font
         label.textColor = UIColor(hex: "222222")
-        label.backgroundColor = UIColor(hex: "ebebeb")
+        label.backgroundColor = UIColor.bgTag
         label.textAlignment = .center
         label.layer.cornerRadius = 3
         label.clipsToBounds = true

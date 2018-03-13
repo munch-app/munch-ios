@@ -263,11 +263,11 @@ class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
 
             tagBorderWidth = 0
             tagTextColor = UIColor.black.withAlphaComponent(0.88)
-            tagBackgroundColor = UIColor(hex: "F0F0F7")
+            tagBackgroundColor = UIColor.bgTag
 
             tagSelectedBorderWidth = 0
             tagSelectedTextColor = UIColor.black.withAlphaComponent(0.88)
-            tagSelectedBackgroundColor = UIColor(hex: "F0F0F7")
+            tagSelectedBackgroundColor = UIColor.bgTag
             tagSelectedCornerRadius = 3
 
             tagExtraSpace = CGSize(width: 18, height: 8)

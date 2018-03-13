@@ -26,28 +26,28 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
             view.clipsToBounds = true
         }
 
-        label.titleLabel?.font = UIFont.systemFont(ofSize: 13.0, weight: .regular)
+        label.titleLabel?.font = UIFont.systemFont(ofSize: 12.0, weight: .regular)
         label.titleLabel?.isOpaque = true
         label.titleLabel?.clipsToBounds = true
-        label.titleLabel?.backgroundColor = .white
+        label.titleLabel?.backgroundColor = UIColor(hex: "F0F0F0")
         label.imageView?.isOpaque = true
-        label.imageView?.backgroundColor = .white
+        label.imageView?.backgroundColor = UIColor(hex: "F0F0F0")
 
-        label.setTitleColor(UIColor(hex: "101010"), for: .normal)
+        label.setTitleColor(UIColor(hex: "202020"), for: .normal)
         label.isOpaque = true
-        label.backgroundColor = .white
+        label.backgroundColor = UIColor(hex: "F0F0F0")
 
         label.contentEdgeInsets.top = 3
         label.contentEdgeInsets.bottom = 3
-        label.contentEdgeInsets.left = 7
-        label.contentEdgeInsets.right = 6
-        label.imageEdgeInsets.left = -4
+        label.contentEdgeInsets.left = 10
+        label.contentEdgeInsets.right = 8
+        label.imageEdgeInsets.left = -8
         label.layer.masksToBounds = true
-        label.layer.cornerRadius = 5
+        label.layer.cornerRadius = 4
         label.isUserInteractionEnabled = true
 
         label.setImage(UIImage(named: "Search-Container-Small"), for: .normal)
-        label.tintColor = UIColor(hex: "101010")
+        label.tintColor = UIColor(hex: "202020")
         return label
     }()
     let bottomView = SearchPlaceCardBottomView()
@@ -67,8 +67,8 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
 
         containerLabel.addTarget(self, action: #selector(onContainerApply(_:)), for: .touchUpInside)
         containerLabel.snp.makeConstraints { make in
-            make.left.equalTo(topImageView).inset(6)
-            make.bottom.equalTo(topImageView).inset(6)
+            make.left.equalTo(topImageView).inset(8)
+            make.bottom.equalTo(topImageView).inset(8)
         }
 
         topImageView.layer.cornerRadius = 3
