@@ -71,7 +71,7 @@ class PlaceTitleCardView: PlaceCardView {
             make.height.equalTo(1.0 / UIScreen.main.scale)
         }
 
-        titleLabel.font = UIFont.systemFont(ofSize: 20.0, weight: .semibold)
+        titleLabel.font = UIFont.systemFont(ofSize: 19.0, weight: .semibold)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.85)
         titleLabel.snp.makeConstraints { (make) in
             make.left.right.equalTo(self).inset(leftRight)

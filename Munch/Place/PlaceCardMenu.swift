@@ -11,13 +11,67 @@ import Cosmos
 import SnapKit
 import SwiftyJSON
 
-class PlaceHeaderMenuCard: PlaceTitleCardView {
-    override func didLoad(card: PlaceCard) {
+class PlaceHeaderMenuCard: PlaceTitleCardView, SFSafariViewControllerDelegate {
+    let webButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Web Menu", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15.0, weight: .medium)
+
+        button.contentEdgeInsets.top = 6
+        button.contentEdgeInsets.bottom = 6
+        button.contentEdgeInsets.left = 10
+        button.contentEdgeInsets.right = 12
+        button.imageEdgeInsets.right = -8
+        button.setTitleColor(UIColor(hex: "222222"), for: .normal)
+
+        button.setImage(UIImage(named: "RIP-Menu"), for: .normal)
+        button.tintColor = UIColor(hex: "222222")
+
+        button.layer.cornerRadius = 3
+        button.backgroundColor = UIColor(hex: "F0F0F7")
+
+        button.semanticContentAttribute = .forceRightToLeft
+        return button
+    }()
+
+    var menuUrl: URL?
+
+    required init(card: PlaceCard, controller: PlaceViewController) {
+        super.init(card: card, controller: controller)
+        self.addSubview(webButton)
+
+        webButton.snp.makeConstraints { make in
+            make.right.equalTo(self).inset(leftRight)
+            make.top.bottom.equalTo(titleLabel)
+        }
+
         self.title = "Menu"
+        self.webButton.addTarget(self, action: #selector(onWebButton(_:)), for: .touchUpInside)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func didLoad(card: PlaceCard) {
+        if let url = card["menuUrl"].url {
+            self.menuUrl = url
+            webButton.isHidden = false
+        } else {
+            webButton.isHidden = true
+        }
+    }
+
+    @objc func onWebButton(_ sender: Any) {
+        if let url = self.menuUrl {
+            let safari = SFSafariViewController(url: url)
+            safari.delegate = self
+            controller.present(safari, animated: true, completion: nil)
+        }
     }
 
     override class var cardId: String? {
-        return "header_Menu_20171220"
+        return "header_Menu_20180313"
     }
 }
 
@@ -42,9 +96,6 @@ class PlaceVendorMenuImageCard: PlaceCardView, SFSafariViewControllerDelegate {
     private var menus = [MenuType]()
 
     override func didLoad(card: PlaceCard) {
-        if let url = card["menuUrl"].string {
-            menus.append(.url(url))
-        }
         if let images = card["images"].array {
             for image in images {
                 menus.append(.image(image))
@@ -63,7 +114,7 @@ class PlaceVendorMenuImageCard: PlaceCardView, SFSafariViewControllerDelegate {
     }
 
     override class var cardId: String? {
-        return "extended_PlaceMenu_20180306"
+        return "extended_PlaceMenu_20180313"
     }
 }
 
