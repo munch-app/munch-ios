@@ -363,4 +363,24 @@ extension SearchControllerSuggestManager {
 
         return "Singapore"
     }
+
+    public func getContextLatLng() -> String? {
+        if let containers = searchQuery.filter.containers, !containers.isEmpty {
+            for container in containers {
+                if let latLng = container.location?.latLng {
+                    return latLng
+                }
+            }
+        }
+
+        if let latLng = searchQuery.filter.location?.latLng {
+            return latLng
+        }
+
+        if MunchLocation.isEnabled {
+            return MunchLocation.lastLatLng
+        }
+
+        return nil
+    }
 }

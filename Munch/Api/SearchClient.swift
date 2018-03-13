@@ -15,24 +15,24 @@ import SwiftyJSON
  DiscoveryClient from DiscoveryService in munch-core/munch-api
  */
 class SearchClient {
-    func suggest(text: String, query: SearchQuery, callback: @escaping (_ meta: MetaJSON,
+    func suggest(text: String, latLng: String?, query: SearchQuery, callback: @escaping (_ meta: MetaJSON,
                                                                         _ assumptions: [AssumedSearchQuery],
                                                                         _ places: [Place],
                                                                         _ locationContainers: [SearchResult],
                                                                         _ tags: [Tag]) -> Void) {
+        var params = Parameters()
+        params["text"] = text
+        params["latLng"] = latLng
+        params["types"] = [
+            "Place": 40,
+            "Location,Container": 10,
+            "Tag": 4
+        ]
+
         MunchLocation.waitFor { latLng, error in
             var query = query
             query.latLng = MunchLocation.lastLatLng
-
-            var params = Parameters()
-            params["text"] = text
             params["query"] = query.toParams()
-            params["latLng"] = MunchLocation.lastLatLng
-            params["types"] = [
-                "Place": 40,
-                "Location,Container": 10,
-                "Tag": 4
-            ]
 
             MunchApi.restful.post("/search/suggest", parameters: params) { meta, json in
                 let assumptions = json["data"]["Assumption"].flatMap({ AssumedSearchQuery(json: $0.1) })
@@ -60,10 +60,10 @@ class SearchClient {
     }
 
     func suggestPriceRange(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ priceRangeInArea: PriceRangeInArea?) -> Void) {
-        var searchQuery = query
-        searchQuery.latLng = MunchLocation.lastLatLng
+        var query = query
+        query.latLng = MunchLocation.lastLatLng
 
-        MunchApi.restful.post("/search/suggest/price/range", parameters: searchQuery.toParams()) { metaJSON, json in
+        MunchApi.restful.post("/search/suggest/price/range", parameters: query.toParams()) { metaJSON, json in
             callback(metaJSON, PriceRangeInArea.init(json: json["data"]))
         }
     }
@@ -168,6 +168,16 @@ struct Container: SearchResult, Equatable {
     var images: [SourcedImage]?
     var ranking: Double
 
+    var location: Location?
+
+    struct Location {
+        var latLng: String?
+
+        init(json: JSON) {
+            self.latLng = json["latLng"].string
+        }
+    }
+
     init(json: JSON) {
         self.id = json["id"].string
         self.type = json["type"].string
@@ -175,6 +185,8 @@ struct Container: SearchResult, Equatable {
 
         self.images = json["images"].map({ SourcedImage(json: $0.1) })
         self.ranking = json["ranking"].double ?? 0
+
+        self.location = Location(json: json["location"])
     }
 
     func toParams() -> Parameters {
@@ -182,8 +194,10 @@ struct Container: SearchResult, Equatable {
         params["id"] = id
         params["type"] = type
         params["name"] = name
+
         params["images"] = images?.map({ $0.toParams() })
         params["ranking"] = ranking
+
         params["dataType"] = "Container"
         return params
     }

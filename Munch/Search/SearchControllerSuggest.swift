@@ -156,7 +156,7 @@ class SearchSuggestController: UIViewController {
             self.suggests = nil
             self.tableView.reloadData()
 
-            MunchApi.search.suggest(text: text, query: self.manager.searchQuery) { meta, assumptions, places, results, tags in
+            MunchApi.search.suggest(text: text, latLng: self.manager.getContextLatLng(), query: self.manager.searchQuery) { meta, assumptions, places, results, tags in
                 if meta.isOk() {
                     self.suggests = SearchControllerSuggestManager.map(assumptions: assumptions, places: places, locationContainers: results, tags: tags)
                     self.tableView.reloadData()
