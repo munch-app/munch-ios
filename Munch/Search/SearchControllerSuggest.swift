@@ -365,6 +365,15 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
     }
 
     func tagCollection(selectedLocation name: String, for tagCollection: SearchFilterTagCollection) {
+        if name.lowercased() == "nearby" {
+            let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            alert.addAction(UIAlertAction(title: "Reset", style: .destructive) { action in
+                self.controller.manager.select(location: nil)
+            })
+            addAlert(removeAll: alert)
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            self.controller.present(alert, animated: true)
+        }
     }
 
     func tagCollection(selectedHour name: String, for tagCollection: SearchFilterTagCollection) {
