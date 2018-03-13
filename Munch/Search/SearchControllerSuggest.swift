@@ -192,6 +192,7 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
         tableView.register(SearchSuggestCellAssumption.self, forCellReuseIdentifier: SearchSuggestCellAssumption.id)
         tableView.register(SearchSuggestCellLoading.self, forCellReuseIdentifier: SearchSuggestCellLoading.id)
         tableView.register(SearchSuggestCellPriceRange.self, forCellReuseIdentifier: SearchSuggestCellPriceRange.id)
+        tableView.register(SearchSuggestCellTagMore.self, forCellReuseIdentifier: SearchSuggestCellTagMore.id)
     }
 
     var items: [SearchSuggestType] {
@@ -253,6 +254,9 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
             cell.render(title: text, selected: manager.isSelected(tag: text))
             return cell
 
+        case .tagMore(let title):
+            return tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellTagMore.id) as! SearchSuggestCellTagMore
+
         case .time(let timings):
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellTiming.id) as! SearchSuggestCellTiming
             cell.render(timings: timings, controller: self)
@@ -281,7 +285,7 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
             self.onExtensionDismiss(query.searchQuery)
             self.dismiss(animated: true)
 
-        case .headerMore(let title):
+        case .tagMore(let title):
             let controller = SearchSuggestTagController(searchQuery: manager.searchQuery, type: title) { query in
                 if let query = query {
                     self.manager.setSearchQuery(searchQuery: query)

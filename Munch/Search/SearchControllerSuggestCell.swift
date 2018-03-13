@@ -1251,3 +1251,58 @@ class SearchSuggestCellPlace: UITableViewCell {
         return "SearchSuggestCellPlace"
     }
 }
+
+class SearchSuggestCellTagMore: UITableViewCell {
+    private let titleLabel: UILabel = {
+        let titleLabel = UILabel()
+        titleLabel.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        titleLabel.text = "Browse All"
+        titleLabel.textColor = UIColor(hex: "333333")
+        return titleLabel
+    }()
+    private let moreImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "Search-Right-Arrow")
+        imageView.tintColor  = UIColor(hex: "333333")
+        imageView.contentMode = .scaleAspectFit
+        imageView.backgroundColor = .white
+        return imageView
+    }()
+    private let containerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(containerView)
+        containerView.addSubview(titleLabel)
+        containerView.addSubview(moreImageView)
+
+        containerView.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(24)
+            make.top.bottom.equalTo(self).inset(2)
+        }
+
+        titleLabel.snp.makeConstraints { (make) in
+            make.top.bottom.equalTo(containerView).inset(12)
+            make.left.equalTo(containerView).inset(18)
+            make.right.equalTo(moreImageView.snp.left).inset(-12)
+        }
+
+        moreImageView.snp.makeConstraints { make in
+            make.top.bottom.equalTo(containerView).inset(10)
+            make.right.equalTo(containerView).inset(20)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    class var id: String {
+        return "SearchSuggestCellTagMore"
+    }
+}

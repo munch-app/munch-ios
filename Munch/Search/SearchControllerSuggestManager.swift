@@ -15,6 +15,7 @@ enum SearchSuggestType {
     case priceRange
     case time([SearchTimingType])
     case tag(Tag)
+    case tagMore(String)
     case place(Place)
 }
 
@@ -64,6 +65,7 @@ class SearchControllerSuggestManager {
         list.append(SearchSuggestType.time([SearchTimingType.now, SearchTimingType.breakfast, SearchTimingType.lunch, SearchTimingType.dinner, SearchTimingType.supper]))
         list.append(SearchSuggestType.header("CUISINE"))
         list.append(contentsOf: SearchControllerSuggestManager.map(priority: "cuisine"))
+        list.append(SearchSuggestType.tagMore("CUISINE"))
         list.append(SearchSuggestType.header("ESTABLISHMENT"))
         list.append(contentsOf: SearchControllerSuggestManager.map(priority: "establishment"))
         list.append(SearchSuggestType.header("AMENITIES"))
@@ -254,17 +256,17 @@ class SearchControllerSuggestManager {
 
 extension SearchControllerSuggestManager {
     private static var types: [String: [String]] = [
-        "cuisine": ["African", "American", "Arabic", "Argentinean", "Asian", "Australian", "Bangladeshi", "Beijing", "Belgian", "Brazilian", "Burmese", "Cambodian", "Cantonese", "Caribbean", "Chinese", "Cuban", "Dongbei", "Dutch", "English", "Eurasian", "European", "Foochow", "French", "Fujian", "Fusion", "German", "Greek", "Hainanese", "Hakka", "Hokkien", "Hong Kong", "Indian", "Indochinese", "International", "Iranian", "Irish", "Italian", "Japanese", "Korean", "Latin American", "Lebanese", "Malay Indonesian", "Mediterranean", "Mexican", "Middle Eastern", "Modern European", "Mongolian", "Moroccan", "Nonya Peranakan", "North Indian", "Pakistani", "Portuguese", "Russian", "Shanghainese", "Sze chuan", "Singaporean", "South Indian", "Spanish", "Swiss", "Taiwanese", "Teochew", "Thai", "Turkish", "Vietnamese", "Western", ],
-        "establishment": ["Bakery", "Buffet", "Cafe", "Dessert", "Fast Food", "Hawker", "Restaurant", "High Tea", "Drinks", "Snacks", ],
-        "amenities": ["Child-Friendly", "Vegetarian-Friendly", "Healthy", "Pet-Friendly", "Halal", "Large Group", ],
-        "occasion": ["Brunch", "Romantic", "Business Meal", "Football Screening", "Supper"]
+        "cuisine": ["Chinese", "Singaporean", "Western", "Italian", "Japanese", "Indian", "Cantonese", "Thai", "Korean", "English", "Fusion", "Asian", "Hainanese", "American", "French", "Hong Kong", "Teochew", "Taiwanese", "Malaysian", "Mexican", "Shanghainese", "Indonesian", "Vietnamese", "European", "Peranakan", "Sze Chuan", "Spanish", "Middle Eastern", "Modern European", "Filipino", "Turkish", "Hakka", "German", "Mediterranean", "Swiss", "Hawaiian", "Australian", "Portugese"],
+        "establishment": ["Hawker", "Drinks", "Bakery", "Dessert", "Snacks", "Cafe", "Bars & Pubs", "Fast Food", "BBQ", "Buffet", "Hotpot & Steamboat", "High Tea", "Fine Dining"],
+        "amenities": ["Child-Friendly", "Large Group", "Vegetarian Options", "Halal", "Healthy", "Alcohol", "Vegetarian", "Private Dining", "Budget", "Pet-Friendly", "Live Music", "Vegan", "Vegan Options"],
+        "occasion": ["Romantic", "Supper", "Brunch", "Business Meal", "Scenic View"]
     ]
 
     private static var priorityTypes: [String: [String]] = [
         "cuisine": ["Singaporean", "Japanese", "Italian", "Thai", "Chinese", "Korean", "Mexican", "Mediterranean"],
-        "establishment": ["Bars & Pubs", "Hawker", "Cafe", "Snacks"],
-        "amenities": ["Child-Friendly", "Halal", "Large Group", "Pet-Friendly", ],
-        "occasion": ["Brunch", "Romantic", "Business Meal", "Football Screening", ]
+        "establishment": ["Hawker", "Drinks", "Bakery", "Dessert", "Snacks", "Cafe", "Bars & Pubs", "Fast Food", "BBQ", "Buffet", "Hotpot & Steamboat", "High Tea", "Fine Dining"],
+        "amenities": ["Child-Friendly", "Large Group", "Vegetarian Options", "Halal", "Healthy", "Alcohol", "Vegetarian", "Private Dining", "Budget", "Pet-Friendly", "Live Music", "Vegan", "Vegan Options"],
+        "occasion": ["Romantic", "Supper", "Brunch", "Business Meal", "Scenic View"]
     ]
 
     public static var anywhere: Location {

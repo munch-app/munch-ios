@@ -127,7 +127,7 @@ class SearchSuggestTagController: UIViewController, UIGestureRecognizerDelegate 
 fileprivate class SearchControllerSuggestTagHeaderView: UIView {
     fileprivate let headerLabel: UILabel = {
         let label = UILabel()
-        label.text = "More Tags"
+        label.text = "Tags"
         label.font = .systemFont(ofSize: 17, weight: .medium)
         label.textColor = UIColor.black.withAlphaComponent(0.75)
         return label
