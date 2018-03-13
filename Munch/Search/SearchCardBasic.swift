@@ -29,13 +29,13 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         label.titleLabel?.font = UIFont.systemFont(ofSize: 12.0, weight: .regular)
         label.titleLabel?.isOpaque = true
         label.titleLabel?.clipsToBounds = true
-        label.titleLabel?.backgroundColor = UIColor(hex: "F0F0F0")
+        label.titleLabel?.backgroundColor = UIColor(hex: "FAFAFA")
         label.imageView?.isOpaque = true
-        label.imageView?.backgroundColor = UIColor(hex: "F0F0F0")
+        label.imageView?.backgroundColor = UIColor(hex: "FAFAFA")
 
         label.setTitleColor(UIColor(hex: "202020"), for: .normal)
         label.isOpaque = true
-        label.backgroundColor = UIColor(hex: "F0F0F0")
+        label.backgroundColor = UIColor(hex: "FAFAFA")
 
         label.contentEdgeInsets.top = 3
         label.contentEdgeInsets.bottom = 3
@@ -203,7 +203,7 @@ class SearchPlaceCardBottomView: UIView {
             make.bottom.equalTo(locationLabel.snp.top)
         }
 
-        locationLabel.font = UIFont.systemFont(ofSize: 13, weight: UIFont.Weight.regular)
+        locationLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         locationLabel.textColor = UIColor.black.withAlphaComponent(0.75)
         locationLabel.backgroundColor = .white
         locationLabel.snp.makeConstraints { make in
