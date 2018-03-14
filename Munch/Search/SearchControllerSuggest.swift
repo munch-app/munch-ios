@@ -50,6 +50,7 @@ class SearchSuggestController: UIViewController {
     }()
     private var suggests: [SearchSuggestType]?
     private var firstLoad: Bool = true
+    private var enterKey: Bool = false
     private var searchQuery: SearchQuery
 
     init(searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
@@ -145,6 +146,7 @@ class SearchSuggestController: UIViewController {
         // Reset View
         self.suggests = []
         self.tableView.reloadData()
+        self.enterKey = false
 
         NSObject.cancelPreviousPerformRequests(withTarget: self)
         self.perform(#selector(textFieldDidCommit(textField:)), with: headerView.textField, afterDelay: 1.0)
@@ -158,8 +160,20 @@ class SearchSuggestController: UIViewController {
 
             MunchApi.search.suggest(text: text, latLng: self.manager.getContextLatLng(), query: self.manager.searchQuery) { meta, assumptions, places, results, tags in
                 if meta.isOk() {
-                    self.suggests = SearchControllerSuggestManager.map(assumptions: assumptions, places: places, locationContainers: results, tags: tags)
-                    self.tableView.reloadData()
+
+                    if self.enterKey, let query = assumptions.get(0) {
+                        Analytics.logEvent(AnalyticsEventSearch, parameters: [
+                            AnalyticsParameterSearchTerm: query.text as NSObject,
+                            "result_count": query.resultCount as NSObject
+                        ])
+                        self.onExtensionDismiss(query.searchQuery)
+                        self.dismiss(animated: true)
+                    } else {
+                        self.suggests = SearchControllerSuggestManager.map(assumptions: assumptions, places: places, locationContainers: results, tags: tags)
+                        self.tableView.reloadData()
+                    }
+
+                    self.enterKey = false
                 } else {
                     self.present(meta.createAlert(), animated: true)
                 }
@@ -171,6 +185,7 @@ class SearchSuggestController: UIViewController {
 
     @objc func textFieldShouldReturn(_ sender: Any) -> Bool {
         NSObject.cancelPreviousPerformRequests(withTarget: self)
+        self.enterKey = true
         textFieldDidCommit(textField: headerView.textField)
         return true
     }
