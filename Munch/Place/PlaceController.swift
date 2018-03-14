@@ -104,7 +104,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.cardTableView.isScrollEnabled = false
         self.cardTableView.separatorStyle = .none
         self.cardTableView.rowHeight = UITableViewAutomaticDimension
-        self.cardTableView.estimatedRowHeight = 100
+        self.cardTableView.estimatedRowHeight = 250
         self.cardTableView.contentInset.top = 0
         self.cardTableView.contentInset.bottom = 0
         self.cardTableView.contentInsetAdjustmentBehavior = .never
