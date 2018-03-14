@@ -325,7 +325,19 @@ extension SearchController {
         // Else Static Empty CardView
         return cardTableView.dequeueReusableCell(withIdentifier: SearchStaticEmptyCard.cardId)!
     }
-    
+
+    func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        switch indexPath.section {
+        case 1:
+            // Improve performance for this card
+            if let card = cards.get(indexPath.row), card.cardId == SearchPlaceCard.cardId {
+                return UIScreen.main.bounds.width * 0.888
+            }
+        default: break
+        }
+        return UITableViewAutomaticDimension
+    }
+
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         switch indexPath.section {
         case 1:
