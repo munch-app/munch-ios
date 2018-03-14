@@ -249,6 +249,7 @@ enum SearchFilterTagType {
     case price(String)
     case hour(String)
     case tag(String)
+    case or
 }
 
 class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
@@ -278,17 +279,28 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
     func render(query: SearchQuery) {
         var tags = [SearchFilterTagType]()
 
-        // FirstTag: Location Tag
+        // FirstTag is always Location Tag
         tags.append(contentsOf: getLocationTag(query: query))
         tags.append(contentsOf: getHourTag(query: query))
         tags.append(contentsOf: getPriceTag(query: query))
-
-        // Other Tags
-        for tag in query.filter.tag.positives {
-            tags.append(SearchFilterTagType.tag(tag))
-        }
+        tags.append(contentsOf: getFilterTags(query: query))
 
         render(tags: tags)
+    }
+
+    private func getFilterTags(query: SearchQuery) -> [SearchFilterTagType] {
+        var tags = [SearchFilterTagType]()
+        for tag in query.filter.tag.positives {
+            tags.append(SearchFilterTagType.tag(tag))
+            tags.append(.or)
+        }
+
+        if tags.isEmpty {
+           return []
+        }
+
+        tags.removeLast()
+        return tags
     }
 
     /**
@@ -343,6 +355,8 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
                 tagCollection.addTag(name)
             case let .tag(name):
                 tagCollection.addTag(name)
+            case .or:
+                tagCollection.addTag("or", with: OrTagConfig())
             }
         }
     }
@@ -369,6 +383,29 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
         }
     }
 
+    class OrTagConfig: TTGTextTagConfig {
+        override init() {
+            super.init()
+            tagTextFont = UIFont.systemFont(ofSize: 14.0, weight: .regular)
+            tagShadowOffset = CGSize.zero
+            tagShadowRadius = 0
+            tagCornerRadius = 4
+
+            tagBorderWidth = 1.0
+            tagBorderColor = .clear
+            tagTextColor = UIColor(hex: "404040")
+            tagBackgroundColor = .clear
+
+            tagSelectedBorderWidth = 1.0
+            tagSelectedBorderColor = .clear
+            tagSelectedTextColor = UIColor(hex: "404040")
+            tagSelectedBackgroundColor = .clear
+
+            tagExtraSpace = CGSize(width: 0, height: 13)
+        }
+    }
+
+
     func textTagCollectionView(_ textTagCollectionView: TTGTextTagCollectionView!, didTapTag tagText: String!, at index: UInt, selected: Bool) {
         switch tags[Int(index)] {
         case let .location(name):
@@ -379,6 +416,7 @@ class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
             delegate?.tagCollection(selectedHour: name, for: self)
         case let .tag(name):
             delegate?.tagCollection(selectedTag: name, for: self)
+        case .or: return
         }
     }
 
