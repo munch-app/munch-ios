@@ -25,7 +25,7 @@ class SearchSuggestCellAssumption: UITableViewCell {
         let button = UIButton()
         button.backgroundColor = .clear
         button.tintColor = UIColor(hex: "202020")
-        button.setImage(UIImage(named: "Search-Right-Arrow"), for: .normal)
+        button.setImage(UIImage(named: "Search-Right-Arrow-Small"), for: .normal)
 
         button.setTitleColor(UIColor(hex: "202020"), for: .normal)
         button.titleLabel!.font = UIFont.systemFont(ofSize: 13, weight: .medium)
