@@ -58,6 +58,8 @@ class MunchTagCollectionView: UIView {
         collectionView.snp.makeConstraints { make in
             make.edges.equalTo(self)
         }
+
+        UIView.setAnimationsEnabled(false)
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -102,12 +102,9 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
             SourcedImage(json: $0.1)
         }
 
-        self.render(containers: containers)
-
+        render(containers: containers)
         topImageView.render(sourcedImage: images.get(0))
         bottomView.render(card: card)
-        setNeedsLayout()
-        layoutIfNeeded()
 
         Analytics.logEvent(AnalyticsEventViewSearchResults, parameters: [
             AnalyticsParameterSearchTerm: "" as NSObject,
