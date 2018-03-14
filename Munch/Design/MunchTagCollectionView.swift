@@ -58,8 +58,6 @@ class MunchTagCollectionView: UIView {
         collectionView.snp.makeConstraints { make in
             make.edges.equalTo(self)
         }
-
-        UIView.setAnimationsEnabled(false)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -72,12 +70,18 @@ class MunchTagCollectionView: UIView {
 
     func addAll(types: [MunchTagCollectionType]) {
         items.append(contentsOf: types)
+
+        UIView.setAnimationsEnabled(false)
         collectionView.reloadData()
+        UIView.setAnimationsEnabled(true)
     }
 
     func removeAll() {
         items.removeAll()
+
+        UIView.setAnimationsEnabled(false)
         collectionView.reloadData()
+        UIView.setAnimationsEnabled(true)
     }
 
     func replaceAll(types: [MunchTagCollectionType]) {
