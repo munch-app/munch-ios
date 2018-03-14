@@ -158,25 +158,49 @@ extension PlaceVendorMenuImageCard: UICollectionViewDataSource, UICollectionView
 }
 
 fileprivate class PlaceMenuImageCardCell: UICollectionViewCell {
-    let imageView: MunchImageView = {
-        let imageView = MunchImageView()
-        imageView.layer.cornerRadius = 3
+    let imageView: ShimmerImageView = {
+        let imageView = ShimmerImageView()
+        imageView.layer.cornerRadius = 2
         imageView.backgroundColor = UIColor(hex: "F0F0F7")
         return imageView
+    }()
+
+    private let brandLabel: UIButton = {
+        let label = UIButton()
+        label.titleLabel?.font = UIFont.systemFont(ofSize: 10.0, weight: .regular)
+        label.setTitleColor(.white, for: .normal)
+        label.backgroundColor = UIColor.black.withAlphaComponent(0.66)
+        label.contentEdgeInsets = UIEdgeInsets(topBottom: 3, leftRight: 4)
+        label.layer.masksToBounds = true
+        label.layer.cornerRadius = 7
+        label.isUserInteractionEnabled = false
+        return label
     }()
 
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
         self.addSubview(imageView)
+        self.addSubview(brandLabel)
 
         imageView.snp.makeConstraints { make in
             make.edges.equalTo(self)
+        }
+
+        brandLabel.snp.makeConstraints { make in
+            make.right.equalTo(imageView).inset(5)
+            make.bottom.equalTo(imageView).inset(5)
         }
     }
 
     func render(menu: JSON) {
         let images = menu["thumbnail"].dictionaryObject as? [String: String]
         imageView.render(images: images)
+        brandLabel.setTitle(menu["sourceName"].string, for: .normal)
+    }
+
+    fileprivate override func layoutSubviews() {
+        super.layoutSubviews()
+        imageView.layer.cornerRadius = 3
     }
 
     required init?(coder aDecoder: NSCoder) {
