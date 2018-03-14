@@ -418,7 +418,7 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.shadow(vertical: 1.5)
+        self.shadow(vertical: 2)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -480,7 +480,7 @@ class SearchSuggestBottomView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.shadow(vertical: -1.5)
+        self.shadow(vertical: -2)
     }
 
     required init?(coder aDecoder: NSCoder) {

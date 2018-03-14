@@ -299,7 +299,7 @@ fileprivate class PlaceHeaderView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        shadowView.shadow(vertical: 1.5)
+        shadowView.shadow(vertical: 2)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -485,7 +485,7 @@ fileprivate class PlaceBottomView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.shadow(vertical: -1.5)
+        self.shadow(vertical: -2)
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -180,7 +180,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.shadow(vertical: 1.5)
+        self.shadow(vertical: 2)
     }
 
     required init?(coder aDecoder: NSCoder) {
