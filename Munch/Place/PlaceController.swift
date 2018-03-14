@@ -24,6 +24,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
     private var cards = [PlaceShimmerImageBannerCard.card, PlaceShimmerNameTagCard.card]
     private var cells = [PlaceCardView]()
     private var cellTypes = [String: PlaceCardView.Type]()
+    private var cellHeights = [CGFloat](repeating: UITableViewAutomaticDimension, count: 100)
 
     private let cardTableView = UITableView()
     private let headerView = PlaceHeaderView()
@@ -103,7 +104,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.cardTableView.isScrollEnabled = false
         self.cardTableView.separatorStyle = .none
         self.cardTableView.rowHeight = UITableViewAutomaticDimension
-        self.cardTableView.estimatedRowHeight = 1000
+        self.cardTableView.estimatedRowHeight = 100
         self.cardTableView.contentInset.top = 0
         self.cardTableView.contentInset.bottom = 0
         self.cardTableView.contentInsetAdjustmentBehavior = .never
@@ -552,8 +553,16 @@ extension PlaceViewController {
         return cards.count
     }
 
+    func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return cellHeights[indexPath.row]
+    }
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         return cells[indexPath.row]
+    }
+
+    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        cellHeights[indexPath.row] = cell.bounds.height
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
