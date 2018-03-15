@@ -149,7 +149,7 @@ class SearchSuggestController: UIViewController {
         self.enterKey = false
 
         NSObject.cancelPreviousPerformRequests(withTarget: self)
-        self.perform(#selector(textFieldDidCommit(textField:)), with: headerView.textField, afterDelay: 1.0)
+        self.perform(#selector(textFieldDidCommit(textField:)), with: headerView.textField, afterDelay: 0.4)
     }
 
     @objc func textFieldDidCommit(textField: UITextField) {
