@@ -21,6 +21,7 @@ public class MunchClient {
     public static let url = MunchPlist.get(asString: "MunchApi-Url")!
 
     let restful = RestfulClient()
+    let discover = DiscoverClient()
     let search = SearchClient()
     let places = PlaceClient()
     let locations = LocationClient()

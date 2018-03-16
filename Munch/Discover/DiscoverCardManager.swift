@@ -26,7 +26,7 @@ class SearchCardManager {
         self.init(query: query, cards: [shimmerCard, shimmerCard, shimmerCard])
 
         func search() {
-            MunchApi.search.search(query: self.query!) { (meta, cards) in
+            MunchApi.discover.discover(query: self.query!) { (meta, cards) in
                 if (meta.isOk()) {
                     if (cards.isEmpty) {
                         self.cards = [SearchStaticNoResultCard.card]
@@ -94,7 +94,7 @@ class SearchCardManager {
         }
         self.loading = true
 
-        MunchApi.search.search(query: query!) { meta, cards in
+        MunchApi.discover.discover(query: query!) { meta, cards in
             if (meta.isOk()) {
                 self.append(contents: cards)
                 self.more = !cards.isEmpty
@@ -111,7 +111,7 @@ class SearchCardManager {
 }
 
 protocol SearchCardView {
-    func render(card: SearchCard, controller: SearchController)
+    func render(card: SearchCard, controller: DiscoverController)
 
     var leftRight: CGFloat { get }
     var topBottom: CGFloat { get }

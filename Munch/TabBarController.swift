@@ -24,7 +24,7 @@ enum InitialViewProvider {
     }
 
     fileprivate static func search() -> UIViewController {
-        let controller = SearchNavigationalController()
+        let controller = DiscoverNavigationalController()
         controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "Discover", image: UIImage(named: "TabBar-Search"))
         return controller
     }
@@ -77,7 +77,7 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
         }
 
         if let navigation = viewController as? UINavigationController {
-            if let controller = navigation.topViewController as? SearchController {
+            if let controller = navigation.topViewController as? DiscoverController {
                 if (self.previousController == viewController) {
                     sameTabCounter += 1
                     if (sameTabCounter >= 2) {

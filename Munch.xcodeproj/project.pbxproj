@@ -19,15 +19,10 @@
 		032F89111E82DFA300AD3818 /* MunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F89101E82DFA300AD3818 /* MunchTests.swift */; };
 		032F891C1E82DFA300AD3818 /* MunchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F891B1E82DFA300AD3818 /* MunchUITests.swift */; };
 		033E62F81F1D381F00AE97FA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 033E62F71F1D381F00AE97FA /* Main.storyboard */; };
-		034FCF0A1F6C282E00D353F1 /* SearchCardBasic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCF041F6C282E00D353F1 /* SearchCardBasic.swift */; };
-		034FCF0B1F6C282E00D353F1 /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCF051F6C282E00D353F1 /* SearchController.swift */; };
-		034FCF0C1F6C282E00D353F1 /* SearchCardStatic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034FCF061F6C282E00D353F1 /* SearchCardStatic.swift */; };
 		0378849B1E8E563E006025B5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0378849A1E8E563E006025B5 /* Extensions.swift */; };
 		038275781F03B7A700C5954A /* Munch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038275771F03B7A700C5954A /* Munch.swift */; };
 		038275811F06DB8D00C5954A /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038275801F06DB8D00C5954A /* Location.swift */; };
 		038275831F0A8DE400C5954A /* Munch.plist in Resources */ = {isa = PBXBuildFile; fileRef = 038275821F0A8DE400C5954A /* Munch.plist */; };
-		03B65F1C1F6C4A8C0030D12B /* SearchHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B65F1B1F6C4A8C0030D12B /* SearchHeaderView.swift */; };
-		03BB67F61F6FA9B500F17A1A /* SearchControllerSuggest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BB67F51F6FA9B500F17A1A /* SearchControllerSuggest.swift */; };
 		03CD276D1F6286FC003562A1 /* PlaceCardBasic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD276A1F6286FC003562A1 /* PlaceCardBasic.swift */; };
 		03CD276E1F6286FC003562A1 /* PlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD276B1F6286FC003562A1 /* PlaceController.swift */; };
 		03CD27741F62BD5C003562A1 /* PlaceCardStatic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD27731F62BD5C003562A1 /* PlaceCardStatic.swift */; };
@@ -40,36 +35,45 @@
 		03D3FEF41E8A8DB500ACFF50 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D3FEF21E8A8DA500ACFF50 /* SDWebImage.framework */; };
 		03E1A5A81F6D4FA4005A6E58 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1A5A71F6D4FA4005A6E58 /* TabBarController.swift */; };
 		03E1A5AA1F6D7BAB005A6E58 /* Shimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1A5A91F6D7BAB005A6E58 /* Shimmer.swift */; };
-		03E1A5AC1F6E7B58005A6E58 /* SearchCardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E1A5AB1F6E7B58005A6E58 /* SearchCardManager.swift */; };
-		03F0BA5F1F99D6C30040B9C8 /* SearchCardInjected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0BA5E1F99D6C30040B9C8 /* SearchCardInjected.swift */; };
 		12855D04BD7B4359954CC379 /* Pods_MunchTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30933A940AE4DF2E7F80A839 /* Pods_MunchTests.framework */; };
-		B4B7305298D0BD615402C69A /* SearchCardPlace.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B731559A28CBEF535E5DD8 /* SearchCardPlace.swift */; };
 		B4B730544AF1361565440B2C /* PlaceMapController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73B4027BDB40E3CC44F31 /* PlaceMapController.swift */; };
+		B4B730C1F0DC600A2FDA75C7 /* DiscoverFilterControllerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73674D52B48994B6BA4C8 /* DiscoverFilterControllerCell.swift */; };
 		B4B730D92CC36AD63D76C190 /* PlaceDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73B9E1E79F626D02B9A75 /* PlaceDataController.swift */; };
-		B4B73163CB5F4AE3B4425B56 /* SearchControllerSuggestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73AE61B5E68D3CB127949 /* SearchControllerSuggestCell.swift */; };
 		B4B73186CECEE6F9A52F7336 /* MunchTagCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73FCDF170A5A1D388ED3D /* MunchTagCollectionView.swift */; };
 		B4B7319B6239909F0C37875F /* PlaceCardMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B739295503DBF1CB674F6E /* PlaceCardMenu.swift */; };
 		B4B7321A7BF0F1FDE9D9A007 /* Auth0.plist in Resources */ = {isa = PBXBuildFile; fileRef = B4B73D105B16A6AD87C50DAA /* Auth0.plist */; };
+		B4B7322222D439237161D021 /* DiscoverCardInjected.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73E43EE9DA14E743A7D00 /* DiscoverCardInjected.swift */; };
 		B4B732371A580E8A5F7BB44B /* locations-popular.json in Resources */ = {isa = PBXBuildFile; fileRef = B4B738FC6C7F484B97FA825F /* locations-popular.json */; };
 		B4B7328EA1644B7350AB75A5 /* CollectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B731358DC763BF5447E963 /* CollectionController.swift */; };
 		B4B732A48087AEDBC0BCB2D9 /* PlaceCardLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738EF6EA67EF16E54F617 /* PlaceCardLocation.swift */; };
+		B4B732D0913D41B80467751C /* DiscoverCardStatic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737074C4561047C9BFEF7 /* DiscoverCardStatic.swift */; };
 		B4B732DD92904EA6B71DC806 /* SettingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73CEBAA298AA8928EA653 /* SettingController.swift */; };
-		B4B733066D6686ED5223F7E6 /* SearchCardLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B733A73EEB474161B4526F /* SearchCardLocation.swift */; };
+		B4B733E2F1385A88F9CB14FB /* SearchControllerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73061D8DD8498D4A81118 /* SearchControllerCell.swift */; };
+		B4B7345BDD641E863C08D682 /* DiscoverFilterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73DF7C5AD7467F10DFD01 /* DiscoverFilterController.swift */; };
 		B4B735A57EF2C7D7303D057F /* AccountAuthentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73734DDE87E53A16337E2 /* AccountAuthentication.swift */; };
-		B4B7371F9449BA9324A537B5 /* SearchControllerSuggestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73C80998FA2D5147D2E9F /* SearchControllerSuggestManager.swift */; };
-		B4B7374EC3A5CD8609928070 /* SearchControllerSuggestTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73D14EB8F465208077777 /* SearchControllerSuggestTag.swift */; };
+		B4B7364D0900B168A8674EB5 /* DiscoverCardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B736D460DA6FB8F5E14597 /* DiscoverCardManager.swift */; };
 		B4B7379631A03DB830487460 /* PlaceCardInstagram.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B733FC3F034246C4E19D67 /* PlaceCardInstagram.swift */; };
 		B4B7380CD92347AB225B54EB /* PlaceCardAbout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737B2890DCC10B0DF0304 /* PlaceCardAbout.swift */; };
 		B4B7380CEE70044FE930F722 /* module.modulemap in Sources */ = {isa = PBXBuildFile; fileRef = B4B73D56D29ADB145295DB94 /* module.modulemap */; };
 		B4B7383023B0469B2430E41F /* PlaceCardArticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B730979285E2CEAED9B41C /* PlaceCardArticle.swift */; };
 		B4B7385BBBEB7A119E93D402 /* AccountClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73924CDDEE30BE2E2AF8A /* AccountClient.swift */; };
+		B4B73883BC1EA4E672069982 /* FilterTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73B26D2C06996A50FDCFD /* FilterTagView.swift */; };
 		B4B738A7A9FED6C3EAB68353 /* RecentDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73C04AEC75362CDFAC648 /* RecentDatabase.swift */; };
+		B4B7394776204E20917961B8 /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73F5D951E505956C018F2 /* SearchController.swift */; };
 		B4B7394871CE904DFB47BB71 /* PlaceCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B733DCA665CD29B03D26BB /* PlaceCard.swift */; };
 		B4B73994A58E6A119A38712B /* PlaceCardUGC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73A91A35296A0F8E94C42 /* PlaceCardUGC.swift */; };
 		B4B73A8BD16561824718B41D /* CollectionPlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73EBA645A014851F10D53 /* CollectionPlaceController.swift */; };
+		B4B73A99E335E46C1E77221F /* DiscoverClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738F9E591F81CC551E7B0 /* DiscoverClient.swift */; };
+		B4B73AEF40CD73CA66934629 /* DiscoverHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73EE893236D718B7BFC9A /* DiscoverHeaderView.swift */; };
+		B4B73B94A8D2D54612D1341F /* DiscoverCardBasic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7391AB84C1BDDC4CDBB3A /* DiscoverCardBasic.swift */; };
 		B4B73BA7FADE13E2517C71F8 /* CollectionClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B735022631764CC931E8CA /* CollectionClient.swift */; };
 		B4B73C2A60EE351F094AED22 /* AccountDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7318BCB00B96424E50D14 /* AccountDataController.swift */; };
+		B4B73C7BC49F7B704F1FC361 /* DiscoverCardLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73BAF0144003D08D45799 /* DiscoverCardLocation.swift */; };
+		B4B73D2B7F6FEC9485A4DD54 /* DiscoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73824F859BACAFDBBDD34 /* DiscoverController.swift */; };
+		B4B73D54856661571066C8A0 /* DiscoverFilterControllerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73EF1579E836FFEE0FD7F /* DiscoverFilterControllerManager.swift */; };
+		B4B73E19B906303068F4910A /* DiscoverCardPlace.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7382BCE4D3313B24B0494 /* DiscoverCardPlace.swift */; };
 		B4B73E1C452DF2E4B4DF4DA2 /* PlaceCardAward.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7393EC9371A4BF34117EE /* PlaceCardAward.swift */; };
+		B4B73FB23FCE1F3751115B71 /* DiscoverFilterControllerTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73CBF20AB05DB7E901099 /* DiscoverFilterControllerTag.swift */; };
 		B4B73FE5E010EDBC83209A55 /* BoardingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B730E3D2F989A8CA95B67F /* BoardingController.swift */; };
 		B4B73FECE8D26C31A28E9DE9 /* PlaceCardReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737A0379DB051FD36C86D /* PlaceCardReview.swift */; };
 		DB136C8B43E175A72028D87F /* Pods_MunchUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2CE8E9F738C2A64071DD8B3 /* Pods_MunchUITests.framework */; };
@@ -118,9 +122,6 @@
 		033E62F71F1D381F00AE97FA /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		034820551E9CB3C400B0076A /* ImageViewer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageViewer.framework; path = Carthage/Build/iOS/ImageViewer.framework; sourceTree = "<group>"; };
 		034820571E9CB92A00B0076A /* SKPhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SKPhotoBrowser.framework; path = Carthage/Build/iOS/SKPhotoBrowser.framework; sourceTree = "<group>"; };
-		034FCF041F6C282E00D353F1 /* SearchCardBasic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardBasic.swift; sourceTree = "<group>"; };
-		034FCF051F6C282E00D353F1 /* SearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
-		034FCF061F6C282E00D353F1 /* SearchCardStatic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardStatic.swift; sourceTree = "<group>"; };
 		037884981E8E4E3F006025B5 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Carthage/Build/iOS/SnapKit.framework; sourceTree = "<group>"; };
 		0378849A1E8E563E006025B5 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		038275771F03B7A700C5954A /* Munch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Munch.swift; sourceTree = "<group>"; };
@@ -134,8 +135,6 @@
 		039C39411E8D485400A28533 /* MXPagerView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXPagerView.framework; path = Carthage/Build/iOS/MXPagerView.framework; sourceTree = "<group>"; };
 		039C39431E8D485800A28533 /* MXParallaxHeader.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MXParallaxHeader.framework; path = Carthage/Build/iOS/MXParallaxHeader.framework; sourceTree = "<group>"; };
 		03B1EACD202AC15800217189 /* Munch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Munch.entitlements; sourceTree = "<group>"; };
-		03B65F1B1F6C4A8C0030D12B /* SearchHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchHeaderView.swift; sourceTree = "<group>"; };
-		03BB67F51F6FA9B500F17A1A /* SearchControllerSuggest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchControllerSuggest.swift; sourceTree = "<group>"; };
 		03CD276A1F6286FC003562A1 /* PlaceCardBasic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardBasic.swift; sourceTree = "<group>"; };
 		03CD276B1F6286FC003562A1 /* PlaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceController.swift; sourceTree = "<group>"; };
 		03CD27731F62BD5C003562A1 /* PlaceCardStatic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardStatic.swift; sourceTree = "<group>"; };
@@ -153,42 +152,51 @@
 		03D88C141E9DF412005F825B /* Hero.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Hero.framework; path = Carthage/Build/iOS/Hero.framework; sourceTree = "<group>"; };
 		03E1A5A71F6D4FA4005A6E58 /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		03E1A5A91F6D7BAB005A6E58 /* Shimmer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Shimmer.swift; sourceTree = "<group>"; };
-		03E1A5AB1F6E7B58005A6E58 /* SearchCardManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardManager.swift; sourceTree = "<group>"; };
 		03EE235D1E83039A009AFBFC /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
-		03F0BA5E1F99D6C30040B9C8 /* SearchCardInjected.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCardInjected.swift; sourceTree = "<group>"; };
 		19CC2B7B7A468F7A24511641 /* Pods-Munch.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Munch.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Munch/Pods-Munch.debug.xcconfig"; sourceTree = "<group>"; };
 		30933A940AE4DF2E7F80A839 /* Pods_MunchTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MunchTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		79CEEE458C385CB72EED1E4B /* Pods-Munch.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Munch.release.xcconfig"; path = "Pods/Target Support Files/Pods-Munch/Pods-Munch.release.xcconfig"; sourceTree = "<group>"; };
 		A93EEFB98ADF9ED9EE8DF559 /* Pods-MunchUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MunchUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MunchUITests/Pods-MunchUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		ACE953A82302FD876F98E058 /* Pods-MunchTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MunchTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MunchTests/Pods-MunchTests.release.xcconfig"; sourceTree = "<group>"; };
+		B4B73061D8DD8498D4A81118 /* SearchControllerCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchControllerCell.swift; sourceTree = "<group>"; };
 		B4B730979285E2CEAED9B41C /* PlaceCardArticle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardArticle.swift; sourceTree = "<group>"; };
 		B4B730E3D2F989A8CA95B67F /* BoardingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardingController.swift; sourceTree = "<group>"; };
 		B4B731358DC763BF5447E963 /* CollectionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionController.swift; sourceTree = "<group>"; };
-		B4B731559A28CBEF535E5DD8 /* SearchCardPlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardPlace.swift; sourceTree = "<group>"; };
 		B4B7318BCB00B96424E50D14 /* AccountDataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountDataController.swift; sourceTree = "<group>"; };
-		B4B733A73EEB474161B4526F /* SearchCardLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardLocation.swift; sourceTree = "<group>"; };
 		B4B733DCA665CD29B03D26BB /* PlaceCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCard.swift; sourceTree = "<group>"; };
 		B4B733FC3F034246C4E19D67 /* PlaceCardInstagram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardInstagram.swift; sourceTree = "<group>"; };
 		B4B735022631764CC931E8CA /* CollectionClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionClient.swift; sourceTree = "<group>"; };
+		B4B73674D52B48994B6BA4C8 /* DiscoverFilterControllerCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverFilterControllerCell.swift; sourceTree = "<group>"; };
+		B4B736D460DA6FB8F5E14597 /* DiscoverCardManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverCardManager.swift; sourceTree = "<group>"; };
+		B4B737074C4561047C9BFEF7 /* DiscoverCardStatic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverCardStatic.swift; sourceTree = "<group>"; };
 		B4B73734DDE87E53A16337E2 /* AccountAuthentication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountAuthentication.swift; sourceTree = "<group>"; };
 		B4B737A0379DB051FD36C86D /* PlaceCardReview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardReview.swift; sourceTree = "<group>"; };
 		B4B737B2890DCC10B0DF0304 /* PlaceCardAbout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardAbout.swift; sourceTree = "<group>"; };
+		B4B73824F859BACAFDBBDD34 /* DiscoverController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverController.swift; sourceTree = "<group>"; };
+		B4B7382BCE4D3313B24B0494 /* DiscoverCardPlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverCardPlace.swift; sourceTree = "<group>"; };
 		B4B738EF6EA67EF16E54F617 /* PlaceCardLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardLocation.swift; sourceTree = "<group>"; };
+		B4B738F9E591F81CC551E7B0 /* DiscoverClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverClient.swift; sourceTree = "<group>"; };
 		B4B738FC6C7F484B97FA825F /* locations-popular.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "locations-popular.json"; sourceTree = "<group>"; };
+		B4B7391AB84C1BDDC4CDBB3A /* DiscoverCardBasic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverCardBasic.swift; sourceTree = "<group>"; };
 		B4B73924CDDEE30BE2E2AF8A /* AccountClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountClient.swift; sourceTree = "<group>"; };
 		B4B739295503DBF1CB674F6E /* PlaceCardMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardMenu.swift; sourceTree = "<group>"; };
 		B4B7393EC9371A4BF34117EE /* PlaceCardAward.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardAward.swift; sourceTree = "<group>"; };
 		B4B73A91A35296A0F8E94C42 /* PlaceCardUGC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardUGC.swift; sourceTree = "<group>"; };
-		B4B73AE61B5E68D3CB127949 /* SearchControllerSuggestCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchControllerSuggestCell.swift; sourceTree = "<group>"; };
+		B4B73B26D2C06996A50FDCFD /* FilterTagView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterTagView.swift; sourceTree = "<group>"; };
 		B4B73B4027BDB40E3CC44F31 /* PlaceMapController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceMapController.swift; sourceTree = "<group>"; };
 		B4B73B9E1E79F626D02B9A75 /* PlaceDataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDataController.swift; sourceTree = "<group>"; };
+		B4B73BAF0144003D08D45799 /* DiscoverCardLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverCardLocation.swift; sourceTree = "<group>"; };
 		B4B73C04AEC75362CDFAC648 /* RecentDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentDatabase.swift; sourceTree = "<group>"; };
-		B4B73C80998FA2D5147D2E9F /* SearchControllerSuggestManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchControllerSuggestManager.swift; sourceTree = "<group>"; };
+		B4B73CBF20AB05DB7E901099 /* DiscoverFilterControllerTag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverFilterControllerTag.swift; sourceTree = "<group>"; };
 		B4B73CEBAA298AA8928EA653 /* SettingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingController.swift; sourceTree = "<group>"; };
 		B4B73D105B16A6AD87C50DAA /* Auth0.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Auth0.plist; sourceTree = "<group>"; };
-		B4B73D14EB8F465208077777 /* SearchControllerSuggestTag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchControllerSuggestTag.swift; sourceTree = "<group>"; };
 		B4B73D56D29ADB145295DB94 /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		B4B73DF7C5AD7467F10DFD01 /* DiscoverFilterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverFilterController.swift; sourceTree = "<group>"; };
+		B4B73E43EE9DA14E743A7D00 /* DiscoverCardInjected.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverCardInjected.swift; sourceTree = "<group>"; };
 		B4B73EBA645A014851F10D53 /* CollectionPlaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionPlaceController.swift; sourceTree = "<group>"; };
+		B4B73EE893236D718B7BFC9A /* DiscoverHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverHeaderView.swift; sourceTree = "<group>"; };
+		B4B73EF1579E836FFEE0FD7F /* DiscoverFilterControllerManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverFilterControllerManager.swift; sourceTree = "<group>"; };
+		B4B73F5D951E505956C018F2 /* SearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
 		B4B73FCDF170A5A1D388ED3D /* MunchTagCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchTagCollectionView.swift; sourceTree = "<group>"; };
 		D2CE8E9F738C2A64071DD8B3 /* Pods_MunchUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MunchUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9422C7B675412F67AA5C66F /* Pods-MunchTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MunchTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MunchTests/Pods-MunchTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -275,6 +283,7 @@
 				B4B7312EC0B6525AB7EC438B /* Collection */,
 				B4B7378B383CC0C6448D2AB0 /* Sources */,
 				B4B7397E027B7859767C21AF /* Design */,
+				B4B73C7583D5DAE980260B60 /* Discover */,
 			);
 			path = Munch;
 			sourceTree = "<group>";
@@ -376,6 +385,7 @@
 				B4B73924CDDEE30BE2E2AF8A /* AccountClient.swift */,
 				B4B735022631764CC931E8CA /* CollectionClient.swift */,
 				B4B73734DDE87E53A16337E2 /* AccountAuthentication.swift */,
+				B4B738F9E591F81CC551E7B0 /* DiscoverClient.swift */,
 			);
 			path = Api;
 			sourceTree = "<group>";
@@ -383,19 +393,9 @@
 		0348472E1F9D21A30049BDF7 /* Search */ = {
 			isa = PBXGroup;
 			children = (
-				034FCF051F6C282E00D353F1 /* SearchController.swift */,
-				03B65F1B1F6C4A8C0030D12B /* SearchHeaderView.swift */,
-				03E1A5AB1F6E7B58005A6E58 /* SearchCardManager.swift */,
-				034FCF041F6C282E00D353F1 /* SearchCardBasic.swift */,
-				03F0BA5E1F99D6C30040B9C8 /* SearchCardInjected.swift */,
-				034FCF061F6C282E00D353F1 /* SearchCardStatic.swift */,
-				03BB67F51F6FA9B500F17A1A /* SearchControllerSuggest.swift */,
 				B4B738FC6C7F484B97FA825F /* locations-popular.json */,
-				B4B733A73EEB474161B4526F /* SearchCardLocation.swift */,
-				B4B731559A28CBEF535E5DD8 /* SearchCardPlace.swift */,
-				B4B73AE61B5E68D3CB127949 /* SearchControllerSuggestCell.swift */,
-				B4B73C80998FA2D5147D2E9F /* SearchControllerSuggestManager.swift */,
-				B4B73D14EB8F465208077777 /* SearchControllerSuggestTag.swift */,
+				B4B73F5D951E505956C018F2 /* SearchController.swift */,
+				B4B73061D8DD8498D4A81118 /* SearchControllerCell.swift */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -422,6 +422,18 @@
 			path = Collection;
 			sourceTree = "<group>";
 		};
+		B4B734D991D2A9B8AF708C24 /* Filter */ = {
+			isa = PBXGroup;
+			children = (
+				B4B73DF7C5AD7467F10DFD01 /* DiscoverFilterController.swift */,
+				B4B73CBF20AB05DB7E901099 /* DiscoverFilterControllerTag.swift */,
+				B4B73674D52B48994B6BA4C8 /* DiscoverFilterControllerCell.swift */,
+				B4B73EF1579E836FFEE0FD7F /* DiscoverFilterControllerManager.swift */,
+				B4B73B26D2C06996A50FDCFD /* FilterTagView.swift */,
+			);
+			path = Filter;
+			sourceTree = "<group>";
+		};
 		B4B7378B383CC0C6448D2AB0 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -444,6 +456,22 @@
 				B4B73FCDF170A5A1D388ED3D /* MunchTagCollectionView.swift */,
 			);
 			path = Design;
+			sourceTree = "<group>";
+		};
+		B4B73C7583D5DAE980260B60 /* Discover */ = {
+			isa = PBXGroup;
+			children = (
+				B4B73E43EE9DA14E743A7D00 /* DiscoverCardInjected.swift */,
+				B4B73824F859BACAFDBBDD34 /* DiscoverController.swift */,
+				B4B736D460DA6FB8F5E14597 /* DiscoverCardManager.swift */,
+				B4B737074C4561047C9BFEF7 /* DiscoverCardStatic.swift */,
+				B4B7382BCE4D3313B24B0494 /* DiscoverCardPlace.swift */,
+				B4B7391AB84C1BDDC4CDBB3A /* DiscoverCardBasic.swift */,
+				B4B73BAF0144003D08D45799 /* DiscoverCardLocation.swift */,
+				B4B73EE893236D718B7BFC9A /* DiscoverHeaderView.swift */,
+				B4B734D991D2A9B8AF708C24 /* Filter */,
+			);
+			path = Discover;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -824,10 +852,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				038275781F03B7A700C5954A /* Munch.swift in Sources */,
-				034FCF0C1F6C282E00D353F1 /* SearchCardStatic.swift in Sources */,
 				03D2335C1F9D3851000F5F05 /* AccountController.swift in Sources */,
 				0314786A1F6A18CC00246BCD /* LocationClient.swift in Sources */,
-				03B65F1C1F6C4A8C0030D12B /* SearchHeaderView.swift in Sources */,
 				031478661F6A16F900246BCD /* SearchClient.swift in Sources */,
 				031478641F6A16ED00246BCD /* PlaceClient.swift in Sources */,
 				03CD276E1F6286FC003562A1 /* PlaceController.swift in Sources */,
@@ -836,13 +862,8 @@
 				032F88FC1E82DFA300AD3818 /* AppDelegate.swift in Sources */,
 				0378849B1E8E563E006025B5 /* Extensions.swift in Sources */,
 				03E1A5A81F6D4FA4005A6E58 /* TabBarController.swift in Sources */,
-				03E1A5AC1F6E7B58005A6E58 /* SearchCardManager.swift in Sources */,
-				034FCF0B1F6C282E00D353F1 /* SearchController.swift in Sources */,
 				03CD27741F62BD5C003562A1 /* PlaceCardStatic.swift in Sources */,
-				03F0BA5F1F99D6C30040B9C8 /* SearchCardInjected.swift in Sources */,
 				03CD276D1F6286FC003562A1 /* PlaceCardBasic.swift in Sources */,
-				034FCF0A1F6C282E00D353F1 /* SearchCardBasic.swift in Sources */,
-				03BB67F61F6FA9B500F17A1A /* SearchControllerSuggest.swift in Sources */,
 				03CF0AA41E97AA3C00A3FD1F /* MunchApi.swift in Sources */,
 				B4B7385BBBEB7A119E93D402 /* AccountClient.swift in Sources */,
 				B4B7394871CE904DFB47BB71 /* PlaceCard.swift in Sources */,
@@ -861,16 +882,27 @@
 				B4B73A8BD16561824718B41D /* CollectionPlaceController.swift in Sources */,
 				B4B7380CD92347AB225B54EB /* PlaceCardAbout.swift in Sources */,
 				B4B732A48087AEDBC0BCB2D9 /* PlaceCardLocation.swift in Sources */,
-				B4B733066D6686ED5223F7E6 /* SearchCardLocation.swift in Sources */,
-				B4B7305298D0BD615402C69A /* SearchCardPlace.swift in Sources */,
 				B4B735A57EF2C7D7303D057F /* AccountAuthentication.swift in Sources */,
 				B4B7380CEE70044FE930F722 /* module.modulemap in Sources */,
 				B4B73994A58E6A119A38712B /* PlaceCardUGC.swift in Sources */,
-				B4B73163CB5F4AE3B4425B56 /* SearchControllerSuggestCell.swift in Sources */,
-				B4B7371F9449BA9324A537B5 /* SearchControllerSuggestManager.swift in Sources */,
 				B4B73186CECEE6F9A52F7336 /* MunchTagCollectionView.swift in Sources */,
-				B4B7374EC3A5CD8609928070 /* SearchControllerSuggestTag.swift in Sources */,
 				B4B73E1C452DF2E4B4DF4DA2 /* PlaceCardAward.swift in Sources */,
+				B4B7322222D439237161D021 /* DiscoverCardInjected.swift in Sources */,
+				B4B73D2B7F6FEC9485A4DD54 /* DiscoverController.swift in Sources */,
+				B4B7364D0900B168A8674EB5 /* DiscoverCardManager.swift in Sources */,
+				B4B732D0913D41B80467751C /* DiscoverCardStatic.swift in Sources */,
+				B4B73E19B906303068F4910A /* DiscoverCardPlace.swift in Sources */,
+				B4B73B94A8D2D54612D1341F /* DiscoverCardBasic.swift in Sources */,
+				B4B73C7BC49F7B704F1FC361 /* DiscoverCardLocation.swift in Sources */,
+				B4B73AEF40CD73CA66934629 /* DiscoverHeaderView.swift in Sources */,
+				B4B7345BDD641E863C08D682 /* DiscoverFilterController.swift in Sources */,
+				B4B73A99E335E46C1E77221F /* DiscoverClient.swift in Sources */,
+				B4B7394776204E20917961B8 /* SearchController.swift in Sources */,
+				B4B73FB23FCE1F3751115B71 /* DiscoverFilterControllerTag.swift in Sources */,
+				B4B730C1F0DC600A2FDA75C7 /* DiscoverFilterControllerCell.swift in Sources */,
+				B4B73D54856661571066C8A0 /* DiscoverFilterControllerManager.swift in Sources */,
+				B4B733E2F1385A88F9CB14FB /* SearchControllerCell.swift in Sources */,
+				B4B73883BC1EA4E672069982 /* FilterTagView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

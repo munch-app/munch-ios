@@ -10,103 +10,7 @@ import SnapKit
 import BEMCheckBox
 import RangeSeekSlider
 
-class SearchSuggestCellAssumption: UITableViewCell {
-    private let containerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor(hex: "F0F0F0")
-        return view
-    }()
-    private let tagCollection: MunchTagCollectionView = {
-        let tagCollection = MunchTagCollectionView(horizontalSpacing: 6, backgroundColor: UIColor(hex: "F0F0F0"), showFullyVisibleOnly: false)
-        tagCollection.isUserInteractionEnabled = false
-        return tagCollection
-    }()
-    private let applyButton: UIButton = {
-        let button = UIButton()
-        button.backgroundColor = .clear
-        button.tintColor = UIColor(hex: "202020")
-        button.setImage(UIImage(named: "Search-Right-Arrow-Small"), for: .normal)
-
-        button.setTitleColor(UIColor(hex: "202020"), for: .normal)
-        button.titleLabel!.font = UIFont.systemFont(ofSize: 13, weight: .medium)
-        button.contentEdgeInsets.right = 0
-        button.titleEdgeInsets.bottom = 2
-        button.titleEdgeInsets.right = -1
-
-        button.contentHorizontalAlignment = .right
-        button.semanticContentAttribute = .forceRightToLeft
-        button.isUserInteractionEnabled = false
-        return button
-    }()
-
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-        self.addSubview(containerView)
-        containerView.addSubview(tagCollection)
-        containerView.addSubview(applyButton)
-
-        containerView.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(24)
-            make.top.equalTo(self).inset(10)
-            make.bottom.equalTo(self).inset(4)
-        }
-
-        tagCollection.snp.makeConstraints { make in
-            make.left.equalTo(containerView).inset(10)
-            make.right.equalTo(containerView)
-            make.top.equalTo(containerView).inset(8)
-            make.height.equalTo(32)
-        }
-
-        applyButton.snp.makeConstraints { (make) in
-            make.top.equalTo(tagCollection.snp.bottom).inset(-8)
-            make.bottom.equalTo(containerView).inset(8)
-            make.right.equalTo(containerView).inset(8)
-        }
-    }
-
-    func render(query: AssumedSearchQuery) {
-        var types = [MunchTagCollectionType]()
-
-        for token in query.tokens {
-            if let token = token as? AssumedSearchQuery.TagToken {
-                types.append(.assumptionTag(token.text))
-            } else if let token = token as? AssumedSearchQuery.TextToken {
-                types.append(.assumptionText(token.text))
-            }
-        }
-
-        tagCollection.replaceAll(types: types)
-        let title = SearchSuggestBottomView.countTitle(count: query.resultCount)
-
-        if title.lowercased() == "no results" {
-            applyButton.setTitleColor(UIColor.primary600, for: .normal)
-            applyButton.tintColor = UIColor.primary600
-            applyButton.setTitle("No Results", for: .normal)
-        } else {
-            applyButton.setTitleColor(UIColor(hex: "202020"), for: .normal)
-            applyButton.tintColor = UIColor(hex: "202020")
-            applyButton.setTitle(title, for: .normal)
-        }
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        containerView.layer.cornerRadius = 3
-        containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    class var id: String {
-        return "SearchSuggestCellAssumption"
-    }
-}
-
-class SearchSuggestCellLoading: UITableViewCell {
+class DiscoverFilterCellLoading: UITableViewCell {
     private let containerView: ShimmerView = {
         let view = ShimmerView(color: UIColor(hex: "F3F3F3"))
         return view
@@ -153,7 +57,7 @@ class SearchSuggestCellLoading: UITableViewCell {
     }
 }
 
-class SearchSuggestCellHeader: UITableViewCell {
+class DiscoverFilterCellHeader: UITableViewCell {
     private let label: UILabel = {
         let label = UILabel()
         label.backgroundColor = .white
@@ -189,65 +93,7 @@ class SearchSuggestCellHeader: UITableViewCell {
     }
 }
 
-class SearchSuggestCellHeaderMore: UITableViewCell {
-    private let label: UILabel = {
-        let label = UILabel()
-        label.backgroundColor = .white
-        label.font = UIFont.systemFont(ofSize: 12.0, weight: .bold)
-        label.textColor = UIColor(hex: "555555")
-        label.textAlignment = .center
-        return label
-    }()
-    private let moreButton: UIButton = {
-        let button = UIButton()
-        button.tintColor = UIColor(hex: "333333")
-        button.setImage(UIImage(named: "Search-Right-Arrow"), for: .normal)
-
-        button.setTitle("MORE", for: .normal)
-        button.setTitleColor(UIColor(hex: "333333"), for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 10, weight: .medium)
-        button.contentEdgeInsets.right = 0
-        button.titleEdgeInsets.right = -1
-
-        button.contentHorizontalAlignment = .right
-        button.semanticContentAttribute = .forceRightToLeft
-        button.isUserInteractionEnabled = false
-        return button
-    }()
-
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-
-        self.addSubview(label)
-        self.addSubview(moreButton)
-
-        label.snp.makeConstraints { make in
-            make.left.right.equalTo(self)
-            make.top.equalTo(self).inset(14)
-            make.bottom.equalTo(self).inset(14)
-        }
-
-        moreButton.snp.makeConstraints { make in
-            make.right.equalTo(self).inset(24)
-            make.centerY.equalTo(self)
-        }
-    }
-
-    func render(title: String) {
-        label.text = title
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    class var id: String {
-        return "SearchSuggestCellHeaderMore"
-    }
-}
-
-class SearchSuggestCellNoResult: UITableViewCell {
+class DiscoverFilterCellNoResult: UITableViewCell {
     private let label: UILabel = {
         let label = UILabel()
         label.backgroundColor = .white
@@ -280,7 +126,7 @@ class SearchSuggestCellNoResult: UITableViewCell {
     }
 }
 
-class SearchSuggestCellLocation: UITableViewCell {
+class DiscoverFilterCellLocation: UITableViewCell {
     fileprivate let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
@@ -296,10 +142,10 @@ class SearchSuggestCellLocation: UITableViewCell {
         return collectionView
     }()
 
-    var locations: [SearchLocationType]!
+    var locations: [DiscoverFilterLocation]!
     private var isHookSet: Bool = false
 
-    var controller: SearchSuggestController! {
+    var controller: DiscoverFilterController! {
         didSet {
             if !isHookSet {
                 controller.manager.addUpdateHook { query in
@@ -328,7 +174,7 @@ class SearchSuggestCellLocation: UITableViewCell {
         }
     }
 
-    func render(locations: [SearchLocationType], controller: SearchSuggestController) {
+    func render(locations: [DiscoverFilterLocation], controller: DiscoverFilterController) {
         self.controller = controller
         self.locations = locations
         self.collectionView.reloadData()
@@ -343,7 +189,7 @@ class SearchSuggestCellLocation: UITableViewCell {
     }
 }
 
-extension SearchSuggestCellLocation: UICollectionViewDataSource, UICollectionViewDelegate {
+extension DiscoverFilterCellLocation: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return locations.count
     }
@@ -373,7 +219,7 @@ extension SearchSuggestCellLocation: UICollectionViewDataSource, UICollectionVie
         case .nearby:
             controller.manager.select(location: nil, save: false)
         case .anywhere:
-            controller.manager.select(location: SearchControllerSuggestManager.anywhere, save: false)
+            controller.manager.select(location: DiscoverFilterControllerManager.anywhere, save: false)
         case let .location(location):
             controller.manager.select(location: location)
         case let .container(container):
@@ -458,7 +304,7 @@ extension SearchSuggestCellLocation: UICollectionViewDataSource, UICollectionVie
     }
 }
 
-class SearchSuggestCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
+class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
     private let loadingIndicator: UIView = {
         let view = UIView()
 
@@ -495,7 +341,7 @@ class SearchSuggestCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
     private var locationName: String?
     private var priceRangeInArea: PriceRangeInArea?
 
-    var controller: SearchSuggestController! {
+    var controller: DiscoverFilterController! {
         didSet {
             if !isHookSet {
                 self.reload()
@@ -805,7 +651,7 @@ class SearchSuggestCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
     }
 }
 
-class SearchSuggestCellTiming: UITableViewCell {
+class DiscoverFilterCellTiming: UITableViewCell {
     fileprivate let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
@@ -822,8 +668,8 @@ class SearchSuggestCellTiming: UITableViewCell {
         return collectionView
     }()
 
-    var controller: SearchSuggestController!
-    var timings: [SearchTimingType]!
+    var controller: DiscoverFilterController!
+    var timings: [DiscoverFilterTiming]!
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -840,7 +686,7 @@ class SearchSuggestCellTiming: UITableViewCell {
         }
     }
 
-    func render(timings: [SearchTimingType], controller: SearchSuggestController) {
+    func render(timings: [DiscoverFilterTiming], controller: DiscoverFilterController) {
         self.controller = controller
         self.timings = timings
         self.collectionView.reloadData()
@@ -855,7 +701,7 @@ class SearchSuggestCellTiming: UITableViewCell {
     }
 }
 
-extension SearchSuggestCellTiming: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension DiscoverFilterCellTiming: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return timings.count
     }
@@ -1074,7 +920,7 @@ extension SearchSuggestCellTiming: UICollectionViewDataSource, UICollectionViewD
     }
 }
 
-class SearchSuggestCellTag: UITableViewCell {
+class DiscoverFilterCellTag: UITableViewCell {
     private let titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
@@ -1153,106 +999,7 @@ class SearchSuggestCellTag: UITableViewCell {
     }
 }
 
-class SearchSuggestCellPlace: UITableViewCell {
-    private let nameLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
-        label.textColor = UIColor(hex: "404040")
-        return label
-    }()
-    private let locationLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 13, weight: .medium)
-        label.textColor = UIColor(hex: "535353")
-        return label
-    }()
-    private let placeImageView: ShimmerImageView = {
-        let imageView = ShimmerImageView()
-        return imageView
-    }()
-
-    private let containerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor(hex: "F0F0F0")
-        return view
-    }()
-
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-        self.addSubview(containerView)
-        containerView.addSubview(placeImageView)
-        containerView.addSubview(nameLabel)
-        containerView.addSubview(locationLabel)
-
-        containerView.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(24)
-            make.top.bottom.equalTo(self).inset(2)
-        }
-
-        placeImageView.snp.makeConstraints { make in
-            make.left.top.bottom.equalTo(containerView).inset(8)
-            make.height.equalTo(40)
-            make.width.equalTo(50)
-        }
-
-        nameLabel.snp.makeConstraints { make in
-            make.left.equalTo(placeImageView.snp.right).inset(-12)
-            make.right.equalTo(containerView).inset(8)
-            make.top.equalTo(containerView).inset(11)
-        }
-
-        locationLabel.snp.makeConstraints { make in
-            make.left.equalTo(placeImageView.snp.right).inset(-12)
-            make.right.equalTo(containerView).inset(8)
-            make.bottom.equalTo(containerView).inset(11)
-        }
-    }
-
-    func render(place: Place) {
-        placeImageView.render(sourcedImage: place.images?.get(0))
-        nameLabel.text = place.name
-
-        let string = NSMutableAttributedString()
-
-        if let latLng = place.location.latLng, let distance = MunchLocation.distance(asMetric: latLng) {
-            string.append(distance.set(style: .default { make in
-                make.color = UIColor(hex: "606060")
-            }))
-            string.append(NSAttributedString(string: ", "))
-        }
-
-        let locationName = place.location.neighbourhood ?? ""
-        string.append(locationName.set(style: .default { make in
-            make.color = UIColor(hex: "505050")
-        }))
-
-        if !(place.open ?? true) {
-            string.append(NSAttributedString(string: ", "))
-            string.append("Perm Closed".set(style: .default { make in
-                make.color = UIColor.primary500
-            }))
-        }
-
-        locationLabel.attributedText = string
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        containerView.layer.cornerRadius = 3
-        containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    class var id: String {
-        return "SearchSuggestCellPlace"
-    }
-}
-
-class SearchSuggestCellTagMore: UITableViewCell {
+class DiscoverFilterCellTagMore: UITableViewCell {
     private let titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
@@ -1294,7 +1041,7 @@ class SearchSuggestCellTagMore: UITableViewCell {
 
         moreImageView.snp.makeConstraints { make in
             make.top.bottom.equalTo(containerView).inset(10)
-            make.right.equalTo(containerView).inset(20)
+            make.right.equalTo(containerView).inset(22)
         }
     }
 

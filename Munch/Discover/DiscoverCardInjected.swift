@@ -1,5 +1,5 @@
 //
-//  SearchCardInjected.swift
+//  DiscoverCardInjected.swift
 //  Munch
 //
 //  Created by Fuxing Loh on 20/10/17.
@@ -18,7 +18,7 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
     private let descriptionLabel = UILabel()
     private let actionButton = UIButton()
 
-    private var controller: SearchController!
+    private var controller: DiscoverController!
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -76,7 +76,7 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func render(card: SearchCard, controller: SearchController) {
+    func render(card: SearchCard, controller: DiscoverController) {
         self.controller = controller
     }
 
@@ -91,7 +91,7 @@ class SearchNoResultCard: UITableViewCell, SearchCardView {
     private let descriptionLabel = UILabel()
     private let actionButton = UIButton()
 
-    private var controller: SearchController!
+    private var controller: DiscoverController!
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -124,7 +124,7 @@ class SearchNoResultCard: UITableViewCell, SearchCardView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func render(card: SearchCard, controller: SearchController) {
+    func render(card: SearchCard, controller: DiscoverController) {
         self.controller = controller
     }
 
@@ -139,7 +139,7 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
     private let actionButton = UIButton()
 
     private var searchQuery: SearchQuery!
-    private var controller: SearchController!
+    private var controller: DiscoverController!
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -171,7 +171,7 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func render(card: SearchCard, controller: SearchController) {
+    func render(card: SearchCard, controller: DiscoverController) {
         self.controller = controller
 
         if let locationName = card["locationName"].string {
@@ -207,7 +207,7 @@ class SearchHeaderCard: UITableViewCell, SearchCardView {
         }
     }
 
-    func render(card: SearchCard, controller: SearchController) {
+    func render(card: SearchCard, controller: DiscoverController) {
         self.titleLabel.text = card["title"].string
         self.layoutIfNeeded()
     }
@@ -266,7 +266,7 @@ class SearchQueryReplaceCard: UITableViewCell, SearchCardView {
         }
     }
 
-    func render(card: SearchCard, controller: SearchController) {
+    func render(card: SearchCard, controller: DiscoverController) {
         let query = SearchQuery(json: card["searchQuery"])
         controller.cardManager?.replace(query: query)
 

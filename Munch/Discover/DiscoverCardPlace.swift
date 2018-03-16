@@ -33,7 +33,7 @@ class SearchNewPlaceCard: UITableViewCell, SearchCardView {
         return collectionView
     }()
 
-    private var controller: SearchController!
+    private var controller: DiscoverController!
     private var places = [Place]()
     private var card: SearchCard?
 
@@ -59,7 +59,7 @@ class SearchNewPlaceCard: UITableViewCell, SearchCardView {
         }
     }
 
-    func render(card: SearchCard, controller: SearchController) {
+    func render(card: SearchCard, controller: DiscoverController) {
         if self.card?.instanceId == card.instanceId {
             return
         }
@@ -123,7 +123,7 @@ class SearchRecentPlaceCard: UITableViewCell, SearchCardView {
         return collectionView
     }()
 
-    private var controller: SearchController!
+    private var controller: DiscoverController!
     private var places = [Place]()
     private var card: SearchCard?
 
@@ -149,7 +149,7 @@ class SearchRecentPlaceCard: UITableViewCell, SearchCardView {
         }
     }
 
-    func render(card: SearchCard, controller: SearchController) {
+    func render(card: SearchCard, controller: DiscoverController) {
         if self.card?.instanceId == card.instanceId {
             return
         }

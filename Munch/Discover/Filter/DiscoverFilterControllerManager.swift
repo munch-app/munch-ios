@@ -5,28 +5,25 @@
 
 import Foundation
 
-enum SearchSuggestType {
+enum DiscoverFilterType {
     case empty
     case loading
-    case assumption(AssumedSearchQuery)
     case header(String)
-    case headerMore(String)
-    case location([SearchLocationType])
+    case location([DiscoverFilterLocation])
     case priceRange
-    case time([SearchTimingType])
+    case time([DiscoverFilterTiming])
     case tag(Tag)
     case tagMore(String)
-    case place(Place)
 }
 
-enum SearchLocationType {
+enum DiscoverFilterLocation {
     case nearby
     case anywhere(Location)
     case location(Location)
     case container(Container)
 }
 
-enum SearchTimingType {
+enum DiscoverFilterTiming {
     case now
     case breakfast
     case lunch
@@ -34,7 +31,7 @@ enum SearchTimingType {
     case supper
 }
 
-class SearchControllerSuggestManager {
+class DiscoverFilterControllerManager {
     private let dayFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "EEE"
@@ -52,39 +49,39 @@ class SearchControllerSuggestManager {
     let recentLocationDatabase = RecentDatabase(name: "SearchLocation", maxItems: 8)
     private var updateHooks = [(SearchQuery) -> Void]()
 
-    lazy var suggestions: [SearchSuggestType] = {
+    lazy var suggestions: [DiscoverFilterType] = {
         let locationDatabase = RecentDatabase(name: "SearchLocation", maxItems: 8)
-        let recentLocations = SearchControllerSuggestManager.readRecentLocations(database: locationDatabase)
+        let recentLocations = DiscoverFilterControllerManager.readRecentLocations(database: locationDatabase)
 
-        var list = [SearchSuggestType]()
-        list.append(SearchSuggestType.header("LOCATION"))
-        list.append(SearchSuggestType.location([SearchLocationType.nearby, SearchLocationType.anywhere(SearchControllerSuggestManager.anywhere)] + recentLocations))
-        list.append(SearchSuggestType.header("PRICE RANGE"))
-        list.append(SearchSuggestType.priceRange)
-        list.append(SearchSuggestType.header("TIMING"))
-        list.append(SearchSuggestType.time([SearchTimingType.now, SearchTimingType.breakfast, SearchTimingType.lunch, SearchTimingType.dinner, SearchTimingType.supper]))
-        list.append(SearchSuggestType.header("CUISINE"))
-        list.append(contentsOf: SearchControllerSuggestManager.map(priority: "cuisine"))
-        list.append(SearchSuggestType.tagMore("CUISINE"))
-        list.append(SearchSuggestType.header("ESTABLISHMENT"))
-        list.append(contentsOf: SearchControllerSuggestManager.map(priority: "establishment"))
-        list.append(SearchSuggestType.header("AMENITIES"))
-        list.append(contentsOf: SearchControllerSuggestManager.map(priority: "amenities"))
-        list.append(SearchSuggestType.header("OCCASION"))
-        list.append(contentsOf: SearchControllerSuggestManager.map(priority: "occasion"))
+        var list = [DiscoverFilterType]()
+        list.append(DiscoverFilterType.header("LOCATION"))
+        list.append(DiscoverFilterType.location([DiscoverFilterLocation.nearby, DiscoverFilterLocation.anywhere(DiscoverFilterControllerManager.anywhere)] + recentLocations))
+        list.append(DiscoverFilterType.header("PRICE RANGE"))
+        list.append(DiscoverFilterType.priceRange)
+        list.append(DiscoverFilterType.header("TIMING"))
+        list.append(DiscoverFilterType.time([DiscoverFilterTiming.now, DiscoverFilterTiming.breakfast, DiscoverFilterTiming.lunch, DiscoverFilterTiming.dinner, DiscoverFilterTiming.supper]))
+        list.append(DiscoverFilterType.header("CUISINE"))
+        list.append(contentsOf: DiscoverFilterControllerManager.map(priority: "cuisine"))
+        list.append(DiscoverFilterType.tagMore("CUISINE"))
+        list.append(DiscoverFilterType.header("ESTABLISHMENT"))
+        list.append(contentsOf: DiscoverFilterControllerManager.map(priority: "establishment"))
+        list.append(DiscoverFilterType.header("AMENITIES"))
+        list.append(contentsOf: DiscoverFilterControllerManager.map(priority: "amenities"))
+        list.append(DiscoverFilterType.header("OCCASION"))
+        list.append(contentsOf: DiscoverFilterControllerManager.map(priority: "occasion"))
         return list
     }()
 
-    lazy var tags: [SearchSuggestType] = {
-        var list = [SearchSuggestType]()
-        list.append(SearchSuggestType.header("CUISINE"))
-        list.append(contentsOf: SearchControllerSuggestManager.map(all: "cuisine"))
-        list.append(SearchSuggestType.header("ESTABLISHMENT"))
-        list.append(contentsOf: SearchControllerSuggestManager.map(all: "establishment"))
-        list.append(SearchSuggestType.header("AMENITIES"))
-        list.append(contentsOf: SearchControllerSuggestManager.map(all: "amenities"))
-        list.append(SearchSuggestType.header("OCCASION"))
-        list.append(contentsOf: SearchControllerSuggestManager.map(all: "occasion"))
+    lazy var tags: [DiscoverFilterType] = {
+        var list = [DiscoverFilterType]()
+        list.append(DiscoverFilterType.header("CUISINE"))
+        list.append(contentsOf: DiscoverFilterControllerManager.map(all: "cuisine"))
+        list.append(DiscoverFilterType.header("ESTABLISHMENT"))
+        list.append(contentsOf: DiscoverFilterControllerManager.map(all: "establishment"))
+        list.append(DiscoverFilterType.header("AMENITIES"))
+        list.append(contentsOf: DiscoverFilterControllerManager.map(all: "amenities"))
+        list.append(DiscoverFilterType.header("OCCASION"))
+        list.append(contentsOf: DiscoverFilterControllerManager.map(all: "occasion"))
         return list
     }()
 
@@ -126,8 +123,8 @@ class SearchControllerSuggestManager {
         searchQuery.filter.containers = containers
 
         // Update suggestions location card
-        let recentLocations = SearchControllerSuggestManager.readRecentLocations(database: recentLocationDatabase)
-        suggestions[1] = SearchSuggestType.location([SearchLocationType.nearby, SearchLocationType.anywhere(SearchControllerSuggestManager.anywhere)] + recentLocations)
+        let recentLocations = DiscoverFilterControllerManager.readRecentLocations(database: recentLocationDatabase)
+        suggestions[1] = DiscoverFilterType.location([DiscoverFilterLocation.nearby, DiscoverFilterLocation.anywhere(DiscoverFilterControllerManager.anywhere)] + recentLocations)
         runHooks()
     }
 
@@ -254,7 +251,7 @@ class SearchControllerSuggestManager {
     }
 }
 
-extension SearchControllerSuggestManager {
+extension DiscoverFilterControllerManager {
     private static var types: [String: [String]] = [
         "cuisine": ["Chinese", "Singaporean", "Western", "Italian", "Japanese", "Indian", "Cantonese", "Thai", "Korean", "English", "Fusion", "Asian", "Hainanese", "American", "French", "Hong Kong", "Teochew", "Taiwanese", "Malaysian", "Mexican", "Shanghainese", "Indonesian", "Vietnamese", "European", "Peranakan", "Sze Chuan", "Spanish", "Middle Eastern", "Modern European", "Filipino", "Turkish", "Hakka", "German", "Mediterranean", "Swiss", "Hawaiian", "Australian", "Portugese"],
         "establishment": ["Hawker", "Drinks", "Bakery", "Dessert", "Snacks", "Cafe", "Bars & Pubs", "Fast Food", "BBQ", "Buffet", "Hotpot & Steamboat", "High Tea", "Fine Dining"],
@@ -280,43 +277,39 @@ extension SearchControllerSuggestManager {
         return singapore
     }
 
-    private class func readRecentLocations(database: RecentDatabase) -> [SearchLocationType] {
+    private class func readRecentLocations(database: RecentDatabase) -> [DiscoverFilterLocation] {
         return database.get()
                 .flatMap({ $1 })
                 .flatMap({ SearchClient.parseResult(result: $0) })
                 .flatMap { result in
                     if let location = result as? Location {
-                        return SearchLocationType.location(location)
+                        return DiscoverFilterLocation.location(location)
                     } else if let container = result as? Container {
-                        return SearchLocationType.container(container)
+                        return DiscoverFilterLocation.container(container)
                     } else {
                         return nil
                     }
                 }
     }
 
-    private class func map(priority type: String) -> [SearchSuggestType] {
-        return priorityTypes[type.lowercased()]!.map({ SearchSuggestType.tag(Tag(name: $0)) })
+    private class func map(priority type: String) -> [DiscoverFilterType] {
+        return priorityTypes[type.lowercased()]!.map({ DiscoverFilterType.tag(Tag(name: $0)) })
     }
 
-    private class func map(all type: String) -> [SearchSuggestType] {
-        return types[type.lowercased()]!.map({ SearchSuggestType.tag(Tag(name: $0)) })
+    private class func map(all type: String) -> [DiscoverFilterType] {
+        return types[type.lowercased()]!.map({ DiscoverFilterType.tag(Tag(name: $0)) })
     }
 
-    class func map(assumptions: [AssumedSearchQuery], places: [Place], locationContainers: [SearchResult], tags: [Tag]) -> [SearchSuggestType] {
-        var list = [SearchSuggestType]()
+    class func map(locations: [SearchResult], tags: [Tag]) -> [DiscoverFilterType] {
+        var list = [DiscoverFilterType]()
 
-        for query in assumptions {
-            list.append(.assumption(query))
-        }
-
-        if !locationContainers.isEmpty {
+        if !locations.isEmpty {
             list.append(.header("LOCATION"))
-            list.append(SearchSuggestType.location(locationContainers.flatMap({
+            list.append(DiscoverFilterType.location(locations.flatMap({
                 if let location = $0 as? Location {
-                    return SearchLocationType.location(location)
+                    return DiscoverFilterLocation.location(location)
                 } else if let container = $0 as? Container {
-                    return SearchLocationType.container(container)
+                    return DiscoverFilterLocation.container(container)
                 } else {
                     return nil
                 }
@@ -325,12 +318,7 @@ extension SearchControllerSuggestManager {
 
         if !tags.isEmpty {
             list.append(.header("TAG"))
-            list.append(contentsOf: tags.map({ SearchSuggestType.tag($0) }))
-        }
-
-        if !places.isEmpty {
-            list.append(.header("RESTAURANT"))
-            list.append(contentsOf: places.map({ SearchSuggestType.place($0) }))
+            list.append(contentsOf: tags.map({ DiscoverFilterType.tag($0) }))
         }
 
         if list.isEmpty {
@@ -341,9 +329,9 @@ extension SearchControllerSuggestManager {
     }
 }
 
-extension SearchControllerSuggestManager {
+extension DiscoverFilterControllerManager {
     public func getPriceInArea(callback: @escaping (_ meta: MetaJSON, _ priceRangeInArea: PriceRangeInArea?) -> Void) {
-        MunchApi.search.suggestPriceRange(query: self.searchQuery, callback: callback)
+        MunchApi.discover.filterPriceRange(query: self.searchQuery, callback: callback)
     }
 
     public func getLocationName() -> String {

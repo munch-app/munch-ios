@@ -11,62 +11,30 @@ import Alamofire
 
 import SwiftyJSON
 
-/**
- DiscoveryClient from DiscoveryService in munch-core/munch-api
- */
 class SearchClient {
-    func suggest(text: String, latLng: String?, query: SearchQuery, callback: @escaping (_ meta: MetaJSON,
-                                                                        _ assumptions: [AssumedSearchQuery],
+    func search(text: String, latLng: String?, query: SearchQuery, callback: @escaping (_ meta: MetaJSON,
+                                                                        _ assumptions: [AssumptionQueryResult],
                                                                         _ places: [Place],
-                                                                        _ locationContainers: [SearchResult],
-                                                                        _ tags: [Tag]) -> Void) {
+                                                                        _ locations: [SearchResult]) -> Void) {
         var params = Parameters()
         params["text"] = text
         params["latLng"] = latLng
-        params["types"] = [
-            "Place": 40,
-            "Location,Container": 10,
-            "Tag": 4
-        ]
 
         MunchLocation.waitFor { latLng, error in
             var query = query
             query.latLng = MunchLocation.lastLatLng
             params["query"] = query.toParams()
 
-            MunchApi.restful.post("/search/suggest", parameters: params) { meta, json in
-                let assumptions = json["data"]["Assumption"].flatMap({ AssumedSearchQuery(json: $0.1) })
-                let places = json["data"]["Place"].flatMap({ SearchClient.parseResult(result: $0.1) as? Place })
-                let locationContainers = json["data"]["Location,Container"].flatMap({ SearchClient.parseResult(result: $0.1) })
-                let tags = json["data"]["Tag"].flatMap({ SearchClient.parseResult(result: $0.1) as? Tag })
-                callback(meta, assumptions, places, locationContainers, tags)
+            MunchApi.restful.post("/search", parameters: params) { meta, json in
+                let assumptions = json["data"]["assumptions"].flatMap({ AssumptionQueryResult(json: $0.1) })
+                let places = json["data"]["places"].flatMap({ SearchClient.parseResult(result: $0.1) as? Place })
+                let locationContainers = json["data"]["locations"].flatMap({ SearchClient.parseResult(result: $0.1) })
+                callback(meta, assumptions, places, locationContainers)
             }
         }
     }
 
-    func search(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ results: [SearchCard]) -> Void) {
-        MunchApi.restful.post("/search", parameters: query.toParams()) { meta, json in
-            callback(meta, json["data"].map({ SearchCard(json: $0.1) }))
-        }
-    }
 
-    func count(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ count: Int?) -> Void) {
-        var query = query
-        query.latLng = MunchLocation.lastLatLng
-
-        MunchApi.restful.post("/search/count", parameters: query.toParams()) { meta, json in
-            callback(meta, json["data"].int)
-        }
-    }
-
-    func suggestPriceRange(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ priceRangeInArea: PriceRangeInArea?) -> Void) {
-        var query = query
-        query.latLng = MunchLocation.lastLatLng
-
-        MunchApi.restful.post("/search/suggest/price/range", parameters: query.toParams()) { metaJSON, json in
-            callback(metaJSON, PriceRangeInArea.init(json: json["data"]))
-        }
-    }
 
     /**
      Method to parse search result type
@@ -207,20 +175,16 @@ struct Container: SearchResult, Equatable {
     }
 }
 
-struct AssumedSearchQuery {
-    var text: String
+struct AssumptionQueryResult {
     var tokens: [SearchQueryToken]
-    var searchQuery: SearchQuery
-    var resultCount: Int
+    var places: [Place]
 
     init?(json: JSON) {
         guard json.exists() else {
             return nil
         }
-        self.text = json["text"].string ?? ""
-        self.tokens = json["tokens"].flatMap({ AssumedSearchQuery.parseToken(result: $0.1) })
-        self.searchQuery = SearchQuery(json: json["searchQuery"])
-        self.resultCount = json["resultCount"].int ?? 0
+        self.tokens = json["tokens"].flatMap({ AssumptionQueryResult.parseToken(result: $0.1) })
+        self.places = json["places"].flatMap({ SearchClient.parseResult(result: $0.1) as? Place })
     }
 
     struct TextToken: SearchQueryToken {

@@ -14,10 +14,10 @@ import SnapKit
 import SwiftyJSON
 import TPKeyboardAvoiding
 
-class SearchSuggestRootController: UINavigationController, UINavigationControllerDelegate {
+class DiscoverFilterRootController: UINavigationController, UINavigationControllerDelegate {
     init(searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
         super.init(nibName: nil, bundle: nil)
-        self.viewControllers = [SearchSuggestController(searchQuery: searchQuery, extensionDismiss: extensionDismiss)]
+        self.viewControllers = [DiscoverFilterController(searchQuery: searchQuery, extensionDismiss: extensionDismiss)]
         self.delegate = self
     }
 
@@ -31,26 +31,27 @@ class SearchSuggestRootController: UINavigationController, UINavigationControlle
     }
 }
 
-class SearchSuggestController: UIViewController {
+class DiscoverFilterController: UIViewController {
     private let onExtensionDismiss: ((SearchQuery?) -> Void)
-    let manager: SearchControllerSuggestManager
+    let manager: DiscoverFilterControllerManager
 
-    fileprivate let headerView = SearchSuggestHeaderView()
-    fileprivate let bottomView = SearchSuggestBottomView()
+    fileprivate let headerView = DiscoverFilterHeaderView()
+    fileprivate let bottomView = DiscoverFilterBottomView()
+
     fileprivate let tableView: UITableView = {
         let tableView = UITableView()
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 50
 
         tableView.tableFooterView = UIView(frame: CGRect.zero)
-        tableView.contentInset.top = 7
+
         tableView.contentInset.bottom = 14
         tableView.separatorStyle = .none
         return tableView
     }()
-    private var suggests: [SearchSuggestType]?
+
+    private var results: [DiscoverFilterType]?
     private var firstLoad: Bool = true
-    private var enterKey: Bool = false
     private var searchQuery: SearchQuery
 
     init(searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
@@ -69,11 +70,6 @@ class SearchSuggestController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
-
-        if firstLoad {
-            self.headerView.textField.becomeFirstResponder()
-            self.firstLoad = false
-        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -83,13 +79,13 @@ class SearchSuggestController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         self.view.addSubview(tableView)
         self.view.addSubview(headerView)
         self.view.addSubview(bottomView)
 
         self.tableView.delegate = self
         self.tableView.dataSource = self
-
         self.headerView.controller = self
 
         self.headerView.cancelButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
@@ -100,12 +96,13 @@ class SearchSuggestController: UIViewController {
 
         self.headerView.tagCollection.render(query: manager.searchQuery)
         self.bottomView.render(searchQuery: manager.searchQuery)
+
         self.manager.addUpdateHook { query in
             self.headerView.tagCollection.render(query: query)
             self.bottomView.render(searchQuery: query)
             self.tableView.reloadData()
 
-            if self.searchQuery != query {
+            if query != self.searchQuery {
                 self.headerView.textField.text = nil
                 self.headerView.textField.resignFirstResponder()
             }
@@ -123,9 +120,14 @@ class SearchSuggestController: UIViewController {
 
         self.tableView.snp.makeConstraints { make in
             make.left.right.equalTo(self.view)
-            make.top.equalTo(self.headerView.snp.bottom)
+            make.top.equalTo(self.view)
             make.bottom.equalTo(self.bottomView.snp.top)
         }
+
+        self.tableView.layoutIfNeeded()
+        self.tableView.contentInset.top = self.headerView.contentHeight
+        self.tableView.contentOffset.y = -62
+        self.headerView.topConstraint.update(inset: 36)
     }
 
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
@@ -144,36 +146,23 @@ class SearchSuggestController: UIViewController {
 
     @objc func textFieldDidChange(_ sender: Any) {
         // Reset View
-        self.suggests = []
+        self.results = []
         self.tableView.reloadData()
-        self.enterKey = false
 
         NSObject.cancelPreviousPerformRequests(withTarget: self)
         self.perform(#selector(textFieldDidCommit(textField:)), with: headerView.textField, afterDelay: 0.4)
     }
 
     @objc func textFieldDidCommit(textField: UITextField) {
-        if let text = textField.text, text.count >= 3 {
+        if let text = textField.text, text.count >= 2 {
             // Change to null when get committed
-            self.suggests = nil
+            self.results = nil
             self.tableView.reloadData()
 
-            MunchApi.search.suggest(text: text, latLng: self.manager.getContextLatLng(), query: self.manager.searchQuery) { meta, assumptions, places, results, tags in
+            MunchApi.discover.filterSuggest(text: text, latLng: self.manager.getContextLatLng(), query: self.manager.searchQuery) { meta, locations, tags in
                 if meta.isOk() {
-
-                    if self.enterKey, let query = assumptions.get(0) {
-                        Analytics.logEvent(AnalyticsEventSearch, parameters: [
-                            AnalyticsParameterSearchTerm: query.text as NSObject,
-                            "result_count": query.resultCount as NSObject
-                        ])
-                        self.onExtensionDismiss(query.searchQuery)
-                        self.dismiss(animated: true)
-                    } else {
-                        self.suggests = SearchControllerSuggestManager.map(assumptions: assumptions, places: places, locationContainers: results, tags: tags)
-                        self.tableView.reloadData()
-                    }
-
-                    self.enterKey = false
+                    self.results = DiscoverFilterControllerManager.map(locations: locations, tags: tags)
+                    self.tableView.reloadData()
                 } else {
                     self.present(meta.createAlert(), animated: true)
                 }
@@ -185,7 +174,6 @@ class SearchSuggestController: UIViewController {
 
     @objc func textFieldShouldReturn(_ sender: Any) -> Bool {
         NSObject.cancelPreviousPerformRequests(withTarget: self)
-        self.enterKey = true
         textFieldDidCommit(textField: headerView.textField)
         return true
     }
@@ -195,32 +183,29 @@ class SearchSuggestController: UIViewController {
     }
 }
 
-extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
+extension DiscoverFilterController: UITableViewDataSource, UITableViewDelegate {
     func registerCell() {
-        tableView.register(SearchSuggestCellHeader.self, forCellReuseIdentifier: SearchSuggestCellHeader.id)
-        tableView.register(SearchSuggestCellHeaderMore.self, forCellReuseIdentifier: SearchSuggestCellHeaderMore.id)
-        tableView.register(SearchSuggestCellLocation.self, forCellReuseIdentifier: SearchSuggestCellLocation.id)
-        tableView.register(SearchSuggestCellTag.self, forCellReuseIdentifier: SearchSuggestCellTag.id)
-        tableView.register(SearchSuggestCellTiming.self, forCellReuseIdentifier: SearchSuggestCellTiming.id)
-        tableView.register(SearchSuggestCellNoResult.self, forCellReuseIdentifier: SearchSuggestCellNoResult.id)
-        tableView.register(SearchSuggestCellPlace.self, forCellReuseIdentifier: SearchSuggestCellPlace.id)
-        tableView.register(SearchSuggestCellAssumption.self, forCellReuseIdentifier: SearchSuggestCellAssumption.id)
-        tableView.register(SearchSuggestCellLoading.self, forCellReuseIdentifier: SearchSuggestCellLoading.id)
-        tableView.register(SearchSuggestCellPriceRange.self, forCellReuseIdentifier: SearchSuggestCellPriceRange.id)
-        tableView.register(SearchSuggestCellTagMore.self, forCellReuseIdentifier: SearchSuggestCellTagMore.id)
+        tableView.register(DiscoverFilterCellHeader.self, forCellReuseIdentifier: DiscoverFilterCellHeader.id)
+        tableView.register(DiscoverFilterCellLocation.self, forCellReuseIdentifier: DiscoverFilterCellLocation.id)
+        tableView.register(DiscoverFilterCellTag.self, forCellReuseIdentifier: DiscoverFilterCellTag.id)
+        tableView.register(DiscoverFilterCellTiming.self, forCellReuseIdentifier: DiscoverFilterCellTiming.id)
+        tableView.register(DiscoverFilterCellNoResult.self, forCellReuseIdentifier: DiscoverFilterCellNoResult.id)
+        tableView.register(DiscoverFilterCellLoading.self, forCellReuseIdentifier: DiscoverFilterCellLoading.id)
+        tableView.register(DiscoverFilterCellPriceRange.self, forCellReuseIdentifier: DiscoverFilterCellPriceRange.id)
+        tableView.register(DiscoverFilterCellTagMore.self, forCellReuseIdentifier: DiscoverFilterCellTagMore.id)
     }
 
-    var items: [SearchSuggestType] {
+    var items: [DiscoverFilterType] {
         if let text = headerView.textField.text {
             if text.isEmpty {
                 return self.manager.suggestions
             } else if text.count < 3 {
                 return []
             } else if text.count >= 3 {
-                if let suggests = self.suggests {
-                    return suggests
+                if let results = self.results {
+                    return results
                 }
-                return [SearchSuggestType.loading]
+                return [DiscoverFilterType.loading]
             }
         }
         return []
@@ -233,53 +218,38 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch items[indexPath.row] {
         case .empty:
-            return tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellNoResult.id) as! SearchSuggestCellNoResult
+            return tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellNoResult.id) as! DiscoverFilterCellNoResult
 
         case .loading:
-            return tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellLoading.id) as! SearchSuggestCellLoading
-
-        case .assumption(let query):
-            let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellAssumption.id) as! SearchSuggestCellAssumption
-            cell.render(query: query)
-            return cell
+            return tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellLoading.id) as! DiscoverFilterCellLoading
 
         case .header(let title):
-            let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellHeader.id) as! SearchSuggestCellHeader
-            cell.render(title: title)
-            return cell
-
-        case .headerMore(let title):
-            let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellHeaderMore.id) as! SearchSuggestCellHeaderMore
+            let cell = tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellHeader.id) as! DiscoverFilterCellHeader
             cell.render(title: title)
             return cell
 
         case .location(let locations):
-            let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellLocation.id) as! SearchSuggestCellLocation
+            let cell = tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellLocation.id) as! DiscoverFilterCellLocation
             cell.render(locations: locations, controller: self)
             return cell
 
         case .priceRange:
-            let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellPriceRange.id) as! SearchSuggestCellPriceRange
+            let cell = tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellPriceRange.id) as! DiscoverFilterCellPriceRange
             cell.controller = self
             return cell
 
         case .tag(let tag):
-            let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellTag.id) as! SearchSuggestCellTag
+            let cell = tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellTag.id) as! DiscoverFilterCellTag
             let text = tag.name ?? ""
             cell.render(title: text, selected: manager.isSelected(tag: text))
             return cell
 
-        case .tagMore(let title):
-            return tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellTagMore.id) as! SearchSuggestCellTagMore
+        case .tagMore:
+            return tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellTagMore.id) as! DiscoverFilterCellTagMore
 
         case .time(let timings):
-            let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellTiming.id) as! SearchSuggestCellTiming
+            let cell = tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellTiming.id) as! DiscoverFilterCellTiming
             cell.render(timings: timings, controller: self)
-            return cell
-
-        case .place(let place):
-            let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellPlace.id) as! SearchSuggestCellPlace
-            cell.render(place: place)
             return cell
         }
     }
@@ -292,14 +262,6 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
             let text = tag.name ?? ""
             manager.select(tag: text, selected: !manager.isSelected(tag: text))
 
-        case .assumption(let query):
-            Analytics.logEvent(AnalyticsEventSearch, parameters: [
-                AnalyticsParameterSearchTerm: query.text as NSObject,
-                "result_count": query.resultCount as NSObject
-            ])
-            self.onExtensionDismiss(query.searchQuery)
-            self.dismiss(animated: true)
-
         case .tagMore(let title):
             let controller = SearchSuggestTagController(searchQuery: manager.searchQuery, type: title) { query in
                 if let query = query {
@@ -307,20 +269,13 @@ extension SearchSuggestController: UITableViewDataSource, UITableViewDelegate {
                 }
             }
             self.navigationController?.pushViewController(controller, animated: true)
-
-        case .place(let place):
-            if let placeId = place.id {
-                let placeController = PlaceViewController(placeId: placeId)
-                self.navigationController?.pushViewController(placeController, animated: true)
-            }
-
         default: return
         }
     }
 }
 
-fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
-    fileprivate var controller: SearchSuggestController!
+fileprivate class DiscoverFilterHeaderView: UIView, FilterTagViewDelegate {
+    fileprivate var controller: DiscoverFilterController!
     fileprivate let textField: SearchTextField = {
         let textField = SearchTextField()
         textField.clearButtonMode = .whileEditing
@@ -337,53 +292,66 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
         textField.leftImageWidth = 32
         textField.leftImageSize = 18
 
-        textField.placeholder = "Search Anything"
+        textField.placeholder = "Search Location or Filter"
         textField.font = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
         return textField
     }()
     fileprivate let cancelButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Cancel", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 15)
-        button.titleEdgeInsets.right = 24
+        button.setImage(UIImage(named: "NavigationBar-Close"), for: .normal)
+        button.tintColor = .black
+        button.imageEdgeInsets.right = 24
         button.contentHorizontalAlignment = .right
+        button.backgroundColor = .white
         return button
     }()
-    fileprivate let tagCollection = SearchFilterTagCollection()
+    fileprivate let tagCollection: FilterTagView = {
+        let config = FilterTagView.DefaultTagConfig()
+        config.tagExtraSpace = CGSize(width: 21, height: 16)
+        let view = FilterTagView(tagConfig: config)
+        view.backgroundColor = .white
+        return view
+    }()
+    var topConstraint: Constraint! = nil
 
     override init(frame: CGRect = CGRect()) {
         super.init(frame: frame)
+        self.backgroundColor = .white
+
         self.addSubview(textField)
         self.addSubview(cancelButton)
         self.addSubview(tagCollection)
+
         self.tagCollection.delegate = self
 
-        self.backgroundColor = .white
-
-        textField.snp.makeConstraints { make in
-            make.top.equalTo(self.safeArea.top).inset(8)
-            make.left.equalTo(self).inset(24)
-            make.right.equalTo(cancelButton.snp.left)
-            make.height.equalTo(36)
-        }
-
         cancelButton.snp.makeConstraints { make in
-            make.width.equalTo(90)
-            make.top.equalTo(self.safeArea.top).inset(8)
+            make.width.equalTo(64)
             make.right.equalTo(self)
-            make.height.equalTo(36)
+
+            make.top.bottom.equalTo(self.tagCollection)
         }
 
         tagCollection.snp.makeConstraints { make in
+            make.left.equalTo(self).inset(24)
+            make.right.equalTo(cancelButton.snp.left)
+            make.top.equalTo(self.safeArea.top).inset(8)
+
+            make.height.equalTo(37)
+        }
+
+        textField.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
-            make.top.equalTo(textField.snp.bottom).inset(-9)
-            make.bottom.equalTo(self).inset(8)
-            make.height.equalTo(34)
+            make.height.equalTo(36)
+
+
+            self.topConstraint = make.top.equalTo(tagCollection.snp.bottom).constraint
+            self.topConstraint.update(inset: 36)
+
+            make.bottom.equalTo(self).inset(10)
         }
     }
 
-    func tagCollection(selectedLocation name: String, for tagCollection: SearchFilterTagCollection) {
+    func tagCollection(selectedLocation name: String, for tagCollection: FilterTagView) {
         if name.lowercased() == "nearby" {
             let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
             alert.addAction(UIAlertAction(title: "Reset", style: .destructive) { action in
@@ -395,7 +363,7 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
         }
     }
 
-    func tagCollection(selectedHour name: String, for tagCollection: SearchFilterTagCollection) {
+    func tagCollection(selectedHour name: String, for tagCollection: FilterTagView) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
             self.controller.manager.select(hour: name)
@@ -405,7 +373,7 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
         self.controller.present(alert, animated: true)
     }
 
-    func tagCollection(selectedPrice name: String, for tagCollection: SearchFilterTagCollection) {
+    func tagCollection(selectedPrice name: String, for tagCollection: FilterTagView) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
             self.controller.manager.resetPrice()
@@ -415,7 +383,7 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
         self.controller.present(alert, animated: true)
     }
 
-    func tagCollection(selectedTag name: String, for tagCollection: SearchFilterTagCollection) {
+    func tagCollection(selectedTag name: String, for tagCollection: FilterTagView) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
             self.controller.manager.reset(tags: [name])
@@ -439,9 +407,87 @@ fileprivate class SearchSuggestHeaderView: UIView, SearchFilterTagDelegate {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    let contentHeight: CGFloat = 99 + 7
+    let extendedHeight: CGFloat = 44
 }
 
-class SearchSuggestBottomView: UIView {
+// Header Scroll to Hide Functions
+extension DiscoverFilterHeaderView {
+    var maxHeight: CGFloat {
+        // contentHeight + safeArea.top
+        return self.safeAreaInsets.top + contentHeight
+    }
+
+    func contentDidScroll(scrollView: UIScrollView) {
+        let height = calculateHeight(scrollView: scrollView)
+        let inset = extendedHeight - height - 8
+        self.topConstraint.update(inset: inset)
+    }
+
+    /**
+     nil means don't move
+     */
+    func contentShouldMove(scrollView: UIScrollView) -> CGFloat? {
+        let height = calculateHeight(scrollView: scrollView)
+
+        // Already fully closed or opened
+        if (height == extendedHeight || height == 0.0) {
+            return nil
+        }
+
+
+        if (height < extendedHeight / 2) {
+            // To close
+            return -maxHeight + extendedHeight
+        } else {
+            // To open
+            return -maxHeight
+        }
+    }
+
+    private func calculateHeight(scrollView: UIScrollView) -> CGFloat {
+        let y = scrollView.contentOffset.y
+        if y <= -maxHeight {
+            return extendedHeight
+        } else if y >= -maxHeight + extendedHeight {
+            return 0
+        } else {
+            return extendedHeight - (maxHeight + y)
+        }
+    }
+}
+
+// MARK: Scroll View
+extension DiscoverFilterController {
+    func scrollsToTop(animated: Bool = true) {
+        tableView.contentOffset.y = -self.headerView.contentHeight
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        self.headerView.contentDidScroll(scrollView: scrollView)
+    }
+
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if (!decelerate) {
+            scrollViewDidFinish(scrollView)
+        }
+    }
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        scrollViewDidFinish(scrollView)
+    }
+
+    func scrollViewDidFinish(_ scrollView: UIScrollView) {
+        // Check nearest locate and move to it
+        if let y = self.headerView.contentShouldMove(scrollView: scrollView) {
+            let point = CGPoint(x: 0, y: y)
+            scrollView.setContentOffset(point, animated: true)
+        }
+    }
+}
+
+class DiscoverFilterBottomView: UIView {
     fileprivate let applyBtn: UIButton = {
         let applyBtn = UIButton()
         applyBtn.layer.cornerRadius = 3
@@ -473,9 +519,9 @@ class SearchSuggestBottomView: UIView {
     }
 
     @objc fileprivate func renderDidCommit(_ sender: Any) {
-        MunchApi.search.count(query: searchQuery, callback: { (meta, count) in
+        MunchApi.discover.filterCount(query: searchQuery, callback: { (meta, count) in
             if let count = count {
-                self.applyBtn.setTitle(SearchSuggestBottomView.countTitle(count: count), for: .normal)
+                self.applyBtn.setTitle(DiscoverFilterBottomView.countTitle(count: count), for: .normal)
             }
         })
     }

@@ -299,7 +299,7 @@ class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
 
     func textTagCollectionView(_ textTagCollectionView: TTGTextTagCollectionView!, didTapTag tagText: String!, at index: UInt, selected: Bool) {
         if let navigationController = self.controller.navigationController {
-            if let searchController = navigationController.viewControllers[navigationController.viewControllers.count - 2] as? SearchController {
+            if let searchController = navigationController.viewControllers[navigationController.viewControllers.count - 2] as? DiscoverController {
                 navigationController.popViewController(animated: true)
 
                 // Add Selected as filter

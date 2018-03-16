@@ -16,7 +16,7 @@ import TTGTagCollectionView
 
 import Firebase
 
-class SearchPlaceCard: UITableViewCell, SearchCardView {
+class DiscoverPlaceCard: UITableViewCell, SearchCardView {
     let topImageView = ShimmerImageView()
     let containerLabel: UIButton = {
         let label = UIButton()
@@ -50,9 +50,9 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         label.tintColor = UIColor(hex: "202020")
         return label
     }()
-    let bottomView = SearchPlaceCardBottomView()
+    let bottomView = DiscoverPlaceCardBottomView()
 
-    var controller: SearchController!
+    var controller: DiscoverController!
     var containers: [Container] = []
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -94,7 +94,7 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func render(card: SearchCard, controller: SearchController) {
+    func render(card: SearchCard, controller: DiscoverController) {
         self.controller = controller
         self.containers = card["containers"].map({ Container(json: $0.1) })
 
@@ -139,8 +139,8 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
     }
 }
 
-class SearchSmallPlaceCard: UITableViewCell, SearchCardView {
-    let bottomView = SearchPlaceCardBottomView()
+class DiscoverSmallPlaceCard: UITableViewCell, SearchCardView {
+    let bottomView = DiscoverPlaceCardBottomView()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -159,7 +159,7 @@ class SearchSmallPlaceCard: UITableViewCell, SearchCardView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func render(card: SearchCard, controller: SearchController) {
+    func render(card: SearchCard, controller: DiscoverController) {
         bottomView.render(card: card)
         setNeedsLayout()
         layoutIfNeeded()
@@ -170,7 +170,7 @@ class SearchSmallPlaceCard: UITableViewCell, SearchCardView {
     }
 }
 
-class SearchPlaceCardBottomView: UIView {
+class DiscoverPlaceCardBottomView: UIView {
     let nameLabel = UILabel()
     let tagCollection = MunchTagCollectionView(showFullyVisibleOnly: true)
     let locationLabel = UILabel()

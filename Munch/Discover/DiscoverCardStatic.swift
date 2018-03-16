@@ -91,7 +91,7 @@ class SearchShimmerPlaceCard: UITableViewCell, SearchCardView {
         }
     }
 
-    func render(card: SearchCard, controller: SearchController) {
+    func render(card: SearchCard, controller: DiscoverController) {
     }
 
     static var cardId: String {
@@ -123,7 +123,7 @@ class SearchStaticNoResultCard: UITableViewCell, SearchCardView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func render(card: SearchCard, controller: SearchController) {
+    func render(card: SearchCard, controller: DiscoverController) {
     }
 
     static var cardId: String {
@@ -137,7 +137,7 @@ class SearchStaticErrorCard: UITableViewCell, SearchCardView {
     private let descriptionLabel = UILabel()
     private let actionButton = UIButton()
 
-    private var controller: SearchController!
+    private var controller: DiscoverController!
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -170,7 +170,7 @@ class SearchStaticErrorCard: UITableViewCell, SearchCardView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func render(card: SearchCard, controller: SearchController) {
+    func render(card: SearchCard, controller: DiscoverController) {
         self.controller = controller
         self.titleLabel.text = card["type"].string
         self.descriptionLabel.text = card["message"].string
@@ -217,7 +217,7 @@ class SearchStaticLoadingCard: UITableViewCell, SearchCardView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func render(card: SearchCard, controller: SearchController) {
+    func render(card: SearchCard, controller: DiscoverController) {
     }
 
     func startAnimating() {
@@ -252,7 +252,7 @@ class SearchStaticEmptyCard: UITableViewCell, SearchCardView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func render(card: SearchCard, controller: SearchController) {
+    func render(card: SearchCard, controller: DiscoverController) {
     }
 
     static var cardId: String {
@@ -279,7 +279,7 @@ class SearchStaticTopCard: UITableViewCell, SearchCardView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func render(card: SearchCard, controller: SearchController) {
+    func render(card: SearchCard, controller: DiscoverController) {
     }
 
     static var cardId: String {

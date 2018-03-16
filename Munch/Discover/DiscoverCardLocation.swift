@@ -30,7 +30,7 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
         return collectionView
     }()
 
-    private var controller: SearchController!
+    private var controller: DiscoverController!
     private var containers = [Container]()
     private var card: SearchCard?
 
@@ -56,7 +56,7 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
         }
     }
 
-    func render(card: SearchCard, controller: SearchController) {
+    func render(card: SearchCard, controller: DiscoverController) {
         if self.card?.instanceId == card.instanceId {
             return
         }

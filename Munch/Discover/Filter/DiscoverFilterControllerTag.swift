@@ -10,9 +10,9 @@ import SnapKit
 import BEMCheckBox
 
 class SearchSuggestTagController: UIViewController, UIGestureRecognizerDelegate {
-    fileprivate let manager: SearchControllerSuggestManager
+    fileprivate let manager: DiscoverFilterControllerManager
     fileprivate let selectedType: String
-    fileprivate var tags: [SearchSuggestType]
+    fileprivate var tags: [DiscoverFilterType]
 
     private let onExtensionDismiss: ((SearchQuery?) -> Void)
 
@@ -29,13 +29,13 @@ class SearchSuggestTagController: UIViewController, UIGestureRecognizerDelegate 
         tableView.contentInset.bottom = 14
         tableView.separatorStyle = .none
 
-        tableView.register(SearchSuggestCellHeader.self, forCellReuseIdentifier: SearchSuggestCellHeader.id)
-        tableView.register(SearchSuggestCellTag.self, forCellReuseIdentifier: SearchSuggestCellTag.id)
+        tableView.register(DiscoverFilterCellHeader.self, forCellReuseIdentifier: DiscoverFilterCellHeader.id)
+        tableView.register(DiscoverFilterCellTag.self, forCellReuseIdentifier: DiscoverFilterCellTag.id)
         return tableView
     }()
 
     init(searchQuery: SearchQuery, type: String, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
-        self.manager = SearchControllerSuggestManager(searchQuery: searchQuery)
+        self.manager = DiscoverFilterControllerManager(searchQuery: searchQuery)
         self.tags = manager.tags
         self.selectedType = type
         self.onExtensionDismiss = extensionDismiss
@@ -207,7 +207,7 @@ fileprivate class SearchControllerSuggestTagBottomView: UIView {
     }
 
     @objc fileprivate func renderDidCommit(_ sender: Any) {
-        MunchApi.search.count(query: searchQuery, callback: { (meta, count) in
+        MunchApi.discover.filterCount(query: searchQuery, callback: { (meta, count) in
             if let count = count {
                 if count == 0 {
                     self.applyButton.setTitle("No Results", for: .normal)
@@ -242,12 +242,12 @@ extension SearchSuggestTagController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch tags[indexPath.row] {
         case .header(let title):
-            let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellHeader.id) as! SearchSuggestCellHeader
+            let cell = tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellHeader.id) as! DiscoverFilterCellHeader
             cell.render(title: title)
             return cell
 
         case .tag(let tag):
-            let cell = tableView.dequeueReusableCell(withIdentifier: SearchSuggestCellTag.id) as! SearchSuggestCellTag
+            let cell = tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellTag.id) as! DiscoverFilterCellTag
             let text = tag.name ?? ""
             cell.render(title: text, selected: manager.isSelected(tag: text))
             return cell

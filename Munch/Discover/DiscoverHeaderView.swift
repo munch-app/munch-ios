@@ -1,5 +1,5 @@
 //
-//  SearchHeaderView.swift
+//  DiscoverHeaderView.swift
 //  Munch
 //
 //  Created by Fuxing Loh on 16/9/17.
@@ -16,13 +16,13 @@ import TTGTagCollectionView
  SearchHeader controls data managements query, update refresh
  SearchController only controls rendering of the data
  */
-class SearchHeaderView: UIView, SearchFilterTagDelegate {
-    var controller: SearchController!
+class DiscoverHeaderView: UIView, FilterTagViewDelegate {
+    var controller: DiscoverController!
 
     let backButton = SearchBackButton()
     let textButton = SearchTextButton()
     let mapButton = SearchMapButton()
-    let tagCollection = SearchFilterTagCollection()
+    let tagCollection = FilterTagView()
 
     var topConstraint: Constraint! = nil
 
@@ -83,18 +83,18 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
 
     @objc func onHeaderAction(for view: UIView) {
         if view is SearchTextButton {
-            controller.goTo(extension: SearchSuggestController.self)
+            controller.goTo(extension: DiscoverFilterController.self)
         } else if view is SearchBackButton {
             // When back button is clicked
             renderPrevious()
         }
     }
 
-    func tagCollection(selectedLocation name: String, for tagCollection: SearchFilterTagCollection) {
-        controller.goTo(extension: SearchSuggestController.self)
+    func tagCollection(selectedLocation name: String, for tagCollection: FilterTagView) {
+        controller.goTo(extension: DiscoverFilterController.self)
     }
 
-    func tagCollection(selectedHour name: String, for tagCollection: SearchFilterTagCollection) {
+    func tagCollection(selectedHour name: String, for tagCollection: FilterTagView) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
             var searchQuery = self.controller.searchQuery
@@ -109,7 +109,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
         self.controller.present(alert, animated: true)
     }
 
-    func tagCollection(selectedPrice name: String, for tagCollection: SearchFilterTagCollection) {
+    func tagCollection(selectedPrice name: String, for tagCollection: FilterTagView) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
             var searchQuery = self.controller.searchQuery
@@ -123,7 +123,7 @@ class SearchHeaderView: UIView, SearchFilterTagDelegate {
         self.controller.present(alert, animated: true)
     }
 
-    func tagCollection(selectedTag name: String, for tagCollection: SearchFilterTagCollection) {
+    func tagCollection(selectedTag name: String, for tagCollection: FilterTagView) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
             var searchQuery = self.controller.searchQuery
@@ -244,202 +244,8 @@ class SearchBackButton: UIButton {
 
 }
 
-enum SearchFilterTagType {
-    case location(String)
-    case price(String)
-    case hour(String)
-    case tag(String)
-    case or
-}
-
-class SearchFilterTagCollection: UIView, TTGTextTagCollectionViewDelegate {
-    let tagCollection = TTGTextTagCollectionView()
-    let defaultTagConfig = DefaultTagConfig()
-
-    var delegate: SearchFilterTagDelegate?
-    var tags: [SearchFilterTagType]!
-
-    override init(frame: CGRect = CGRect()) {
-        super.init(frame: frame)
-        self.addSubview(tagCollection)
-        tagCollection.delegate = self
-        tagCollection.defaultConfig = defaultTagConfig
-        tagCollection.horizontalSpacing = 10
-        tagCollection.numberOfLines = 1
-        tagCollection.scrollDirection = .horizontal
-        tagCollection.showsHorizontalScrollIndicator = false
-        tagCollection.showsVerticalScrollIndicator = false
-        tagCollection.alignment = .left
-        tagCollection.contentInset = UIEdgeInsets(topBottom: 2, leftRight: 0)
-        tagCollection.snp.makeConstraints { (make) in
-            make.edges.equalTo(self)
-        }
-    }
-
-    func render(query: SearchQuery) {
-        var tags = [SearchFilterTagType]()
-
-        // FirstTag is always Location Tag
-        tags.append(contentsOf: getLocationTag(query: query))
-        tags.append(contentsOf: getHourTag(query: query))
-        tags.append(contentsOf: getPriceTag(query: query))
-        tags.append(contentsOf: getFilterTags(query: query))
-
-        render(tags: tags)
-    }
-
-    private func getFilterTags(query: SearchQuery) -> [SearchFilterTagType] {
-        var tags = [SearchFilterTagType]()
-        for tag in query.filter.tag.positives {
-            tags.append(SearchFilterTagType.tag(tag))
-            tags.append(.or)
-        }
-
-        if tags.isEmpty {
-           return []
-        }
-
-        tags.removeLast()
-        return tags
-    }
-
-    /**
-     Must always return one returns min
-     */
-    private func getLocationTag(query: SearchQuery) -> [SearchFilterTagType] {
-        if let containers = query.filter.containers, !containers.isEmpty {
-            return containers.map({ SearchFilterTagType.location($0.name ?? "Container") })
-        }
-
-        if let locationName = query.filter.location?.name {
-            return [SearchFilterTagType.location(locationName)]
-        }
-
-        if MunchLocation.isEnabled {
-            return [SearchFilterTagType.location("Nearby")]
-        }
-
-        return [SearchFilterTagType.location("Singapore")]
-    }
-
-    private func getPriceTag(query: SearchQuery) -> [SearchFilterTagType] {
-        if let min = query.filter.price.min, let max = query.filter.price.max {
-            let min = String(format: "%.0f", min)
-            let max = String(format: "%.0f", max)
-            return [SearchFilterTagType.price("$\(min) - $\(max)")]
-        }
-        return []
-    }
-
-    private func getHourTag(query: SearchQuery) -> [SearchFilterTagType] {
-        if let name = query.filter.hour.name {
-            return [SearchFilterTagType.hour(name)]
-        } else if let day = query.filter.hour.day,
-                  let open = query.filter.hour.open,
-                  let close = query.filter.hour.close {
-            return [SearchFilterTagType.hour("\(day): \(open)-\(close)")]
-        }
-        return []
-    }
-
-    private func render(tags: [SearchFilterTagType]) {
-        tagCollection.removeAllTags()
-        self.tags = tags
-        for tag in tags {
-            switch tag {
-            case let .location(name):
-                tagCollection.addTag(name)
-            case let .price(name):
-                tagCollection.addTag(name)
-            case let .hour(name):
-                tagCollection.addTag(name)
-            case let .tag(name):
-                tagCollection.addTag(name)
-            case .or:
-                tagCollection.addTag("or", with: OrTagConfig())
-            }
-        }
-    }
-
-    class DefaultTagConfig: TTGTextTagConfig {
-        override init() {
-            super.init()
-            tagTextFont = UIFont.systemFont(ofSize: 14.0, weight: .regular)
-            tagShadowOffset = CGSize.zero
-            tagShadowRadius = 0
-            tagCornerRadius = 4
-
-            tagBorderWidth = 1.0
-            tagBorderColor = UIColor.clear
-            tagTextColor = UIColor(hex: "303030")
-            tagBackgroundColor = UIColor(hex: "EBEBEB")
-
-            tagSelectedBorderWidth = 1.0
-            tagSelectedBorderColor = UIColor.clear
-            tagSelectedTextColor = UIColor(hex: "303030")
-            tagSelectedBackgroundColor = UIColor(hex: "EBEBEB")
-
-            tagExtraSpace = CGSize(width: 21, height: 13)
-        }
-    }
-
-    class OrTagConfig: TTGTextTagConfig {
-        override init() {
-            super.init()
-            tagTextFont = UIFont.systemFont(ofSize: 14.0, weight: .regular)
-            tagShadowOffset = CGSize.zero
-            tagShadowRadius = 0
-            tagCornerRadius = 4
-
-            tagBorderWidth = 1.0
-            tagBorderColor = .clear
-            tagTextColor = UIColor(hex: "404040")
-            tagBackgroundColor = .clear
-
-            tagSelectedBorderWidth = 1.0
-            tagSelectedBorderColor = .clear
-            tagSelectedTextColor = UIColor(hex: "404040")
-            tagSelectedBackgroundColor = .clear
-
-            tagExtraSpace = CGSize(width: 0, height: 13)
-        }
-    }
-
-
-    func textTagCollectionView(_ textTagCollectionView: TTGTextTagCollectionView!, didTapTag tagText: String!, at index: UInt, selected: Bool) {
-        switch tags[Int(index)] {
-        case let .location(name):
-            delegate?.tagCollection(selectedLocation: name, for: self)
-        case let .price(name):
-            delegate?.tagCollection(selectedPrice: name, for: self)
-        case let .hour(name):
-            delegate?.tagCollection(selectedHour: name, for: self)
-        case let .tag(name):
-            delegate?.tagCollection(selectedTag: name, for: self)
-        case .or: return
-        }
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-/**
- Delegate tool for SearchFilterTag
- */
-protocol SearchFilterTagDelegate {
-    func tagCollection(selectedLocation name: String, for tagCollection: SearchFilterTagCollection)
-
-    func tagCollection(selectedHour name: String, for tagCollection: SearchFilterTagCollection)
-
-    func tagCollection(selectedPrice name: String, for tagCollection: SearchFilterTagCollection)
-
-    func tagCollection(selectedTag name: String, for tagCollection: SearchFilterTagCollection)
-}
-
 // Header Scroll to Hide Functions
-extension SearchHeaderView {
+extension DiscoverHeaderView {
     var contentHeight: CGFloat {
         return 94
     }
