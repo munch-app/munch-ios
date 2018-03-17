@@ -172,7 +172,7 @@ class DiscoverSmallPlaceCard: UITableViewCell, SearchCardView {
 
 class DiscoverPlaceCardBottomView: UIView {
     let nameLabel = UILabel()
-    let tagCollection = MunchTagCollectionView(showFullyVisibleOnly: true)
+    let tagView = MunchTagView(count: 4)
     let locationLabel = UILabel()
 
     private var tagLabelWidth: Constraint!
@@ -180,7 +180,7 @@ class DiscoverPlaceCardBottomView: UIView {
     override init(frame: CGRect = CGRect()) {
         super.init(frame: frame)
         self.addSubview(nameLabel)
-        self.addSubview(tagCollection)
+        self.addSubview(tagView)
         self.addSubview(locationLabel)
 
         nameLabel.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
@@ -189,11 +189,11 @@ class DiscoverPlaceCardBottomView: UIView {
         nameLabel.snp.makeConstraints { make in
             make.height.equalTo(26)
             make.left.right.equalTo(self)
-            make.bottom.equalTo(tagCollection.snp.top)
+            make.bottom.equalTo(tagView.snp.top)
         }
 
-        tagCollection.isUserInteractionEnabled = false
-        tagCollection.snp.makeConstraints { (make) in
+        tagView.isUserInteractionEnabled = false
+        tagView.snp.makeConstraints { (make) in
             make.left.equalTo(self)
             make.right.equalTo(self)
             make.height.equalTo(24)
@@ -221,17 +221,20 @@ class DiscoverPlaceCardBottomView: UIView {
     }
 
     private func render(tag card: SearchCard) {
-        var types = [MunchTagCollectionType]()
+        // Count is Controlled by View
+        self.tagView.removeAll()
 
         if let average = card["review"]["average"].float {
-            types.append(.rating(average))
+            let percent = CGFloat(average)
+            let text = ReviewRatingUtils.text(percent: percent)
+            self.tagView.add(text: text, config: RatingTagViewConfig(percent: percent))
         }
 
-        types.append(contentsOf: card["tags"].prefix(3)
-                .flatMap({ $0.1.string?.capitalized })
-                .flatMap({ MunchTagCollectionType.tag($0) }))
-
-        self.tagCollection.replaceAll(types: types)
+        for tag in card["tags"].prefix(3) {
+            if let text = tag.1.string?.capitalized {
+                self.tagView.add(text: text)
+            }
+        }
     }
 
     private func render(location card: SearchCard) {
@@ -270,5 +273,17 @@ class DiscoverPlaceCardBottomView: UIView {
             break
         }
         self.locationLabel.attributedText = line
+    }
+
+    struct RatingTagViewConfig: MunchTagViewConfig {
+        let font = UIFont.systemFont(ofSize: 13.0, weight: .medium)
+        let textColor = UIColor.white
+        let backgroundColor: UIColor
+
+        let extra = CGSize(width: 14, height: 8)
+
+        init(percent: CGFloat) {
+            self.backgroundColor = ReviewRatingUtils.color(percent: percent)
+        }
     }
 }
