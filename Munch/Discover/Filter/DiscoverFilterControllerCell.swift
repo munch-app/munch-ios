@@ -7,6 +7,7 @@ import Foundation
 import UIKit
 
 import SnapKit
+import SwiftRichString
 import BEMCheckBox
 import RangeSeekSlider
 
@@ -53,7 +54,63 @@ class DiscoverFilterCellLoading: UITableViewCell {
     }
 
     class var id: String {
-        return "SearchSuggestCellLoading"
+        return "DiscoverFilterCellLoading"
+    }
+}
+
+class DiscoverFilterCellDescription: UITableViewCell {
+    private let icon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.tintColor = UIColor(hex: "444444")
+        imageView.image = UIImage(named: "Search-Glass")
+        return imageView
+    }()
+    private let label: UILabel = {
+        let label = UILabel()
+        label.backgroundColor = .white
+        label.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
+        label.textColor = UIColor(hex: "444444")
+        label.textAlignment = .center
+
+        label.numberOfLines = 2
+        let text = NSMutableAttributedString()
+        text.append(NSAttributedString(string: "Search for any "))
+        text.append("Location".set(style: .default { make in
+            make.font = FontAttribute(font: .systemFont(ofSize: 16.0, weight: .semibold))
+        }))
+        text.append(NSAttributedString(string: ", Cuisine, Food or Amenities"))
+        label.attributedText = text
+        label.textAlignment = .left
+        return label
+    }()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(label)
+        self.addSubview(icon)
+
+        icon.snp.makeConstraints { make in
+            make.left.equalTo(self).inset(35)
+            make.top.equalTo(self).inset(18)
+            make.bottom.equalTo(self).inset(18)
+
+            make.height.width.equalTo(40)
+        }
+
+        label.snp.makeConstraints { make in
+            make.top.bottom.equalTo(icon)
+            make.right.equalTo(self).inset(35)
+            make.left.equalTo(icon.snp.right).inset(-12)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    class var id: String {
+        return "DiscoverFilterCellDescription"
     }
 }
 
@@ -89,7 +146,62 @@ class DiscoverFilterCellHeader: UITableViewCell {
     }
 
     class var id: String {
-        return "SearchSuggestCellHeader"
+        return "DiscoverFilterCellHeader"
+    }
+}
+
+class DiscoverFilterCellHeaderLocation: UITableViewCell {
+    private let label: UILabel = {
+        let label = UILabel()
+        label.text = "LOCATION"
+        label.backgroundColor = .white
+        label.font = UIFont.systemFont(ofSize: 12.0, weight: .bold)
+        label.textColor = UIColor(hex: "555555")
+        label.textAlignment = .center
+        return label
+    }()
+    private let moreButton: UIButton = {
+        let button = UIButton()
+        button.tintColor = UIColor(hex: "333333")
+        button.setImage(UIImage(named: "Search-Right-Arrow-Small"), for: .normal)
+
+        button.setTitle("SEARCH", for: .normal)
+        button.setTitleColor(UIColor(hex: "333333"), for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 11, weight: .medium)
+        button.contentEdgeInsets.right = 0
+        button.titleEdgeInsets.right = -1
+
+        button.contentHorizontalAlignment = .right
+        button.semanticContentAttribute = .forceRightToLeft
+        button.isUserInteractionEnabled = false
+        return button
+    }()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+
+        self.addSubview(label)
+        self.addSubview(moreButton)
+
+        label.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.top.equalTo(self).inset(14)
+            make.bottom.equalTo(self).inset(14)
+        }
+
+        moreButton.snp.makeConstraints { make in
+            make.right.equalTo(self).inset(24)
+            make.centerY.equalTo(self)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    class var id: String {
+        return "DiscoverFilterCellHeaderLocation"
     }
 }
 
@@ -376,7 +488,8 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
 
         containerView.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
-            make.top.bottom.equalTo(self).inset(14)
+            make.top.equalTo(self).inset(14)
+            make.bottom.equalTo(self)
         }
 
         priceSlider.snp.makeConstraints { make in

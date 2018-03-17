@@ -7,8 +7,10 @@ import Foundation
 
 enum DiscoverFilterType {
     case empty
+    case description
     case loading
     case header(String)
+    case headerLocation
     case location([DiscoverFilterLocation])
     case priceRange
     case time([DiscoverFilterTiming])
@@ -54,7 +56,7 @@ class DiscoverFilterControllerManager {
         let recentLocations = DiscoverFilterControllerManager.readRecentLocations(database: locationDatabase)
 
         var list = [DiscoverFilterType]()
-        list.append(DiscoverFilterType.header("LOCATION"))
+        list.append(DiscoverFilterType.headerLocation)
         list.append(DiscoverFilterType.location([DiscoverFilterLocation.nearby, DiscoverFilterLocation.anywhere(DiscoverFilterControllerManager.anywhere)] + recentLocations))
         list.append(DiscoverFilterType.header("PRICE RANGE"))
         list.append(DiscoverFilterType.priceRange)
@@ -304,7 +306,7 @@ extension DiscoverFilterControllerManager {
         var list = [DiscoverFilterType]()
 
         if !locations.isEmpty {
-            list.append(.header("LOCATION"))
+            list.append(.headerLocation)
             list.append(DiscoverFilterType.location(locations.flatMap({
                 if let location = $0 as? Location {
                     return DiscoverFilterLocation.location(location)

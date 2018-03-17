@@ -192,7 +192,7 @@ class DiscoverFilterButton: UIButton {
         super.init(frame: frame)
 
         setImage(UIImage(named: "Search-Filter"), for: .normal)
-        tintColor = UIColor(hex: "222222")
+        tintColor = UIColor(hex: "333333")
         contentHorizontalAlignment = .right
         contentEdgeInsets.right = 24
     }

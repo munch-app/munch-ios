@@ -51,8 +51,36 @@ class DiscoverFilterController: UIViewController {
     }()
 
     private var results: [DiscoverFilterType]?
-    private var firstLoad: Bool = true
     private var searchQuery: SearchQuery
+    private var state: State = State.filter {
+        didSet {
+            switch state {
+            case .filter:
+                self.headerView.textField.text = nil
+                self.headerView.textField.resignFirstResponder()
+                self.tableView.reloadData()
+            case .loading:
+                self.results = nil
+                self.tableView.reloadData()
+            case .result:
+                self.tableView.reloadData()
+            case .search:
+                self.headerView.textField.text = nil
+                self.tableView.reloadData()
+            case .empty:
+                self.results = []
+                self.tableView.reloadData()
+            }
+        }
+    }
+
+    enum State {
+        case filter
+        case search
+        case result
+        case loading
+        case empty
+    }
 
     init(searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
         self.onExtensionDismiss = extensionDismiss
@@ -91,6 +119,7 @@ class DiscoverFilterController: UIViewController {
         self.headerView.cancelButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
         self.headerView.textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         self.headerView.textField.addTarget(self, action: #selector(textFieldShouldReturn(_:)), for: .editingDidEndOnExit)
+        self.headerView.textField.addTarget(self, action: #selector(textFieldDidBegin(_:)), for: .editingDidBegin)
 
         self.bottomView.applyBtn.addTarget(self, action: #selector(actionApply(_:)), for: .touchUpInside)
 
@@ -100,11 +129,11 @@ class DiscoverFilterController: UIViewController {
         self.manager.addUpdateHook { query in
             self.headerView.tagCollection.render(query: query)
             self.bottomView.render(searchQuery: query)
-            self.tableView.reloadData()
 
             if query != self.searchQuery {
-                self.headerView.textField.text = nil
-                self.headerView.textField.resignFirstResponder()
+                self.state = .filter
+            } else {
+                self.tableView.reloadData()
             }
         }
 
@@ -132,6 +161,9 @@ class DiscoverFilterController: UIViewController {
 
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         self.headerView.textField.resignFirstResponder()
+        if self.state == State.search {
+            self.state = .filter
+        }
     }
 
     @objc func actionCancel(_ sender: Any) {
@@ -144,31 +176,30 @@ class DiscoverFilterController: UIViewController {
         self.dismiss(animated: true)
     }
 
-    @objc func textFieldDidChange(_ sender: Any) {
-        // Reset View
-        self.results = []
-        self.tableView.reloadData()
+    @objc func textFieldDidBegin(_ sender: Any) {
+        self.state = .search
+    }
 
+    @objc func textFieldDidChange(_ sender: Any) {
+        self.state = .empty
         NSObject.cancelPreviousPerformRequests(withTarget: self)
         self.perform(#selector(textFieldDidCommit(textField:)), with: headerView.textField, afterDelay: 0.4)
     }
 
     @objc func textFieldDidCommit(textField: UITextField) {
         if let text = textField.text, text.count >= 2 {
-            // Change to null when get committed
-            self.results = nil
-            self.tableView.reloadData()
+            self.state = .loading
 
             MunchApi.discover.filterSuggest(text: text, latLng: self.manager.getContextLatLng(), query: self.manager.searchQuery) { meta, locations, tags in
                 if meta.isOk() {
                     self.results = DiscoverFilterControllerManager.map(locations: locations, tags: tags)
-                    self.tableView.reloadData()
+                    self.state = .result
                 } else {
                     self.present(meta.createAlert(), animated: true)
                 }
             }
         } else {
-            self.tableView.reloadData()
+            self.state = .empty
         }
     }
 
@@ -185,7 +216,9 @@ class DiscoverFilterController: UIViewController {
 
 extension DiscoverFilterController: UITableViewDataSource, UITableViewDelegate {
     func registerCell() {
+        tableView.register(DiscoverFilterCellDescription.self, forCellReuseIdentifier: DiscoverFilterCellDescription.id)
         tableView.register(DiscoverFilterCellHeader.self, forCellReuseIdentifier: DiscoverFilterCellHeader.id)
+        tableView.register(DiscoverFilterCellHeaderLocation.self, forCellReuseIdentifier: DiscoverFilterCellHeaderLocation.id)
         tableView.register(DiscoverFilterCellLocation.self, forCellReuseIdentifier: DiscoverFilterCellLocation.id)
         tableView.register(DiscoverFilterCellTag.self, forCellReuseIdentifier: DiscoverFilterCellTag.id)
         tableView.register(DiscoverFilterCellTiming.self, forCellReuseIdentifier: DiscoverFilterCellTiming.id)
@@ -196,19 +229,21 @@ extension DiscoverFilterController: UITableViewDataSource, UITableViewDelegate {
     }
 
     var items: [DiscoverFilterType] {
-        if let text = headerView.textField.text {
-            if text.isEmpty {
-                return self.manager.suggestions
-            } else if text.count < 3 {
-                return []
-            } else if text.count >= 3 {
-                if let results = self.results {
-                    return results
-                }
-                return [DiscoverFilterType.loading]
+        switch self.state {
+        case .loading:
+            return [DiscoverFilterType.loading]
+        case .filter:
+            return self.manager.suggestions
+        case .search:
+            return [DiscoverFilterType.description]
+        case .empty:
+            return []
+        case .result:
+            if let results = self.results {
+                return results
             }
+            return [DiscoverFilterType.loading]
         }
-        return []
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -220,6 +255,9 @@ extension DiscoverFilterController: UITableViewDataSource, UITableViewDelegate {
         case .empty:
             return tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellNoResult.id) as! DiscoverFilterCellNoResult
 
+        case .description:
+            return tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellDescription.id) as! DiscoverFilterCellDescription
+
         case .loading:
             return tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellLoading.id) as! DiscoverFilterCellLoading
 
@@ -227,6 +265,9 @@ extension DiscoverFilterController: UITableViewDataSource, UITableViewDelegate {
             let cell = tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellHeader.id) as! DiscoverFilterCellHeader
             cell.render(title: title)
             return cell
+
+        case .headerLocation:
+            return tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellHeaderLocation.id) as! DiscoverFilterCellHeaderLocation
 
         case .location(let locations):
             let cell = tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellLocation.id) as! DiscoverFilterCellLocation
@@ -261,6 +302,9 @@ extension DiscoverFilterController: UITableViewDataSource, UITableViewDelegate {
         case .tag(let tag):
             let text = tag.name ?? ""
             manager.select(tag: text, selected: !manager.isSelected(tag: text))
+
+        case .headerLocation:
+            self.state = .search
 
         case .tagMore(let title):
             let controller = SearchSuggestTagController(searchQuery: manager.searchQuery, type: title) { query in
@@ -299,7 +343,7 @@ fileprivate class DiscoverFilterHeaderView: UIView, FilterTagViewDelegate {
     fileprivate let cancelButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "NavigationBar-Close"), for: .normal)
-        button.tintColor = .black
+        button.tintColor = UIColor(hex: "333333")
         button.imageEdgeInsets.right = 24
         button.contentHorizontalAlignment = .right
         button.backgroundColor = .white
