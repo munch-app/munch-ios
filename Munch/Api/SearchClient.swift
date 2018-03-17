@@ -14,8 +14,7 @@ import SwiftyJSON
 class SearchClient {
     func search(text: String, latLng: String?, query: SearchQuery, callback: @escaping (_ meta: MetaJSON,
                                                                         _ assumptions: [AssumptionQueryResult],
-                                                                        _ places: [Place],
-                                                                        _ locations: [SearchResult]) -> Void) {
+                                                                        _ places: [Place]) -> Void) {
         var params = Parameters()
         params["text"] = text
         params["latLng"] = latLng
@@ -28,8 +27,7 @@ class SearchClient {
             MunchApi.restful.post("/search", parameters: params) { meta, json in
                 let assumptions = json["data"]["assumptions"].flatMap({ AssumptionQueryResult(json: $0.1) })
                 let places = json["data"]["places"].flatMap({ SearchClient.parseResult(result: $0.1) as? Place })
-                let locationContainers = json["data"]["locations"].flatMap({ SearchClient.parseResult(result: $0.1) })
-                callback(meta, assumptions, places, locationContainers)
+                callback(meta, assumptions, places)
             }
         }
     }
@@ -176,6 +174,7 @@ struct Container: SearchResult, Equatable {
 }
 
 struct AssumptionQueryResult {
+    var searchQuery: SearchQuery
     var tokens: [SearchQueryToken]
     var places: [Place]
 
@@ -183,6 +182,7 @@ struct AssumptionQueryResult {
         guard json.exists() else {
             return nil
         }
+        self.searchQuery = SearchQuery(json: json["searchQuery"])
         self.tokens = json["tokens"].flatMap({ AssumptionQueryResult.parseToken(result: $0.1) })
         self.places = json["places"].flatMap({ SearchClient.parseResult(result: $0.1) as? Place })
     }

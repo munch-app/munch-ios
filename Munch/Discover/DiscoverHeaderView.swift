@@ -79,7 +79,7 @@ class DiscoverHeaderView: UIView, FilterTagViewDelegate {
 
     @objc func onHeaderAction(for view: UIView) {
         if view is DiscoverTextButton {
-            // TODO Search Text
+            controller.goTo(extension: SearchController.self)
         } else if view is DiscoverBackButton {
             // When back button is clicked
             renderPrevious()
@@ -89,7 +89,6 @@ class DiscoverHeaderView: UIView, FilterTagViewDelegate {
     }
 
     func tagCollection(selectedLocation name: String, for tagCollection: FilterTagView) {
-        // TODO Filter Location
         controller.goTo(extension: DiscoverFilterController.self)
     }
 

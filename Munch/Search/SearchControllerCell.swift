@@ -6,6 +6,93 @@
 import Foundation
 import UIKit
 
+enum SearchResultType {
+    case empty
+    case loading
+    case place(Place)
+    case assumption(AssumptionQueryResult)
+}
+
+class SearchCellLoading: UITableViewCell {
+    private let containerView: ShimmerView = {
+        let view = ShimmerView(color: UIColor(hex: "F3F3F3"))
+        return view
+    }()
+
+    private let tagView: ShimmerView = {
+        let view = ShimmerView(color: UIColor(hex: "E6E6E6"))
+        return view
+    }()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(containerView)
+        self.addSubview(tagView)
+
+        containerView.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(24)
+            make.top.bottom.equalTo(self).inset(14)
+        }
+
+        tagView.snp.makeConstraints { make in
+            make.left.equalTo(containerView).inset(16)
+            make.top.bottom.equalTo(containerView).inset(16)
+            make.width.equalTo(150)
+            make.height.equalTo(24)
+        }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        containerView.contentView.layer.cornerRadius = 3
+        containerView.contentView.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
+
+        tagView.contentView.layer.cornerRadius = 3
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    class var id: String {
+        return "DiscoverFilterCellLoading"
+    }
+}
+
+class SearchCellNoResult: UITableViewCell {
+    private let label: UILabel = {
+        let label = UILabel()
+        label.backgroundColor = .white
+        label.text = "No Results"
+        label.font = UIFont.systemFont(ofSize: 15.0, weight: .medium)
+        label.textColor = UIColor(hex: "333333")
+        label.textAlignment = .center
+        return label
+    }()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+
+        self.addSubview(label)
+
+        label.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.top.equalTo(self).inset(20)
+            make.bottom.equalTo(self).inset(20)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    class var id: String {
+        return "SearchCellNoResult"
+    }
+}
+
 class SearchCellAssumptionQueryResult: UITableViewCell {
     private let containerView: UIView = {
         let view = UIView()
