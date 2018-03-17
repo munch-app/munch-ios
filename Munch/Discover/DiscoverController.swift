@@ -30,7 +30,7 @@ class DiscoverNavigationalController: UINavigationController, UINavigationContro
 
 class DiscoverController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     private let cardTableView = UITableView()
-    let headerView = DiscoverHeaderView(showMapBtn: false)
+    let headerView = DiscoverHeaderView()
     private let refreshControl = UIRefreshControl()
 
     private let backIndicatorView = BackIndicatorView()

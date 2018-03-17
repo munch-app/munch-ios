@@ -19,53 +19,49 @@ import TTGTagCollectionView
 class DiscoverHeaderView: UIView, FilterTagViewDelegate {
     var controller: DiscoverController!
 
-    let backButton = SearchBackButton()
-    let textButton = SearchTextButton()
-    let mapButton = SearchMapButton()
+    let backButton = DiscoverBackButton()
+    let textButton = DiscoverTextButton()
+    let filterButton = DiscoverFilterButton()
     let tagCollection = FilterTagView()
 
     var topConstraint: Constraint! = nil
 
     var searchQueryHistories = [SearchQuery]()
 
-    required init(showMapBtn: Bool = true) {
+    required init() {
         super.init(frame: .zero)
-        self.tagCollection.delegate = self
-        self.initViews(showMapBtn: showMapBtn)
+        self.initViews()
     }
 
-    private func initViews(showMapBtn: Bool) {
+    private func initViews() {
         self.backgroundColor = .white
 
         self.addSubview(tagCollection)
         self.addSubview(textButton)
         self.addSubview(backButton)
+        self.addSubview(filterButton)
 
-        if (showMapBtn) {
-            self.addSubview(mapButton)
+        self.tagCollection.delegate = self
 
-            mapButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
-            mapButton.snp.makeConstraints { make in
-                make.width.equalTo(72)
-                make.right.equalTo(self)
-                make.height.equalTo(52)
-                make.top.equalTo(self.safeArea.top)
-            }
-        }
-
+        filterButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
         textButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
-        textButton.snp.makeConstraints { make in
-            make.left.equalTo(self).inset(24)
-            if showMapBtn {
-                make.right.equalTo(mapButton.snp.left)
-            } else {
-                make.right.equalTo(self).inset(24)
-            }
+        backButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
+
+
+        filterButton.snp.makeConstraints { make in
+            make.width.equalTo(72)
+            make.right.equalTo(self)
             make.height.equalTo(52)
             make.top.equalTo(self.safeArea.top)
         }
 
-        backButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
+        textButton.snp.makeConstraints { make in
+            make.left.equalTo(self).inset(24)
+            make.right.equalTo(filterButton.snp.left)
+            make.height.equalTo(52)
+            make.top.equalTo(self.safeArea.top)
+        }
+
         backButton.snp.makeConstraints { make in
             make.top.equalTo(self.safeArea.top)
             make.left.equalTo(self)
@@ -82,15 +78,18 @@ class DiscoverHeaderView: UIView, FilterTagViewDelegate {
     }
 
     @objc func onHeaderAction(for view: UIView) {
-        if view is SearchTextButton {
-            controller.goTo(extension: DiscoverFilterController.self)
-        } else if view is SearchBackButton {
+        if view is DiscoverTextButton {
+            // TODO Search Text
+        } else if view is DiscoverBackButton {
             // When back button is clicked
             renderPrevious()
+        } else if view is DiscoverFilterButton {
+            controller.goTo(extension: DiscoverFilterController.self)
         }
     }
 
     func tagCollection(selectedLocation name: String, for tagCollection: FilterTagView) {
+        // TODO Filter Location
         controller.goTo(extension: DiscoverFilterController.self)
     }
 
@@ -188,12 +187,12 @@ class DiscoverHeaderView: UIView, FilterTagViewDelegate {
     }
 }
 
-class SearchMapButton: UIButton {
+class DiscoverFilterButton: UIButton {
     override init(frame: CGRect = CGRect()) {
         super.init(frame: frame)
 
         setImage(UIImage(named: "Search-Filter"), for: .normal)
-        tintColor = UIColor.black.withAlphaComponent(0.65)
+        tintColor = UIColor(hex: "222222")
         contentHorizontalAlignment = .right
         contentEdgeInsets.right = 24
     }
@@ -203,7 +202,7 @@ class SearchMapButton: UIButton {
     }
 }
 
-class SearchTextButton: UIButton {
+class DiscoverTextButton: UIButton {
     fileprivate let field = SearchTextField()
 
     override init(frame: CGRect = CGRect()) {
@@ -240,7 +239,7 @@ class SearchTextButton: UIButton {
     }
 }
 
-class SearchBackButton: UIButton {
+class DiscoverBackButton: UIButton {
 
 }
 
