@@ -35,7 +35,8 @@ class SearchController: UIViewController {
 
         tableView.tableFooterView = UIView(frame: CGRect.zero)
 
-        tableView.contentInset.bottom = 14
+        tableView.contentInset.top = 8
+        tableView.contentInset.bottom = 16
         tableView.separatorStyle = .none
         return tableView
     }()
@@ -123,8 +124,8 @@ class SearchController: UIViewController {
             self.results = nil
             self.tableView.reloadData()
 
-            // TODO LatLng
-            MunchApi.search.search(text: text, latLng: nil, query: searchQuery) { meta, assumptions, places in
+            let latLng = DiscoverFilterControllerManager.getContextLatLng(searchQuery: searchQuery)
+            MunchApi.search.search(text: text, latLng: latLng, query: searchQuery) { meta, assumptions, places in
                 if meta.isOk() {
                     self.results = SearchController.map(assumptions: assumptions, places: places)
                     self.tableView.reloadData()
@@ -203,7 +204,7 @@ extension SearchController: UITableViewDataSource, UITableViewDelegate {
 
         case .assumption(let queryResult):
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchCellAssumptionQueryResult.id) as! SearchCellAssumptionQueryResult
-            // TODO Assumption
+            cell.render(queryResult: queryResult, controller: self)
             return cell
 
         case .loading:
@@ -219,13 +220,21 @@ extension SearchController: UITableViewDataSource, UITableViewDelegate {
 
         switch items[indexPath.row] {
         case .place(let place):
-            if let placeId = place.id {
-                let placeController = PlaceViewController(placeId: placeId)
-                self.navigationController?.pushViewController(placeController, animated: true)
-            }
-                // TODO Assumption
+            select(placeId: place.id)
         default: return
         }
+    }
+
+    func select(placeId: String?) {
+        if let placeId = placeId {
+            let placeController = PlaceViewController(placeId: placeId)
+            self.navigationController?.pushViewController(placeController, animated: true)
+        }
+    }
+
+    func select(searchQuery: SearchQuery) {
+        self.onExtensionDismiss(searchQuery)
+        self.dismiss(animated: true)
     }
 }
 

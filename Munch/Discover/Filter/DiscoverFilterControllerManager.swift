@@ -357,6 +357,10 @@ extension DiscoverFilterControllerManager {
     }
 
     public func getContextLatLng() -> String? {
+        return DiscoverFilterControllerManager.getContextLatLng(searchQuery: searchQuery)
+    }
+
+    public static func getContextLatLng(searchQuery: SearchQuery) -> String? {
         if let containers = searchQuery.filter.containers, !containers.isEmpty {
             for container in containers {
                 if let latLng = container.location?.latLng {

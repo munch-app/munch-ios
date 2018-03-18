@@ -6,6 +6,8 @@
 import Foundation
 import UIKit
 
+import SnapKit
+
 enum SearchResultType {
     case empty
     case loading
@@ -94,90 +96,112 @@ class SearchCellNoResult: UITableViewCell {
 }
 
 class SearchCellAssumptionQueryResult: UITableViewCell {
-    private let containerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor(hex: "F0F0F0")
-        return view
+    private let tagTokenConfig = TagTokenConfig()
+    private let textTokenConfig = TextTokenConfig()
+
+    private let iconView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "Search-Assumption-Tag")
+        imageView.tintColor = UIColor.primary200
+        return imageView
     }()
-    private let tagCollection: MunchTagCollectionView = {
-        let tagCollection = MunchTagCollectionView(horizontalSpacing: 6, backgroundColor: UIColor(hex: "F0F0F0"), showFullyVisibleOnly: false)
-        tagCollection.isUserInteractionEnabled = false
-        return tagCollection
+    private let tagView: MunchTagView = {
+        let tagView = MunchTagView(extends: true)
+        return tagView
+    }()
+    private let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+        layout.itemSize = CGSize(width: 140, height: 150)
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 16
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.backgroundColor = .white
+        collectionView.register(SearchCellAssumptionPlace.self, forCellWithReuseIdentifier: "SearchCellAssumptionPlace")
+        return collectionView
     }()
     private let applyButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = .clear
-        button.tintColor = UIColor(hex: "202020")
-        button.setImage(UIImage(named: "Search-Right-Arrow-Small"), for: .normal)
+        button.backgroundColor = .white
 
-        button.setTitleColor(UIColor(hex: "202020"), for: .normal)
+        button.setTitle("SHOW ALL", for: .normal)
+        button.setTitleColor(UIColor(hex: "383838"), for: .normal)
         button.titleLabel!.font = UIFont.systemFont(ofSize: 13, weight: .medium)
-        button.contentEdgeInsets.right = 0
-        button.titleEdgeInsets.bottom = 2
-        button.titleEdgeInsets.right = -1
 
-        button.contentHorizontalAlignment = .right
-        button.semanticContentAttribute = .forceRightToLeft
-        button.isUserInteractionEnabled = false
+        button.layer.cornerRadius = 3
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor(hex: "808080").cgColor
         return button
     }()
+
+    private var controller: SearchController!
+    private var searchQuery: SearchQuery!
+    private var places = [Place]()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
-        self.addSubview(containerView)
-        containerView.addSubview(tagCollection)
-        containerView.addSubview(applyButton)
 
-        containerView.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(24)
-            make.top.equalTo(self).inset(10)
-            make.bottom.equalTo(self).inset(4)
+        self.addSubview(iconView)
+        self.addSubview(tagView)
+        self.addSubview(collectionView)
+        self.addSubview(applyButton)
+
+        self.collectionView.dataSource = self
+        self.collectionView.delegate = self
+
+        applyButton.addTarget(self, action: #selector(actionApply(_:)), for: .touchUpInside)
+
+        iconView.snp.makeConstraints { make in
+            make.left.equalTo(self).inset(24)
+
+            make.top.bottom.equalTo(tagView)
         }
 
-        tagCollection.snp.makeConstraints { make in
-            make.left.equalTo(containerView).inset(10)
-            make.right.equalTo(containerView)
-            make.top.equalTo(containerView).inset(8)
-            make.height.equalTo(32)
+        tagView.snp.makeConstraints { make in
+            make.right.equalTo(self).inset(24)
+            make.left.equalTo(iconView.snp.right).inset(-8)
+            make.top.equalTo(self).inset(12)
+            make.height.equalTo(30)
+        }
+
+        collectionView.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.top.equalTo(tagView.snp.bottom).inset(-15)
+            make.height.equalTo(150)
         }
 
         applyButton.snp.makeConstraints { (make) in
-            make.top.equalTo(tagCollection.snp.bottom).inset(-8)
-            make.bottom.equalTo(containerView).inset(8)
-            make.right.equalTo(containerView).inset(8)
+            make.left.right.equalTo(self).inset(24)
+            make.height.equalTo(36)
+
+            make.top.equalTo(collectionView.snp.bottom).inset(-12)
+            make.bottom.equalTo(self).inset(12)
         }
     }
 
-//    func render(query: AssumedSearchQuery) {
-//        var types = [MunchTagCollectionType]()
-//
-//        for token in query.tokens {
-//            if let token = token as? AssumedSearchQuery.TagToken {
-//                types.append(.assumptionTag(token.text))
-//            } else if let token = token as? AssumedSearchQuery.TextToken {
-//                types.append(.assumptionText(token.text))
-//            }
-//        }
-//
-//        tagCollection.replaceAll(types: types)
-//        let title = DiscoverFilterBottomView.countTitle(count: query.resultCount)
-//
-//        if title.lowercased() == "no results" {
-//            applyButton.setTitleColor(UIColor.primary600, for: .normal)
-//            applyButton.tintColor = UIColor.primary600
-//            applyButton.setTitle("No Results", for: .normal)
-//        } else {
-//            applyButton.setTitleColor(UIColor(hex: "202020"), for: .normal)
-//            applyButton.tintColor = UIColor(hex: "202020")
-//            applyButton.setTitle(title, for: .normal)
-//        }
-//    }
+    func render(queryResult: AssumptionQueryResult, controller: SearchController) {
+        self.controller = controller
+        self.searchQuery = queryResult.searchQuery
+        self.places = queryResult.places
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        containerView.layer.cornerRadius = 3
-        containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
+        self.tagView.removeAll()
+        for token in queryResult.tokens {
+            if let token = token as? AssumptionQueryResult.TagToken {
+                self.tagView.add(text: token.text, config: tagTokenConfig)
+            } else if let token = token as? AssumptionQueryResult.TextToken {
+                self.tagView.add(text: token.text, config: textTokenConfig)
+            }
+        }
+
+        self.collectionView.reloadData()
+    }
+
+    @objc func actionApply(_ sender: Any) {
+        self.controller.select(searchQuery: searchQuery)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -186,6 +210,113 @@ class SearchCellAssumptionQueryResult: UITableViewCell {
 
     class var id: String {
         return "SearchCellAssumptionQueryResult"
+    }
+
+    struct TagTokenConfig: MunchTagViewConfig {
+        let font = UIFont.systemFont(ofSize: 14.0, weight: .medium)
+        let textColor = UIColor(hex: "222222")
+        let backgroundColor = UIColor.bgTag
+        let extra = CGSize(width: 20, height: 13)
+    }
+
+    struct TextTokenConfig: MunchTagViewConfig {
+        let font = UIFont.systemFont(ofSize: 14.0, weight: .medium)
+        let textColor = UIColor(hex: "222222")
+        let backgroundColor = UIColor.white
+        let extra = CGSize(width: 2, height: 13)
+    }
+}
+
+extension SearchCellAssumptionQueryResult: UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return places.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let place = places[indexPath.row]
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchCellAssumptionPlace", for: indexPath) as! SearchCellAssumptionPlace
+        cell.render(place: place)
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let place = places[indexPath.row]
+        controller.select(placeId: place.id)
+    }
+}
+
+fileprivate class SearchCellAssumptionPlace: UICollectionViewCell {
+    let imageView: MunchImageView = {
+        let imageView = MunchImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.backgroundColor = UIColor(hex: "DEDEDE")
+        return imageView
+    }()
+    let typeLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 12.0, weight: .medium)
+        label.textColor = UIColor.black.withAlphaComponent(0.85)
+        label.isUserInteractionEnabled = false
+        label.backgroundColor = .white
+        return label
+    }()
+    let nameLabel: UITextView = {
+        let nameLabel = UITextView()
+        nameLabel.font = UIFont.systemFont(ofSize: 13.0, weight: .bold)
+        nameLabel.textColor = UIColor.black.withAlphaComponent(0.75)
+        nameLabel.backgroundColor = .white
+
+        nameLabel.textContainer.maximumNumberOfLines = 2
+        nameLabel.textContainer.lineBreakMode = .byTruncatingTail
+        nameLabel.textContainer.lineFragmentPadding = 2
+        nameLabel.textContainerInset = UIEdgeInsets(topBottom: 0, leftRight: -2)
+        nameLabel.isUserInteractionEnabled = false
+        return nameLabel
+    }()
+
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        self.addSubview(imageView)
+        self.addSubview(typeLabel)
+        self.addSubview(nameLabel)
+
+        imageView.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.top.equalTo(self)
+        }
+
+        typeLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.top.equalTo(imageView.snp.bottom).inset(-3)
+            make.height.equalTo(14)
+        }
+
+        nameLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.top.equalTo(typeLabel.snp.bottom).inset(-3)
+            make.bottom.equalTo(self)
+
+            make.height.equalTo(32)
+        }
+
+        self.layoutIfNeeded()
+    }
+
+    func render(place: Place) {
+        imageView.render(sourcedImage: place.images?.get(0))
+        nameLabel.text = place.name
+        let neighbourhood = place.location.neighbourhood ?? ""
+        let tag = place.tag.explicits.get(0) ?? ""
+        typeLabel.text = neighbourhood + " ⋅ " + tag.capitalized
+    }
+
+    fileprivate override func layoutSubviews() {
+        super.layoutSubviews()
+        self.imageView.roundCorners(.allCorners, radius: 2)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 

@@ -164,7 +164,8 @@ public class MunchLocation {
 extension CLLocation {
     convenience init?(latLng: String) {
         let ll = latLng.components(separatedBy: ",")
-        if let lat = ll.get(0), let lng = ll.get(1) {
+        if let lat = ll.get(0)?.trimmingCharacters(in: .whitespacesAndNewlines),
+           let lng = ll.get(1)?.trimmingCharacters(in: .whitespacesAndNewlines) {
             if let latD = Double(lat), let lngD = Double(lng) {
                 self.init(latitude: latD, longitude: lngD)
                 return

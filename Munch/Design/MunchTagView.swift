@@ -15,9 +15,11 @@ class MunchTagView: UIView {
     private var index = 0
 
     private var spacing: CGFloat
+    private var extends: Bool
 
-    init(count: Int = 6, spacing: CGFloat = 8) {
+    init(count: Int = 6, spacing: CGFloat = 8, extends: Bool = false) {
         self.spacing = spacing
+        self.extends = extends
 
         var cells = [MunchTagViewCellTag]()
         for _ in 1...count {
@@ -39,13 +41,9 @@ class MunchTagView: UIView {
             cell.isHidden = false
 
             if let previous = cells.get(index - 1) {
-                var x = previous.frame.origin.x
-                x += spacing
-                x += previous.frame.size.width
+                let x = previous.frame.origin.x + spacing + previous.frame.size.width
                 cell.frame.origin.x = x
             }
-
-            // TODO Is Visible
         }
         self.index += 1
     }
@@ -55,6 +53,24 @@ class MunchTagView: UIView {
             cell.isHidden = true
         }
         self.index = 0
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        // Only check if rendering have space if extends is disabled
+        if !extends {
+            var previousX: CGFloat = 0
+            for (n, cell) in cells.enumerated() {
+                guard n < self.index else {
+                    return
+                }
+
+                previousX += cell.frame.size.width
+                cell.isHidden = !(previousX <= self.frame.width)
+                previousX += spacing
+            }
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
