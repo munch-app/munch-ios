@@ -246,7 +246,8 @@ class SearchCellAssumptionQueryResult: UITableViewCell {
 
         self.collectionView.reloadData()
 
-        applyButton.setTitle(DiscoverFilterBottomView.countTitle(count: queryResult.count), for: .normal)
+        let title = DiscoverFilterBottomView.countTitle(count: queryResult.count, prefix: "Show all")
+        applyButton.setTitle(title, for: .normal)
     }
 
     @objc func actionApply(_ sender: Any) {

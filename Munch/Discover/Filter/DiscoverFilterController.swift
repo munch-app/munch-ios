@@ -570,16 +570,16 @@ class DiscoverFilterBottomView: UIView {
         })
     }
 
-    class func countTitle(count: Int) -> String {
+    class func countTitle(count: Int, empty: String = "No Results", prefix: String = "See", postfix: String = "Restaurants") -> String {
         if count == 0 {
-            return "No Results"
+            return empty
         } else if count > 100 {
-            return "See 100+ Restaurants"
+            return "\(prefix) 100+ \(postfix)"
         } else if count <= 10 {
-            return "See \(count) Restaurants"
+            return "\(prefix) \(count) \(postfix)"
         } else {
             let rounded = count / 10 * 10
-            return "See \(rounded)+ Restaurants"
+            return "\(prefix) \(rounded)+ \(postfix)"
         }
     }
 
