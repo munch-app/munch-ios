@@ -177,6 +177,7 @@ struct AssumptionQueryResult {
     var searchQuery: SearchQuery
     var tokens: [SearchQueryToken]
     var places: [Place]
+    var count: Int
 
     init?(json: JSON) {
         guard json.exists() else {
@@ -185,6 +186,7 @@ struct AssumptionQueryResult {
         self.searchQuery = SearchQuery(json: json["searchQuery"])
         self.tokens = json["tokens"].flatMap({ AssumptionQueryResult.parseToken(result: $0.1) })
         self.places = json["places"].flatMap({ SearchClient.parseResult(result: $0.1) as? Place })
+        self.count = json["count"].int ?? 0
     }
 
     struct TextToken: SearchQueryToken {
