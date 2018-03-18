@@ -173,6 +173,7 @@ class SearchController: UIViewController {
 extension SearchController: UITableViewDataSource, UITableViewDelegate {
     func registerCell() {
         tableView.register(SearchCellHeaderRestaurant.self, forCellReuseIdentifier: SearchCellHeaderRestaurant.id)
+        tableView.register(SearchCellRecentlyViewed.self, forCellReuseIdentifier: SearchCellRecentlyViewed.id)
         tableView.register(SearchCellPlace.self, forCellReuseIdentifier: SearchCellPlace.id)
         tableView.register(SearchCellLoading.self, forCellReuseIdentifier: SearchCellLoading.id)
         tableView.register(SearchCellNoResult.self, forCellReuseIdentifier: SearchCellNoResult.id)
@@ -182,7 +183,7 @@ extension SearchController: UITableViewDataSource, UITableViewDelegate {
     var items: [SearchResultType] {
         if let text = headerView.textField.text {
             if text.isEmpty {
-                return []
+                return [SearchResultType.recentlyViewed]
             } else if text.count < 3 {
                 return []
             } else if text.count >= 3 {
@@ -192,7 +193,7 @@ extension SearchController: UITableViewDataSource, UITableViewDelegate {
                 return [SearchResultType.loading]
             }
         }
-        return []
+        return [SearchResultType.recentlyViewed]
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -209,6 +210,11 @@ extension SearchController: UITableViewDataSource, UITableViewDelegate {
         case .assumption(let queryResult):
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchCellAssumptionQueryResult.id) as! SearchCellAssumptionQueryResult
             cell.render(queryResult: queryResult, controller: self)
+            return cell
+
+        case .recentlyViewed:
+            let cell = tableView.dequeueReusableCell(withIdentifier: SearchCellRecentlyViewed.id) as! SearchCellRecentlyViewed
+            cell.render(controller: self)
             return cell
 
         case .headerRestaurant:

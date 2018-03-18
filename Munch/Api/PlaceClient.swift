@@ -230,6 +230,14 @@ struct Place: SearchResult, Equatable {
             self.explicits = json["explicits"].map({ $0.1.stringValue })
             self.implicits = json["implicits"].map({ $0.1.stringValue })
         }
+
+        func toParams() -> Parameters {
+            // This is not completed
+            var params = Parameters()
+            params["explicits"] = explicits
+            params["implicits"] = implicits
+            return params
+        }
     }
 
     /**
@@ -366,6 +374,9 @@ struct Place: SearchResult, Equatable {
         params["id"] = id
         params["name"] = name
         params["location"] = location.toParams()
+        params["tag"] = tag.toParams()
+        params["images"] = images?.map({ $0.toParams() })
+
         params["dataType"] = "Place"
         return params
     }

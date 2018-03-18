@@ -80,12 +80,14 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
                     AnalyticsParameterItemName: place.name! as NSObject,
                     AnalyticsParameterItemCategory: "place" as NSObject
                 ])
+
+                MunchApi.collections.recent.put(placeId: self.placeId) { meta in
+                    let recentDatabase = RecentDatabase(name: "RecentlyViewedPlace", maxItems: 20)
+                    recentDatabase.put(text: self.placeId, dictionary: place.toParams())
+                }
             } else {
                 self.present(meta.createAlert(), animated: true)
             }
-        }
-
-        MunchApi.collections.recent.put(placeId: placeId) { meta in
         }
 
         NotificationCenter.default.addObserver(forName: .UIApplicationUserDidTakeScreenshot, object: nil, queue: .main) { notification in

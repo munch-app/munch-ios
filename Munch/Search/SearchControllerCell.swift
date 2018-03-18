@@ -14,6 +14,7 @@ enum SearchResultType {
     case headerRestaurant
     case place(Place)
     case assumption(AssumptionQueryResult)
+    case recentlyViewed
 }
 
 class SearchCellHeaderRestaurant: UITableViewCell {
@@ -45,7 +46,7 @@ class SearchCellHeaderRestaurant: UITableViewCell {
 
         labelView.snp.makeConstraints { make in
             make.right.equalTo(self).inset(24)
-            make.left.equalTo(iconView.snp.right).inset(-4)
+            make.left.equalTo(iconView.snp.right).inset(-6)
             make.top.equalTo(self).inset(12)
 
             make.top.bottom.equalTo(iconView)
@@ -490,5 +491,111 @@ class SearchCellPlace: UITableViewCell {
         let textColor = UIColor(hex: "222222")
         let backgroundColor = UIColor.white
         let extra = CGSize(width: 10, height: 5)
+    }
+}
+
+class SearchCellRecentlyViewed: UITableViewCell {
+    private let iconView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "Search-Recently-Viewed")
+        imageView.tintColor = UIColor.primary200
+        return imageView
+    }()
+    private let labelView: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 16.0, weight: .medium)
+        label.textColor = UIColor(hex: "404040")
+        label.text = "RECENTLY VIEWED"
+        return label
+    }()
+    private let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+        layout.itemSize = CGSize(width: 130, height: 140)
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 16
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.backgroundColor = .white
+        collectionView.register(SearchCellAssumptionPlace.self, forCellWithReuseIdentifier: "SearchCellAssumptionPlace")
+        return collectionView
+    }()
+
+    private var controller: SearchController!
+    private var places = [Place]()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+
+        self.addSubview(iconView)
+        self.addSubview(labelView)
+        self.addSubview(collectionView)
+
+        self.collectionView.dataSource = self
+        self.collectionView.delegate = self
+
+        iconView.snp.makeConstraints { make in
+            make.left.equalTo(self).inset(24)
+            make.width.height.equalTo(24)
+        }
+
+        labelView.snp.makeConstraints { make in
+            make.right.equalTo(self).inset(24)
+            make.left.equalTo(iconView.snp.right).inset(-6)
+            make.top.equalTo(self).inset(12)
+
+            make.top.bottom.equalTo(iconView)
+        }
+
+        collectionView.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.top.equalTo(labelView.snp.bottom).inset(-15)
+            make.height.equalTo(140)
+            make.bottom.equalTo(self).inset(12)
+        }
+    }
+
+    func render(controller: SearchController) {
+        self.controller = controller
+        let recentDatabase = RecentDatabase(name: "RecentlyViewedPlace", maxItems: 20)
+        self.places = recentDatabase.get()
+                .flatMap({ $1 })
+                .flatMap({ SearchClient.parseResult(result: $0) })
+                .flatMap({ $0 as? Place })
+        self.collectionView.reloadData()
+
+        if places.isEmpty {
+            labelView.isHidden = true
+            iconView.isHidden = true
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    class var id: String {
+        return "SearchCellRecentlyViewed"
+    }
+}
+
+extension SearchCellRecentlyViewed: UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return places.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let place = places[indexPath.row]
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchCellAssumptionPlace", for: indexPath) as! SearchCellAssumptionPlace
+        cell.render(place: place)
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let place = places[indexPath.row]
+        controller.select(placeId: place.id)
     }
 }

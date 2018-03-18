@@ -61,6 +61,7 @@ class RecentDatabase {
                 .filter("_name == '\(name)' AND text == '\(text)'").first {
             try! realm.write {
                 exist._date = Int(Date().timeIntervalSince1970)
+                exist.json = try json?.rawData()
             }
         } else {
             try! realm.write {
