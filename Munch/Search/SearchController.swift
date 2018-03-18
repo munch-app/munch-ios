@@ -155,8 +155,11 @@ class SearchController: UIViewController {
             list.append(.assumption(assumption))
         }
 
-        for place in places {
-            list.append(.place(place))
+        if !places.isEmpty {
+            list.append(.headerRestaurant)
+            for place in places {
+                list.append(.place(place))
+            }
         }
 
         if list.isEmpty {
@@ -169,6 +172,7 @@ class SearchController: UIViewController {
 
 extension SearchController: UITableViewDataSource, UITableViewDelegate {
     func registerCell() {
+        tableView.register(SearchCellHeaderRestaurant.self, forCellReuseIdentifier: SearchCellHeaderRestaurant.id)
         tableView.register(SearchCellPlace.self, forCellReuseIdentifier: SearchCellPlace.id)
         tableView.register(SearchCellLoading.self, forCellReuseIdentifier: SearchCellLoading.id)
         tableView.register(SearchCellNoResult.self, forCellReuseIdentifier: SearchCellNoResult.id)
@@ -206,6 +210,9 @@ extension SearchController: UITableViewDataSource, UITableViewDelegate {
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchCellAssumptionQueryResult.id) as! SearchCellAssumptionQueryResult
             cell.render(queryResult: queryResult, controller: self)
             return cell
+
+        case .headerRestaurant:
+            return tableView.dequeueReusableCell(withIdentifier: SearchCellHeaderRestaurant.id) as! SearchCellHeaderRestaurant
 
         case .loading:
             return tableView.dequeueReusableCell(withIdentifier: SearchCellLoading.id) as! SearchCellLoading

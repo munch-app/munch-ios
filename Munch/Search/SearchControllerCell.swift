@@ -11,8 +11,54 @@ import SnapKit
 enum SearchResultType {
     case empty
     case loading
+    case headerRestaurant
     case place(Place)
     case assumption(AssumptionQueryResult)
+}
+
+class SearchCellHeaderRestaurant: UITableViewCell {
+    private let iconView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "Search-Restaurant")
+        imageView.tintColor = UIColor.primary200
+        return imageView
+    }()
+    private let labelView: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 16.0, weight: .medium)
+        label.textColor = UIColor(hex: "404040")
+        label.text = "RESTAURANTS"
+        return label
+    }()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+
+        self.addSubview(iconView)
+        self.addSubview(labelView)
+
+        iconView.snp.makeConstraints { make in
+            make.left.equalTo(self).inset(24)
+            make.width.height.equalTo(24)
+        }
+
+        labelView.snp.makeConstraints { make in
+            make.right.equalTo(self).inset(24)
+            make.left.equalTo(iconView.snp.right).inset(-4)
+            make.top.equalTo(self).inset(12)
+
+            make.top.bottom.equalTo(iconView)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    class var id: String {
+        return "SearchCellHeaderRestaurant"
+    }
 }
 
 class SearchCellLoading: UITableViewCell {
@@ -112,7 +158,7 @@ class SearchCellAssumptionQueryResult: UITableViewCell {
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
-        layout.itemSize = CGSize(width: 140, height: 150)
+        layout.itemSize = CGSize(width: 150, height: 160)
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 16
 
@@ -171,7 +217,7 @@ class SearchCellAssumptionQueryResult: UITableViewCell {
         collectionView.snp.makeConstraints { make in
             make.left.right.equalTo(self)
             make.top.equalTo(tagView.snp.bottom).inset(-15)
-            make.height.equalTo(150)
+            make.height.equalTo(160)
         }
 
         applyButton.snp.makeConstraints { (make) in
@@ -321,6 +367,8 @@ fileprivate class SearchCellAssumptionPlace: UICollectionViewCell {
 }
 
 class SearchCellPlace: UITableViewCell {
+    private let tagTokenConfig = TagTokenConfig()
+
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
@@ -344,34 +392,48 @@ class SearchCellPlace: UITableViewCell {
         return view
     }()
 
+    private let tagView = MunchTagView(count: 4)
+
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         self.addSubview(containerView)
         containerView.addSubview(placeImageView)
+
         containerView.addSubview(nameLabel)
         containerView.addSubview(locationLabel)
+        containerView.addSubview(tagView)
 
         containerView.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
-            make.top.bottom.equalTo(self).inset(2)
+            make.top.bottom.equalTo(self).inset(5)
         }
 
         placeImageView.snp.makeConstraints { make in
             make.left.top.bottom.equalTo(containerView).inset(8)
-            make.height.equalTo(40)
-            make.width.equalTo(50)
+            make.width.equalTo(80)
+            make.height.equalTo(64)
         }
 
         nameLabel.snp.makeConstraints { make in
-            make.left.equalTo(placeImageView.snp.right).inset(-12)
+            make.left.equalTo(placeImageView.snp.right).inset(-10)
             make.right.equalTo(containerView).inset(8)
+
             make.top.equalTo(containerView).inset(11)
         }
 
-        locationLabel.snp.makeConstraints { make in
-            make.left.equalTo(placeImageView.snp.right).inset(-12)
+        tagView.snp.makeConstraints { (make) in
+            make.left.equalTo(placeImageView.snp.right).inset(-10)
             make.right.equalTo(containerView).inset(8)
+
+            make.height.equalTo(19)
+            make.top.equalTo(nameLabel.snp.bottom).inset(-3)
+        }
+
+        locationLabel.snp.makeConstraints { make in
+            make.left.equalTo(placeImageView.snp.right).inset(-10)
+            make.right.equalTo(containerView).inset(8)
+
             make.bottom.equalTo(containerView).inset(11)
         }
     }
@@ -402,6 +464,11 @@ class SearchCellPlace: UITableViewCell {
         }
 
         locationLabel.attributedText = string
+
+        self.tagView.removeAll()
+        for tag in place.tag.explicits.prefix(3) {
+            self.tagView.add(text: tag.capitalized, config: tagTokenConfig)
+        }
     }
 
     override func layoutSubviews() {
@@ -416,5 +483,12 @@ class SearchCellPlace: UITableViewCell {
 
     class var id: String {
         return "SearchCellPlace"
+    }
+
+    struct TagTokenConfig: MunchTagViewConfig {
+        let font = UIFont.systemFont(ofSize: 11.0, weight: .regular)
+        let textColor = UIColor(hex: "222222")
+        let backgroundColor = UIColor.white
+        let extra = CGSize(width: 10, height: 5)
     }
 }
