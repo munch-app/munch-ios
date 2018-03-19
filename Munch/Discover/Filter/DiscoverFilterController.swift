@@ -304,6 +304,7 @@ extension DiscoverFilterController: UITableViewDataSource, UITableViewDelegate {
             manager.select(tag: text, selected: !manager.isSelected(tag: text))
 
         case .headerLocation:
+            self.headerView.textField.becomeFirstResponder()
             self.state = .search
 
         case .tagMore(let title):
