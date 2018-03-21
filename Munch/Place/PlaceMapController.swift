@@ -42,6 +42,23 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
         return button
     }()
 
+    private let mapButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "RIP-Map"), for: .normal)
+        button.tintColor = .black
+        button.backgroundColor = .white
+
+        button.layer.cornerRadius = 25
+        button.layer.masksToBounds = false
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.2
+        button.layer.shadowOffset = CGSize(width: 4, height: 4)
+        button.layer.shadowRadius = 25
+        button.layer.shouldRasterize = true
+        button.layer.rasterizationScale = UIScreen.main.scale
+        return button
+    }()
+
     private let locationManager: CLLocationManager = {
         let manager = CLLocationManager()
         manager.desiredAccuracy = kCLLocationAccuracyBest
@@ -76,8 +93,8 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
 
         self.mapView.delegate = self
         self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
-        self.headerView.mapButton.addTarget(self, action: #selector(onOpenMap(_:)), for: .touchUpInside)
         self.headingButton.addTarget(self, action: #selector(onShowHeading(_:)), for: .touchUpInside)
+        self.mapButton.addTarget(self, action: #selector(onShowHeading(_:)), for: .touchUpInside)
 
         self.render()
 
@@ -89,6 +106,7 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
         self.view.addSubview(headerView)
         self.view.addSubview(bottomView)
         self.view.addSubview(headingButton)
+        self.view.addSubview(mapButton)
 
         headerView.snp.makeConstraints { make in
             make.top.left.right.equalTo(self.view)
@@ -107,6 +125,12 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
             make.right.equalTo(self.view).inset(24)
             make.bottom.equalTo(bottomView.snp.top).inset(-24)
             make.width.height.equalTo(50)
+        }
+
+        mapButton.snp.makeConstraints { make in
+            make.right.equalTo(self.view).inset(24)
+            make.width.height.equalTo(50)
+            make.bottom.equalTo(headingButton.snp.top).inset(-16)
         }
     }
 
@@ -288,15 +312,6 @@ fileprivate class PlaceMapViewHeader: UIView {
         return button
     }()
 
-    fileprivate let mapButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "RIP-Map"), for: .normal)
-        button.tintColor = .black
-        button.imageEdgeInsets.right = 20
-        button.contentHorizontalAlignment = .right
-        return button
-    }()
-
     override init(frame: CGRect = CGRect.zero) {
         super.init(frame: frame)
         self.initViews()
@@ -304,21 +319,11 @@ fileprivate class PlaceMapViewHeader: UIView {
 
     private func initViews() {
         self.addSubview(backButton)
-        self.addSubview(mapButton)
 
         backButton.snp.makeConstraints { make in
             make.top.equalTo(self.safeArea.top)
             make.bottom.equalTo(self)
             make.left.equalTo(self)
-
-            make.width.equalTo(64)
-            make.height.equalTo(44)
-        }
-
-        mapButton.snp.makeConstraints { make in
-            make.top.equalTo(self.safeArea.top)
-            make.bottom.equalTo(self)
-            make.right.equalTo(self)
 
             make.width.equalTo(64)
             make.height.equalTo(44)
@@ -341,14 +346,11 @@ fileprivate class PlaceMapViewBottom: UIView {
     private let tagCollection: TTGTextTagCollectionView = {
         let tagCollection = TTGTextTagCollectionView()
         tagCollection.defaultConfig = DefaultTagConfig()
-        tagCollection.isUserInteractionEnabled = false
-        tagCollection.horizontalSpacing = 8
-        tagCollection.verticalSpacing = 0
+        tagCollection.horizontalSpacing = 6
         tagCollection.numberOfLines = 0
         tagCollection.alignment = .left
-        tagCollection.scrollDirection = .horizontal
-        tagCollection.showsHorizontalScrollIndicator = false
-        tagCollection.contentInset = UIEdgeInsets(top: 4, left: 0, bottom: 3, right: 0)
+        tagCollection.scrollDirection = .vertical
+        tagCollection.contentInset = UIEdgeInsets(top: 4, left: 0, bottom: 4, right: 0)
         return tagCollection
     }()
     private let addressLabel = AddressLabel()
@@ -414,14 +416,14 @@ extension PlaceMapViewBottom: TTGTextTagCollectionViewDelegate {
 
             tagBorderWidth = 0
             tagTextColor = UIColor.black.withAlphaComponent(0.88)
-            tagBackgroundColor = UIColor(hex: "ebebeb")
+            tagBackgroundColor = UIColor.bgTag
 
             tagSelectedBorderWidth = 0
             tagSelectedTextColor = UIColor.black.withAlphaComponent(0.88)
-            tagSelectedBackgroundColor = UIColor(hex: "ebebeb")
+            tagSelectedBackgroundColor = UIColor.bgTag
             tagSelectedCornerRadius = 3
 
-            tagExtraSpace = CGSize(width: 15, height: 8)
+            tagExtraSpace = CGSize(width: 18, height: 8)
         }
     }
 }
