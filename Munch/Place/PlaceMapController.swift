@@ -94,7 +94,7 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
         self.mapView.delegate = self
         self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
         self.headingButton.addTarget(self, action: #selector(onShowHeading(_:)), for: .touchUpInside)
-        self.mapButton.addTarget(self, action: #selector(onShowHeading(_:)), for: .touchUpInside)
+        self.mapButton.addTarget(self, action: #selector(onOpenMap(_:)), for: .touchUpInside)
 
         self.render()
 
