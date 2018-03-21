@@ -315,7 +315,7 @@ extension DiscoverFilterCellLocation: UICollectionViewDataSource, UICollectionVi
             cell.render(text: "Nearby", image: UIImage(named: "Search-Location-Nearby"), selected: selected)
         case let .anywhere(location):
             let selected = controller.manager.isSelected(location: location)
-            cell.render(text: "Anywhere", image: UIImage(named: "Search-Location-Anywhere"), selected: selected)
+            cell.render(text: "Singapore", image: UIImage(named: "Search-Location-Anywhere"), selected: selected)
         case let .location(location):
             let selected = controller.manager.isSelected(location: location)
             cell.render(text: location.name, image: UIImage(named: "Search-Location-Pin"), selected: selected)

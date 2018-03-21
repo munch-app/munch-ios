@@ -416,7 +416,7 @@ fileprivate class AccountDataCollectionCreateCell: UICollectionViewCell {
 fileprivate class AccountDataEmptyLikeCell: UICollectionViewCell {
     private let label: UILabel = {
         let label = UILabel()
-        label.text = "You haven't liked any places."
+        label.text = "Hit like to save your favourite spots here"
         label.textAlignment = .center
         label.font = UIFont.systemFont(ofSize: 18.0, weight: UIFont.Weight.regular)
         return label

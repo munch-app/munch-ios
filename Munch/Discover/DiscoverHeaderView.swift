@@ -218,7 +218,7 @@ class DiscoverTextButton: UIButton {
         field.leftImageWidth = 32
         field.leftImageSize = 18
 
-        field.placeholder = "Search Anything"
+        field.placeholder = "Search e.g. Italian in Marina Bay"
         field.font = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
 
         field.isEnabled = false
