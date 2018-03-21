@@ -177,6 +177,26 @@ class DiscoverPlaceCardBottomView: UIView {
 
     private var tagLabelWidth: Constraint!
 
+    static let periodText = " • ".set(style: Style("open", {
+        $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: .ultraLight))
+    }))
+    static let closingSoonText = "Closing Soon".set(style: Style("open", {
+        $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 13, weight: .semibold))
+        $0.color = UIColor.primary
+    }))
+    static let closedNowText = "Closed Now".set(style: Style("open", {
+        $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 13, weight: .semibold))
+        $0.color = UIColor.primary
+    }))
+    static let openingSoonText = "Opening Soon".set(style: Style("open", {
+        $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 13, weight: .semibold))
+        $0.color = UIColor.secondary
+    }))
+    static let openNowText = "Open Now".set(style: Style("open", {
+        $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 13, weight: .semibold))
+        $0.color = UIColor.secondary
+    }))
+
     override init(frame: CGRect = CGRect()) {
         super.init(frame: frame)
         self.addSubview(nameLabel)
@@ -240,6 +260,13 @@ class DiscoverPlaceCardBottomView: UIView {
     private func render(location card: SearchCard) {
         let line = NSMutableAttributedString()
 
+        // Distance
+        if let latLng = card["location"]["latLng"].string {
+            if let distance = MunchLocation.distance(asMetric: latLng) {
+                line.append(NSMutableAttributedString(string: "\(distance) - "))
+            }
+        }
+
         // Neighbourhood
         if let street = card["location"]["neighbourhood"].string {
             line.append(NSMutableAttributedString(string: street))
@@ -247,28 +274,21 @@ class DiscoverPlaceCardBottomView: UIView {
             line.append(NSMutableAttributedString(string: "Singapore"))
         }
 
-        // Distance
-        if let latLng = card["location"]["latLng"].string {
-            if let distance = MunchLocation.distance(asMetric: latLng) {
-                line.append(NSMutableAttributedString(string: " - \(distance)"))
-            }
-        }
-
         // Open Now
         let hours = card["hours"].flatMap({ Place.Hour(json: $0.1) })
         switch Place.Hour.Formatter.isOpen(hours: hours) {
         case .opening:
-            line.append(NSMutableAttributedString(string: " • ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: .ultraLight)]))
-            line.append(NSMutableAttributedString(string: "Opening Soon", attributes: [NSAttributedStringKey.foregroundColor: UIColor.secondary]))
+            line.append(DiscoverPlaceCardBottomView.periodText)
+            line.append(DiscoverPlaceCardBottomView.openingSoonText)
         case .open:
-            line.append(NSMutableAttributedString(string: " • ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: .ultraLight)]))
-            line.append(NSMutableAttributedString(string: "Open Now", attributes: [NSAttributedStringKey.foregroundColor: UIColor.secondary]))
+            line.append(DiscoverPlaceCardBottomView.periodText)
+            line.append(DiscoverPlaceCardBottomView.openNowText)
         case .closed:
-            line.append(NSMutableAttributedString(string: " • ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: .ultraLight)]))
-            line.append(NSMutableAttributedString(string: "Closed Now", attributes: [NSAttributedStringKey.foregroundColor: UIColor.primary]))
+            line.append(DiscoverPlaceCardBottomView.periodText)
+            line.append(DiscoverPlaceCardBottomView.closedNowText)
         case .closing:
-            line.append(NSMutableAttributedString(string: " • ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15, weight: .ultraLight)]))
-            line.append(NSMutableAttributedString(string: "Closing Soon", attributes: [NSAttributedStringKey.foregroundColor: UIColor.primary]))
+            line.append(DiscoverPlaceCardBottomView.periodText)
+            line.append(DiscoverPlaceCardBottomView.closingSoonText)
         case .none:
             break
         }

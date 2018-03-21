@@ -395,6 +395,7 @@ struct SearchCard: Equatable {
     var cardId: String
     var uniqueId: String?
     var instanceId: String
+
     private var json: JSON
 
     init(cardId: String, json: JSON = JSON(parseJSON: "{}")) {
@@ -415,6 +416,10 @@ struct SearchCard: Equatable {
      */
     subscript(name: String) -> JSON {
         return json[name]
+    }
+
+    func cached(field: String) {
+
     }
 
     static func ==(lhs: SearchCard, rhs: SearchCard) -> Bool {

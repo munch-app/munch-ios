@@ -338,9 +338,7 @@ struct Place: SearchResult, Equatable {
 
                 let date = Date()
                 let currentDay = day().lowercased()
-                let currentHours = hours.filter {
-                    $0.day == currentDay
-                }
+                let currentHours = hours.filter({ $0.day == currentDay })
 
                 for hour in currentHours {
                     if (isBetween(hour: hour, date: date)) {
