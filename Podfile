@@ -27,9 +27,11 @@ target 'Munch' do
   # UI Components Library
   pod 'TPKeyboardAvoiding', '~> 1.3'
   pod 'NVActivityIndicatorView', '~> 4.0'
-  pod 'ESTabBarController-swift', '~> 2.5'
+  pod 'ESTabBarController-swift', '2.5'
   pod 'Shimmer', '~> 1.0'
   pod 'TTGTagCollectionView', :git=> 'https://github.com/Fuxingloh/TTGTagCollectionView.git', :branch => 'master'
+  pod 'NativePopup', :git => 'https://github.com/Fuxingloh/NativePopup.git', :branch => 'master'
+
   pod 'SKPhotoBrowser', '~> 5.0'
   pod 'Cosmos', '~> 13.0'
   pod 'BEMCheckBox', '~> 1.4'

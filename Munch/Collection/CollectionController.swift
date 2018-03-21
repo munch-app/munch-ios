@@ -8,9 +8,9 @@ import UIKit
 
 class CollectionSelectRootController: UINavigationController, UINavigationControllerDelegate {
 
-    init(placeId: String) {
+    init(placeId: String, onDismiss: @escaping((PlaceCollection?) -> Void)) {
         super.init(nibName: nil, bundle: nil)
-        self.viewControllers = [CollectionSelectListController(placeId: placeId)]
+        self.viewControllers = [CollectionSelectListController(placeId: placeId, onDismiss: onDismiss)]
         self.delegate = self
     }
 
@@ -54,8 +54,11 @@ class CollectionSelectListController: UIViewController {
 
     var items: [PlaceCollection] = []
 
-    init(placeId: String) {
+    private let onDismiss: ((PlaceCollection?) -> Void)
+
+    init(placeId: String, onDismiss: @escaping((PlaceCollection?) -> Void)) {
         self.placeId = placeId
+        self.onDismiss = onDismiss
         super.init(nibName: nil, bundle: nil)
 
         self.hidesBottomBarWhenPushed = true
@@ -248,6 +251,7 @@ extension CollectionSelectListController: UITableViewDataSource, UITableViewDele
         if let collectionId = item.collectionId {
             MunchApi.collections.putPlace(collectionId: collectionId, placeId: placeId) { meta in
                 if meta.isOk() {
+                    self.onDismiss(item)
                     self.dismiss(animated: true)
                 } else {
                     self.present(meta.createAlert(), animated: true)

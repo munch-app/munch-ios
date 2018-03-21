@@ -16,6 +16,8 @@ import SnapKit
 import Cosmos
 import SwiftRichString
 
+import NativePopup
+
 class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, SFSafariViewControllerDelegate {
     let placeId: String
     var place: Place?
@@ -134,6 +136,9 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         AccountAuthentication.requireAuthentication(controller: self) { state in
             switch state {
             case .loggedIn:
+                let generator = UIImpactFeedbackGenerator(style: .light)
+                generator.impactOccurred()
+
                 if let place = self.place, let liked = self.liked {
                     self.liked = !liked
                     self.headerView.render(place: place, liked: self.liked)
@@ -169,7 +174,14 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
             AccountAuthentication.requireAuthentication(controller: self) { state in
                 switch state {
                 case .loggedIn:
-                    let controller = CollectionSelectRootController(placeId: self.placeId)
+                    let controller = CollectionSelectRootController(placeId: self.placeId) { placeCollection in
+                        if let collection = placeCollection, let name = collection.name {
+                            NativePopup.show(image: Preset.Feedback.done,
+                                    title: "Added to \(name)",
+                                    message: nil,
+                                    initialEffectType: .fadeIn)
+                        }
+                    }
                     self.present(controller, animated: true)
                 default:
                     return

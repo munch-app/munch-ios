@@ -7,6 +7,7 @@ import Foundation
 import UIKit
 
 import NVActivityIndicatorView
+import NativePopup
 
 class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
     var userId: String?
@@ -46,7 +47,6 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
     }
 
     init(collectionId: String, placeCollection: PlaceCollection) {
-        self.userId = placeCollection.userId
         self.collectionId = collectionId
         self.placeCollection = placeCollection
         super.init(nibName: nil, bundle: nil)
@@ -175,6 +175,12 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
     func deletePlace(placeId: String) {
         MunchApi.collections.deletePlace(collectionId: self.collectionId, placeId: placeId) { metaJSON in
             if metaJSON.isOk() {
+                if let collection = self.placeCollection, let name = collection.name {
+                    NativePopup.show(image: Preset.Feedback.done,
+                            title: "Removed from \(name)",
+                            message: nil,
+                            initialEffectType: .fadeIn)
+                }
                 self.addedPlaces = []
                 self.collectionView.reloadData()
             } else {
