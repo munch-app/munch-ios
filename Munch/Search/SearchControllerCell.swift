@@ -21,13 +21,13 @@ class SearchCellHeaderRestaurant: UITableViewCell {
     private let iconView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "Search-Restaurant")
-        imageView.tintColor = UIColor.primary200
+        imageView.tintColor = UIColor.primary300
         return imageView
     }()
     private let labelView: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16.0, weight: .medium)
-        label.textColor = UIColor(hex: "404040")
+        label.font = UIFont.systemFont(ofSize: 15.0, weight: .medium)
+        label.textColor = UIColor(hex: "555555")
         label.text = "RESTAURANTS"
         return label
     }()
@@ -41,7 +41,7 @@ class SearchCellHeaderRestaurant: UITableViewCell {
 
         iconView.snp.makeConstraints { make in
             make.left.equalTo(self).inset(24)
-            make.width.height.equalTo(24)
+            make.width.height.equalTo(20)
         }
 
         labelView.snp.makeConstraints { make in
@@ -149,7 +149,7 @@ class SearchCellAssumptionQueryResult: UITableViewCell {
     private let iconView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "Search-Assumption-Tag")
-        imageView.tintColor = UIColor.primary200
+        imageView.tintColor = UIColor.primary300
         return imageView
     }()
     private let tagView: MunchTagView = {
@@ -501,13 +501,13 @@ class SearchCellRecentlyViewed: UITableViewCell {
     private let iconView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "Search-Recently-Viewed")
-        imageView.tintColor = UIColor.primary200
+        imageView.tintColor = UIColor.primary300
         return imageView
     }()
     private let labelView: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16.0, weight: .medium)
-        label.textColor = UIColor(hex: "404040")
+        label.font = UIFont.systemFont(ofSize: 15.0, weight: .medium)
+        label.textColor = UIColor(hex: "555555")
         label.text = "RECENTLY VIEWED"
         return label
     }()
@@ -542,7 +542,7 @@ class SearchCellRecentlyViewed: UITableViewCell {
 
         iconView.snp.makeConstraints { make in
             make.left.equalTo(self).inset(24)
-            make.width.height.equalTo(24)
+            make.width.height.equalTo(20)
         }
 
         labelView.snp.makeConstraints { make in
