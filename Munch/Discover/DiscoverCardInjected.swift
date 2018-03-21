@@ -224,7 +224,7 @@ class SearchHeaderCard: UITableViewCell, SearchCardView {
 class SearchHeaderCardLabel: UIView {
     private let label: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 18.0, weight: .bold)
+        label.font = UIFont.systemFont(ofSize: 20.0, weight: .semibold)
         label.textColor = UIColor(hex: "484848")
         label.backgroundColor = .white
         label.text = " "
