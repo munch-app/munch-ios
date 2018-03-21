@@ -14,7 +14,6 @@ enum FilterTagType {
     case price(String)
     case hour(String)
     case tag(String)
-    case or
 }
 
 class FilterTagView: UIView, TTGTextTagCollectionViewDelegate {
@@ -59,14 +58,11 @@ class FilterTagView: UIView, TTGTextTagCollectionViewDelegate {
         var tags = [FilterTagType]()
         for tag in query.filter.tag.positives {
             tags.append(FilterTagType.tag(tag))
-            tags.append(.or)
         }
 
         if tags.isEmpty {
             return []
         }
-
-        tags.removeLast()
         return tags
     }
 
@@ -122,8 +118,6 @@ class FilterTagView: UIView, TTGTextTagCollectionViewDelegate {
                 tagCollection.addTag(name)
             case let .tag(name):
                 tagCollection.addTag(name)
-            case .or:
-                tagCollection.addTag("or", with: OrTagConfig())
             }
         }
     }
@@ -183,7 +177,6 @@ class FilterTagView: UIView, TTGTextTagCollectionViewDelegate {
             delegate?.tagCollection(selectedHour: name, for: self)
         case let .tag(name):
             delegate?.tagCollection(selectedTag: name, for: self)
-        case .or: return
         }
     }
 

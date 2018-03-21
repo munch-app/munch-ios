@@ -194,6 +194,7 @@ class DiscoverFilterButton: UIButton {
         tintColor = UIColor(hex: "333333")
         contentHorizontalAlignment = .right
         contentEdgeInsets.right = 24
+        backgroundColor = .white
     }
 
     required init?(coder aDecoder: NSCoder) {
