@@ -766,10 +766,11 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
 
 class DiscoverFilterCellTiming: UITableViewCell {
     fileprivate let collectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
+        let layout = LeftAlignedCollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
-        layout.scrollDirection = .horizontal
+        layout.scrollDirection = .vertical
         layout.minimumInteritemSpacing = 16 // LeftRight
+        layout.minimumLineSpacing = 12
 
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.showsVerticalScrollIndicator = false
@@ -794,7 +795,7 @@ class DiscoverFilterCellTiming: UITableViewCell {
 
         collectionView.snp.makeConstraints { make in
             make.left.right.equalTo(self)
-            make.height.equalTo(40).priority(999)
+            make.height.equalTo(92).priority(999)
             make.top.bottom.equalTo(self)
         }
     }
@@ -811,6 +812,27 @@ class DiscoverFilterCellTiming: UITableViewCell {
 
     class var id: String {
         return "SearchSuggestCellTiming"
+    }
+
+    class LeftAlignedCollectionViewFlowLayout: UICollectionViewFlowLayout {
+        override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+            let attributes = super.layoutAttributesForElements(in: rect)
+
+            var leftMargin = sectionInset.left
+            var maxY: CGFloat = -1.0
+            attributes?.forEach { layoutAttribute in
+                if layoutAttribute.frame.origin.y >= maxY {
+                    leftMargin = sectionInset.left
+                }
+
+                layoutAttribute.frame.origin.x = leftMargin
+
+                leftMargin += layoutAttribute.frame.width + minimumInteritemSpacing
+                maxY = max(layoutAttribute.frame.maxY , maxY)
+            }
+
+            return attributes
+        }
     }
 }
 
