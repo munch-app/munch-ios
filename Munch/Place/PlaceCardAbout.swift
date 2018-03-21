@@ -187,9 +187,14 @@ class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
 
     override func didTap() {
         if let websiteUrl = websiteUrl, let url = URL.init(string: websiteUrl) {
-            let safari = SFSafariViewController(url: url)
-            safari.delegate = self
-            controller.present(safari, animated: true, completion: nil)
+            let alert = UIAlertController(title: nil, message: "Open in Safari?", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: "Open", style: .default, handler: { action in
+                let safari = SFSafariViewController(url: url)
+                safari.delegate = self
+                self.controller.present(safari, animated: true, completion: nil)
+            }))
+            controller.present(alert, animated: true, completion: nil)
         }
     }
 
