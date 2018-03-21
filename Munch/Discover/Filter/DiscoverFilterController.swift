@@ -343,9 +343,10 @@ fileprivate class DiscoverFilterHeaderView: UIView, FilterTagViewDelegate {
     }()
     fileprivate let cancelButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "NavigationBar-Close"), for: .normal)
-        button.tintColor = UIColor(hex: "333333")
-        button.imageEdgeInsets.right = 24
+        button.setTitle("CANCEL", for: .normal)
+        button.setTitleColor(UIColor(hex: "333333"), for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 12, weight: .medium)
+        button.titleEdgeInsets.right = 24
         button.contentHorizontalAlignment = .right
         button.backgroundColor = .white
         return button
@@ -370,7 +371,7 @@ fileprivate class DiscoverFilterHeaderView: UIView, FilterTagViewDelegate {
         self.tagCollection.delegate = self
 
         cancelButton.snp.makeConstraints { make in
-            make.width.equalTo(64)
+            make.width.equalTo(84)
             make.right.equalTo(self)
 
             make.top.bottom.equalTo(self.tagCollection)

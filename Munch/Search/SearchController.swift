@@ -274,9 +274,9 @@ fileprivate class SearchHeaderView: UIView {
     }()
     fileprivate let cancelButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Cancel", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 15)
+        button.setTitle("CANCEL", for: .normal)
+        button.setTitleColor(UIColor(hex: "333333"), for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 12, weight: .medium)
         button.titleEdgeInsets.right = 24
         button.contentHorizontalAlignment = .right
         return button

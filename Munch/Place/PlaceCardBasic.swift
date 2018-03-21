@@ -322,6 +322,10 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
         $0.color = UIColor.black
         $0.font = FontAttribute.init(font: .systemFont(ofSize: 14, weight: .regular))
     })
+    static let boldStyle = Style("bold", {
+        $0.color = UIColor.black
+        $0.font = FontAttribute.init(font: .systemFont(ofSize: 14, weight: .semibold))
+    })
 
     let grid = UIView()
     let indicator = UIButton()
@@ -373,7 +377,7 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
             attributedText.append("Open Now\n".set(style: PlaceBasicBusinessHourCard.openStyle))
         case .closing:
             attributedText.append("Closing Soon\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
-        case .closed:fallthrough
+        case .closed: fallthrough
         case .none:
             attributedText.append("Closed Now\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
 
@@ -443,16 +447,15 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
             func createLine(day: String, dayText: String) -> NSAttributedString {
                 if hours.isToday(day: day) {
                     switch hours.isOpen() {
-                    case .opening:
-                        fallthrough
-                    case .closing:
-                         fallthrough
+                    case .opening: fallthrough
+                    case .closing: fallthrough
                     case .open:
-                        return "\(dayText)\n" + hours[day].set(style: PlaceBasicBusinessHourCard.openStyle)
-                    case .closed:
-                        fallthrough
+                        return dayText.set(style: PlaceBasicBusinessHourCard.boldStyle) + "\n"
+                                + hours[day].set(style: PlaceBasicBusinessHourCard.openStyle)
+                    case .closed: fallthrough
                     case .none:
-                        return "\(dayText)\n" + hours[day].set(style: PlaceBasicBusinessHourCard.closeStyle)
+                        return dayText.set(style: PlaceBasicBusinessHourCard.boldStyle) + "\n"
+                                + hours[day].set(style: PlaceBasicBusinessHourCard.closeStyle)
                     }
                 } else {
                     return NSAttributedString(string: "\(dayText)\n\(hours[day])")
