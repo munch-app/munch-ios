@@ -111,10 +111,14 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>camera description.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>photos description.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Message: Location Always</string>
+	<string>Munch uses your location to help you discover the most delicious places around</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Message: Location In Use</string>
+	<string>Munch uses your location to help you discover the most delicious places around</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

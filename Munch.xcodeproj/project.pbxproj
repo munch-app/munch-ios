@@ -82,20 +82,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		03217E1120622D4A00EE4F7F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 03217E0C20622D4A00EE4F7F /* NativePopup.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = FE85338B1EAC7C92004BB756;
-			remoteInfo = NativePopup;
-		};
-		03217E1320622D4A00EE4F7F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 03217E0C20622D4A00EE4F7F /* NativePopup.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = FECA87B71EAC7CCF00D07CB1;
-			remoteInfo = Example;
-		};
 		032F890D1E82DFA300AD3818 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 032F88F01E82DFA200AD3818 /* Project object */;
@@ -120,8 +106,6 @@
 		031C2F411E9AADDB0022F0AF /* NYTPhotoViewerCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NYTPhotoViewerCore.framework; path = Carthage/Build/iOS/NYTPhotoViewerCore.framework; sourceTree = "<group>"; };
 		031C2F431E9AEFC10022F0AF /* FLAnimatedImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLAnimatedImage.framework; path = Carthage/Build/iOS/FLAnimatedImage.framework; sourceTree = "<group>"; };
 		031C2F451E9CAE170022F0AF /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
-		03217E0A20622CE300EE4F7F /* NativePopup */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NativePopup; path = Munch/Sources/NativePopup; sourceTree = "<group>"; };
-		03217E0C20622D4A00EE4F7F /* NativePopup.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = NativePopup.xcodeproj; path = Munch/Sources/NativePopup.xcodeproj; sourceTree = "<group>"; };
 		032548612014831500F51D85 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		032F88F81E82DFA300AD3818 /* Munch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Munch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		032F88FB1E82DFA300AD3818 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -254,15 +238,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		03217E0D20622D4A00EE4F7F /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				03217E1220622D4A00EE4F7F /* NativePopup.framework */,
-				03217E1420622D4A00EE4F7F /* Example.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		032F88EF1E82DFA200AD3818 = {
 			isa = PBXGroup;
 			children = (
@@ -337,8 +312,6 @@
 		032F892F1E82EF8B00AD3818 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				03217E0C20622D4A00EE4F7F /* NativePopup.xcodeproj */,
-				03217E0A20622CE300EE4F7F /* NativePopup */,
 				0382757D1F06427300C5954A /* NVActivityIndicatorView.framework */,
 				0382757B1F05109600C5954A /* RealmSwift.framework */,
 				038275791F05109300C5954A /* Realm.framework */,
@@ -616,12 +589,6 @@
 			mainGroup = 032F88EF1E82DFA200AD3818;
 			productRefGroup = 032F88F91E82DFA300AD3818 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 03217E0D20622D4A00EE4F7F /* Products */;
-					ProjectRef = 03217E0C20622D4A00EE4F7F /* NativePopup.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				032F88F71E82DFA200AD3818 /* Munch */,
@@ -1106,10 +1073,7 @@
 				CODE_SIGN_ENTITLEMENTS = Munch/Munch.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 7G635T5DK8;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Munch/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1130,10 +1094,7 @@
 				CODE_SIGN_ENTITLEMENTS = Munch/Munch.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 7G635T5DK8;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Munch/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
