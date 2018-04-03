@@ -446,7 +446,7 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
 
     private var isHookSet: Bool = false
     private var locationName: String?
-    private var priceRangeInArea: PriceRangeInArea?
+    private var filterPriceRange: FilterPriceRange?
 
     var controller: DiscoverFilterController! {
         didSet {
@@ -509,48 +509,43 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
     fileprivate func reload() {
         let locationName = controller.manager.getLocationName()
         if locationName == self.locationName {
+            self.updateSelected()
             return
         }
 
-        self.priceRangeInArea = nil
+        self.filterPriceRange = nil
         self.isLoading = true
         self.locationName = locationName
 
-//        let deadline = DispatchTime.now() + 0.75
-//        controller.manager.getPriceInArea { metaJSON, priceRangeInArea in
-//            self.priceRangeInArea = priceRangeInArea
-//
-//            if metaJSON.isOk(), let priceRangeInArea = priceRangeInArea {
-//                DispatchQueue.main.asyncAfter(deadline: deadline) {
-//                    self.priceSlider.minValue = CGFloat(priceRangeInArea.minRounded)
-//                    self.priceSlider.maxValue = CGFloat(priceRangeInArea.maxRounded)
-//
-//                    self.priceSlider.enableStep = false
-//                    self.updateSelected()
-//                    self.isLoading = false
-//                    self.controller.manager.resetPrice()
-//                }
-//            } else {
-//                self.controller.present(metaJSON.createAlert(), animated: true)
-//            }
-//        }
+        let deadline = DispatchTime.now() + 0.75
+        controller.manager.getPriceRange {  metaJSON, filterPriceRange in
+            self.filterPriceRange = filterPriceRange
+
+            if metaJSON.isOk(), let filterPriceRange = filterPriceRange {
+                DispatchQueue.main.asyncAfter(deadline: deadline) {
+                    self.priceSlider.minValue = CGFloat(filterPriceRange.all.minRounded)
+                    self.priceSlider.maxValue = CGFloat(filterPriceRange.all.maxRounded)
+
+                    self.priceSlider.enableStep = false
+                    self.updateSelected()
+                    self.isLoading = false
+                    self.controller.manager.resetPrice()
+                }
+            } else {
+                self.controller.present(metaJSON.createAlert(), animated: true)
+            }
+        }
     }
 
     @objc fileprivate func onPriceButton(for button: UIButton) {
-        if let priceRangeInArea = priceRangeInArea, let name = button.title(for: .normal) {
+        if let filterPriceRange = filterPriceRange, let name = button.title(for: .normal) {
             switch name {
             case "$":
-                let min = priceRangeInArea.cheapRange.min
-                let max = priceRangeInArea.cheapRange.max
-                controller.manager.select(price: name, min: min, max: max)
+                controller.manager.select(price: name, min: filterPriceRange.cheap.min, max: filterPriceRange.cheap.max)
             case "$$":
-                let min = priceRangeInArea.averageRange.min
-                let max = priceRangeInArea.averageRange.max
-                controller.manager.select(price: name, min: min, max: max)
+                controller.manager.select(price: name, min: filterPriceRange.average.min, max: filterPriceRange.average.max)
             case "$$$":
-                let min = priceRangeInArea.expensiveRange.min
-                let max = priceRangeInArea.expensiveRange.max
-                controller.manager.select(price: name, min: min, max: max)
+                controller.manager.select(price: name, min: filterPriceRange.expensive.min, max: filterPriceRange.expensive.max)
             default: break
             }
 
@@ -565,7 +560,8 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
         let max = Double(priceSlider.selectedMaxValue)
         priceButtons.select(name: nil)
 
-        if priceRangeInArea?.min == min && priceRangeInArea?.max == max {
+
+        if filterPriceRange?.all.min == min && filterPriceRange?.all.max == max {
             controller.manager.select(price: nil, min: nil, max: nil)
         } else {
             controller.manager.select(price: nil, min: min, max: max)
@@ -577,12 +573,12 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
     }
 
     private func updateSelected() {
-        if let priceRangeInArea = priceRangeInArea {
+        if let filterPriceRange = filterPriceRange {
             priceButtons.select(name: controller.manager.searchQuery.filter.price.name)
             let price = self.controller.manager.searchQuery.filter.price
 
-            self.priceSlider.selectedMinValue = CGFloat(price.min ?? priceRangeInArea.minRounded)
-            self.priceSlider.selectedMaxValue = CGFloat(price.max ?? priceRangeInArea.maxRounded)
+            self.priceSlider.selectedMinValue = CGFloat(price.min ?? filterPriceRange.all.minRounded)
+            self.priceSlider.selectedMaxValue = CGFloat(price.max ?? filterPriceRange.all.maxRounded)
             priceSlider.setNeedsLayout()
         }
     }

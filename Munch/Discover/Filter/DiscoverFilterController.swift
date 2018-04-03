@@ -250,12 +250,8 @@ extension DiscoverFilterController: UITableViewDataSource, UITableViewDelegate {
             return
 
         case .tagMore(let title):
-            let controller = SearchSuggestTagController(searchQuery: manager.searchQuery, type: title) { query in
-                if let query = query {
-                    self.manager.setSearchQuery(searchQuery: query)
-                }
-            }
-            self.navigationController?.pushViewController(controller, animated: true)
+            // TODO
+            return
         default: return
         }
     }

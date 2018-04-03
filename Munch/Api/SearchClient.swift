@@ -25,8 +25,8 @@ class SearchClient {
             params["query"] = query.toParams()
 
             MunchApi.restful.post("/search", parameters: params) { meta, json in
-                let assumptions = json["data"]["assumptions"].flatMap({ AssumptionQueryResult(json: $0.1) })
-                let places = json["data"]["places"].flatMap({ SearchClient.parseResult(result: $0.1) as? Place })
+                let assumptions = json["data"]["assumptions"].compactMap({ AssumptionQueryResult(json: $0.1) })
+                let places = json["data"]["places"].compactMap({ SearchClient.parseResult(result: $0.1) as? Place })
                 callback(meta, assumptions, places)
             }
         }
@@ -184,8 +184,8 @@ struct AssumptionQueryResult {
             return nil
         }
         self.searchQuery = SearchQuery(json: json["searchQuery"])
-        self.tokens = json["tokens"].flatMap({ AssumptionQueryResult.parseToken(result: $0.1) })
-        self.places = json["places"].flatMap({ SearchClient.parseResult(result: $0.1) as? Place })
+        self.tokens = json["tokens"].compactMap({ AssumptionQueryResult.parseToken(result: $0.1) })
+        self.places = json["places"].compactMap({ SearchClient.parseResult(result: $0.1) as? Place })
         self.count = json["count"].int ?? 0
     }
 

@@ -67,7 +67,7 @@ class SearchNewPlaceCard: UITableViewCell, SearchCardView {
         self.controller = controller
         self.card = card
 
-        let places = card["places"].flatMap({ Place(json: $0.1) })
+        let places = card["places"].compactMap({ Place(json: $0.1) })
         if self.places != places {
             self.places = places
             self.collectionView.setContentOffset(.zero, animated: false)
@@ -157,7 +157,7 @@ class SearchRecentPlaceCard: UITableViewCell, SearchCardView {
         self.controller = controller
         self.card = card
 
-        let places = card["places"].flatMap({ Place(json: $0.1) })
+        let places = card["places"].compactMap({ Place(json: $0.1) })
         if self.places != places {
             self.places = places
             self.collectionView.setContentOffset(.zero, animated: false)

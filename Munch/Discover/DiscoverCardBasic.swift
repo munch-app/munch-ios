@@ -98,7 +98,7 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
         self.controller = controller
         self.containers = card["containers"].map({ Container(json: $0.1) })
 
-        let images = card["images"].flatMap {
+        let images = card["images"].compactMap {
             SourcedImage(json: $0.1)
         }
 
@@ -275,7 +275,7 @@ class DiscoverPlaceCardBottomView: UIView {
         }
 
         // Open Now
-        let hours = card["hours"].flatMap({ Place.Hour(json: $0.1) })
+        let hours = card["hours"].compactMap({ Place.Hour(json: $0.1) })
         switch Place.Hour.Formatter.isOpen(hours: hours) {
         case .opening:
             line.append(DiscoverPlaceCardBottomView.periodText)

@@ -40,7 +40,7 @@ class CollectionClient {
         params["size"] = size
 
         MunchApi.restful.get("/collections", parameters: params) { meta, json in
-            callback(meta, json["data"].flatMap({ PlaceCollection(json: $0.1) }))
+            callback(meta, json["data"].compactMap({ PlaceCollection(json: $0.1) }))
         }
     }
 

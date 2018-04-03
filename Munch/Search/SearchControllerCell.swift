@@ -565,9 +565,9 @@ class SearchCellRecentlyViewed: UITableViewCell {
         self.controller = controller
         let recentDatabase = RecentDatabase(name: "RecentlyViewedPlace", maxItems: 20)
         self.places = recentDatabase.get()
-                .flatMap({ $1 })
-                .flatMap({ SearchClient.parseResult(result: $0) })
-                .flatMap({ $0 as? Place })
+                .compactMap({ $1 })
+                .compactMap({ SearchClient.parseResult(result: $0) })
+                .compactMap({ $0 as? Place })
         self.collectionView.reloadData()
 
         if places.isEmpty {

@@ -12,47 +12,70 @@ import SwiftyJSON
  DiscoveryClient from DiscoveryService in munch-core/munch-api
  */
 class DiscoverClient {
+    let filter = FilterClient()
+
     func discover(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ results: [SearchCard]) -> Void) {
         MunchApi.restful.post("/discover", parameters: query.toParams()) { meta, json in
             callback(meta, json["data"].map({ SearchCard(json: $0.1) }))
         }
     }
 
-    func filterSuggest(text: String, latLng: String?, query: SearchQuery, callback: @escaping (_ meta: MetaJSON,
-                                                                                         _ locationContainers: [SearchResult],
-                                                                                         _ tags: [Tag]) -> Void) {
-        var params = Parameters()
-        params["text"] = text
-        params["latLng"] = latLng
+    class FilterClient {
+        let decoder = JSONDecoder()
 
-        MunchLocation.waitFor { latLng, error in
+        func count(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ filterData: FilterCount?) -> Void) {
             var query = query
             query.latLng = MunchLocation.lastLatLng
-            params["query"] = query.toParams()
 
-            MunchApi.restful.post("/discover/filter/suggest", parameters: params) { meta, json in
-                let locationContainers = json["data"]["Location,Container"].flatMap({ SearchClient.parseResult(result: $0.1) })
-                let tags = json["data"]["Tag"].flatMap({ SearchClient.parseResult(result: $0.1) as? Tag })
-                callback(meta, locationContainers, tags)
+            MunchApi.restful.post("/discover/filter/count", parameters: query.toParams()) { meta, json in
+                if meta.isOk() {
+                    let filterData = try! self.decoder.decode(FilterCount.self, from: json["data"].rawData())
+                    callback(meta, filterData)
+                } else {
+                    callback(meta, nil)
+                }
+            }
+        }
+
+        func price(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ filterData: FilterPriceRange?) -> Void) {
+            var query = query
+            query.latLng = MunchLocation.lastLatLng
+
+            MunchApi.restful.post("/discover/filter/price", parameters: query.toParams()) { meta, json in
+                if meta.isOk() {
+                    let filterData = try! self.decoder.decode(FilterPriceRange.self, from: json["data"].rawData())
+                    callback(meta, filterData)
+                } else {
+                    callback(meta, nil)
+                }
             }
         }
     }
+}
 
-    func filterCount(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ count: Int?) -> Void) {
-        var query = query
-        query.latLng = MunchLocation.lastLatLng
+struct FilterCount: Codable {
+    var count: Int
+    var tags: [String: Int]
+}
 
-        MunchApi.restful.post("/discover/filter/count", parameters: query.toParams()) { meta, json in
-            callback(meta, json["data"].int)
+struct FilterPriceRange: Codable {
+    var frequency: [String: Int]
+
+    var all: Segment
+    var cheap: Segment
+    var average: Segment
+    var expensive: Segment
+
+    struct Segment: Codable {
+        var min: Double
+        var max: Double
+
+        var minRounded: Double {
+            return (min / 5).rounded(.down) * 5
         }
-    }
 
-    func filterPriceRange(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ priceRangeInArea: PriceRangeInArea?) -> Void) {
-        var query = query
-        query.latLng = MunchLocation.lastLatLng
-
-        MunchApi.restful.post("/discover/filter/price/range", parameters: query.toParams()) { metaJSON, json in
-            callback(metaJSON, PriceRangeInArea.init(json: json["data"]))
+        var maxRounded: Double {
+            return (max / 5).rounded(.up) * 5
         }
     }
 }

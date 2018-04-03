@@ -145,7 +145,7 @@ class AddressLabel: SRCopyableView {
 
     func render(card: PlaceCard) {
         render(lineOne: card["address"].string)
-        let landmarks = card["landmarks"].flatMap({ Place.Location.Landmark(json: $0.1) })
+        let landmarks = card["landmarks"].compactMap({ Place.Location.Landmark(json: $0.1) })
         render(lineTwo: card["latLng"].string, landmarks: landmarks)
     }
 

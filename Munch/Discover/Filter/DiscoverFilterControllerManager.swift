@@ -46,7 +46,6 @@ class DiscoverFilterControllerManager {
     }()
 
     private(set) var searchQuery: SearchQuery
-    var text: String?
 
     let recentLocationDatabase = RecentDatabase(name: "SearchLocation", maxItems: 8)
     private var updateHooks = [(SearchQuery) -> Void]()
@@ -335,8 +334,12 @@ extension DiscoverFilterControllerManager {
 }
 
 extension DiscoverFilterControllerManager {
-    public func getPriceInArea(callback: @escaping (_ meta: MetaJSON, _ priceRangeInArea: PriceRangeInArea?) -> Void) {
-        MunchApi.discover.filterPriceRange(query: self.searchQuery, callback: callback)
+    public func getPriceRange(callback: @escaping (_ meta: MetaJSON, _ filterData: FilterPriceRange?) -> Void) {
+        MunchApi.discover.filter.price(query: self.searchQuery, callback: callback)
+    }
+
+    public func getCount(callback: @escaping (_ meta: MetaJSON, _ filterData: FilterCount?) -> Void) {
+        MunchApi.discover.filter.count(query: self.searchQuery, callback: callback)
     }
 
     public func getLocationName() -> String {

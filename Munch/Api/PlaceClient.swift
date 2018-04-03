@@ -118,7 +118,7 @@ struct Place: SearchResult, Equatable {
         self.review = Review(json: json["review"])
         self.tag = Tag(json: json["tag"])
 
-        self.hours = json["hours"].flatMap({ Hour(json: $0.1) })
+        self.hours = json["hours"].compactMap({ Hour(json: $0.1) })
         self.images = json["images"].map({ SourcedImage(json: $0.1) })
     }
 
@@ -165,7 +165,7 @@ struct Place: SearchResult, Equatable {
             self.address = json["address"].string
             self.unitNumber = json["unitNumber"].string
 
-            self.landmarks = json["landmarks"].flatMap({ Landmark(json: $0.1) })
+            self.landmarks = json["landmarks"].compactMap({ Landmark(json: $0.1) })
 
             self.neighbourhood = json["neighbourhood"].string
             self.city = json["city"].string
