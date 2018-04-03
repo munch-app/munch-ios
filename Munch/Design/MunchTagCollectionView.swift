@@ -440,8 +440,9 @@ class MunchTagCollectionViewCellFilterTagClose: UICollectionViewCell, MunchTagCo
         let button = UIButton()
         button.setImage(UIImage(named: "Search-Tag-Close"), for: .normal)
         button.tintColor = UIColor(hex: "4B4B4B")
-        button.backgroundColor = UIColor(hex: "FBFBFB")
+        button.backgroundColor = UIColor(hex: "FAFAFA")
         button.layer.cornerRadius = 8
+        button.isUserInteractionEnabled = false
         return button
     }()
 

@@ -118,9 +118,8 @@ class DiscoverFilterCellHeader: UITableViewCell {
     private let label: UILabel = {
         let label = UILabel()
         label.backgroundColor = .white
-        label.font = UIFont.systemFont(ofSize: 12.0, weight: .bold)
-        label.textColor = UIColor(hex: "555555")
-        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 20.0, weight: .medium)
+        label.textColor = UIColor(hex: "434343")
         return label
     }()
 
@@ -131,8 +130,8 @@ class DiscoverFilterCellHeader: UITableViewCell {
         self.addSubview(label)
 
         label.snp.makeConstraints { make in
-            make.left.right.equalTo(self)
-            make.top.equalTo(self).inset(14)
+            make.left.equalTo(self).inset(24)
+            make.top.equalTo(self).inset(26)
             make.bottom.equalTo(self).inset(14)
         }
     }
@@ -153,23 +152,17 @@ class DiscoverFilterCellHeader: UITableViewCell {
 class DiscoverFilterCellHeaderLocation: UITableViewCell {
     private let label: UILabel = {
         let label = UILabel()
-        label.text = "LOCATION"
+        label.text = "Location"
         label.backgroundColor = .white
-        label.font = UIFont.systemFont(ofSize: 12.0, weight: .bold)
-        label.textColor = UIColor(hex: "555555")
-        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 20.0, weight: .medium)
+        label.textColor = UIColor(hex: "434343")
         return label
     }()
     private let moreButton: UIButton = {
         let button = UIButton()
-        button.tintColor = UIColor(hex: "333333")
-        button.setImage(UIImage(named: "Search-Right-Arrow-Small"), for: .normal)
-
-        button.setTitle("SEARCH", for: .normal)
-        button.setTitleColor(UIColor(hex: "333333"), for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 11, weight: .medium)
-        button.contentEdgeInsets.right = 0
-        button.titleEdgeInsets.right = -1
+        button.setTitle("See All", for: .normal)
+        button.setTitleColor(UIColor.primary, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
 
         button.contentHorizontalAlignment = .right
         button.semanticContentAttribute = .forceRightToLeft
@@ -185,14 +178,16 @@ class DiscoverFilterCellHeaderLocation: UITableViewCell {
         self.addSubview(moreButton)
 
         label.snp.makeConstraints { make in
-            make.left.right.equalTo(self)
-            make.top.equalTo(self).inset(14)
+            make.left.equalTo(self).inset(24)
+
+            make.top.equalTo(self).inset(18)
             make.bottom.equalTo(self).inset(14)
         }
 
         moreButton.snp.makeConstraints { make in
             make.right.equalTo(self).inset(24)
-            make.centerY.equalTo(self)
+
+            make.top.bottom.equalTo(label)
         }
     }
 
@@ -766,11 +761,10 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
 
 class DiscoverFilterCellTiming: UITableViewCell {
     fileprivate let collectionView: UICollectionView = {
-        let layout = LeftAlignedCollectionViewFlowLayout()
+        let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
-        layout.scrollDirection = .vertical
+        layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 16 // LeftRight
-        layout.minimumLineSpacing = 12
 
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.showsVerticalScrollIndicator = false
@@ -795,7 +789,7 @@ class DiscoverFilterCellTiming: UITableViewCell {
 
         collectionView.snp.makeConstraints { make in
             make.left.right.equalTo(self)
-            make.height.equalTo(92).priority(999)
+            make.height.equalTo(40).priority(999)
             make.top.bottom.equalTo(self)
         }
     }
@@ -828,7 +822,7 @@ class DiscoverFilterCellTiming: UITableViewCell {
                 layoutAttribute.frame.origin.x = leftMargin
 
                 leftMargin += layoutAttribute.frame.width + minimumInteritemSpacing
-                maxY = max(layoutAttribute.frame.maxY , maxY)
+                maxY = max(layoutAttribute.frame.maxY, maxY)
             }
 
             return attributes
@@ -878,15 +872,9 @@ extension DiscoverFilterCellTiming: UICollectionViewDataSource, UICollectionView
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         switch timings[indexPath.row] {
         case .now:
-            return CGSize(width: SearchSuggestCellTimingGridCellTitle.textWidth(text: "Open Now") + 36 + 20, height: 36)
-        case .breakfast:
-            return CGSize(width: SearchSuggestCellTimingGridCellTitle.textWidth(text: "Breakfast") + 36, height: 36)
-        case .lunch:
-            return CGSize(width: SearchSuggestCellTimingGridCellTitle.textWidth(text: "Lunch") + 36, height: 36)
-        case .dinner:
-            return CGSize(width: SearchSuggestCellTimingGridCellTitle.textWidth(text: "Dinner") + 36, height: 36)
-        case .supper:
-            return CGSize(width: SearchSuggestCellTimingGridCellTitle.textWidth(text: "Supper") + 36, height: 36)
+            return CGSize(width: 106 + 20, height: 36)
+        default:
+            return CGSize(width: 100, height: 36)
         }
     }
 
@@ -991,10 +979,6 @@ extension DiscoverFilterCellTiming: UICollectionViewDataSource, UICollectionView
     fileprivate class SearchSuggestCellTimingGridCellTitle: UICollectionViewCell {
         static let labelFont = UIFont.systemFont(ofSize: 14.0, weight: .semibold)
 
-        class func textWidth(text: String) -> CGFloat {
-            return UILabel.textWidth(font: labelFont, text: text)
-        }
-
         let containerView: UIView = {
             let view = UIView()
             view.backgroundColor = UIColor(hex: "F0F0F0")
@@ -1009,7 +993,7 @@ extension DiscoverFilterCellTiming: UICollectionViewDataSource, UICollectionView
             nameLabel.numberOfLines = 1
             nameLabel.isUserInteractionEnabled = false
 
-            nameLabel.textAlignment = .right
+            nameLabel.textAlignment = .center
             return nameLabel
         }()
 
@@ -1019,10 +1003,7 @@ extension DiscoverFilterCellTiming: UICollectionViewDataSource, UICollectionView
             containerView.addSubview(nameLabel)
 
             nameLabel.snp.makeConstraints { make in
-                make.right.equalTo(containerView).inset(18)
-                make.top.bottom.equalTo(containerView)
-                make.left.equalTo(containerView)
-
+                make.edges.equalTo(containerView)
                 make.height.equalTo(36)
             }
 
@@ -1145,7 +1126,7 @@ class DiscoverFilterCellTagMore: UITableViewCell {
     private let moreImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "Search-Right-Arrow")
-        imageView.tintColor  = UIColor(hex: "333333")
+        imageView.tintColor = UIColor(hex: "333333")
         imageView.contentMode = .scaleAspectFit
         imageView.backgroundColor = .white
         return imageView
