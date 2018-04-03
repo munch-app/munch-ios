@@ -43,6 +43,10 @@ class FilterTagView: UIView, TTGTextTagCollectionViewDelegate {
     }
 
     func render(query: SearchQuery) {
+        render(tags: FilterTagView.resolve(query: query))
+    }
+
+    class func resolve(query: SearchQuery) -> [FilterTagType]{
         var tags = [FilterTagType]()
 
         // FirstTag is always Location Tag
@@ -51,10 +55,10 @@ class FilterTagView: UIView, TTGTextTagCollectionViewDelegate {
         tags.append(contentsOf: getPriceTag(query: query))
         tags.append(contentsOf: getFilterTags(query: query))
 
-        render(tags: tags)
+        return tags
     }
 
-    private func getFilterTags(query: SearchQuery) -> [FilterTagType] {
+    private class func getFilterTags(query: SearchQuery) -> [FilterTagType] {
         var tags = [FilterTagType]()
         for tag in query.filter.tag.positives {
             tags.append(FilterTagType.tag(tag))
@@ -69,7 +73,7 @@ class FilterTagView: UIView, TTGTextTagCollectionViewDelegate {
     /**
      Must always return one returns min
      */
-    private func getLocationTag(query: SearchQuery) -> [FilterTagType] {
+    private class func getLocationTag(query: SearchQuery) -> [FilterTagType] {
         if let containers = query.filter.containers, !containers.isEmpty {
             return containers.map({ FilterTagType.location($0.name ?? "Container") })
         }
@@ -85,7 +89,7 @@ class FilterTagView: UIView, TTGTextTagCollectionViewDelegate {
         return [FilterTagType.location("Singapore")]
     }
 
-    private func getPriceTag(query: SearchQuery) -> [FilterTagType] {
+    private class func getPriceTag(query: SearchQuery) -> [FilterTagType] {
         if let min = query.filter.price.min, let max = query.filter.price.max {
             let min = String(format: "%.0f", min)
             let max = String(format: "%.0f", max)
@@ -94,7 +98,7 @@ class FilterTagView: UIView, TTGTextTagCollectionViewDelegate {
         return []
     }
 
-    private func getHourTag(query: SearchQuery) -> [FilterTagType] {
+    private class func getHourTag(query: SearchQuery) -> [FilterTagType] {
         if let name = query.filter.hour.name {
             return [FilterTagType.hour(name)]
         } else if let day = query.filter.hour.day,

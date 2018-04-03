@@ -15,10 +15,13 @@ enum MunchTagCollectionType {
     case assumptionPlus
     case assumptionTag(String)
     case assumptionText(String)
+
+    case filterTag(String)
+    case filterTagClose(String)
 }
 
 protocol MunchTagCollectionViewDelegate {
-    func tagCollectionView(collectionView: MunchTagCollectionView, didSelect type: MunchTagCollectionType)
+    func tagCollectionView(collectionView: MunchTagCollectionView, didSelect type: MunchTagCollectionType, index: Int)
 }
 
 class MunchTagCollectionView: UIView {
@@ -46,6 +49,8 @@ class MunchTagCollectionView: UIView {
         collectionView.register(MunchTagCollectionViewCellAssumptionPlus.self, forCellWithReuseIdentifier: "MunchTagCollectionViewCellAssumptionPlus")
         collectionView.register(MunchTagCollectionViewCellAssumptionTag.self, forCellWithReuseIdentifier: "MunchTagCollectionViewCellAssumptionTag")
         collectionView.register(MunchTagCollectionViewCellAssumptionText.self, forCellWithReuseIdentifier: "MunchTagCollectionViewCellAssumptionText")
+        collectionView.register(MunchTagCollectionViewCellFilterTag.self, forCellWithReuseIdentifier: "MunchTagCollectionViewCellFilterTag")
+        collectionView.register(MunchTagCollectionViewCellFilterTagClose.self, forCellWithReuseIdentifier: "MunchTagCollectionViewCellFilterTagClose")
         collectionView.delegate = self
         collectionView.dataSource = self
 
@@ -108,6 +113,10 @@ extension MunchTagCollectionView: UICollectionViewDataSource, UICollectionViewDe
             return MunchTagCollectionViewCellAssumptionTag.size(type: item)
         case .assumptionText:
             return MunchTagCollectionViewCellAssumptionText.size(type: item)
+        case .filterTag:
+            return MunchTagCollectionViewCellFilterTag.size(type: item)
+        case .filterTagClose:
+            return MunchTagCollectionViewCellFilterTagClose.size(type: item)
         }
     }
 
@@ -123,6 +132,12 @@ extension MunchTagCollectionView: UICollectionViewDataSource, UICollectionViewDe
             return collectionView.dequeueReusableCell(withReuseIdentifier: "MunchTagCollectionViewCellAssumptionTag", for: indexPath) as! MunchTagCollectionViewCellAssumptionTag
         case .assumptionText:
             return collectionView.dequeueReusableCell(withReuseIdentifier: "MunchTagCollectionViewCellAssumptionText", for: indexPath) as! MunchTagCollectionViewCellAssumptionText
+
+        case .filterTag:
+            return collectionView.dequeueReusableCell(withReuseIdentifier: "MunchTagCollectionViewCellFilterTag", for: indexPath) as! MunchTagCollectionViewCellFilterTag
+        case .filterTagClose:
+            return collectionView.dequeueReusableCell(withReuseIdentifier: "MunchTagCollectionViewCellFilterTagClose", for: indexPath) as! MunchTagCollectionViewCellFilterTagClose
+
         }
     }
 
@@ -148,11 +163,19 @@ extension MunchTagCollectionView: UICollectionViewDataSource, UICollectionViewDe
         case .assumptionText(let text):
             let cell = cell as! MunchTagCollectionViewCellAssumptionText
             cell.textLabel.text = text
+
+        case .filterTag(let text):
+            let cell = cell as! MunchTagCollectionViewCellFilterTag
+            cell.textLabel.text = text
+
+        case .filterTagClose(let text):
+            let cell = cell as! MunchTagCollectionViewCellFilterTagClose
+            cell.textLabel.text = text
         }
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self.delegate?.tagCollectionView(collectionView: self, didSelect: items[indexPath.row])
+        self.delegate?.tagCollectionView(collectionView: self, didSelect: items[indexPath.row], index: indexPath.row)
     }
 
     private func outOfBound(view: UIView, superview: UIView) -> Bool {
@@ -358,6 +381,100 @@ class MunchTagCollectionViewCellAssumptionText: UICollectionViewCell, MunchTagCo
         switch type {
         case .assumptionText(let text):
             return UILabel.textSize(font: font, text: text, extra: CGSize(width: 2, height: 13))
+        default: return .zero
+        }
+    }
+}
+
+class MunchTagCollectionViewCellFilterTag: UICollectionViewCell, MunchTagCollectionViewCellView {
+    static let font = UIFont.systemFont(ofSize: 14.0, weight: .regular)
+
+    fileprivate let textLabel: UILabel = {
+        let label = UILabel()
+        label.font = font
+        label.textColor = UIColor(hex: "303030")
+        label.backgroundColor = UIColor(hex: "EBEBEB")
+        label.textAlignment = .center
+        label.layer.cornerRadius = 4
+        label.clipsToBounds = true
+        return label
+    }()
+
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        self.addSubview(textLabel)
+        self.backgroundColor = .clear
+
+        textLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.top.bottom.equalTo(self)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    static func size(type: MunchTagCollectionType) -> CGSize {
+        switch type {
+        case .filterTag(let text):
+            return UILabel.textSize(font: font, text: text, extra: CGSize(width: 21, height: 16))
+        default: return .zero
+        }
+    }
+}
+
+class MunchTagCollectionViewCellFilterTagClose: UICollectionViewCell, MunchTagCollectionViewCellView {
+    static let font = UIFont.systemFont(ofSize: 14.0, weight: .regular)
+
+    fileprivate let textLabel: UILabel = {
+        let label = UILabel()
+        label.font = font
+        label.textColor = UIColor(hex: "303030")
+        label.textAlignment = .center
+        label.clipsToBounds = true
+        return label
+    }()
+
+    fileprivate let button: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "Search-Tag-Close"), for: .normal)
+        button.tintColor = UIColor(hex: "4B4B4B")
+        button.backgroundColor = UIColor(hex: "FBFBFB")
+        button.layer.cornerRadius = 8
+        return button
+    }()
+
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        self.addSubview(textLabel)
+        self.addSubview(button)
+
+        self.backgroundColor = UIColor(hex: "EBEBEB")
+        self.layer.cornerRadius = 4
+
+        textLabel.snp.makeConstraints { make in
+            make.left.equalTo(self)
+            make.right.equalTo(self).inset(16)
+            make.top.bottom.equalTo(self)
+        }
+
+        button.snp.makeConstraints { make in
+            make.right.equalTo(self).inset(7)
+            make.centerY.equalTo(self)
+
+            make.width.height.equalTo(16)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    static func size(type: MunchTagCollectionType) -> CGSize {
+        switch type {
+        case .filterTagClose(let text):
+            return UILabel.textSize(font: font, text: text, extra: CGSize(width: 21 + 16, height: 16))
         default: return .zero
         }
     }

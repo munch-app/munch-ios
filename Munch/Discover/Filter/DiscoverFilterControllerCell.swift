@@ -521,24 +521,24 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
         self.isLoading = true
         self.locationName = locationName
 
-        let deadline = DispatchTime.now() + 0.75
-        controller.manager.getPriceInArea { metaJSON, priceRangeInArea in
-            self.priceRangeInArea = priceRangeInArea
-
-            if metaJSON.isOk(), let priceRangeInArea = priceRangeInArea {
-                DispatchQueue.main.asyncAfter(deadline: deadline) {
-                    self.priceSlider.minValue = CGFloat(priceRangeInArea.minRounded)
-                    self.priceSlider.maxValue = CGFloat(priceRangeInArea.maxRounded)
-
-                    self.priceSlider.enableStep = false
-                    self.updateSelected()
-                    self.isLoading = false
-                    self.controller.manager.resetPrice()
-                }
-            } else {
-                self.controller.present(metaJSON.createAlert(), animated: true)
-            }
-        }
+//        let deadline = DispatchTime.now() + 0.75
+//        controller.manager.getPriceInArea { metaJSON, priceRangeInArea in
+//            self.priceRangeInArea = priceRangeInArea
+//
+//            if metaJSON.isOk(), let priceRangeInArea = priceRangeInArea {
+//                DispatchQueue.main.asyncAfter(deadline: deadline) {
+//                    self.priceSlider.minValue = CGFloat(priceRangeInArea.minRounded)
+//                    self.priceSlider.maxValue = CGFloat(priceRangeInArea.maxRounded)
+//
+//                    self.priceSlider.enableStep = false
+//                    self.updateSelected()
+//                    self.isLoading = false
+//                    self.controller.manager.resetPrice()
+//                }
+//            } else {
+//                self.controller.present(metaJSON.createAlert(), animated: true)
+//            }
+//        }
     }
 
     @objc fileprivate func onPriceButton(for button: UIButton) {

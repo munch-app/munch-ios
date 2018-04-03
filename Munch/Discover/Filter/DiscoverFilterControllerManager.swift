@@ -199,6 +199,9 @@ class DiscoverFilterControllerManager {
      */
     func reset() {
         searchQuery.filter.tag.positives = []
+        searchQuery.filter.location = nil
+        searchQuery.filter.containers = []
+
 
         // Filters Hour
         searchQuery.filter.hour.name = nil
@@ -281,9 +284,9 @@ extension DiscoverFilterControllerManager {
 
     private class func readRecentLocations(database: RecentDatabase) -> [DiscoverFilterLocation] {
         return database.get()
-                .flatMap({ $1 })
-                .flatMap({ SearchClient.parseResult(result: $0) })
-                .flatMap { result in
+                .compactMap({ $1 })
+                .compactMap({ SearchClient.parseResult(result: $0) })
+                .compactMap { result in
                     if let location = result as? Location {
                         return DiscoverFilterLocation.location(location)
                     } else if let container = result as? Container {
@@ -307,7 +310,7 @@ extension DiscoverFilterControllerManager {
 
         if !locations.isEmpty {
             list.append(.headerLocation)
-            list.append(DiscoverFilterType.location(locations.flatMap({
+            list.append(DiscoverFilterType.location(locations.compactMap({
                 if let location = $0 as? Location {
                     return DiscoverFilterLocation.location(location)
                 } else if let container = $0 as? Container {

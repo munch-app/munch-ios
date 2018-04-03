@@ -49,6 +49,7 @@
 		B4B732B745E473C91052B79B /* MunchTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7344760EE7CB65B7A520A /* MunchTagView.swift */; };
 		B4B732D0913D41B80467751C /* DiscoverCardStatic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737074C4561047C9BFEF7 /* DiscoverCardStatic.swift */; };
 		B4B732DD92904EA6B71DC806 /* SettingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73CEBAA298AA8928EA653 /* SettingController.swift */; };
+		B4B732F5A5B0B0895BA2F8CA /* DiscoverFilterControllerLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B736D9D2BEAE7E96B61E78 /* DiscoverFilterControllerLocation.swift */; };
 		B4B733E2F1385A88F9CB14FB /* SearchControllerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73061D8DD8498D4A81118 /* SearchControllerCell.swift */; };
 		B4B7345BDD641E863C08D682 /* DiscoverFilterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73DF7C5AD7467F10DFD01 /* DiscoverFilterController.swift */; };
 		B4B735A57EF2C7D7303D057F /* AccountAuthentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73734DDE87E53A16337E2 /* AccountAuthentication.swift */; };
@@ -170,6 +171,7 @@
 		B4B735022631764CC931E8CA /* CollectionClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionClient.swift; sourceTree = "<group>"; };
 		B4B73674D52B48994B6BA4C8 /* DiscoverFilterControllerCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverFilterControllerCell.swift; sourceTree = "<group>"; };
 		B4B736D460DA6FB8F5E14597 /* DiscoverCardManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverCardManager.swift; sourceTree = "<group>"; };
+		B4B736D9D2BEAE7E96B61E78 /* DiscoverFilterControllerLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverFilterControllerLocation.swift; sourceTree = "<group>"; };
 		B4B737074C4561047C9BFEF7 /* DiscoverCardStatic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverCardStatic.swift; sourceTree = "<group>"; };
 		B4B73734DDE87E53A16337E2 /* AccountAuthentication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountAuthentication.swift; sourceTree = "<group>"; };
 		B4B737A0379DB051FD36C86D /* PlaceCardReview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardReview.swift; sourceTree = "<group>"; };
@@ -432,6 +434,7 @@
 				B4B73674D52B48994B6BA4C8 /* DiscoverFilterControllerCell.swift */,
 				B4B73EF1579E836FFEE0FD7F /* DiscoverFilterControllerManager.swift */,
 				B4B73B26D2C06996A50FDCFD /* FilterTagView.swift */,
+				B4B736D9D2BEAE7E96B61E78 /* DiscoverFilterControllerLocation.swift */,
 			);
 			path = Filter;
 			sourceTree = "<group>";
@@ -597,23 +600,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		03217E1220622D4A00EE4F7F /* NativePopup.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = NativePopup.framework;
-			remoteRef = 03217E1120622D4A00EE4F7F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		03217E1420622D4A00EE4F7F /* Example.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = Example.app;
-			remoteRef = 03217E1320622D4A00EE4F7F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		032F88F61E82DFA200AD3818 /* Resources */ = {
@@ -926,6 +912,7 @@
 				B4B733E2F1385A88F9CB14FB /* SearchControllerCell.swift in Sources */,
 				B4B73883BC1EA4E672069982 /* FilterTagView.swift in Sources */,
 				B4B732B745E473C91052B79B /* MunchTagView.swift in Sources */,
+				B4B732F5A5B0B0895BA2F8CA /* DiscoverFilterControllerLocation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
