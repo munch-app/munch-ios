@@ -7,6 +7,7 @@ import Foundation
 import Alamofire
 
 import SwiftyJSON
+import Cache
 
 /**
  DiscoveryClient from DiscoveryService in munch-core/munch-api
@@ -21,6 +22,7 @@ class DiscoverClient {
     }
 
     class FilterClient {
+        let locations = LocationClient()
         let decoder = JSONDecoder()
 
         func count(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ filterData: FilterCount?) -> Void) {
@@ -47,6 +49,52 @@ class DiscoverClient {
                     callback(meta, filterData)
                 } else {
                     callback(meta, nil)
+                }
+            }
+        }
+
+        class LocationClient {
+            private let decoder = JSONDecoder()
+            private let storage: Storage
+
+            init() {
+                let diskConfig = DiskConfig(name: "api/discover/filter/locations")
+                self.storage = try! Storage(diskConfig: diskConfig)
+            }
+
+            func list(callback: @escaping (_ meta: MetaJSON, _ locations: [Location], _ containers: [Container]) -> Void) {
+                try? storage.removeExpiredObjects()
+                let locations = try? storage.object(ofType: [Location].self, forKey: "locations")
+                let containers = try? storage.object(ofType: [Container].self, forKey: "containers")
+                if let locations = locations, let containers = containers {
+                    callback(.ok, locations, containers)
+                    return
+                }
+
+                MunchApi.restful.get("/discover/filter/locations/list") { meta, json in
+                    var locations = [Location]()
+                    var containers = [Container]()
+
+                    if let array = json["data"].array{
+                        for data in array {
+                            let result = SearchClient.parseResult(result: data)
+                            if let location = result as? Location {
+                                locations.append(location)
+                            } else if let container = result as? Container {
+                                containers.append(container)
+                            }
+                        }
+                    }
+
+                    try? self.storage.setObject(locations, forKey: "locations", expiry: .seconds(60 * 60 * 25))
+                    try? self.storage.setObject(containers, forKey: "containers", expiry: .seconds(60 * 60 * 25))
+                    callback(meta, locations, containers)
+                }
+            }
+
+            func search(text: String, callback: @escaping (_ meta: MetaJSON, _ results: [SearchResult]) -> Void) {
+                MunchApi.restful.get("/discover/filter/locations/search", parameters: ["text": text]) { meta, json in
+                    callback(meta, json["data"].compactMap({ SearchClient.parseResult(result: $0.1) }))
                 }
             }
         }

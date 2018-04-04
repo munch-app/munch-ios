@@ -96,7 +96,7 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
 
     func render(card: SearchCard, controller: DiscoverController) {
         self.controller = controller
-        self.containers = card["containers"].map({ Container(json: $0.1) })
+        self.containers = card["containers"].map({ Container.create(json: $0.1)! })
 
         let images = card["images"].compactMap {
             SourcedImage(json: $0.1)

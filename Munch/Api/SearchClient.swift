@@ -12,9 +12,11 @@ import Alamofire
 import SwiftyJSON
 
 class SearchClient {
+    private static let decoder = JSONDecoder()
+
     func search(text: String, latLng: String?, query: SearchQuery, callback: @escaping (_ meta: MetaJSON,
-                                                                        _ assumptions: [AssumptionQueryResult],
-                                                                        _ places: [Place]) -> Void) {
+                                                                                        _ assumptions: [AssumptionQueryResult],
+                                                                                        _ places: [Place]) -> Void) {
         var params = Parameters()
         params["text"] = text
         params["latLng"] = latLng
@@ -33,7 +35,6 @@ class SearchClient {
     }
 
 
-
     /**
      Method to parse search result type
      */
@@ -42,8 +43,12 @@ class SearchClient {
             switch json["dataType"].stringValue {
             case "Tag": return Tag(json: json)
             case "Place": return Place(json: json)
-            case "Location": return Location(json: json)
-            case "Container": return Container(json: json)
+
+            case "Location":
+                return try! decoder.decode(Location.self, from: try! json.rawData())
+
+            case "Container":
+                return try! decoder.decode(Container.self, from: try! json.rawData())
             default: return nil
             }
         }
@@ -126,33 +131,20 @@ struct Tag: SearchResult {
     }
 }
 
-struct Container: SearchResult, Equatable {
+struct Container: SearchResult, Equatable, Encodable, Decodable {
+    static let decoder = JSONDecoder()
+
     var id: String?
     var type: String?
     var name: String?
 
     var images: [SourcedImage]?
-    var ranking: Double
+    var ranking: Double = 0
 
     var location: Location?
 
-    struct Location {
+    struct Location: Codable {
         var latLng: String?
-
-        init(json: JSON) {
-            self.latLng = json["latLng"].string
-        }
-    }
-
-    init(json: JSON) {
-        self.id = json["id"].string
-        self.type = json["type"].string
-        self.name = json["name"].string
-
-        self.images = json["images"].map({ SourcedImage(json: $0.1) })
-        self.ranking = json["ranking"].double ?? 0
-
-        self.location = Location(json: json["location"])
     }
 
     func toParams() -> Parameters {
@@ -170,6 +162,14 @@ struct Container: SearchResult, Equatable {
 
     static func ==(lhs: Container, rhs: Container) -> Bool {
         return lhs.id == rhs.id
+    }
+
+    static func create(json: JSON) -> Container? {
+        if (!json.exists()) {
+            return nil
+        }
+
+        return try? decoder.decode(Container.self, from: try! json.rawData())
     }
 }
 
@@ -271,8 +271,8 @@ struct SearchQuery: Equatable {
             hour.open = json["hour"]["open"].string
             hour.close = json["hour"]["close"].string
 
-            location = Location(json: json["location"])
-            containers = json["containers"].map({ Container(json: $0.1) })
+            location = Location.create(json: json["location"])
+            containers = json["containers"].map({ Container.create(json: $0.1)! })
         }
 
         struct Price {

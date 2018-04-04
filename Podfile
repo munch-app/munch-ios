@@ -11,6 +11,7 @@ target 'Munch' do
   pod 'Kingfisher', '~> 4.2'
   pod 'SnapKit', '~> 4.0'
   pod 'SwiftRichString', '~> 1.0'
+  pod 'Cache'
 
   # Firebase
   pod 'Firebase/Core'

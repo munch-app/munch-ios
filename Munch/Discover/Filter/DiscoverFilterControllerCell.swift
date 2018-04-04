@@ -162,7 +162,7 @@ class DiscoverFilterCellHeaderLocation: UITableViewCell {
         let button = UIButton()
         button.setTitle("See All", for: .normal)
         button.setTitleColor(UIColor.primary, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
 
         button.contentHorizontalAlignment = .right
         button.semanticContentAttribute = .forceRightToLeft
@@ -310,7 +310,7 @@ extension DiscoverFilterCellLocation: UICollectionViewDataSource, UICollectionVi
             cell.render(text: "Nearby", image: UIImage(named: "Search-Location-Nearby"), selected: selected)
         case let .anywhere(location):
             let selected = controller.manager.isSelected(location: location)
-            cell.render(text: "Singapore", image: UIImage(named: "Search-Location-Anywhere"), selected: selected)
+            cell.render(text: "Anywhere", image: UIImage(named: "Search-Location-Anywhere"), selected: selected)
         case let .location(location):
             let selected = controller.manager.isSelected(location: location)
             cell.render(text: location.name, image: UIImage(named: "Search-Location-Pin"), selected: selected)
@@ -1100,8 +1100,9 @@ class DiscoverFilterCellTag: UITableViewCell {
 
         sizeLabel.snp.makeConstraints { make in
             make.top.bottom.equalTo(containerView).inset(12)
-            make.right.equalTo(checkButton.snp.left).inset(-12)
+            make.right.equalTo(checkButton.snp.left).inset(-10)
         }
+        self.layoutIfNeeded()
     }
 
     func render(title: String, selected: Bool, count: FilterCount?) {
@@ -1246,5 +1247,35 @@ class DiscoverFilterCellHeaderCategory: UITableViewCell {
 
     class var id: String {
         return "DiscoverFilterCellHeaderCategory"
+    }
+}
+
+class DiscoverFilterCellSmallLocation: UITableViewCell {
+
+    let titleLabel: UILabel = {
+        let titleLabel = UILabel()
+        titleLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        titleLabel.textColor = .black
+        return titleLabel
+    }()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(titleLabel)
+
+        titleLabel.snp.makeConstraints { (make) in
+            make.top.bottom.equalTo(self).inset(10)
+            make.left.equalTo(self).inset(24)
+            make.right.equalTo(self).inset(24)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    class var id: String {
+        return "DiscoverFilterCellSmallLocation"
     }
 }

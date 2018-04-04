@@ -81,7 +81,7 @@ class DiscoverController: UIViewController, UITableViewDelegate, UITableViewData
         // Place Testing
 //         self.navigationController!.pushViewController(PlaceViewController(placeId: "9512d8fd-5123-49be-b223-5d7e469d28b7"), animated: true)
 
-        self.goTo(extension: DiscoverFilterController.self)
+//        self.goTo(extension: DiscoverFilterController.self)
     }
 
     private func initViews() {

@@ -516,7 +516,7 @@ struct Menu {
 /**
  SourcedImage from munch-core/munch-data
  */
-struct SourcedImage {
+struct SourcedImage: Codable {
     var source: String
     var sourceId: String?
     var sourceName: String?
@@ -527,6 +527,21 @@ struct SourcedImage {
         self.sourceId = json["sourceId"].string
         self.sourceName = json["sourceName"].string
         self.images = json["images"].dictionaryObject as! [String: String]
+    }
+
+    enum SourcedImageKey: String, CodingKey {
+        case source = "source"
+        case sourceId = "sourceId"
+        case sourceName = "sourceName"
+        case images = "images"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: SourcedImageKey.self)
+        self.source = try container.decode(String.self, forKey: .source)
+        self.sourceId = try? container.decode(String.self, forKey: .sourceId)
+        self.sourceName = try? container.decode(String.self, forKey: .sourceName)
+        self.images = try container.decode([String: String].self, forKey: .images)
     }
 
     func toParams() -> Parameters {

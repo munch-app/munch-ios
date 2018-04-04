@@ -64,7 +64,7 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
         self.controller = controller
         self.card = card
 
-        self.containers = card["containers"].map({ Container(json: $0.1) })
+        self.containers = card["containers"].map({ Container.create(json: $0.1)! })
         self.collectionView.setContentOffset(.zero, animated: false)
         self.collectionView.reloadData()
     }

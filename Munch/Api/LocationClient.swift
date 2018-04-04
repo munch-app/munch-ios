@@ -17,10 +17,12 @@ import SwiftyJSON
 class LocationClient {
     func popular(callback: @escaping (_ meta: MetaJSON, _ locations: [Location]) -> Void) {
         MunchApi.restful.get("/locations/popular") { meta, json in
-            callback(meta, json["data"].map { Location(json: $0.1)! })
+            callback(meta, json["data"].map {
+                Location.create(json: $0.1)!
+            })
         }
     }
-    
+
     func suggest(text: String, callback: @escaping (_ meta: MetaJSON, _ results: [SearchResult]) -> Void) {
         MunchApi.restful.get("/locations/suggest", parameters: ["text": text]) { meta, json in
             callback(meta, json["data"].compactMap({ SearchClient.parseResult(result: $0.1) }))
@@ -38,38 +40,24 @@ class LocationClient {
  Location object form munch-core/service-location
  Used in search for munch-core/service-places
  */
-struct Location: SearchResult, Equatable {
+struct Location: SearchResult, Equatable, Encodable, Decodable {
+    static let decoder = JSONDecoder()
+
     var id: String?
     var name: String?
     var city: String?
     var country: String?
-    
+
     var latLng: String?
     var points: [String]? // points is ["lat, lng"] String Array
 
-    init() {
-
-    }
-
-    init?(json: JSON) {
-        if (!json.exists()) { return nil }
-        
-        self.id = json["id"].string
-        self.name = json["name"].string
-        self.city = json["city"].string
-        self.country = json["country"].string
-        
-        self.latLng = json["latLng"].string
-        self.points = json["points"].map({$0.1.stringValue})
-    }
-    
     func toParams() -> Parameters {
         var params = Parameters()
         params["id"] = id
         params["name"] = name
         params["city"] = city
         params["country"] = country
-        
+
         params["latLng"] = latLng
         params["points"] = points
         params["dataType"] = "Location"
@@ -78,5 +66,13 @@ struct Location: SearchResult, Equatable {
 
     static func ==(lhs: Location, rhs: Location) -> Bool {
         return lhs.id == rhs.id
+    }
+
+    static func create(json: JSON) -> Location? {
+        if (!json.exists()) {
+            return nil
+        }
+
+        return try? decoder.decode(Location.self, from: try! json.rawData())
     }
 }

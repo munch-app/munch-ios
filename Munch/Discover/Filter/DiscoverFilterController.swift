@@ -128,8 +128,6 @@ class DiscoverFilterController: UIViewController {
             make.top.equalTo(self.headerView.snp.bottom)
             make.bottom.equalTo(self.bottomView.snp.top)
         }
-
-        self.tableView.layoutIfNeeded()
     }
 
     @objc func actionCancel(_ sender: Any) {
@@ -233,8 +231,14 @@ extension DiscoverFilterController: UITableViewDataSource, UITableViewDelegate {
             manager.select(tag: text, selected: !manager.isSelected(tag: text))
 
         case .headerLocation:
-            // TODO
-            return
+            let controller = DiscoverFilterControllerLocation(searchQuery: self.searchQuery) { location, container in
+                if let location = location {
+                    self.manager.select(location: location, save: true)
+                } else if let container = container {
+                    self.manager.select(container: container, save: true)
+                }
+            }
+            self.navigationController?.pushViewController(controller, animated: true)
 
         case .tagMore:
             manager.select(category: .cuisineMore)
