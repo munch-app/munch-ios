@@ -16,6 +16,7 @@ enum DiscoverFilterType {
     case time([DiscoverFilterTiming])
     case tag(Tag)
     case tagMore(String)
+    case headerCategory
 }
 
 enum DiscoverFilterLocation {
@@ -33,6 +34,13 @@ enum DiscoverFilterTiming {
     case supper
 }
 
+enum DiscoverFilterCategory {
+    case cuisine
+    case cuisineMore
+    case establishment
+    case others
+}
+
 class DiscoverFilterControllerManager {
     private let dayFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -46,48 +54,32 @@ class DiscoverFilterControllerManager {
     }()
 
     private(set) var searchQuery: SearchQuery
+    private(set) var count: FilterCount?
+
+    private var updateCountTask: DispatchWorkItem?
+    private var selectedCategory: DiscoverFilterCategory = .cuisine
 
     let recentLocationDatabase = RecentDatabase(name: "SearchLocation", maxItems: 8)
     private var updateHooks = [(SearchQuery) -> Void]()
 
-    lazy var suggestions: [DiscoverFilterType] = {
-        let locationDatabase = RecentDatabase(name: "SearchLocation", maxItems: 8)
-        let recentLocations = DiscoverFilterControllerManager.readRecentLocations(database: locationDatabase)
-
-        var list = [DiscoverFilterType]()
-        list.append(DiscoverFilterType.headerLocation)
-        list.append(DiscoverFilterType.location([DiscoverFilterLocation.nearby, DiscoverFilterLocation.anywhere(DiscoverFilterControllerManager.anywhere)] + recentLocations))
-        list.append(DiscoverFilterType.header("Price Range"))
-        list.append(DiscoverFilterType.priceRange)
-        list.append(DiscoverFilterType.header("Timing"))
-        list.append(DiscoverFilterType.time([DiscoverFilterTiming.now, DiscoverFilterTiming.breakfast, DiscoverFilterTiming.lunch, DiscoverFilterTiming.dinner, DiscoverFilterTiming.supper]))
-        list.append(DiscoverFilterType.header("Cuisine"))
-        list.append(contentsOf: DiscoverFilterControllerManager.map(priority: "cuisine"))
-        list.append(DiscoverFilterType.tagMore("CUISINE"))
-        list.append(DiscoverFilterType.header("Establishment"))
-        list.append(contentsOf: DiscoverFilterControllerManager.map(priority: "establishment"))
-        list.append(DiscoverFilterType.header("AMENITIES"))
-        list.append(contentsOf: DiscoverFilterControllerManager.map(priority: "amenities"))
-        list.append(DiscoverFilterType.header("OCCASION"))
-        list.append(contentsOf: DiscoverFilterControllerManager.map(priority: "occasion"))
-        return list
-    }()
+    var suggestions: [DiscoverFilterType] = []
 
     lazy var tags: [DiscoverFilterType] = {
         var list = [DiscoverFilterType]()
         list.append(DiscoverFilterType.header("Cuisine"))
-        list.append(contentsOf: DiscoverFilterControllerManager.map(all: "cuisine"))
+        list.append(contentsOf: map(all: "cuisine"))
         list.append(DiscoverFilterType.header("ESTABLISHMENT"))
-        list.append(contentsOf: DiscoverFilterControllerManager.map(all: "establishment"))
+        list.append(contentsOf: map(all: "establishment"))
         list.append(DiscoverFilterType.header("AMENITIES"))
-        list.append(contentsOf: DiscoverFilterControllerManager.map(all: "amenities"))
+        list.append(contentsOf: map(all: "amenities"))
         list.append(DiscoverFilterType.header("OCCASION"))
-        list.append(contentsOf: DiscoverFilterControllerManager.map(all: "occasion"))
+        list.append(contentsOf: map(all: "occasion"))
         return list
     }()
 
     init(searchQuery: SearchQuery) {
         self.searchQuery = searchQuery
+        self.select(category: .cuisine)
     }
 
     func setSearchQuery(searchQuery: SearchQuery) {
@@ -99,10 +91,40 @@ class DiscoverFilterControllerManager {
         updateHooks.append(hook)
     }
 
-    private func runHooks() {
+    func runHooks() {
         for hook in updateHooks {
             hook(self.searchQuery)
         }
+    }
+
+    func select(category: DiscoverFilterCategory) {
+        self.selectedCategory = category
+        let locationDatabase = RecentDatabase(name: "SearchLocation", maxItems: 8)
+        let recentLocations = DiscoverFilterControllerManager.readRecentLocations(database: locationDatabase)
+
+        var list = [DiscoverFilterType]()
+        list.append(DiscoverFilterType.headerLocation)
+        list.append(DiscoverFilterType.location([DiscoverFilterLocation.nearby, DiscoverFilterLocation.anywhere(DiscoverFilterControllerManager.anywhere)] + recentLocations))
+        list.append(DiscoverFilterType.header("Price Range"))
+        list.append(DiscoverFilterType.priceRange)
+        list.append(DiscoverFilterType.header("Timing"))
+        list.append(DiscoverFilterType.time([DiscoverFilterTiming.now, DiscoverFilterTiming.breakfast, DiscoverFilterTiming.lunch, DiscoverFilterTiming.dinner, DiscoverFilterTiming.supper]))
+
+        list.append(DiscoverFilterType.headerCategory)
+
+        switch category {
+        case .cuisine:
+            list.append(contentsOf: map(priority: "cuisine"))
+            list.append(DiscoverFilterType.tagMore("CUISINE"))
+        case .cuisineMore:
+            list.append(contentsOf: map(all: "cuisine"))
+        case .establishment:
+            list.append(contentsOf: map(all: "establishment"))
+        case .others:
+            list.append(contentsOf: map(all: "others"))
+        }
+
+        self.suggestions = list
     }
 
     func select(location: Location?, save: Bool = true) {
@@ -260,7 +282,8 @@ extension DiscoverFilterControllerManager {
         "cuisine": ["Chinese", "Singaporean", "Western", "Italian", "Japanese", "Indian", "Cantonese", "Thai", "Korean", "English", "Fusion", "Asian", "Hainanese", "American", "French", "Hong Kong", "Teochew", "Taiwanese", "Malaysian", "Mexican", "Shanghainese", "Indonesian", "Vietnamese", "European", "Peranakan", "Sze Chuan", "Spanish", "Middle Eastern", "Modern European", "Filipino", "Turkish", "Hakka", "German", "Mediterranean", "Swiss", "Hawaiian", "Australian"],
         "establishment": ["Hawker", "Drinks", "Bakery", "Dessert", "Snacks", "Cafe", "Bars & Pubs", "Fast Food", "BBQ", "Buffet", "Hotpot & Steamboat", "High Tea", "Fine Dining"],
         "amenities": ["Child-Friendly", "Large Group", "Vegetarian Options", "Halal", "Healthy", "Alcohol", "Vegetarian", "Private Dining", "Budget", "Pet-Friendly", "Live Music", "Vegan", "Vegan Options"],
-        "occasion": ["Romantic", "Supper", "Brunch", "Business Meal", "Scenic View"]
+        "occasion": ["Romantic", "Supper", "Brunch", "Business Meal", "Scenic View"],
+        "others": ["Romantic", "Supper", "Brunch", "Business Meal", "Scenic View", "Child-Friendly", "Large Group", "Vegetarian Options", "Halal", "Healthy", "Alcohol", "Vegetarian", "Private Dining", "Budget", "Pet-Friendly", "Live Music", "Vegan", "Vegan Options"]
     ]
 
     private static var priorityTypes: [String: [String]] = [
@@ -296,12 +319,30 @@ extension DiscoverFilterControllerManager {
                 }
     }
 
-    private class func map(priority type: String) -> [DiscoverFilterType] {
-        return priorityTypes[type.lowercased()]!.map({ DiscoverFilterType.tag(Tag(name: $0)) })
+    private func map(priority type: String) -> [DiscoverFilterType] {
+        return DiscoverFilterControllerManager.priorityTypes[type.lowercased()]!
+                .sorted(by: { bef, aft in
+                    let befC = self.count?.tags[bef.lowercased(), default: 0] ?? 0
+                    let aftC = self.count?.tags[aft.lowercased(), default: 0] ?? 0
+                    if befC > aftC {
+                        return true
+                    }
+                    return searchQuery.filter.tag.positives.contains(bef)
+                })
+                .map({ DiscoverFilterType.tag(Tag(name: $0)) })
     }
 
-    private class func map(all type: String) -> [DiscoverFilterType] {
-        return types[type.lowercased()]!.map({ DiscoverFilterType.tag(Tag(name: $0)) })
+    private func map(all type: String) -> [DiscoverFilterType] {
+        return DiscoverFilterControllerManager.types[type.lowercased()]!
+                .sorted(by: { bef, aft in
+                    let befC = self.count?.tags[bef.lowercased(), default: 0] ?? 0
+                    let aftC = self.count?.tags[aft.lowercased(), default: 0] ?? 0
+                    if befC > aftC {
+                        return true
+                    }
+                    return searchQuery.filter.tag.positives.contains(bef)
+                })
+                .map({ DiscoverFilterType.tag(Tag(name: $0)) })
     }
 
     class func map(locations: [SearchResult], tags: [Tag]) -> [DiscoverFilterType] {
@@ -338,8 +379,19 @@ extension DiscoverFilterControllerManager {
         MunchApi.discover.filter.price(query: self.searchQuery, callback: callback)
     }
 
-    public func getCount(callback: @escaping (_ meta: MetaJSON, _ filterData: FilterCount?) -> Void) {
-        MunchApi.discover.filter.count(query: self.searchQuery, callback: callback)
+    public func updateCount(callback: @escaping (_ meta: MetaJSON, _ count: FilterCount?) -> Void) {
+        self.count = nil
+
+        updateCountTask?.cancel()
+        updateCountTask = DispatchWorkItem {
+            MunchApi.discover.filter.count(query: self.searchQuery) { meta, count in
+                self.count = count
+                self.select(category: self.selectedCategory)
+                callback(meta, count)
+            }
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1, execute: updateCountTask!)
     }
 
     public func getLocationName() -> String {

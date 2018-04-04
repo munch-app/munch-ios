@@ -131,7 +131,7 @@ class DiscoverFilterCellHeader: UITableViewCell {
 
         label.snp.makeConstraints { make in
             make.left.equalTo(self).inset(24)
-            make.top.equalTo(self).inset(26)
+            make.top.equalTo(self).inset(34)
             make.bottom.equalTo(self).inset(14)
         }
     }
@@ -162,7 +162,7 @@ class DiscoverFilterCellHeaderLocation: UITableViewCell {
         let button = UIButton()
         button.setTitle("See All", for: .normal)
         button.setTitleColor(UIColor.primary, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .medium)
 
         button.contentHorizontalAlignment = .right
         button.semanticContentAttribute = .forceRightToLeft
@@ -495,7 +495,7 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
 
         priceButtons.snp.makeConstraints { make in
             make.left.right.equalTo(containerView)
-            make.bottom.equalTo(containerView)
+            make.bottom.equalTo(containerView).inset(3)
         }
 
         loadingIndicator.snp.makeConstraints { make in
@@ -518,7 +518,7 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
         self.locationName = locationName
 
         let deadline = DispatchTime.now() + 0.75
-        controller.manager.getPriceRange {  metaJSON, filterPriceRange in
+        controller.manager.getPriceRange { metaJSON, filterPriceRange in
             self.filterPriceRange = filterPriceRange
 
             if metaJSON.isOk(), let filterPriceRange = filterPriceRange {
@@ -1052,22 +1052,39 @@ class DiscoverFilterCellTag: UITableViewCell {
         checkButton.onFillColor = .primary
         return checkButton
     }()
+    private let sizeLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        label.textColor = UIColor(hex: "444444")
+        return label
+    }()
     private let containerView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(hex: "F0F0F0")
         return view
     }()
 
+    private let shimmerView: ShimmerView = {
+        let view = ShimmerView(color: UIColor(hex: "E6E6E6"))
+        return view
+    }()
+
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
+        self.addSubview(shimmerView)
         self.addSubview(containerView)
         containerView.addSubview(titleLabel)
         containerView.addSubview(checkButton)
+        containerView.addSubview(sizeLabel)
 
         containerView.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
             make.top.bottom.equalTo(self).inset(2)
+        }
+
+        shimmerView.snp.makeConstraints { make in
+            make.edges.equalTo(containerView)
         }
 
         titleLabel.snp.makeConstraints { (make) in
@@ -1080,26 +1097,45 @@ class DiscoverFilterCellTag: UITableViewCell {
             make.top.bottom.equalTo(containerView).inset(10)
             make.right.equalTo(containerView).inset(18)
         }
+
+        sizeLabel.snp.makeConstraints { make in
+            make.top.bottom.equalTo(containerView).inset(12)
+            make.right.equalTo(checkButton.snp.left).inset(-12)
+        }
     }
 
-    func render(title: String, selected: Bool) {
+    func render(title: String, selected: Bool, count: FilterCount?) {
+        if let count = count {
+            let size = count.tags[title.lowercased(), default: 0]
+            if size > 0 {
+                sizeLabel.text = DiscoverFilterBottomView.countTitle(count: size, prefix: "", postfix: "")
+                sizeLabel.textColor = UIColor(hex: "444444")
+                checkButton.tintColor = UIColor(hex: "444444")
+            } else {
+                sizeLabel.text = "0"
+                sizeLabel.textColor = UIColor(hex: "CCCCCC")
+                checkButton.tintColor = UIColor(hex: "CCCCCC")
+            }
+            containerView.isHidden = false
+            shimmerView.isShimmering = false
+            shimmerView.isHidden = true
+        } else {
+            containerView.isHidden = true
+            shimmerView.isShimmering = true
+            shimmerView.isHidden = false
+        }
+
         titleLabel.text = title
         checkButton.setOn(selected, animated: false)
-    }
-
-    /**
-     Flip the switch on check button
-     */
-    func flip() -> Bool {
-        let flip = !checkButton.on
-        checkButton.setOn(flip, animated: true)
-        return flip
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
         containerView.layer.cornerRadius = 3
         containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
+
+        shimmerView.layer.cornerRadius = 3
+        shimmerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -1114,9 +1150,9 @@ class DiscoverFilterCellTag: UITableViewCell {
 class DiscoverFilterCellTagMore: UITableViewCell {
     private let titleLabel: UILabel = {
         let titleLabel = UILabel()
-        titleLabel.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-        titleLabel.text = "Browse All"
-        titleLabel.textColor = UIColor(hex: "333333")
+        titleLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+        titleLabel.text = "Show All"
+        titleLabel.textColor = UIColor.primary
         return titleLabel
     }()
     private let moreImageView: UIImageView = {
@@ -1125,6 +1161,7 @@ class DiscoverFilterCellTagMore: UITableViewCell {
         imageView.tintColor = UIColor(hex: "333333")
         imageView.contentMode = .scaleAspectFit
         imageView.backgroundColor = .white
+        imageView.isHidden = true
         return imageView
     }()
     private let containerView: UIView = {
@@ -1163,5 +1200,51 @@ class DiscoverFilterCellTagMore: UITableViewCell {
 
     class var id: String {
         return "SearchSuggestCellTagMore"
+    }
+}
+
+class DiscoverFilterCellHeaderCategory: UITableViewCell {
+    private let containerView = UIView()
+    private let segmentControl: UISegmentedControl = {
+        let control = UISegmentedControl(items: ["Cuisine", "Establishment", "Others"])
+        control.tintColor = UIColor(hex: "4A4A4A")
+        control.selectedSegmentIndex = 0
+        return control
+    }()
+
+    var controller: DiscoverFilterController!
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(segmentControl)
+
+        segmentControl.addTarget(self, action: #selector(actionSelect(_:)), for: .valueChanged)
+        segmentControl.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(24)
+            make.top.equalTo(self).inset(44)
+            make.bottom.equalTo(self).inset(20)
+        }
+    }
+
+    @objc fileprivate func actionSelect(_ control: UISegmentedControl) {
+        switch control.selectedSegmentIndex {
+        case 0:
+            controller.manager.select(category: .cuisine)
+        case 1:
+            controller.manager.select(category: .establishment)
+        case 2:
+            controller.manager.select(category: .others)
+        default: return
+        }
+        self.controller.tableView.reloadData()
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    class var id: String {
+        return "DiscoverFilterCellHeaderCategory"
     }
 }

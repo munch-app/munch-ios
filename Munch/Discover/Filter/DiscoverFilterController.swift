@@ -13,6 +13,7 @@ import Firebase
 import SnapKit
 import SwiftyJSON
 import TPKeyboardAvoiding
+import NVActivityIndicatorView
 
 class DiscoverFilterRootController: UINavigationController, UINavigationControllerDelegate {
     init(searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
@@ -38,39 +39,20 @@ class DiscoverFilterController: UIViewController {
     fileprivate let headerView = DiscoverFilterHeaderView()
     fileprivate let bottomView = DiscoverFilterBottomView()
 
-    fileprivate let tableView: UITableView = {
+    let tableView: UITableView = {
         let tableView = UITableView()
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 50
 
         tableView.tableFooterView = UIView(frame: CGRect.zero)
 
-        tableView.contentInset.bottom = 14
+        tableView.contentInset.bottom = 16
         tableView.separatorStyle = .none
         return tableView
     }()
 
     private var results: [DiscoverFilterType]?
     private var searchQuery: SearchQuery
-    private var state: State = State.filter {
-        didSet {
-            switch state {
-            case .filter:
-                self.tableView.reloadData()
-            case .loading:
-                self.results = nil
-                self.tableView.reloadData()
-            case .result:
-                self.tableView.reloadData()
-            }
-        }
-    }
-
-    enum State {
-        case filter
-        case result
-        case loading
-    }
 
     init(searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
         self.onExtensionDismiss = extensionDismiss
@@ -108,18 +90,27 @@ class DiscoverFilterController: UIViewController {
         self.headerView.closeButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
         self.headerView.resetButton.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
         self.bottomView.applyBtn.addTarget(self, action: #selector(actionApply(_:)), for: .touchUpInside)
+
         self.headerView.render(query: self.searchQuery)
+        self.bottomView.render(count: nil)
+        self.manager.updateCount { metaJSON, count in
+            self.bottomView.render(count: count?.count)
+            self.tableView.reloadData()
+        }
 
         self.manager.addUpdateHook { query in
-            // TODO Render
-            self.headerView.render(query: query)
-//            self.bottomView.render(searchQuery: query)
-
             if query != self.searchQuery {
-                self.state = .filter
-            } else {
-                self.tableView.reloadData()
+                self.searchQuery = query
+
+                self.bottomView.render(count: nil)
+                self.manager.updateCount { metaJSON, count in
+                    self.bottomView.render(count: count?.count)
+                    self.tableView.reloadData()
+                }
             }
+
+            self.headerView.render(query: query)
+            self.tableView.reloadData()
         }
 
         self.headerView.snp.makeConstraints { make in
@@ -172,20 +163,11 @@ extension DiscoverFilterController: UITableViewDataSource, UITableViewDelegate {
         tableView.register(DiscoverFilterCellLoading.self, forCellReuseIdentifier: DiscoverFilterCellLoading.id)
         tableView.register(DiscoverFilterCellPriceRange.self, forCellReuseIdentifier: DiscoverFilterCellPriceRange.id)
         tableView.register(DiscoverFilterCellTagMore.self, forCellReuseIdentifier: DiscoverFilterCellTagMore.id)
+        tableView.register(DiscoverFilterCellHeaderCategory.self, forCellReuseIdentifier: DiscoverFilterCellHeaderCategory.id)
     }
 
     var items: [DiscoverFilterType] {
-        switch self.state {
-        case .loading:
-            return [DiscoverFilterType.loading]
-        case .filter:
-            return self.manager.suggestions
-        case .result:
-            if let results = self.results {
-                return results
-            }
-            return [DiscoverFilterType.loading]
-        }
+        return self.manager.suggestions
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -211,6 +193,11 @@ extension DiscoverFilterController: UITableViewDataSource, UITableViewDelegate {
         case .headerLocation:
             return tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellHeaderLocation.id) as! DiscoverFilterCellHeaderLocation
 
+        case .headerCategory:
+            let cell = tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellHeaderCategory.id) as! DiscoverFilterCellHeaderCategory
+            cell.controller = self
+            return cell
+
         case .location(let locations):
             let cell = tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellLocation.id) as! DiscoverFilterCellLocation
             cell.render(locations: locations, controller: self)
@@ -224,7 +211,7 @@ extension DiscoverFilterController: UITableViewDataSource, UITableViewDelegate {
         case .tag(let tag):
             let cell = tableView.dequeueReusableCell(withIdentifier: DiscoverFilterCellTag.id) as! DiscoverFilterCellTag
             let text = tag.name ?? ""
-            cell.render(title: text, selected: manager.isSelected(tag: text))
+            cell.render(title: text, selected: manager.isSelected(tag: text), count: self.manager.count)
             return cell
 
         case .tagMore:
@@ -249,9 +236,10 @@ extension DiscoverFilterController: UITableViewDataSource, UITableViewDelegate {
             // TODO
             return
 
-        case .tagMore(let title):
-            // TODO
-            return
+        case .tagMore:
+            manager.select(category: .cuisineMore)
+            self.tableView.reloadData()
+
         default: return
         }
     }
@@ -325,7 +313,8 @@ fileprivate class DiscoverFilterHeaderView: UIView, MunchTagCollectionViewDelega
         }
 
         tagCollection.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(24)
+            make.left.equalTo(self).inset(24)
+            make.right.equalTo(self)
             make.height.equalTo(33)
 
             make.top.equalTo(titleLabel.snp.bottom)
@@ -363,10 +352,13 @@ fileprivate class DiscoverFilterHeaderView: UIView, MunchTagCollectionViewDelega
                 alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
                 self.controller.present(alert, animated: true)
             }
+
         case .hour(let text):
             self.controller.manager.select(hour: text)
+
         case .tag(let text):
             self.controller.manager.reset(tags: [text])
+
         case .price:
             self.controller.manager.resetPrice()
         }
@@ -387,16 +379,21 @@ class DiscoverFilterBottomView: UIView {
         let applyBtn = UIButton()
         applyBtn.layer.cornerRadius = 3
         applyBtn.backgroundColor = .primary
-        applyBtn.setTitle("Loading...", for: .normal)
         applyBtn.setTitleColor(.white, for: .normal)
         applyBtn.titleLabel!.font = UIFont.systemFont(ofSize: 15, weight: .medium)
         return applyBtn
+    }()
+    fileprivate let indicator: NVActivityIndicatorView = {
+        let indicator = NVActivityIndicatorView(frame: .zero, type: .ballBeat, color: .white, padding: 10)
+        indicator.stopAnimating()
+        return indicator
     }()
 
     override init(frame: CGRect = CGRect.zero) {
         super.init(frame: frame)
         self.backgroundColor = .white
         self.addSubview(applyBtn)
+        self.addSubview(indicator)
 
         applyBtn.snp.makeConstraints { (make) in
             make.top.equalTo(self).inset(12)
@@ -404,9 +401,31 @@ class DiscoverFilterBottomView: UIView {
             make.right.left.equalTo(self).inset(24)
             make.height.equalTo(46)
         }
+
+        indicator.snp.makeConstraints { make in
+            make.edges.equalTo(applyBtn)
+        }
     }
 
-    // TODO self.applyBtn.setTitle(DiscoverFilterBottomView.countTitle(count: count), for: .normal)
+    func render(count: Int?) {
+        if let count = count {
+            self.indicator.stopAnimating()
+
+            if count == 0 {
+                self.applyBtn.setTitle("No Results", for: .normal)
+                self.applyBtn.backgroundColor = .white
+                self.applyBtn.setTitleColor(.primary, for: .normal)
+            } else {
+                self.applyBtn.setTitle(DiscoverFilterBottomView.countTitle(count: count), for: .normal)
+                self.applyBtn.backgroundColor = .primary
+                self.applyBtn.setTitleColor(.white, for: .normal)
+            }
+        } else {
+            self.indicator.startAnimating()
+            self.applyBtn.setTitle(nil, for: .normal)
+            self.applyBtn.backgroundColor = .primary
+        }
+    }
 
     class func countTitle(count: Int, empty: String = "No Results", prefix: String = "See", postfix: String = "Restaurants") -> String {
         if count == 0 {
