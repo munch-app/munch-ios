@@ -140,6 +140,7 @@ class CollectionSelectListController: UIViewController {
         alert.addAction(.init(title: "OK", style: .default) { action in
             let textField = alert.textFields![0]
             var collection = PlaceCollection()
+            collection.privacy = "public"
             collection.name = textField.text
 
             MunchApi.collections.post(collection: collection) { meta, collection in

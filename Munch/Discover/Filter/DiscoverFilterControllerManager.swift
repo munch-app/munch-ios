@@ -168,6 +168,12 @@ class DiscoverFilterControllerManager {
             searchQuery.filter.hour.close = nil
             reset(tags: [name])
         } else {
+            searchQuery.filter.hour.name = nil
+            searchQuery.filter.hour.day = nil
+            searchQuery.filter.hour.open = nil
+            searchQuery.filter.hour.close = nil
+            reset(tags: ["Open Now", "Breakfast", "Lunch", "Dinner", "Supper"], run: false)
+
             switch name {
             case "Open Now":
                 let date = Date()
@@ -240,13 +246,15 @@ class DiscoverFilterControllerManager {
         runHooks()
     }
 
-    func reset(tags: [String]) {
+    func reset(tags: [String], run: Bool = true) {
         for tag in tags {
             // Delete Both Lower and Normal Case In Case of Bugs
             searchQuery.filter.tag.positives.remove(tag)
             searchQuery.filter.tag.positives.remove(tag.lowercased())
         }
-        runHooks()
+        if run {
+            runHooks()
+        }
     }
 
     func isSelected(tag: String) -> Bool {

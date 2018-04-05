@@ -672,8 +672,8 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
             colorBetweenHandles = .primary200
             handleColor = .primary600
             tintColor = UIColor(hex: "CCCCCC")
-            minLabelColor = UIColor.black.withAlphaComponent(0.65)
-            maxLabelColor = UIColor.black.withAlphaComponent(0.65)
+            minLabelColor = UIColor.black.withAlphaComponent(0.75)
+            maxLabelColor = UIColor.black.withAlphaComponent(0.75)
             minLabelFont = UIFont.systemFont(ofSize: 14, weight: .semibold)
             maxLabelFont = UIFont.systemFont(ofSize: 14, weight: .semibold)
 

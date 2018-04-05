@@ -153,6 +153,8 @@ struct PlaceCollection {
 
     var sortKey: Int?
 
+    var privacy: String?
+
     var name: String?
     var description: String?
     var count: Int?
@@ -174,6 +176,7 @@ struct PlaceCollection {
         self.collectionId = json["collectionId"].string
 
         self.sortKey = json["sortKey"].int
+        self.privacy = json["privacy"].string
 
         self.name = json["name"].string
         self.description = json["description"].string
@@ -196,6 +199,7 @@ struct PlaceCollection {
     func toParams() -> Parameters {
         var parameters = Parameters()
         parameters["sortKey"] = sortKey
+        parameters["privacy"] = privacy
 
         parameters["name"] = name
         parameters["description"] = description
