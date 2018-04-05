@@ -8,6 +8,9 @@ PODS:
     - Bolts/Tasks
   - Bolts/Tasks (1.9.0)
   - Cache (4.1.2)
+  - Charts (3.0.5):
+    - Charts/Core (= 3.0.5)
+  - Charts/Core (3.0.5)
   - Cosmos (13.0.0)
   - Crashlytics (3.10.1):
     - Fabric (~> 1.7.5)
@@ -109,6 +112,7 @@ DEPENDENCIES:
   - Alamofire (~> 4.5)
   - BEMCheckBox (~> 1.4)
   - Cache
+  - Charts
   - Cosmos (~> 13.0)
   - Crashlytics (~> 3.10.0)
   - ESTabBarController-swift (= 2.5)
@@ -154,6 +158,7 @@ SPEC CHECKSUMS:
   BEMCheckBox: 5ba6e37ade3d3657b36caecc35c8b75c6c2b1a4e
   Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
   Cache: bd0233fc688b5e83a27bcd87807db7e6f23adcc5
+  Charts: 45cdc985b764c838b35ee47eb1365d15735f6d1a
   Cosmos: af3973becc045af335b64498c9812034876b7661
   Crashlytics: aee1a064cbbf99b32efa3f056a5f458d846bc8ff
   ESTabBarController-swift: 8daa432f2a9be8ebd25101dc46c84472fd760512
@@ -190,6 +195,6 @@ SPEC CHECKSUMS:
   TPKeyboardAvoiding: cb69d5ddbe90ce0170e4bc2db1e5e41d4a3ad9a4
   TTGTagCollectionView: 20cf236b538ea9a17d1f0538968148c8d304414a
 
-PODFILE CHECKSUM: 2560a7b57afdf12d55c2707727e6fcc69254fbfa
+PODFILE CHECKSUM: ceb5d5a15edbe9fff9317158419d457b68c99f33
 
 COCOAPODS: 1.3.1

@@ -10,6 +10,7 @@ import SnapKit
 import SwiftRichString
 import BEMCheckBox
 import RangeSeekSlider
+import Charts
 
 class DiscoverFilterCellLoading: UITableViewCell {
     private let containerView: ShimmerView = {
@@ -440,6 +441,21 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
     private let containerView: UIView = {
         return UIView()
     }()
+    private let chartView: LineChartView = {
+        let chartView = LineChartView()
+        chartView.dragEnabled = false
+        chartView.chartDescription?.enabled = false
+
+        chartView.drawGridBackgroundEnabled = false
+        chartView.drawBordersEnabled = false
+        chartView.drawMarkers = false
+        chartView.xAxis.enabled = false
+        chartView.leftAxis.enabled = false
+        chartView.rightAxis.enabled = false
+        chartView.legend.enabled = false
+        chartView.noDataText = ""
+        return chartView
+    }()
 
     private let priceButtons = PriceButtonGroup()
     private let priceSlider = PriceRangeSlider()
@@ -472,6 +488,7 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         self.addSubview(containerView)
+        containerView.addSubview(chartView)
         containerView.addSubview(priceSlider)
         containerView.addSubview(priceButtons)
         containerView.addSubview(loadingIndicator)
@@ -489,7 +506,6 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
 
         priceSlider.snp.makeConstraints { make in
             make.left.right.equalTo(containerView).inset(-8).priority(999)
-            make.top.equalTo(containerView).inset(-12).priority(999)
             make.bottom.equalTo(priceButtons.snp.top).inset(6).priority(999)
         }
 
@@ -500,6 +516,14 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
 
         loadingIndicator.snp.makeConstraints { make in
             make.edges.equalTo(containerView)
+        }
+
+        chartView.snp.makeConstraints { make in
+            make.height.equalTo(100)
+            make.left.right.equalTo(containerView)
+
+            make.top.equalTo(containerView).inset(-30)
+            make.bottom.equalTo(priceSlider.snp.bottom).inset(20)
         }
 
         self.layoutIfNeeded()
@@ -516,6 +540,7 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
         self.filterPriceRange = nil
         self.isLoading = true
         self.locationName = locationName
+        self.chartView.clear()
 
         let deadline = DispatchTime.now() + 0.75
         controller.manager.getPriceRange { metaJSON, filterPriceRange in
@@ -523,8 +548,12 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
 
             if metaJSON.isOk(), let filterPriceRange = filterPriceRange {
                 DispatchQueue.main.asyncAfter(deadline: deadline) {
-                    self.priceSlider.minValue = CGFloat(filterPriceRange.all.minRounded)
-                    self.priceSlider.maxValue = CGFloat(filterPriceRange.all.maxRounded)
+                    let min = filterPriceRange.all.minRounded
+                    let max = filterPriceRange.all.maxRounded
+                    self.priceSlider.minValue = CGFloat(min)
+                    self.priceSlider.maxValue = CGFloat(max)
+
+                    self.chartView.data = LineChartData(dataSets: self.groupInto(filterPriceRange: filterPriceRange))
 
                     self.priceSlider.enableStep = false
                     self.updateSelected()
@@ -537,6 +566,61 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
         }
     }
 
+    private func groupInto(filterPriceRange: FilterPriceRange) -> [LineChartDataSet] {
+        var frequency = filterPriceRange.frequency
+
+        func putRequired(value: Double, num: Int = 0) {
+            if !frequency.contains(where: { $0.key == "\(value)" }) {
+                frequency[String(value)] = num
+            }
+        }
+
+        putRequired(value: filterPriceRange.all.minRounded)
+        putRequired(value: filterPriceRange.all.maxRounded)
+        putRequired(value: filterPriceRange.cheap.min)
+        putRequired(value: filterPriceRange.cheap.max)
+        putRequired(value: filterPriceRange.average.min)
+        putRequired(value: filterPriceRange.average.max)
+        putRequired(value: filterPriceRange.expensive.min)
+        putRequired(value: filterPriceRange.expensive.max)
+
+        let sorted = frequency
+                .map({ tuple -> (Double, Double) in
+                    (Double(tuple.key) ?? 0, Double(tuple.value))
+                })
+                .sorted(by: { (v: (Double, Double), v1: (Double, Double)) in
+                    v.0 < v1.0
+                })
+
+        func createGroup(min: Double, max: Double) -> [ChartDataEntry] {
+            return sorted
+                    .filter({ keyValue in
+                        min <= keyValue.0 && max >= keyValue.0
+                    })
+                    .map({ (tuple: (Double, Double)) -> ChartDataEntry in ChartDataEntry(x: Double(tuple.0), y: Double(tuple.1)) })
+        }
+
+        func createSet(values: [ChartDataEntry], color: UIColor) -> LineChartDataSet {
+            let set = LineChartDataSet(values: values, label: nil)
+            set.drawValuesEnabled = false
+            set.mode = .stepped
+            set.drawCirclesEnabled = false
+            set.circleRadius = 10
+            set.lineWidth = 0
+
+            set.drawFilledEnabled = true
+            set.fillColor = color
+            set.fillAlpha = 1.0
+            return set
+        }
+
+        return [
+            createSet(values: createGroup(min: filterPriceRange.cheap.minRounded, max: filterPriceRange.cheap.max), color: PriceButtonGroup.colors[0]),
+            createSet(values: createGroup(min: filterPriceRange.average.min, max: filterPriceRange.average.max), color: PriceButtonGroup.colors[1]),
+            createSet(values: createGroup(min: filterPriceRange.expensive.min, max: filterPriceRange.expensive.maxRounded), color: PriceButtonGroup.colors[2])
+        ]
+    }
+
     @objc fileprivate func onPriceButton(for button: UIButton) {
         if let filterPriceRange = filterPriceRange, let name = button.title(for: .normal) {
             switch name {
@@ -546,7 +630,7 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
                 controller.manager.select(price: name, min: filterPriceRange.average.min, max: filterPriceRange.average.max)
             case "$$$":
                 controller.manager.select(price: name, min: filterPriceRange.expensive.min, max: filterPriceRange.expensive.max)
-            default: break
+            default:break
             }
 
             self.updateSelected()
@@ -607,9 +691,10 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
     }
 
     class PriceButtonGroup: UIButton {
+        static let colors = [UIColor(hex: "c1ecd8"), UIColor.secondary050, UIColor.secondary300]
         fileprivate let cheapButton: UIButton = {
             let button = UIButton()
-            button.backgroundColor = UIColor(hex: "F0F0F0")
+            button.backgroundColor = colors[0]
             button.setTitle("$", for: .normal)
             button.setTitleColor(UIColor.black.withAlphaComponent(0.75), for: .normal)
             button.titleLabel?.font = UIFont.systemFont(ofSize: 15.0, weight: .semibold)
@@ -617,7 +702,7 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
         }()
         fileprivate let averageButton: UIButton = {
             let button = UIButton()
-            button.backgroundColor = UIColor(hex: "F0F0F0")
+            button.backgroundColor = colors[1]
             button.setTitle("$$", for: .normal)
             button.setTitleColor(UIColor.black.withAlphaComponent(0.75), for: .normal)
             button.titleLabel?.font = UIFont.systemFont(ofSize: 15.0, weight: .semibold)
@@ -625,7 +710,7 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
         }()
         fileprivate let expensiveButton: UIButton = {
             let button = UIButton()
-            button.backgroundColor = UIColor(hex: "F0F0F0")
+            button.backgroundColor = colors[2]
             button.setTitle("$$$", for: .normal)
             button.setTitleColor(UIColor.black.withAlphaComponent(0.75), for: .normal)
             button.titleLabel?.font = UIFont.systemFont(ofSize: 15.0, weight: .semibold)
@@ -641,7 +726,8 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
             self.addSubview(averageButton)
             self.addSubview(expensiveButton)
 
-            cheapButton.snp.makeConstraints { make in
+            cheapButton.snp.makeConstraints {
+                make in
                 make.left.equalTo(self)
                 make.right.equalTo(averageButton.snp.left).inset(-18)
                 make.width.equalTo(averageButton.snp.width)
@@ -650,7 +736,8 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
                 make.top.bottom.equalTo(self)
             }
 
-            averageButton.snp.makeConstraints { make in
+            averageButton.snp.makeConstraints {
+                make in
                 make.left.equalTo(cheapButton.snp.right).inset(-18)
                 make.right.equalTo(expensiveButton.snp.left).inset(-18)
                 make.width.equalTo(cheapButton.snp.width)
@@ -658,7 +745,8 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
                 make.top.bottom.equalTo(self)
             }
 
-            expensiveButton.snp.makeConstraints { make in
+            expensiveButton.snp.makeConstraints {
+                make in
                 make.left.equalTo(averageButton.snp.right).inset(-18)
                 make.right.equalTo(self)
                 make.width.equalTo(cheapButton.snp.width)
@@ -668,12 +756,12 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
         }
 
         fileprivate func select(name: String?) {
-            for button in buttons {
+            for (index, button) in buttons.enumerated() {
                 if (button.title(for: .normal) == name) {
                     button.backgroundColor = .primary400
                     button.setTitleColor(.white, for: .normal)
                 } else {
-                    button.backgroundColor = UIColor(hex: "F0F0F0")
+                    button.backgroundColor = PriceButtonGroup.colors[index]
                     button.setTitleColor(UIColor.black.withAlphaComponent(0.75), for: .normal)
                 }
             }
@@ -705,7 +793,8 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
             self.addSubview(averageButton)
             self.addSubview(expensiveButton)
 
-            cheapButton.snp.makeConstraints { make in
+            cheapButton.snp.makeConstraints {
+                make in
                 make.left.equalTo(self)
                 make.right.equalTo(averageButton.snp.left).inset(-18)
                 make.width.equalTo(averageButton.snp.width)
@@ -722,7 +811,8 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
                 make.top.bottom.equalTo(self)
             }
 
-            expensiveButton.snp.makeConstraints { make in
+            expensiveButton.snp.makeConstraints {
+                make in
                 make.left.equalTo(averageButton.snp.right).inset(-18)
                 make.right.equalTo(self)
                 make.width.equalTo(cheapButton.snp.width)

@@ -26,6 +26,7 @@ target 'Munch' do
   pod 'KMNavigationBarTransition', '~> 1.1'
 
   # UI Components Library
+  pod 'Charts'
   pod 'TPKeyboardAvoiding', '~> 1.3'
   pod 'NVActivityIndicatorView', '~> 4.0'
   pod 'ESTabBarController-swift', '2.5'
