@@ -540,6 +540,9 @@ extension PlaceViewController {
         register(PlaceHeaderInstagramCard.self)
         register(PlaceVendorInstagramCard.self)
 
+        register(PlaceHeaderPartnerContentCard.self)
+        register(PlacePartnerContentCard.self)
+
         // Register Review Cards
         register(PlaceHeaderReviewCard.self)
         register(PlaceVendorFacebookReviewCard.self)
