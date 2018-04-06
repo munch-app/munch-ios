@@ -1069,6 +1069,7 @@
 				"SWIFT_INCLUDE_PATHS[arch=*]" = "${SRCROOT}/Sources/CCommonCrypto";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -1090,6 +1091,7 @@
 				"SWIFT_INCLUDE_PATHS[arch=*]" = "${SRCROOT}/Sources/CCommonCrypto";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
