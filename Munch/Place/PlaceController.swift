@@ -532,14 +532,7 @@ extension PlaceViewController {
         register(PlaceHeaderLocationCard.self)
         register(PlaceBasicLocationCard.self)
 
-        // Register Vendor Article Cards
-        register(PlaceHeaderArticleCard.self)
-        register(PlaceVendorArticleCard.self)
-
-        // Register Vendor Instagram Cards
-        register(PlaceHeaderInstagramCard.self)
-        register(PlaceVendorInstagramCard.self)
-
+        // Register Partner Content
         register(PlaceHeaderPartnerContentCard.self)
         register(PlacePartnerContentCard.self)
 

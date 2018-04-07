@@ -14,6 +14,8 @@ import SwiftyJSON
  PlaceClient from PlaceService in munch-core/munch-api
  */
 class PlaceClient {
+    private let decoder = JSONDecoder()
+
     func get(id: String, callback: @escaping (_ meta: MetaJSON, _ place: Place?) -> Void) {
         MunchApi.restful.get("/places/\(id)") { meta, json in
             callback(meta, Place(json: json["data"]))
@@ -30,23 +32,15 @@ class PlaceClient {
         }
     }
 
-    func getArticle(id: String, maxSort: String? = nil, size: Int, callback: @escaping (_ meta: MetaJSON, _ articles: [Article]) -> Void) {
+    func getPartnerContent(id: String, mediaMaxSort: String? = nil, articleMaxSort: String? = nil, callback:
+            @escaping (_ meta: MetaJSON, _ contents: [PartnerContent], _ mediaMaxSort: String?, _ articleMaxSort: String?) -> Void) {
         var params = Parameters()
-        params["maxSort"] = maxSort
-        params["size"] = size
+        params["mediaMaxSort"] = mediaMaxSort
+        params["articleMaxSort"] = articleMaxSort
 
-        MunchApi.restful.get("/places/\(id)/data/article", parameters: params) { meta, json in
-            callback(meta, json["data"].map({ Article(json: $0.1) }))
-        }
-    }
-
-    func getInstagram(id: String, maxSort: String? = nil, size: Int, callback: @escaping (_ meta: MetaJSON, _ medias: [InstagramMedia]) -> Void) {
-        var params = Parameters()
-        params["maxSort"] = maxSort
-        params["size"] = size
-
-        MunchApi.restful.get("/places/\(id)/data/instagram", parameters: params) { meta, json in
-            callback(meta, json["data"].map({ InstagramMedia(json: $0.1) }))
+        MunchApi.restful.get("/places/\(id)/partners/content") { meta, json in
+            let contents = try? self.decoder.decode([PartnerContent].self, from: json["data"]["contents"].rawData())
+            callback(meta, contents ?? [], json["data"]["mediaMaxSort"].string, json["data"]["articleMaxSort"].string)
         }
     }
 }
@@ -437,7 +431,7 @@ class BusinessHour {
 /**
  Primary data type from munch-core/service-articles
  */
-struct Article {
+struct Article: Codable {
     var articleId: String?
     var articleListNo: String?
 
@@ -451,25 +445,9 @@ struct Article {
     var description: String?
 
     var thumbnail: [String: String]?
-
-    init(json: JSON) {
-        self.articleId = json["articleId"].string
-        self.articleListNo = json["articleListNo"].string
-
-        self.placeId = json["placeId"].string
-        self.placeSort = json["placeSort"].string
-        self.placeName = json["placeName"].string
-
-        self.url = json["url"].string
-        self.brand = json["brand"].string
-        self.title = json["title"].string
-        self.description = json["description"].string
-
-        self.thumbnail = json["thumbnail"].dictionaryObject as? [String: String]
-    }
 }
 
-struct InstagramMedia {
+struct InstagramMedia: Codable {
     var userId: String?
     var mediaId: String?
 
@@ -485,24 +463,6 @@ struct InstagramMedia {
     var profilePicture: String?
 
     var images: [String: String]?
-
-    init(json: JSON) {
-        self.userId = json["userId"].string
-        self.mediaId = json["mediaId"].string
-
-        self.locationId = json["locationId"].string
-
-        self.placeId = json["placeId"].string
-        self.placeSort = json["placeSort"].string
-        self.placeName = json["placeName"].string
-
-        self.type = json["type"].string
-        self.caption = json["caption"].string
-        self.username = json["username"].string
-        self.profilePicture = json["profilePicture"].string
-
-        self.images = json["images"].dictionaryObject as? [String: String]
-    }
 }
 
 /**
@@ -552,4 +512,19 @@ struct SourcedImage: Codable {
         params["images"] = images
         return params
     }
+}
+
+struct PartnerContent: Codable {
+    var uniqueId: String
+    var type: String
+    var image: [String: String]?
+
+    // TODO Date
+
+    var author: String?
+    var title: String?
+    var description: String?
+
+    var article: Article?
+    var instagramMedia: InstagramMedia?
 }

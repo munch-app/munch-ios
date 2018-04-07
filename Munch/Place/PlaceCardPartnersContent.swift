@@ -16,7 +16,8 @@ class PlaceHeaderPartnerContentCard: PlaceTitleCardView {
     }
 
     override func didTap() {
-        // TODO
+        let controller = PlacePartnerContentController(place: self.controller.place!)
+        self.controller.navigationController!.pushViewController(controller, animated: true)
     }
 
     override class var cardId: String? {
@@ -91,7 +92,9 @@ extension PlacePartnerContentCard: UICollectionViewDataSource, UICollectionViewD
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // TODO Click to
+        let content = contents[indexPath.row]
+        let controller = PlacePartnerContentController(place: self.controller.place!, startFromUniqueId: content["uniqueId"].string)
+        self.controller.navigationController!.pushViewController(controller, animated: true)
     }
 }
 
