@@ -30,6 +30,7 @@ class PlacePartnerContentController: UIViewController, UIGestureRecognizerDelega
         collectionView.showsVerticalScrollIndicator = true
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.alwaysBounceVertical = false
+        collectionView.alwaysBounceHorizontal = true
         collectionView.backgroundColor = UIColor.white
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 36, right: 0)
 

@@ -558,7 +558,6 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
                     self.priceSlider.enableStep = false
                     self.updateSelected()
                     self.isLoading = false
-                    self.controller.manager.resetPrice()
                 }
             } else {
                 self.controller.present(metaJSON.createAlert(), animated: true)
