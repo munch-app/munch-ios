@@ -7,6 +7,7 @@ import Foundation
 import Alamofire
 
 import SwiftyJSON
+import Crashlytics
 import Cache
 
 /**
@@ -55,21 +56,31 @@ class DiscoverClient {
 
         class LocationClient {
             private let decoder = JSONDecoder()
-            private let storage: Storage
+            private let storage: Storage?
 
             init() {
-                let diskConfig = DiskConfig(name: "api/discover/filter/locations")
-                self.storage = try! Storage(diskConfig: diskConfig)
+                do {
+                    let diskConfig = DiskConfig(name: "api.discover.filter.locations")
+                    let memoryConfig = MemoryConfig(expiry: .never, countLimit: 10, totalCostLimit: 10)
+                    self.storage = try Storage(diskConfig: diskConfig, memoryConfig: memoryConfig)
+                } catch {
+                    self.storage = nil
+                    print(error)
+                    Crashlytics.sharedInstance().recordError(error)
+                }
             }
 
             func list(callback: @escaping (_ meta: MetaJSON, _ locations: [Location], _ containers: [Container]) -> Void) {
-                try? storage.removeExpiredObjects()
-                let locations = try? storage.object(ofType: [Location].self, forKey: "locations")
-                let containers = try? storage.object(ofType: [Container].self, forKey: "containers")
-                if let locations = locations, let containers = containers {
-                    callback(.ok, locations, containers)
-                    return
+                if let storage = storage {
+                    try? storage.removeExpiredObjects()
+                    let locations = try? storage.object(ofType: [Location].self, forKey: "locations")
+                    let containers = try? storage.object(ofType: [Container].self, forKey: "containers")
+                    if let locations = locations, let containers = containers {
+                        callback(.ok, locations, containers)
+                        return
+                    }
                 }
+
 
                 MunchApi.restful.get("/discover/filter/locations/list") { meta, json in
                     var locations = [Location]()
@@ -86,8 +97,10 @@ class DiscoverClient {
                         }
                     }
 
-                    try? self.storage.setObject(locations, forKey: "locations", expiry: .seconds(60 * 60 * 25))
-                    try? self.storage.setObject(containers, forKey: "containers", expiry: .seconds(60 * 60 * 25))
+                    if let storage = self.storage {
+                        try? storage.setObject(locations, forKey: "locations", expiry: .seconds(60 * 60 * 25))
+                        try? storage.setObject(containers, forKey: "containers", expiry: .seconds(60 * 60 * 25))
+                    }
                     callback(meta, locations, containers)
                 }
             }
