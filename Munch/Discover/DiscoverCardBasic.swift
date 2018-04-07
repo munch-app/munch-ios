@@ -17,7 +17,14 @@ import TTGTagCollectionView
 import Firebase
 
 class DiscoverPlaceCard: UITableViewCell, SearchCardView {
-    let topImageView = ShimmerImageView()
+    let topImageView: ShimmerImageView = {
+        let imageView = ShimmerImageView()
+        imageView.layer.cornerRadius = 3
+
+        let width = Int(UIScreen.main.bounds.width)
+        imageView.imageView.size = (width, width)
+        return imageView
+    }()
     let containerLabel: UIButton = {
         let label = UIButton()
         for view in label.subviews {
@@ -71,7 +78,6 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
             make.bottom.equalTo(topImageView).inset(8)
         }
 
-        topImageView.layer.cornerRadius = 3
         topImageView.snp.makeConstraints { make in
             make.left.right.top.equalTo(containerView)
             make.bottom.equalTo(bottomView.snp.top)

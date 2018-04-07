@@ -577,12 +577,12 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
 
         putRequired(value: filterPriceRange.all.minRounded)
         putRequired(value: filterPriceRange.all.maxRounded)
-        putRequired(value: filterPriceRange.cheap.min)
-        putRequired(value: filterPriceRange.cheap.max)
-        putRequired(value: filterPriceRange.average.min)
-        putRequired(value: filterPriceRange.average.max)
-        putRequired(value: filterPriceRange.expensive.min)
-        putRequired(value: filterPriceRange.expensive.max)
+//        putRequired(value: filterPriceRange.cheap.min)
+//        putRequired(value: filterPriceRange.cheap.max)
+//        putRequired(value: filterPriceRange.average.min)
+//        putRequired(value: filterPriceRange.average.max)
+//        putRequired(value: filterPriceRange.expensive.min)
+//        putRequired(value: filterPriceRange.expensive.max)
 
         let sorted = frequency
                 .map({ tuple -> (Double, Double) in
@@ -603,21 +603,22 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
         func createSet(values: [ChartDataEntry], color: UIColor) -> LineChartDataSet {
             let set = LineChartDataSet(values: values, label: nil)
             set.drawValuesEnabled = false
-            set.mode = .stepped
+            set.mode = .cubicBezier
+            set.cubicIntensity = 0.2
             set.drawCirclesEnabled = false
             set.circleRadius = 10
             set.lineWidth = 0
 
             set.drawFilledEnabled = true
-            set.fillColor = color
+            set.fillColor = UIColor(hex: "E0E0E0")
             set.fillAlpha = 1.0
             return set
         }
 
         return [
-            createSet(values: createGroup(min: filterPriceRange.cheap.minRounded, max: filterPriceRange.cheap.max), color: PriceButtonGroup.colors[0]),
-            createSet(values: createGroup(min: filterPriceRange.average.min, max: filterPriceRange.average.max), color: PriceButtonGroup.colors[1]),
-            createSet(values: createGroup(min: filterPriceRange.expensive.min, max: filterPriceRange.expensive.maxRounded), color: PriceButtonGroup.colors[2])
+            createSet(values: createGroup(min: filterPriceRange.all.minRounded, max: filterPriceRange.all.maxRounded), color: PriceButtonGroup.colors[0]),
+//            createSet(values: createGroup(min: filterPriceRange.average.min, max: filterPriceRange.average.max), color: PriceButtonGroup.colors[1]),
+//            createSet(values: createGroup(min: filterPriceRange.expensive.min, max: filterPriceRange.expensive.maxRounded), color: PriceButtonGroup.colors[2])
         ]
     }
 
@@ -691,7 +692,7 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
     }
 
     class PriceButtonGroup: UIButton {
-        static let colors = [UIColor(hex: "c1ecd8"), UIColor.secondary050, UIColor.secondary300]
+        static let colors = [UIColor(hex: "F0F0F0"), UIColor(hex: "F0F0F0"), UIColor(hex: "F0F0F0")]
         fileprivate let cheapButton: UIButton = {
             let button = UIButton()
             button.backgroundColor = colors[0]

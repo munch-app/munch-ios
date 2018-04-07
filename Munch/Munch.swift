@@ -159,6 +159,7 @@ extension UIColor {
 public class MunchImageView: UIImageView {
     var size: (Int, Int)?
     var images: [(Int, Int, String)]?
+    var rendered = false
     var completionHandler: CompletionHandler?
 
     /**
@@ -180,6 +181,7 @@ public class MunchImageView: UIImageView {
     func render(images: [String: String]?, completionHandler: CompletionHandler? = nil) {
         self.images = MunchImageView.imageList(images: images)
         self.completionHandler = completionHandler
+        self.rendered = false
         self.tryRender()
     }
 
@@ -187,6 +189,10 @@ public class MunchImageView: UIImageView {
      This try render code might be giving performance issues
      */
     private func tryRender() {
+        if rendered {
+            return
+        }
+
         if let size = size, let images = self.images {
             let fitting = images.filter {
                         $0.0 >= size.0 && $0.1 >= size.1
@@ -197,6 +203,7 @@ public class MunchImageView: UIImageView {
 
             if let fit = fitting.get(0) {
                 // Found the smallest fitting image
+                self.rendered = true
                 kf.setImage(with: URL(string: fit.2), completionHandler: completionHandler)
             } else {
                 // No fitting image found, take largest image
@@ -204,6 +211,7 @@ public class MunchImageView: UIImageView {
                     $0.0 * $0.1 > $1.0 * $1.1
                 }
                 if let image = images.get(0) {
+                    self.rendered = true
                     kf.setImage(with: URL(string: image.2), completionHandler: completionHandler)
                 } else {
                     kf.setImage(with: nil, completionHandler: completionHandler)
@@ -211,6 +219,7 @@ public class MunchImageView: UIImageView {
             }
         } else {
             kf.setImage(with: nil, completionHandler: completionHandler)
+            self.rendered = false
         }
     }
 
@@ -239,7 +248,9 @@ public class MunchImageView: UIImageView {
 
     public override func layoutSubviews() {
         super.layoutSubviews()
-        self.size = frameSize()
+        if self.size == nil {
+            self.size = frameSize()
+        }
         self.tryRender()
     }
 

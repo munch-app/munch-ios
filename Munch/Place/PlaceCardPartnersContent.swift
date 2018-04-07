@@ -29,9 +29,9 @@ class PlacePartnerContentCard: PlaceCardView {
     static let width = UIScreen.main.bounds.width - 24 - 24
     private let collectionView: UICollectionView = {
         let layout = SnappingCollectionViewLayout()
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 24)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 48)
 
-        layout.itemSize = CGSize(width: width, height: width * 0.8)
+        layout.itemSize = CGSize(width: width, height: width * 0.85)
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 0
 
@@ -42,7 +42,7 @@ class PlacePartnerContentCard: PlaceCardView {
         collectionView.backgroundColor = UIColor.white
         collectionView.register(PlacePartnerContentCardCell.self, forCellWithReuseIdentifier: "PlacePartnerContentCardCell")
 
-        collectionView.decelerationRate = UIScrollViewDecelerationRateFast
+        collectionView.decelerationRate = UIScrollViewDecelerationRateFast / 4
 
         return collectionView
     }()
@@ -59,7 +59,7 @@ class PlacePartnerContentCard: PlaceCardView {
         if (!contents.isEmpty) {
             collectionView.snp.makeConstraints { make in
                 make.top.bottom.equalTo(self).inset(topBottom)
-                make.height.equalTo(PlacePartnerContentCard.width * 0.8).priority(999)
+                make.height.equalTo(PlacePartnerContentCard.width * 0.85).priority(999)
                 make.left.right.equalTo(self)
             }
         } else {
@@ -151,7 +151,7 @@ fileprivate class PlacePartnerContentCardCell: UICollectionViewCell {
         bannerImageView.snp.makeConstraints { (make) in
             make.left.right.equalTo(containerView)
             make.top.equalTo(containerView)
-            make.height.equalTo(containerView.snp.height).dividedBy(1.75).priority(999)
+            make.height.equalTo(containerView.snp.height).dividedBy(1.6).priority(999)
         }
 
         titleLabel.snp.makeConstraints { (make) in
