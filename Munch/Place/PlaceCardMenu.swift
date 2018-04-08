@@ -148,7 +148,7 @@ extension PlaceVendorMenuImageCard: UICollectionViewDataSource, UICollectionView
                 controller.present(safari, animated: true, completion: nil)
             }
         case .image(let json):
-            if let imageUrl = json["url"].string, let url = URL(string: imageUrl) {
+            if let imageUrl = json["url"].string, let url = MunchImageView.fix(url: imageUrl) {
                 let safari = SFSafariViewController(url: url)
                 safari.delegate = self
                 controller.present(safari, animated: true, completion: nil)

@@ -185,6 +185,15 @@ public class MunchImageView: UIImageView {
         self.tryRender()
     }
 
+    static func fix(url: String) -> URL? {
+        // Temporary TODO Remove, add in on server side
+
+        // s3.dualstack.ap-southeast-1.amazonaws.com
+        // s3-ap-southeast-1.amazonaws.com
+        let url = url.replacingOccurrences(of: "s3-ap-southeast-1.amazonaws.com", with: "s3.dualstack.ap-southeast-1.amazonaws.com")
+        return URL(string: url)
+    }
+
     /**
      This try render code might be giving performance issues
      */
@@ -204,7 +213,7 @@ public class MunchImageView: UIImageView {
             if let fit = fitting.get(0) {
                 // Found the smallest fitting image
                 self.rendered = true
-                kf.setImage(with: URL(string: fit.2), completionHandler: completionHandler)
+                kf.setImage(with: MunchImageView.fix(url: fit.2), completionHandler: completionHandler)
             } else {
                 // No fitting image found, take largest image
                 let images = images.sorted {
@@ -212,7 +221,7 @@ public class MunchImageView: UIImageView {
                 }
                 if let image = images.get(0) {
                     self.rendered = true
-                    kf.setImage(with: URL(string: image.2), completionHandler: completionHandler)
+                    kf.setImage(with: MunchImageView.fix(url: image.2), completionHandler: completionHandler)
                 } else {
                     kf.setImage(with: nil, completionHandler: completionHandler)
                 }

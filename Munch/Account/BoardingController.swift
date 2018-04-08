@@ -351,7 +351,7 @@ fileprivate class BoardingCardCell: UICollectionViewCell {
     }
 
     private func initViews() {
-        let url = URL(string: "https://s3-ap-southeast-1.amazonaws.com/munch-static/iOS/onboarding_1.jpg")
+        let url = URL(string: "https://s3.dualstack.ap-southeast-1.amazonaws.com/munch-static/iOS/onboarding_1.jpg")
         imageView.kf.setImage(with: url)
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true

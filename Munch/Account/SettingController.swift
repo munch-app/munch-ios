@@ -139,7 +139,7 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
 
     private var items: [(String?, [SettingCellType])] {
         return [
-            ("Content Partner", [SettingCellType.instagramConnect]),
+//            ("Content Partner", [SettingCellType.instagramConnect]),
             ("Account", [
                 SettingCellType.feedback,
                 SettingCellType.logout,
