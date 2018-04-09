@@ -103,24 +103,22 @@ public class RestfulClient {
                         case .failure(let error):
                             Crashlytics.sharedInstance().recordError(error)
                             switch response.response?.statusCode ?? 500 {
-                            case 502:
-                                let json = JSON(["meta": ["code": 502, "error": [
-                                    "type": "BadGateway",
-                                    "message": "Gateway error, try again later."
-                                ]]])
-                                callback(MetaJSON(metaJson: json["meta"]), json)
+                            case 502: fallthrough
                             case 503:
                                 let json = JSON(["meta": ["code": 502, "error": [
                                     "type": "ServiceUnavailable",
                                     "message": "Server temporary down, try again later."
                                 ]]])
                                 callback(MetaJSON(metaJson: json["meta"]), json)
-                            case 410:
+
+                            case 410: fallthrough
+                            case 301:
                                 let json = JSON(["meta": ["code": 410, "error": [
                                     "type": "UnsupportedException",
                                     "message": "Your application version is not supported. Please update the app."
                                 ]]])
                                 callback(MetaJSON(metaJson: json["meta"]), json)
+
                             default:
                                 let json = JSON(["meta": ["code": 500, "error": [
                                     "type": "Unknown Error",
