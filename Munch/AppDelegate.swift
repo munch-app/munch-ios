@@ -12,33 +12,44 @@ import Firebase
 import Crashlytics
 import GoogleSignIn
 
+import FBSDKCoreKit
+import FBSDKLoginKit
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
+
         // Select initial view provider to use
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.rootViewController = InitialViewProvider.main()
         self.window?.makeKeyAndVisible()
 
+        // Configure Firebase
         FirebaseApp.configure()
-
+        // Configure FBSDK
+        FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
+        // Configure Google ID
         GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
+
         return true
     }
 
     @available(iOS 9.0, *)
-    func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
-        return GIDSignIn.sharedInstance().handle(url,
-                sourceApplication:options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String,
-                annotation: [:])
-    }
-    
-    func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
-        return true
+    func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any]) -> Bool {
+        if FBSDKApplicationDelegate.sharedInstance().application(application, open: url, options: options) {
+            return true
+        }
+
+        if GIDSignIn.sharedInstance().handle(url,
+                sourceApplication: options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String,
+                annotation: [:]) {
+            return true
+        }
+
+        return false
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
