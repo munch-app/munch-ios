@@ -115,6 +115,12 @@ public class RestfulClient {
                                     "message": "Server temporary down, try again later."
                                 ]]])
                                 callback(MetaJSON(metaJson: json["meta"]), json)
+                            case 410:
+                                let json = JSON(["meta": ["code": 410, "error": [
+                                    "type": "UnsupportedException",
+                                    "message": "Your application version is not supported. Please update the app."
+                                ]]])
+                                callback(MetaJSON(metaJson: json["meta"]), json)
                             default:
                                 let json = JSON(["meta": ["code": 500, "error": [
                                     "type": "Unknown Error",
