@@ -280,6 +280,7 @@ struct Place: SearchResult, Equatable {
                 outFormatter.amSymbol = "am"
                 outFormatter.pmSymbol = "pm"
 
+                dayFormatter.locale = Locale(identifier: "en_US_POSIX")
                 dayFormatter.dateFormat = "EEE"
             }
 
@@ -385,6 +386,14 @@ struct Place: SearchResult, Equatable {
  BusinessHour
  */
 class BusinessHour {
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+
+        return formatter
+    }()
+
     let hours: [Place.Hour]
     let dayHours: [String: String]
 
@@ -417,9 +426,7 @@ class BusinessHour {
     }
 
     var today: String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "EEEE"
-        let dayInWeek = dateFormatter.string(from: Date())
+        let dayInWeek = BusinessHour.dateFormatter.string(from: Date())
         return dayInWeek.capitalized + ": " + self.todayTime
     }
 

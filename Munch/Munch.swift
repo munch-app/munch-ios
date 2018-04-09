@@ -156,6 +156,7 @@ extension UIColor {
     }
 }
 
+// Need to deprecate this class, giving me headaches
 public class MunchImageView: UIImageView {
     var size: (Int, Int)?
     var images: [(Int, Int, String)]?
@@ -257,10 +258,11 @@ public class MunchImageView: UIImageView {
 
     public override func layoutSubviews() {
         super.layoutSubviews()
+        // So that it will only run once
         if self.size == nil {
             self.size = frameSize()
+            self.tryRender()
         }
-        self.tryRender()
     }
 
     /**

@@ -44,11 +44,13 @@ enum DiscoverFilterCategory {
 class DiscoverFilterControllerManager {
     private let dayFormatter: DateFormatter = {
         let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.dateFormat = "EEE"
         return formatter
     }()
     private let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.dateFormat = "HH:mm"
         return formatter
     }()

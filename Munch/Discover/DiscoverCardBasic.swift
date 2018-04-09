@@ -266,7 +266,7 @@ class DiscoverPlaceCardBottomView: UIView {
     private func render(location card: SearchCard) {
         let line = NSMutableAttributedString()
 
-        // Distance
+        // Distance CPU: 0 - 5000 ticks
         if let latLng = card["location"]["latLng"].string {
             if let distance = MunchLocation.distance(asMetric: latLng) {
                 line.append(NSMutableAttributedString(string: "\(distance) - "))
@@ -281,6 +281,7 @@ class DiscoverPlaceCardBottomView: UIView {
         }
 
         // Open Now
+        // Compact CPU: 0 - 6000 ticks
         let hours = card["hours"].compactMap({ Place.Hour(json: $0.1) })
         switch Place.Hour.Formatter.isOpen(hours: hours) {
         case .opening:
@@ -298,6 +299,7 @@ class DiscoverPlaceCardBottomView: UIView {
         case .none:
             break
         }
+        // Render CPU: 0 - 3000 ticks
         self.locationLabel.attributedText = line
     }
 
