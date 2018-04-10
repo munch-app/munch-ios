@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 
 import SnapKit
+import Kingfisher
 
 class DiscoverNavigationalController: UINavigationController, UINavigationControllerDelegate {
     required init() {
@@ -32,6 +33,10 @@ class DiscoverController: UIViewController, UITableViewDelegate, UITableViewData
     private let cardTableView = UITableView()
     let headerView = DiscoverHeaderView()
     private let refreshControl = UIRefreshControl()
+    let imageSize: (Int, Int) = {
+        let width = Int(UIScreen.main.bounds.width)
+        return (width, width)
+    }()
 
     private let backIndicatorView = BackIndicatorView()
     private var backIndicatorConstraint: Constraint!
@@ -63,6 +68,7 @@ class DiscoverController: UIViewController, UITableViewDelegate, UITableViewData
         self.headerView.controller = self
         self.cardTableView.delegate = self
         self.cardTableView.dataSource = self
+        self.cardTableView.prefetchDataSource = self
 
         // Render search results
         contentView(search: searchQuery)
@@ -382,6 +388,24 @@ extension DiscoverController {
                 let controller = PlaceViewController(placeId: placeId)
                 self.navigationController!.pushViewController(controller, animated: true)
             }
+        }
+    }
+}
+
+extension DiscoverController: UITableViewDataSourcePrefetching {
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        DispatchQueue.global(qos: .background).async {
+            let imageList: [[String: String]] = indexPaths.filter({ $0.section == 1 })
+                    .compactMap({
+                        if let card = self.cards.get($0.row) {
+                            if let images = card.dict(name: "images") as? [[String: Any]], let image = images.get(0) {
+                                return image["images"] as? [String: String]
+                            }
+                        }
+                        return nil
+                    })
+
+            MunchImageView.prefetch(imageList: imageList, size: self.imageSize)
         }
     }
 }

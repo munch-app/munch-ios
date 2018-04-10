@@ -208,32 +208,37 @@ public class MunchImageView: UIImageView {
         }
 
         if let size = size, let images = self.images {
-            let fitting = images.filter {
-                        $0.0 >= size.0 && $0.1 >= size.1
-                    }
-                    .sorted {
-                        $0.0 * $0.1 < $1.0 * $1.1
-                    }
-
-            if let fit = fitting.get(0) {
-                // Found the smallest fitting image
-                self.rendered = true
-                kf.setImage(with: MunchImageView.fix(url: fit.2), completionHandler: completionHandler)
-            } else {
-                // No fitting image found, take largest image
-                let images = images.sorted {
-                    $0.0 * $0.1 > $1.0 * $1.1
-                }
-                if let image = images.get(0) {
-                    self.rendered = true
-                    kf.setImage(with: MunchImageView.fix(url: image.2), completionHandler: completionHandler)
-                } else {
-                    kf.setImage(with: nil, completionHandler: completionHandler)
-                }
+            if let url = MunchImageView.selectImage(images: images, size: size) {
+                kf.setImage(with: MunchImageView.fix(url: url), completionHandler: completionHandler)
             }
+            self.rendered = true
         } else {
             kf.setImage(with: nil, completionHandler: completionHandler)
             self.rendered = false
+        }
+    }
+
+    class func selectImage(images: [(Int, Int, String)], size: (Int, Int)) -> String? {
+        let fitting = images.filter {
+                    $0.0 >= size.0 && $0.1 >= size.1
+                }
+                .sorted {
+                    $0.0 * $0.1 < $1.0 * $1.1
+                }
+
+        if let fit = fitting.get(0) {
+            // Found the smallest fitting image
+            return fit.2
+        } else {
+            // No fitting image found, take largest image
+            let images = images.sorted {
+                $0.0 * $0.1 > $1.0 * $1.1
+            }
+            if let image = images.get(0) {
+                return image.2
+            } else {
+                return nil
+            }
         }
     }
 
@@ -258,6 +263,18 @@ public class MunchImageView: UIImageView {
             }
         }
         return nil
+    }
+
+    class func prefetch(imageList: [[String: String]], size: (Int, Int)) {
+        let images: [URL] = imageList.compactMap({
+            if let images = MunchImageView.imageList(images: $0) {
+                if let image = selectImage(images: images, size: size) {
+                    return URL(string: image)
+                }
+            }
+            return nil
+        })
+        ImagePrefetcher(urls: images).start()
     }
 
     public override func layoutSubviews() {
@@ -301,10 +318,10 @@ public class MunchPlist {
 
 extension Calendar {
     static func millis(from: Date, to: Date) -> Int {
-        return Calendar.current.dateComponents(Set<Calendar.Component>([ .nanosecond]), from: from, to: to).nanosecond! / 1000000
+        return Calendar.current.dateComponents(Set<Calendar.Component>([.nanosecond]), from: from, to: to).nanosecond! / 1000000
     }
 
     static func micro(from: Date, to: Date) -> Int {
-        return Calendar.current.dateComponents(Set<Calendar.Component>([ .nanosecond]), from: from, to: to).nanosecond! / 1000
+        return Calendar.current.dateComponents(Set<Calendar.Component>([.nanosecond]), from: from, to: to).nanosecond! / 1000
     }
 }
