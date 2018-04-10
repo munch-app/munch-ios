@@ -5,6 +5,7 @@
 //  Created by Fuxing Loh on 14/9/17.
 //  Copyright © 2017 Munch Technologies. All rights reserved.
 //
+import os.log
 
 import Foundation
 import UIKit
@@ -102,12 +103,14 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
 
     func render(card: SearchCard, controller: DiscoverController) {
         self.controller = controller
-        self.containers = card["containers"].map({ Container.create(json: $0.1)! })
 
+        os_log("Parsing required Json Objects", type: .info)
+        self.containers = card["containers"].map({ Container.create(json: $0.1)! })
         let images = card["images"].compactMap {
             SourcedImage(json: $0.1)
         }
 
+        os_log("Rendering Json Objects", type: .info)
         render(containers: containers)
         topImageView.render(sourcedImage: images.get(0))
         bottomView.render(card: card)
@@ -282,7 +285,8 @@ class DiscoverPlaceCardBottomView: UIView {
 
         // Open Now
         // Compact CPU: 0 - 6000 ticks
-        let hours = card["hours"].compactMap({ Place.Hour(json: $0.1) })
+        let hours = card["hours"].arrayValue.compactMap({ Place.Hour(json: $0) })
+        // Render CPU: 0 - 3000 ticks
         switch Place.Hour.Formatter.isOpen(hours: hours) {
         case .opening:
             line.append(DiscoverPlaceCardBottomView.periodText)
@@ -299,7 +303,6 @@ class DiscoverPlaceCardBottomView: UIView {
         case .none:
             break
         }
-        // Render CPU: 0 - 3000 ticks
         self.locationLabel.attributedText = line
     }
 
