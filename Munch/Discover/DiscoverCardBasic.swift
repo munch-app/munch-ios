@@ -5,6 +5,7 @@
 //  Created by Fuxing Loh on 14/9/17.
 //  Copyright © 2017 Munch Technologies. All rights reserved.
 //
+
 import os.log
 
 import Foundation
@@ -18,6 +19,13 @@ import TTGTagCollectionView
 import Firebase
 
 class DiscoverPlaceCard: UITableViewCell, SearchCardView {
+    static var total: Int = 0
+    static var parse: Int = 0
+    static var container: Int = 0
+    static var image: Int = 0
+    static var bottom: Int = 0
+    static var totalCount: Int = 0
+
     let topImageView: ShimmerImageView = {
         let imageView = ShimmerImageView()
         imageView.layer.cornerRadius = 3
@@ -61,7 +69,7 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
     let bottomView = DiscoverPlaceCardBottomView()
 
     var controller: DiscoverController!
-    var containers: [Container] = []
+    var containers: [JSON] = []
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -104,26 +112,58 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
     func render(card: SearchCard, controller: DiscoverController) {
         self.controller = controller
 
-        os_log("Parsing required Json Objects", type: .info)
-        self.containers = card["containers"].map({ Container.create(json: $0.1)! })
-        let images = card["images"].compactMap {
-            SourcedImage(json: $0.1)
+        let startDate = Date()
+        self.containers = card["containers"].array ?? []
+
+        let parsedDate = Date()
+        render(containers: containers)
+        let containerDate = Date()
+
+        // Top Image Rendering
+        if let images = card.dict(name: "images") as? [[String: Any]], let image = images.get(0) {
+            topImageView.render(images: image["images"] as? [String: String])
+        } else {
+            topImageView.render(images: [:])
         }
 
-        os_log("Rendering Json Objects", type: .info)
-        render(containers: containers)
-        topImageView.render(sourcedImage: images.get(0))
+        let imageDate = Date()
         bottomView.render(card: card)
+        let bottomDate = Date()
 
         Analytics.logEvent(AnalyticsEventViewSearchResults, parameters: [
             AnalyticsParameterSearchTerm: "" as NSObject,
         ])
+
+        let total = Calendar.micro(from: startDate, to: Date())
+        let parse = Calendar.micro(from: startDate, to: parsedDate)
+        let container = Calendar.micro(from: parsedDate, to: containerDate)
+        let image = Calendar.micro(from: containerDate, to: imageDate)
+        let bottom = Calendar.micro(from: imageDate, to: bottomDate)
+        os_log("DiscoverPlaceCard finished card:controller: rendering in (micro) total:%lu parse:%lu container:%lu image:%lu bottom:%lu", type: .info,
+                total, parse, container, image, bottom)
+
+        DiscoverPlaceCard.total += total
+        DiscoverPlaceCard.parse += parse
+        DiscoverPlaceCard.container += container
+        DiscoverPlaceCard.image += image
+        DiscoverPlaceCard.bottom += bottom
+        DiscoverPlaceCard.totalCount += 1
+        if DiscoverPlaceCard.totalCount % 10 == 0 {
+            os_log("DiscoverPlaceCard benchmark for %lu card:controller: rendering in (micro) total:%lu parse:%lu container:%lu image:%lu bottom:%lu", type: .info,
+                    DiscoverPlaceCard.totalCount,
+                    DiscoverPlaceCard.total / DiscoverPlaceCard.totalCount,
+                    DiscoverPlaceCard.parse / DiscoverPlaceCard.totalCount,
+                    DiscoverPlaceCard.container / DiscoverPlaceCard.totalCount,
+                    DiscoverPlaceCard.image / DiscoverPlaceCard.totalCount,
+                    DiscoverPlaceCard.bottom / DiscoverPlaceCard.totalCount)
+        }
     }
 
-    private func render(containers: [Container]) {
+    private func render(containers: [JSON]) {
+        // Container.create(json: $0.1)!
         if controller.searchQuery.filter.containers?.isEmpty ?? true {
             for container in containers {
-                if let type = container.type, type.lowercased() != "area", let name = container.name {
+                if container["type"].string?.lowercased() != "area", let name = container["name"].string {
                     containerLabel.setTitle(name, for: .normal)
                     containerLabel.isHidden = false
                     return
@@ -135,7 +175,7 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
     }
 
     @objc func onContainerApply(_ sender: Any) {
-        if let container = containers.get(0) {
+        if let json = containers.get(0), let container = Container.create(json: json) {
             var searchQuery = self.controller.searchQuery
             searchQuery.filter.containers = [container]
             searchQuery.filter.location = nil
@@ -272,22 +312,19 @@ class DiscoverPlaceCardBottomView: UIView {
         // Distance CPU: 0 - 5000 ticks
         if let latLng = card["location"]["latLng"].string {
             if let distance = MunchLocation.distance(asMetric: latLng) {
-                line.append(NSMutableAttributedString(string: "\(distance) - "))
+                line.append(NSAttributedString(string: "\(distance) - "))
             }
         }
 
         // Neighbourhood
         if let street = card["location"]["neighbourhood"].string {
-            line.append(NSMutableAttributedString(string: street))
+            line.append(NSAttributedString(string: street))
         } else {
-            line.append(NSMutableAttributedString(string: "Singapore"))
+            line.append(NSAttributedString(string: "Singapore"))
         }
 
         // Open Now
-        // Compact CPU: 0 - 6000 ticks
-        let hours = card["hours"].arrayValue.compactMap({ Place.Hour(json: $0) })
-        // Render CPU: 0 - 3000 ticks
-        switch Place.Hour.Formatter.isOpen(hours: hours) {
+        switch Place.Hour.Formatter.isOpen(hours: card["hours"].arrayValue) {
         case .opening:
             line.append(DiscoverPlaceCardBottomView.periodText)
             line.append(DiscoverPlaceCardBottomView.openingSoonText)

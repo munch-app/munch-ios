@@ -294,3 +294,13 @@ public class MunchPlist {
         return instance.dictionary[key] as? String
     }
 }
+
+extension Calendar {
+    static func millis(from: Date, to: Date) -> Int {
+        return Calendar.current.dateComponents(Set<Calendar.Component>([ .nanosecond]), from: from, to: to).nanosecond! / 1000000
+    }
+
+    static func micro(from: Date, to: Date) -> Int {
+        return Calendar.current.dateComponents(Set<Calendar.Component>([ .nanosecond]), from: from, to: to).nanosecond! / 1000
+    }
+}

@@ -397,11 +397,13 @@ struct SearchCard: Equatable {
     var instanceId: String
 
     private var json: JSON
+    private var dictionary: [String: Any]
 
     init(cardId: String, json: JSON = JSON(parseJSON: "{}")) {
         self.cardId = cardId
         self.instanceId = String(arc4random())
         self.json = json
+        self.dictionary = json.dictionaryObject ?? [:]
     }
 
     init(json: JSON) {
@@ -409,6 +411,7 @@ struct SearchCard: Equatable {
         self.uniqueId = json["_uniqueId"].string
         self.instanceId = String(arc4random())
         self.json = json
+        self.dictionary = json.dictionaryObject ?? [:]
     }
 
     /**
@@ -418,8 +421,8 @@ struct SearchCard: Equatable {
         return json[name]
     }
 
-    func cached(field: String) {
-
+    func dict(name: String) -> Any {
+        return dictionary[name]
     }
 
     static func ==(lhs: SearchCard, rhs: SearchCard) -> Bool {

@@ -308,8 +308,16 @@ struct Place: SearchResult, Equatable {
                 return instance.dayFormatter.string(from: dateTmr!)
             }
 
-            class func timeAs(int time: String) -> Int? {
-                return Int(time.replacingOccurrences(of: ":", with: ""))
+            class func timeAs(int time: String?) -> Int? {
+                if let time = time {
+                    let split = time.split(separator: ":")
+                    if let hour = split.get(0), let min = split.get(1) {
+                        if let h = Int(hour), let m = Int(min) {
+                            return h * 60 + m
+                        }
+                    }
+                }
+                return nil
             }
 
             class func isBetween(hour: Place.Hour, date: Date, opening: Int = 0, closing: Int = 0) -> Bool {
@@ -343,6 +351,47 @@ struct Place: SearchResult, Equatable {
                         return Open.open
                     } else if isBetween(hour: hour, date: date, opening: 30) {
                         return Open.opening
+                    }
+                }
+
+                return Open.closed
+            }
+
+            class func isOpen(hours: [JSON]) -> Open {
+                if (hours.isEmpty) {
+                    return Open.none
+                }
+
+                let date = Date()
+                let now = Calendar.current.component(.hour, from: date) * 60 + Calendar.current.component(.minute, from: date)
+                let currentDay = instance.dayFormatter.string(from: date).lowercased()
+
+                for hour in hours {
+                    if hour["day"].string == currentDay,
+                       let open = timeAs(int: hour["open"].string),
+                       let close = timeAs(int: hour["close"].string) {
+                        let toOpening = open - now // if negative means is open
+                        let toClosing = close - now // if negative means is closed
+
+                        // E.g. 8-21, 23 now
+                        // opening = -15
+                        // closing = -2
+
+                        if toOpening <= 30 && toOpening > 0 {
+                            return .opening
+                        }
+
+                        // Is Open
+                        if toOpening <= 0 && toClosing > 0{
+                            // Is Closing
+                            if toClosing <= 30 {
+                                return .closing
+                            }
+                            return .open
+                        }
+
+
+
                     }
                 }
 
