@@ -163,6 +163,10 @@ public class MunchImageView: UIImageView {
     var rendered = false
     var completionHandler: CompletionHandler?
 
+    func render(named: String) {
+        self.image = UIImage(named: named)
+    }
+
     /**
      Render SourcedImage to UIImageView
      SourcedImage will contain a ImageMeta to use for rendering

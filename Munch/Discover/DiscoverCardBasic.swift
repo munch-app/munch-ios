@@ -29,7 +29,7 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
         imageView.layer.cornerRadius = 3
 
         let width = Int(UIScreen.main.bounds.width)
-        imageView.imageView.size = (width, width)
+        imageView.size = (width, width)
         return imageView
     }()
     let containerLabel: UIButton = {
