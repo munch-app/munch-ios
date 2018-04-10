@@ -171,6 +171,15 @@ struct Container: SearchResult, Equatable, Encodable, Decodable {
 
         return try? decoder.decode(Container.self, from: try! json.rawData())
     }
+
+    static func create(json: [String: Any]) -> Container? {
+        return Container.init(id: json["id"] as? String,
+                type: json["type"] as? String,
+                name: json["name"] as? String,
+                images: [],
+                ranking: 0,
+                location: nil)
+    }
 }
 
 struct AssumptionQueryResult {

@@ -357,7 +357,7 @@ struct Place: SearchResult, Equatable {
                 return Open.closed
             }
 
-            class func isOpen(hours: [JSON]) -> Open {
+            class func isOpen(hours: [[String: String]]) -> Open {
                 if (hours.isEmpty) {
                     return Open.none
                 }
@@ -367,9 +367,9 @@ struct Place: SearchResult, Equatable {
                 let currentDay = instance.dayFormatter.string(from: date).lowercased()
 
                 for hour in hours {
-                    if hour["day"].string == currentDay,
-                       let open = timeAs(int: hour["open"].string),
-                       let close = timeAs(int: hour["close"].string) {
+                    if hour["day"] == currentDay,
+                       let open = timeAs(int: hour["open"]),
+                       let close = timeAs(int: hour["close"]) {
                         let toOpening = open - now // if negative means is open
                         let toClosing = close - now // if negative means is closed
 

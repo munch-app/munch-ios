@@ -12,7 +12,6 @@ import Foundation
 import UIKit
 
 import SnapKit
-import SwiftyJSON
 import SwiftRichString
 import TTGTagCollectionView
 
@@ -20,7 +19,6 @@ import Firebase
 
 class DiscoverPlaceCard: UITableViewCell, SearchCardView {
     static var total: Int = 0
-    static var parse: Int = 0
     static var container: Int = 0
     static var image: Int = 0
     static var bottom: Int = 0
@@ -69,7 +67,7 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
     let bottomView = DiscoverPlaceCardBottomView()
 
     var controller: DiscoverController!
-    var containers: [JSON] = []
+    var containers: [[String: Any]] = []
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -113,9 +111,8 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
         self.controller = controller
 
         let startDate = Date()
-        self.containers = card["containers"].array ?? []
 
-        let parsedDate = Date()
+        self.containers = card.dict(name: "containers") as? [[String: Any]] ?? []
         render(containers: containers)
         let containerDate = Date()
 
@@ -135,36 +132,32 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
         ])
 
         let total = Calendar.micro(from: startDate, to: Date())
-        let parse = Calendar.micro(from: startDate, to: parsedDate)
-        let container = Calendar.micro(from: parsedDate, to: containerDate)
+        let container = Calendar.micro(from: startDate, to: containerDate)
         let image = Calendar.micro(from: containerDate, to: imageDate)
         let bottom = Calendar.micro(from: imageDate, to: bottomDate)
-        os_log("DiscoverPlaceCard finished card:controller: rendering in (micro) total:%lu parse:%lu container:%lu image:%lu bottom:%lu", type: .info,
-                total, parse, container, image, bottom)
+        os_log("DiscoverPlaceCard finished card:controller: rendering in (micro) total:%lu container:%lu image:%lu bottom:%lu", type: .info,
+                total, container, image, bottom)
 
         DiscoverPlaceCard.total += total
-        DiscoverPlaceCard.parse += parse
         DiscoverPlaceCard.container += container
         DiscoverPlaceCard.image += image
         DiscoverPlaceCard.bottom += bottom
         DiscoverPlaceCard.totalCount += 1
         if DiscoverPlaceCard.totalCount % 10 == 0 {
-            os_log("DiscoverPlaceCard benchmark for %lu card:controller: rendering in (micro) total:%lu parse:%lu container:%lu image:%lu bottom:%lu", type: .info,
+            os_log("DiscoverPlaceCard benchmark for %lu card:controller: rendering in (micro) total:%lu container:%lu image:%lu bottom:%lu", type: .info,
                     DiscoverPlaceCard.totalCount,
                     DiscoverPlaceCard.total / DiscoverPlaceCard.totalCount,
-                    DiscoverPlaceCard.parse / DiscoverPlaceCard.totalCount,
                     DiscoverPlaceCard.container / DiscoverPlaceCard.totalCount,
                     DiscoverPlaceCard.image / DiscoverPlaceCard.totalCount,
                     DiscoverPlaceCard.bottom / DiscoverPlaceCard.totalCount)
         }
     }
 
-    private func render(containers: [JSON]) {
-        // Container.create(json: $0.1)!
+    private func render(containers: [[String: Any]]) {
         if controller.searchQuery.filter.containers?.isEmpty ?? true {
             for container in containers {
-                if container["type"].string?.lowercased() != "area", let name = container["name"].string {
-                    containerLabel.setTitle(name, for: .normal)
+                if let type = container["type"] as? String, type.lowercased() != "area" {
+                    containerLabel.setTitle(container["name"] as? String, for: .normal)
                     containerLabel.isHidden = false
                     return
                 }
@@ -284,7 +277,7 @@ class DiscoverPlaceCardBottomView: UIView {
     }
 
     func render(card: SearchCard) {
-        nameLabel.text = card["name"].string
+        nameLabel.text = card.dict(name: "name") as? String
         render(tag: card)
         render(location: card)
     }
@@ -293,15 +286,17 @@ class DiscoverPlaceCardBottomView: UIView {
         // Count is Controlled by View
         self.tagView.removeAll()
 
-        if let average = card["review"]["average"].float {
-            let percent = CGFloat(average)
-            let text = ReviewRatingUtils.text(percent: percent)
-            self.tagView.add(text: text, config: RatingTagViewConfig(percent: percent))
+        if let review = card.dict(name: "review") as? [String: Any] {
+            if let average = review["average"] as? Double {
+                let percent = CGFloat(average)
+                let text = ReviewRatingUtils.text(percent: percent)
+                self.tagView.add(text: text, config: RatingTagViewConfig(percent: percent))
+            }
         }
 
-        for tag in card["tags"].prefix(3) {
-            if let text = tag.1.string?.capitalized {
-                self.tagView.add(text: text)
+        if let tags = card.dict(name: "tags") as? [String] {
+            for tag in tags.prefix(3) {
+                self.tagView.add(text: tag.capitalized)
             }
         }
     }
@@ -309,22 +304,21 @@ class DiscoverPlaceCardBottomView: UIView {
     private func render(location card: SearchCard) {
         let line = NSMutableAttributedString()
 
-        // Distance CPU: 0 - 5000 ticks
-        if let latLng = card["location"]["latLng"].string {
-            if let distance = MunchLocation.distance(asMetric: latLng) {
+        if let location = card.dict(name: "location") as? [String: Any] {
+            if let latLng = location["latLng"] as? String, let distance = MunchLocation.distance(asMetric: latLng) {
                 line.append(NSAttributedString(string: "\(distance) - "))
+            }
+
+            if let neighbourhood = location["neighbourhood"] as? String {
+                line.append(NSAttributedString(string: neighbourhood))
+            } else {
+                line.append(NSAttributedString(string: "Singapore"))
             }
         }
 
-        // Neighbourhood
-        if let street = card["location"]["neighbourhood"].string {
-            line.append(NSAttributedString(string: street))
-        } else {
-            line.append(NSAttributedString(string: "Singapore"))
-        }
-
         // Open Now
-        switch Place.Hour.Formatter.isOpen(hours: card["hours"].arrayValue) {
+        let hours = card.dict(name: "hours") as? [[String: String]] ?? []
+        switch Place.Hour.Formatter.isOpen(hours: hours) {
         case .opening:
             line.append(DiscoverPlaceCardBottomView.periodText)
             line.append(DiscoverPlaceCardBottomView.openingSoonText)
