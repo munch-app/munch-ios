@@ -48,6 +48,21 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
+
+        NotificationCenter.default.addObserver(self, selector: #selector(handleScreenshot), name: .UIApplicationUserDidTakeScreenshot, object: nil)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        NotificationCenter.default.removeObserver(self, name: .UIApplicationUserDidTakeScreenshot, object: nil)
+    }
+
+    @objc func handleScreenshot() {
+        Analytics.logEvent(AnalyticsEventShare, parameters: [
+            AnalyticsParameterItemID: "place-\(self.placeId)" as NSObject,
+            AnalyticsParameterContentType: "screenshot" as NSObject
+        ])
     }
 
     override func viewDidLoad() {
@@ -90,13 +105,6 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
             } else {
                 self.present(meta.createAlert(), animated: true)
             }
-        }
-
-        NotificationCenter.default.addObserver(forName: .UIApplicationUserDidTakeScreenshot, object: nil, queue: .main) { notification in
-            Analytics.logEvent(AnalyticsEventShare, parameters: [
-                AnalyticsParameterItemID: "place-\(self.placeId)" as NSObject,
-                AnalyticsParameterContentType: "screenshot" as NSObject
-            ])
         }
     }
 

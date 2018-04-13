@@ -1298,7 +1298,7 @@ class DiscoverFilterCellHeaderCategory: UITableViewCell {
     private let containerView = UIView()
     private let segmentControl: UISegmentedControl = {
         let control = UISegmentedControl(items: ["Cuisine", "Establishment", "Others"])
-        control.tintColor = UIColor(hex: "4A4A4A")
+        control.tintColor = UIColor.primary500
         control.selectedSegmentIndex = 0
         return control
     }()
