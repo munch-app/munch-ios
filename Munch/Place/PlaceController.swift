@@ -161,6 +161,10 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
                         }
                     }
                 }
+
+                Analytics.logEvent("rip_action", parameters: [
+                    AnalyticsParameterItemCategory: "click_like" as NSObject
+                ])
             default:
                 return
             }
@@ -183,6 +187,10 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
                                     message: nil,
                                     initialEffectType: .fadeIn)
                         }
+
+                        Analytics.logEvent("rip_action", parameters: [
+                            AnalyticsParameterItemCategory: "click_add_collection" as NSObject
+                        ])
                     }
                     self.present(controller, animated: true)
                 default:
@@ -205,6 +213,10 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
                         let safari = SFSafariViewController(url: urlComps.url!)
                         safari.delegate = self
                         self.present(safari, animated: true, completion: nil)
+
+                        Analytics.logEvent("rip_action", parameters: [
+                            AnalyticsParameterItemCategory: "click_suggest_edit" as NSObject
+                        ])
                     }
                 default:
                     return

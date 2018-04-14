@@ -299,6 +299,10 @@ struct Place: SearchResult, Equatable {
                 return instance.outFormatter.string(from: date!)
             }
 
+            class func timeNow() -> String {
+                return instance.inFormatter.string(from: Date())
+            }
+
             class func dayNow() -> String {
                 return instance.dayFormatter.string(from: Date())
             }
