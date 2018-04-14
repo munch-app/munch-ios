@@ -153,6 +153,7 @@ class SearchStaticErrorCard: UITableViewCell, SearchCardView {
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(self).inset(topBottom)
+            make.height.equalTo(40)
         }
 
         descriptionLabel.text = "Unknown Error"

@@ -13,6 +13,8 @@ import SwiftRichString
 import SafariServices
 import TTGTagCollectionView
 
+import FirebaseAnalytics
+
 class PlaceHeaderLocationCard: PlaceTitleCardView {
     override func didLoad(card: PlaceCard) {
         self.title = "Map"
@@ -24,6 +26,10 @@ class PlaceHeaderLocationCard: PlaceTitleCardView {
             let controller = PlaceMapViewController.init(place: place)
             self.controller.navigationController?.pushViewController(controller, animated: true)
         }
+
+        Analytics.logEvent("rip_action", parameters: [
+            AnalyticsParameterItemCategory: "click_map" as NSObject
+        ])
     }
 
     override class var cardId: String? {
@@ -106,6 +112,10 @@ class PlaceBasicAddressCard: PlaceCardView {
             let controller = PlaceMapViewController.init(place: place)
             self.controller.navigationController?.pushViewController(controller, animated: true)
         }
+
+        Analytics.logEvent("rip_action", parameters: [
+            AnalyticsParameterItemCategory: "click_address" as NSObject
+        ])
     }
 
     override class var cardId: String? {

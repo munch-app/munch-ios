@@ -8,6 +8,7 @@ import UIKit
 
 import SnapKit
 import SwiftyJSON
+import FirebaseAnalytics
 
 class PlaceExtendedPlaceAwardCard: PlaceCardView {
     private let collectionView: UICollectionView = {
@@ -76,6 +77,10 @@ extension PlaceExtendedPlaceAwardCard: UICollectionViewDataSource, UICollectionV
             let controller = CollectionPlaceController(userId: userId, collectionId: collectionId)
             self.controller.navigationController?.pushViewController(controller, animated: true)
         }
+
+        Analytics.logEvent("rip_action", parameters: [
+            AnalyticsParameterItemCategory: "click_award" as NSObject
+        ])
     }
 }
 

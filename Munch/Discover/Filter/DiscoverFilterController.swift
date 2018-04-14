@@ -133,15 +133,27 @@ class DiscoverFilterController: UIViewController {
     @objc func actionCancel(_ sender: Any) {
         self.onExtensionDismiss(nil)
         self.dismiss(animated: true)
+
+        Analytics.logEvent("filter_action", parameters: [
+            AnalyticsParameterItemCategory: "click_cancel" as NSObject
+        ])
     }
 
     @objc func actionReset(_ sender: Any) {
         self.manager.reset()
+
+        Analytics.logEvent("filter_action", parameters: [
+            AnalyticsParameterItemCategory: "click_reset" as NSObject
+        ])
     }
 
     @objc func actionApply(_ sender: Any) {
         self.onExtensionDismiss(manager.searchQuery)
         self.dismiss(animated: true)
+
+        Analytics.logEvent("filter_action", parameters: [
+            AnalyticsParameterItemCategory: "click_apply" as NSObject
+        ])
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -229,6 +241,10 @@ extension DiscoverFilterController: UITableViewDataSource, UITableViewDelegate {
         case .tag(let tag):
             let text = tag.name ?? ""
             manager.select(tag: text, selected: !manager.isSelected(tag: text))
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemID: "tag-\(text)" as NSObject,
+                AnalyticsParameterItemCategory: "apply_tag" as NSObject
+            ])
 
         case .headerLocation:
             let controller = DiscoverFilterControllerLocation(searchQuery: self.searchQuery) { location, container in
@@ -238,11 +254,18 @@ extension DiscoverFilterController: UITableViewDataSource, UITableViewDelegate {
                     self.manager.select(container: container, save: true)
                 }
             }
+
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemCategory: "click_header_location" as NSObject
+            ])
             self.navigationController?.pushViewController(controller, animated: true)
 
         case .tagMore:
             manager.select(category: .cuisineMore)
             self.tableView.reloadData()
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemCategory: "click_tag_more" as NSObject
+            ])
 
         default: return
         }
@@ -356,15 +379,27 @@ fileprivate class DiscoverFilterHeaderView: UIView, MunchTagCollectionViewDelega
                 alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
                 self.controller.present(alert, animated: true)
             }
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemCategory: "click_reset_location" as NSObject
+            ])
 
         case .hour(let text):
             self.controller.manager.select(hour: text)
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemCategory: "click_reset_hour" as NSObject
+            ])
 
         case .tag(let text):
             self.controller.manager.reset(tags: [text])
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemCategory: "click_reset_tag" as NSObject
+            ])
 
         case .price:
             self.controller.manager.resetPrice()
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemCategory: "click_reset_price" as NSObject
+            ])
         }
     }
 
@@ -413,6 +448,9 @@ class DiscoverFilterBottomView: UIView {
 
     func render(count: Int?) {
         if let count = count {
+            Analytics.logEvent("filter_count", parameters: [
+                "count": count
+            ])
             self.indicator.stopAnimating()
 
             if count == 0 {

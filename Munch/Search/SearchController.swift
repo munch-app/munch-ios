@@ -6,6 +6,8 @@
 import Foundation
 import UIKit
 
+import FirebaseAnalytics
+
 class SearchRootController: UINavigationController, UINavigationControllerDelegate {
     init(searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
         super.init(nibName: nil, bundle: nil)
@@ -129,6 +131,10 @@ class SearchController: UIViewController {
                 if meta.isOk() {
                     self.results = SearchController.map(assumptions: assumptions, places: places)
                     self.tableView.reloadData()
+
+                    Analytics.logEvent(AnalyticsEventSearch, parameters: [
+                        AnalyticsParameterSearchTerm: text as NSObject
+                    ])
                 } else {
                     self.present(meta.createAlert(), animated: true)
                 }
@@ -203,6 +209,11 @@ extension SearchController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch items[indexPath.row] {
         case .place(let place):
+            Analytics.logEvent(AnalyticsEventViewItem, parameters: [
+                AnalyticsParameterItemID: "place-\(place.id ?? "")" as NSObject,
+                AnalyticsParameterItemCategory: "search_place" as NSObject
+            ])
+
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchCellPlace.id) as! SearchCellPlace
             cell.render(place: place)
             return cell
@@ -233,6 +244,10 @@ extension SearchController: UITableViewDataSource, UITableViewDelegate {
 
         switch items[indexPath.row] {
         case .place(let place):
+            Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
+                AnalyticsParameterItemID: "place-\(place.id ?? "")" as NSObject,
+                AnalyticsParameterContentType: "search_place" as NSObject
+            ])
             select(placeId: place.id)
         default: return
         }

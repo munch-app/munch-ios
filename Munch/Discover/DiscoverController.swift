@@ -11,6 +11,7 @@ import UIKit
 
 import SnapKit
 import Kingfisher
+import FirebaseAnalytics
 
 class DiscoverNavigationalController: UINavigationController, UINavigationControllerDelegate {
     required init() {
@@ -360,6 +361,11 @@ extension DiscoverController {
                 if let cell = cell as? SearchCardView {
                     cell.render(card: card, controller: self)
                 }
+
+                Analytics.logEvent(AnalyticsEventViewItem, parameters: [
+                    AnalyticsParameterItemID: "card-\(card.uniqueId ?? "")" as NSObject,
+                    AnalyticsParameterItemCategory: card.cardId as NSObject
+                ])
             }
         case 2:
             self.appendLoad()
@@ -375,7 +381,12 @@ extension DiscoverController {
             case DiscoverPlaceCard.cardId:
                 fallthrough
             case DiscoverSmallPlaceCard.cardId:
-                self.select(placeId: card["placeId"].string)
+                let placeId = card["placeId"].string
+                Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
+                    AnalyticsParameterItemID: "place-\(placeId ?? "")" as NSObject,
+                    AnalyticsParameterContentType: "discover_place" as NSObject
+                ])
+                self.select(placeId: placeId)
             default: break
             }
         default: break

@@ -10,6 +10,7 @@ import SafariServices
 import SnapKit
 import SwiftRichString
 import NVActivityIndicatorView
+import FirebaseAnalytics
 
 class PlacePartnerContentController: UIViewController, UIGestureRecognizerDelegate {
     let placeId: String
@@ -197,12 +198,20 @@ extension PlacePartnerContentController: UICollectionViewDataSource, UICollectio
                 safari.delegate = self
                 self.present(safari, animated: true, completion: nil)
             }
+
+            Analytics.logEvent("rip_extended_action", parameters: [
+                AnalyticsParameterItemCategory: "click_partner_content_article" as NSObject
+            ])
         case "instagram-media":
             if let username = content.instagramMedia?.username, let url = URL(string: "https://instagram.com/" + username) {
                 let safari = SFSafariViewController(url: url)
                 safari.delegate = self
                 self.present(safari, animated: true, completion: nil)
             }
+
+            Analytics.logEvent("rip_extended_action", parameters: [
+                AnalyticsParameterItemCategory: "click_partner_content_instagram" as NSObject
+            ])
         default: return
         }
     }
@@ -331,6 +340,10 @@ fileprivate class PlacePartnerContentControllerCell: UICollectionViewCell {
         titleLabel.text = content.title
         authorLabel.text = content.author
         descriptionLabel.text = content.description
+
+        Analytics.logEvent("rip_extended_view", parameters: [
+            AnalyticsParameterItemCategory: "partner_content" as NSObject
+        ])
     }
 
     required init?(coder aDecoder: NSCoder) {

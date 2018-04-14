@@ -9,6 +9,7 @@ import SafariServices
 
 import Cosmos
 import SnapKit
+import FirebaseAnalytics
 
 class PlaceHeaderReviewCard: PlaceTitleCardView {
     override func didLoad(card: PlaceCard) {
@@ -74,6 +75,10 @@ class PlaceVendorFacebookReviewCard: PlaceCardView, SFSafariViewControllerDelega
             safari.delegate = self
             controller.present(safari, animated: true, completion: nil)
         }
+
+        Analytics.logEvent("rip_action", parameters: [
+            AnalyticsParameterItemCategory: "click_review_facebook" as NSObject
+        ])
     }
 
     override class var cardId: String? {

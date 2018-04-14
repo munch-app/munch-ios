@@ -7,6 +7,7 @@ import Foundation
 import UIKit
 
 import SnapKit
+import FirebaseAnalytics
 
 enum SearchResultType {
     case empty
@@ -284,6 +285,12 @@ extension SearchCellAssumptionQueryResult: UICollectionViewDataSource, UICollect
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let place = places[indexPath.row]
+
+        Analytics.logEvent(AnalyticsEventViewItem, parameters: [
+            AnalyticsParameterItemID: "place-\(place.id ?? "")" as NSObject,
+            AnalyticsParameterItemCategory: "assumption_place" as NSObject
+        ])
+
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchCellAssumptionPlace", for: indexPath) as! SearchCellAssumptionPlace
         cell.render(place: place)
         return cell
@@ -292,6 +299,11 @@ extension SearchCellAssumptionQueryResult: UICollectionViewDataSource, UICollect
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let place = places[indexPath.row]
         controller.select(placeId: place.id)
+
+        Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
+            AnalyticsParameterItemID: "place-\(place.id ?? "")" as NSObject,
+            AnalyticsParameterContentType: "assumption_place" as NSObject
+        ])
     }
 }
 
@@ -592,6 +604,12 @@ extension SearchCellRecentlyViewed: UICollectionViewDataSource, UICollectionView
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let place = places[indexPath.row]
+
+        Analytics.logEvent(AnalyticsEventViewItem, parameters: [
+            AnalyticsParameterItemID: "place-\(place.id ?? "")" as NSObject,
+            AnalyticsParameterItemCategory: "recent_place" as NSObject
+        ])
+
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchCellAssumptionPlace", for: indexPath) as! SearchCellAssumptionPlace
         cell.render(place: place)
         return cell
@@ -600,5 +618,10 @@ extension SearchCellRecentlyViewed: UICollectionViewDataSource, UICollectionView
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let place = places[indexPath.row]
         controller.select(placeId: place.id)
+
+        Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
+            AnalyticsParameterItemID: "place-\(place.id ?? "")" as NSObject,
+            AnalyticsParameterContentType: "recent_place" as NSObject
+        ])
     }
 }

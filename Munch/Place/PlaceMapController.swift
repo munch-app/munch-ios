@@ -11,6 +11,8 @@ import CoreLocation
 import SnapKit
 import TTGTagCollectionView
 
+import FirebaseAnalytics
+
 class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKMapViewDelegate, CLLocationManagerDelegate {
     let placeId: String
     let place: Place
@@ -224,12 +226,20 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
             self.present(alert, animated: true)
         }
+
+        Analytics.logEvent("rip_extended_action", parameters: [
+            AnalyticsParameterItemCategory: "click_map" as NSObject
+        ])
     }
 
     @objc func onShowHeading(_ sender: Any) {
         mapView.showsUserLocation = true
         mapView.showsCompass = false
         mapView.setUserTrackingMode(.followWithHeading, animated: true)
+
+        Analytics.logEvent("rip_extended_action", parameters: [
+            AnalyticsParameterItemCategory: "click_heading" as NSObject
+        ])
     }
 
     @objc func onBackButton(_ sender: Any) {

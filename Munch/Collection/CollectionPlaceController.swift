@@ -8,6 +8,7 @@ import UIKit
 
 import NVActivityIndicatorView
 import NativePopup
+import FirebaseAnalytics
 
 class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
     var userId: String?
@@ -65,6 +66,11 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
+
+        Analytics.logEvent(AnalyticsEventViewItemList, parameters: [
+            AnalyticsParameterItemCategory: "collection_place" as NSObject,
+            AnalyticsParameterItemID: "collection-" + self.collectionId as NSObject
+        ])
     }
 
     override func viewDidLoad() {

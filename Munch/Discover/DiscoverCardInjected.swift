@@ -11,6 +11,7 @@ import UIKit
 
 import SnapKit
 import SwiftyJSON
+import FirebaseAnalytics
 
 class SearchNoLocationCard: UITableViewCell, SearchCardView {
     private let titleImage = UIImageView()
@@ -67,6 +68,7 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
         if MunchLocation.isEnabled {
             controller.render(searchQuery: controller.searchQuery)
         } else {
+            Analytics.logEvent("enable_location", parameters: [:])
             MunchLocation.requestLocation()
             actionButton.setTitle("Refresh Search", for: .normal)
         }

@@ -12,6 +12,8 @@ import BEMCheckBox
 import RangeSeekSlider
 import Charts
 
+import FirebaseAnalytics
+
 class DiscoverFilterCellLoading: UITableViewCell {
     private let containerView: ShimmerView = {
         let view = ShimmerView(color: UIColor(hex: "F3F3F3"))
@@ -326,12 +328,30 @@ extension DiscoverFilterCellLocation: UICollectionViewDataSource, UICollectionVi
         switch locations[indexPath.row] {
         case .nearby:
             controller.manager.select(location: nil, save: false)
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemCategory: "apply_location_nearby" as NSObject
+            ])
+
         case .anywhere:
             controller.manager.select(location: DiscoverFilterControllerManager.anywhere, save: false)
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemCategory: "apply_location_anywhere" as NSObject
+            ])
+
         case let .location(location):
             controller.manager.select(location: location)
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemID: "location-\(location.id ?? "")" as NSObject,
+                AnalyticsParameterItemCategory: "apply_location" as NSObject
+            ])
+
         case let .container(container):
             controller.manager.select(container: container)
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemID: "container-\(container.id ?? "")" as NSObject,
+                AnalyticsParameterItemCategory: "apply_container" as NSObject
+            ])
+
         }
     }
 
@@ -626,10 +646,25 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
             switch name {
             case "$":
                 controller.manager.select(price: name, min: filterPriceRange.cheap.min, max: filterPriceRange.cheap.max)
+                Analytics.logEvent("filter_action", parameters: [
+                    AnalyticsParameterItemID: "price-low" as NSObject,
+                    AnalyticsParameterItemCategory: "apply_price" as NSObject
+                ])
+
             case "$$":
                 controller.manager.select(price: name, min: filterPriceRange.average.min, max: filterPriceRange.average.max)
+                Analytics.logEvent("filter_action", parameters: [
+                    AnalyticsParameterItemID: "price-med" as NSObject,
+                    AnalyticsParameterItemCategory: "apply_price" as NSObject
+                ])
+
             case "$$$":
                 controller.manager.select(price: name, min: filterPriceRange.expensive.min, max: filterPriceRange.expensive.max)
+                Analytics.logEvent("filter_action", parameters: [
+                    AnalyticsParameterItemID: "price-high" as NSObject,
+                    AnalyticsParameterItemCategory: "apply_price" as NSObject
+                ])
+
             default:break
             }
 
@@ -650,6 +685,13 @@ class DiscoverFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
         } else {
             controller.manager.select(price: nil, min: min, max: max)
         }
+
+        Analytics.logEvent("filter_action", parameters: [
+            "min": min,
+            "max": max,
+            AnalyticsParameterItemID: "price-range" as NSObject,
+            AnalyticsParameterItemCategory: "apply_price" as NSObject
+        ])
     }
 
     func didStartTouches(in slider: RangeSeekSlider) {
@@ -893,27 +935,6 @@ class DiscoverFilterCellTiming: UITableViewCell {
     class var id: String {
         return "SearchSuggestCellTiming"
     }
-
-    class LeftAlignedCollectionViewFlowLayout: UICollectionViewFlowLayout {
-        override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-            let attributes = super.layoutAttributesForElements(in: rect)
-
-            var leftMargin = sectionInset.left
-            var maxY: CGFloat = -1.0
-            attributes?.forEach { layoutAttribute in
-                if layoutAttribute.frame.origin.y >= maxY {
-                    leftMargin = sectionInset.left
-                }
-
-                layoutAttribute.frame.origin.x = leftMargin
-
-                leftMargin += layoutAttribute.frame.width + minimumInteritemSpacing
-                maxY = max(layoutAttribute.frame.maxY, maxY)
-            }
-
-            return attributes
-        }
-    }
 }
 
 extension DiscoverFilterCellTiming: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -968,14 +989,39 @@ extension DiscoverFilterCellTiming: UICollectionViewDataSource, UICollectionView
         switch timings[indexPath.row] {
         case .now:
             controller.manager.select(hour: "Open Now")
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemID: "timing-open-now" as NSObject,
+                AnalyticsParameterItemCategory: "apply_hour" as NSObject
+            ])
+
         case .breakfast:
             controller.manager.select(hour: "Breakfast")
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemID: "timing-breakfast" as NSObject,
+                AnalyticsParameterItemCategory: "apply_hour" as NSObject
+            ])
+
         case .lunch:
             controller.manager.select(hour: "Lunch")
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemID: "timing-lunch" as NSObject,
+                AnalyticsParameterItemCategory: "apply_hour" as NSObject
+            ])
+
         case .dinner:
             controller.manager.select(hour: "Dinner")
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemID: "timing-dinner" as NSObject,
+                AnalyticsParameterItemCategory: "apply_hour" as NSObject
+            ])
+
         case .supper:
             controller.manager.select(hour: "Supper")
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemID: "timing-supper" as NSObject,
+                AnalyticsParameterItemCategory: "apply_hour" as NSObject
+            ])
+
         }
     }
 
@@ -1322,10 +1368,25 @@ class DiscoverFilterCellHeaderCategory: UITableViewCell {
         switch control.selectedSegmentIndex {
         case 0:
             controller.manager.select(category: .cuisine)
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemID: "timing-cuisine" as NSObject,
+                AnalyticsParameterItemCategory: "apply_category" as NSObject
+            ])
+
         case 1:
             controller.manager.select(category: .establishment)
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemID: "timing-establishment" as NSObject,
+                AnalyticsParameterItemCategory: "apply_category" as NSObject
+            ])
+
         case 2:
             controller.manager.select(category: .others)
+            Analytics.logEvent("filter_action", parameters: [
+                AnalyticsParameterItemID: "timing-others" as NSObject,
+                AnalyticsParameterItemCategory: "apply_category" as NSObject
+            ])
+
         default: return
         }
         self.controller.tableView.reloadData()

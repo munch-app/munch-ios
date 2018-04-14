@@ -16,6 +16,8 @@ import SwiftRichString
 import SafariServices
 import TTGTagCollectionView
 
+import FirebaseAnalytics
+
 class PlaceBasicImageBannerCard: PlaceCardView {
     private let imageGradientView: UIView = {
         let gradientLayer = CAGradientLayer()
@@ -127,6 +129,10 @@ extension PlaceBasicImageBannerCard: UICollectionViewDataSource, UICollectionVie
             self.pageTitleView.setTitle("\(indexPath.row + 1)/\(self.images.count)", for: .normal)
             self.setSourceId(sourcedImage: self.images.get(indexPath.row))
         }
+
+        Analytics.logEvent("rip_view", parameters: [
+            AnalyticsParameterItemCategory: "banner_image" as NSObject
+        ])
     }
 
     private func setSourceId(sourcedImage: SourcedImage?) {
@@ -306,6 +312,10 @@ class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
                 var searchQuery = searchController.searchQuery
                 searchQuery.filter.tag.positives.insert(tagText)
                 searchController.render(searchQuery: searchQuery)
+
+                Analytics.logEvent("rip_action", parameters: [
+                    AnalyticsParameterItemCategory: "click_tag" as NSObject
+                ])
             }
         }
     }
@@ -408,6 +418,10 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
                 make.right.equalTo(indicator.snp.left)
             }
         }
+
+        Analytics.logEvent("rip_action", parameters: [
+            AnalyticsParameterItemCategory: "click_hours" as NSObject
+        ])
     }
 
     override class var cardId: String? {

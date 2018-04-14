@@ -13,6 +13,8 @@ import SwiftRichString
 import SafariServices
 import TTGTagCollectionView
 
+import FirebaseAnalytics
+
 class PlaceHeaderAboutCard: PlaceTitleCardView {
     override func didLoad(card: PlaceCard) {
         self.title = "About"
@@ -57,6 +59,9 @@ class PlaceBasicDescriptionCard: PlaceCardView {
             descriptionLabel.numberOfLines = 0
         }
 
+        Analytics.logEvent("rip_action", parameters: [
+            AnalyticsParameterItemCategory: "click_about" as NSObject
+        ])
     }
 
     override class var cardId: String? {

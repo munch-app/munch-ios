@@ -7,6 +7,7 @@ import Foundation
 import UIKit
 
 import NVActivityIndicatorView
+import FirebaseAnalytics
 
 extension AccountProfileController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func initAccountData() {
@@ -112,6 +113,10 @@ extension AccountProfileController: UICollectionViewDataSource, UICollectionView
                     if meta.isOk(), let collection = collection {
                         self.dataLoader.collections.insert([collection], at: 0)
                         self.collectionView.reloadData()
+
+                        Analytics.logEvent("collection_create", parameters: [
+                            "from": "profile" as NSObject,
+                        ])
                     } else {
                         self.present(meta.createAlert(), animated: true)
                     }

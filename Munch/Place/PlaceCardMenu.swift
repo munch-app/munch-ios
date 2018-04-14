@@ -11,6 +11,8 @@ import Cosmos
 import SnapKit
 import SwiftyJSON
 
+import FirebaseAnalytics
+
 class PlaceHeaderMenuCard: PlaceTitleCardView, SFSafariViewControllerDelegate {
     let webButton: UIButton = {
         let button = UIButton()
@@ -68,6 +70,10 @@ class PlaceHeaderMenuCard: PlaceTitleCardView, SFSafariViewControllerDelegate {
             safari.delegate = self
             controller.present(safari, animated: true, completion: nil)
         }
+
+        Analytics.logEvent("rip_action", parameters: [
+            AnalyticsParameterItemCategory: "click_menu" as NSObject
+        ])
     }
 
     override class var cardId: String? {

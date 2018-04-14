@@ -69,7 +69,7 @@ class SearchCardManager {
 
         if (self.query != nil) {
             // Query default size is 20
-            self.query!.size = 20
+            self.query!.size = 50
 
             // If from is nil, set to 0
             self.query!.from = self.query!.from ?? 0

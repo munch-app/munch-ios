@@ -6,6 +6,8 @@
 import Foundation
 import UIKit
 
+import FirebaseAnalytics
+
 class CollectionSelectRootController: UINavigationController, UINavigationControllerDelegate {
 
     init(placeId: String, onDismiss: @escaping((PlaceCollection?) -> Void)) {
@@ -148,6 +150,10 @@ class CollectionSelectListController: UIViewController {
                     self.items = [collection] + self.items
                     self.emptyLabel.isHidden = true
                     self.tableView.reloadData()
+
+                    Analytics.logEvent("collection_create", parameters: [
+                        "from": "collection_list" as NSObject,
+                    ])
                 } else {
                     self.present(meta.createAlert(), animated: true)
                 }

@@ -8,6 +8,7 @@ import UIKit
 
 import SnapKit
 import SwiftyJSON
+import FirebaseAnalytics
 
 class PlaceHeaderPartnerContentCard: PlaceTitleCardView {
     override func didLoad(card: PlaceCard) {
@@ -26,12 +27,13 @@ class PlaceHeaderPartnerContentCard: PlaceTitleCardView {
 }
 
 class PlacePartnerContentCard: PlaceCardView {
-    static let width = UIScreen.main.bounds.width - 24 - 24
+    static let width = UIScreen.main.bounds.width - 24 - 60
+    private var indexOfCellBeforeDragging = 0
     private let collectionView: UICollectionView = {
-        let layout = SnappingCollectionViewLayout()
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 48)
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 24 + 60)
 
-        layout.itemSize = CGSize(width: width, height: width * 0.85)
+        layout.itemSize = CGSize(width: width, height: width * 0.90)
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 0
 
@@ -41,8 +43,6 @@ class PlacePartnerContentCard: PlaceCardView {
         collectionView.alwaysBounceHorizontal = true
         collectionView.backgroundColor = UIColor.white
         collectionView.register(PlacePartnerContentCardCell.self, forCellWithReuseIdentifier: "PlacePartnerContentCardCell")
-
-        collectionView.decelerationRate = UIScrollViewDecelerationRateFast / 4
 
         return collectionView
     }()
@@ -56,22 +56,10 @@ class PlacePartnerContentCard: PlaceCardView {
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
 
-        if (!contents.isEmpty) {
-            collectionView.snp.makeConstraints { make in
-                make.top.bottom.equalTo(self).inset(topBottom)
-                make.height.equalTo(PlacePartnerContentCard.width * 0.85).priority(999)
-                make.left.right.equalTo(self)
-            }
-        } else {
-            let titleView = UILabel()
-            titleView.text = "Error Loading Content"
-            titleView.textColor = .primary
-            self.addSubview(titleView)
-
-            titleView.snp.makeConstraints { make in
-                make.top.bottom.equalTo(self).inset(topBottom)
-                make.centerX.equalTo(self)
-            }
+        collectionView.snp.makeConstraints { make in
+            make.top.bottom.equalTo(self).inset(topBottom)
+            make.height.equalTo(PlacePartnerContentCard.width * 0.90).priority(999)
+            make.left.right.equalTo(self)
         }
     }
 
@@ -88,6 +76,11 @@ extension PlacePartnerContentCard: UICollectionViewDataSource, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PlacePartnerContentCardCell", for: indexPath) as! PlacePartnerContentCardCell
         cell.render(json: contents[indexPath.row])
+
+        Analytics.logEvent("rip_view", parameters: [
+            AnalyticsParameterItemCategory: "partner_content" as NSObject
+        ])
+
         return cell
     }
 
@@ -95,6 +88,57 @@ extension PlacePartnerContentCard: UICollectionViewDataSource, UICollectionViewD
         let content = contents[indexPath.row]
         let controller = PlacePartnerContentController(place: self.controller.place!, startFromUniqueId: content["uniqueId"].string)
         self.controller.navigationController!.pushViewController(controller, animated: true)
+    }
+
+    private var collectionViewFlowLayout: UICollectionViewFlowLayout {
+        return self.collectionView.collectionViewLayout as! UICollectionViewFlowLayout
+    }
+
+    private func indexOfMajorCell() -> Int {
+        let itemWidth = collectionViewFlowLayout.itemSize.width
+        let proportionalOffset = collectionViewFlowLayout.collectionView!.contentOffset.x / itemWidth
+        return Int(round(proportionalOffset))
+    }
+
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        indexOfCellBeforeDragging = indexOfMajorCell()
+    }
+
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        // Stop scrollView sliding:
+        targetContentOffset.pointee = scrollView.contentOffset
+
+        // calculate where scrollView should snap to:
+        let indexOfMajorCell = self.indexOfMajorCell()
+
+        // calculate conditions:
+        let dataSourceCount = self.collectionView(self.collectionView, numberOfItemsInSection: 0)
+        let swipeVelocityThreshold: CGFloat = 0.5 // after some trail and error
+        let hasEnoughVelocityToSlideToTheNextCell = indexOfCellBeforeDragging + 1 < dataSourceCount && velocity.x > swipeVelocityThreshold
+        let hasEnoughVelocityToSlideToThePreviousCell = indexOfCellBeforeDragging - 1 >= 0 && velocity.x < -swipeVelocityThreshold
+        let majorCellIsTheCellBeforeDragging = indexOfMajorCell == indexOfCellBeforeDragging
+        let didUseSwipeToSkipCell = majorCellIsTheCellBeforeDragging && (hasEnoughVelocityToSlideToTheNextCell || hasEnoughVelocityToSlideToThePreviousCell)
+
+        if didUseSwipeToSkipCell {
+
+            let snapToIndex = indexOfCellBeforeDragging + (hasEnoughVelocityToSlideToTheNextCell ? 1 : -1)
+            let toValue = collectionViewFlowLayout.itemSize.width * CGFloat(snapToIndex)
+
+            // Damping equal 1 => no oscillations => decay animation:
+            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: velocity.x, options: .allowUserInteraction, animations: {
+                scrollView.contentOffset = CGPoint(x: toValue, y: 0)
+                scrollView.layoutIfNeeded()
+            }, completion: nil)
+
+        } else {
+            // This is a much better to way to scroll to a cell:
+            let indexPath = IndexPath(row: indexOfMajorCell, section: 0)
+            self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+        }
+
+        Analytics.logEvent("rip_view_action", parameters: [
+            AnalyticsParameterItemCategory: "partner_content" as NSObject
+        ])
     }
 }
 
@@ -151,7 +195,7 @@ fileprivate class PlacePartnerContentCardCell: UICollectionViewCell {
         bannerImageView.snp.makeConstraints { (make) in
             make.left.right.equalTo(containerView)
             make.top.equalTo(containerView)
-            make.height.equalTo(containerView.snp.height).dividedBy(1.6).priority(999)
+            make.height.equalTo(containerView.snp.height).dividedBy(1.625).priority(999)
         }
 
         titleLabel.snp.makeConstraints { (make) in
@@ -191,28 +235,5 @@ fileprivate class PlacePartnerContentCardCell: UICollectionViewCell {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class SnappingCollectionViewLayout: UICollectionViewFlowLayout {
-
-    override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
-        guard let collectionView = collectionView else { return super.targetContentOffset(forProposedContentOffset: proposedContentOffset, withScrollingVelocity: velocity) }
-
-        var offsetAdjustment = CGFloat.greatestFiniteMagnitude
-        let horizontalOffset = proposedContentOffset.x + collectionView.contentInset.left
-
-        let targetRect = CGRect(x: proposedContentOffset.x, y: 0, width: collectionView.bounds.size.width, height: collectionView.bounds.size.height)
-
-        let layoutAttributesArray = super.layoutAttributesForElements(in: targetRect)
-
-        layoutAttributesArray?.forEach({ (layoutAttributes) in
-            let itemOffset = layoutAttributes.frame.origin.x
-            if fabsf(Float(itemOffset - horizontalOffset)) < fabsf(Float(offsetAdjustment)) {
-                offsetAdjustment = itemOffset - horizontalOffset
-            }
-        })
-
-        return CGPoint(x: proposedContentOffset.x + offsetAdjustment, y: proposedContentOffset.y)
     }
 }

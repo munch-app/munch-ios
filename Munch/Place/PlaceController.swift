@@ -92,12 +92,6 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
                 self.cardTableView.reloadData()
                 self.scrollViewDidScroll(self.cardTableView)
 
-                Analytics.logEvent(AnalyticsEventViewItem, parameters: [
-                    AnalyticsParameterItemID: "place-\(self.placeId)" as NSObject,
-                    AnalyticsParameterItemName: place.name! as NSObject,
-                    AnalyticsParameterItemCategory: "place" as NSObject
-                ])
-
                 MunchApi.collections.recent.put(placeId: self.placeId) { meta in
                     let recentDatabase = RecentDatabase(name: "RecentlyViewedPlace", maxItems: 20)
                     recentDatabase.put(text: self.placeId, dictionary: place.toParams())
@@ -478,10 +472,9 @@ fileprivate class PlaceBottomView: UIView {
     @objc func actionCall(_ sender: Any) {
         if let phone = place?.phone?.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression, range: nil) {
             if let url = URL(string: "tel://\(phone)"), UIApplication.shared.canOpenURL(url) {
-                Analytics.logEvent("action_cta", parameters: [
+                Analytics.logEvent("rip_action_cta", parameters: [
                     AnalyticsParameterItemID: "place-\(self.place?.id ?? "")" as NSObject,
-                    "name": "CALL" as NSObject,
-                    "full_text": "action_call" as NSObject
+                    AnalyticsParameterItemCategory: "click_call" as NSObject
                 ])
 
                 UIApplication.shared.open(url)
@@ -491,10 +484,9 @@ fileprivate class PlaceBottomView: UIView {
 
     @objc func actionDirection(_ sender: Any) {
         if let address = place?.location.address?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
-            Analytics.logEvent("action_cta", parameters: [
+            Analytics.logEvent("rip_action_cta", parameters: [
                 AnalyticsParameterItemID: "place-\(self.place?.id ?? "")" as NSObject,
-                "name": "DIRECTIONS" as NSObject,
-                "full_text": "action_direction" as NSObject
+                AnalyticsParameterItemCategory: "click_direction" as NSObject
             ])
 
             // Monster Jobs uses comgooglemap url scheme, those fuckers

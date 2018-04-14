@@ -13,6 +13,7 @@ import SnapKit
 import FBSDKCoreKit
 import FBSDKLoginKit
 import GoogleSignIn
+import FirebaseAnalytics
 
 class AccountRootBoardingController: UINavigationController, UINavigationControllerDelegate {
 
@@ -159,6 +160,9 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
                 if result!.grantedPermissions.contains("email") && result!.grantedPermissions.contains("public_profile") {
                     if let token = FBSDKAccessToken.current()?.tokenString {
                         AccountAuthentication.login(facebook: token) { state in
+                            Analytics.logEvent(AnalyticsEventSignUp, parameters: [
+                                AnalyticsParameterSignUpMethod: "facebook" as NSObject
+                            ])
                             self.dismiss(state: state)
                         }
                     } else {
@@ -183,6 +187,9 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
 
         if let authentication = user.authentication {
             AccountAuthentication.login(google: authentication.idToken, accessToken: authentication.accessToken) { state in
+                Analytics.logEvent(AnalyticsEventSignUp, parameters: [
+                    AnalyticsParameterSignUpMethod: "google" as NSObject
+                ])
                 self.dismiss(state: state)
             }
         } else {

@@ -8,6 +8,7 @@ import UIKit
 
 import SnapKit
 import SwiftyJSON
+import FirebaseAnalytics
 
 class SearchContainersCard: UITableViewCell, SearchCardView {
     private let titleLabel: SearchHeaderCardLabel = {
@@ -85,6 +86,12 @@ extension SearchContainersCard: UICollectionViewDataSource, UICollectionViewDele
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let container = containers[indexPath.row]
+
+        Analytics.logEvent(AnalyticsEventViewItem, parameters: [
+            AnalyticsParameterItemID: "container-\(container.id ?? "")" as NSObject,
+            AnalyticsParameterItemCategory: "discover_containers" as NSObject
+        ])
+
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchContainersCardContainerCell", for: indexPath) as! SearchContainersCardContainerCell
         cell.render(container: container)
         return cell
@@ -95,6 +102,11 @@ extension SearchContainersCard: UICollectionViewDataSource, UICollectionViewDele
         var searchQuery = controller.searchQuery
         searchQuery.filter.containers = [container]
         controller.render(searchQuery: searchQuery)
+
+        Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
+            AnalyticsParameterItemID: "container-\(container.id ?? "")" as NSObject,
+            AnalyticsParameterContentType: "discover_containers" as NSObject
+        ])
     }
 }
 

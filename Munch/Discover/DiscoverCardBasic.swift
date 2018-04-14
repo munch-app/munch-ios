@@ -127,10 +127,6 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
         bottomView.render(card: card)
         let bottomDate = Date()
 
-        Analytics.logEvent(AnalyticsEventViewSearchResults, parameters: [
-            AnalyticsParameterSearchTerm: "" as NSObject,
-        ])
-
         let total = Calendar.micro(from: startDate, to: Date())
         let container = Calendar.micro(from: startDate, to: containerDate)
         let image = Calendar.micro(from: containerDate, to: imageDate)
