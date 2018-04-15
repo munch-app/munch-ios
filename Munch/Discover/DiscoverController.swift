@@ -78,6 +78,10 @@ class DiscoverController: UIViewController, UITableViewDelegate, UITableViewData
         let edgePan = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(screenEdgeSwiped))
         edgePan.edges = .left
         self.view.addGestureRecognizer(edgePan)
+
+        if !OnboardingController.isShown {
+            self.present(OnboardingController(), animated: true)
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -89,6 +93,7 @@ class DiscoverController: UIViewController, UITableViewDelegate, UITableViewData
 //         self.navigationController!.pushViewController(PlaceViewController(placeId: "9512d8fd-5123-49be-b223-5d7e469d28b7"), animated: true)
 
 //        self.goTo(extension: DiscoverFilterController.self)
+
     }
 
     private func initViews() {

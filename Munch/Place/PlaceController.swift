@@ -484,7 +484,7 @@ fileprivate class PlaceBottomView: UIView {
     @objc func actionCall(_ sender: Any) {
         if let phone = place?.phone?.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression, range: nil) {
             if let url = URL(string: "tel://\(phone)"), UIApplication.shared.canOpenURL(url) {
-                Analytics.logEvent("rip_action_cta", parameters: [
+                Analytics.logEvent("rip_action", parameters: [
                     AnalyticsParameterItemID: "place-\(self.place?.id ?? "")" as NSObject,
                     AnalyticsParameterItemCategory: "click_call" as NSObject
                 ])
@@ -496,7 +496,7 @@ fileprivate class PlaceBottomView: UIView {
 
     @objc func actionDirection(_ sender: Any) {
         if let address = place?.location.address?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
-            Analytics.logEvent("rip_action_cta", parameters: [
+            Analytics.logEvent("rip_action", parameters: [
                 AnalyticsParameterItemID: "place-\(self.place?.id ?? "")" as NSObject,
                 AnalyticsParameterItemCategory: "click_direction" as NSObject
             ])

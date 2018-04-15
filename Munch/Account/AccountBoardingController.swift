@@ -310,8 +310,7 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
             self.addSubview(cancelButton)
 
             self.backgroundColor = .clear
-            cancelButton.snp.makeConstraints {
-                make in
+            cancelButton.snp.makeConstraints { make in
                 make.top.equalTo(self.safeArea.top)
                 make.bottom.equalTo(self)
                 make.height.equalTo(44)

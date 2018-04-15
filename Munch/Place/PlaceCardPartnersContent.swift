@@ -136,8 +136,8 @@ extension PlacePartnerContentCard: UICollectionViewDataSource, UICollectionViewD
             self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         }
 
-        Analytics.logEvent("rip_view_action", parameters: [
-            AnalyticsParameterItemCategory: "partner_content" as NSObject
+        Analytics.logEvent("rip_action", parameters: [
+            AnalyticsParameterItemCategory: "swiped_partner_content" as NSObject
         ])
     }
 }

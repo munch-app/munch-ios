@@ -227,8 +227,8 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
             self.present(alert, animated: true)
         }
 
-        Analytics.logEvent("rip_extended_action", parameters: [
-            AnalyticsParameterItemCategory: "click_map" as NSObject
+        Analytics.logEvent("rip_action", parameters: [
+            AnalyticsParameterItemCategory: "click_extended_map_map" as NSObject
         ])
     }
 
@@ -237,8 +237,8 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
         mapView.showsCompass = false
         mapView.setUserTrackingMode(.followWithHeading, animated: true)
 
-        Analytics.logEvent("rip_extended_action", parameters: [
-            AnalyticsParameterItemCategory: "click_heading" as NSObject
+        Analytics.logEvent("rip_action", parameters: [
+            AnalyticsParameterItemCategory: "click_extended_map_heading" as NSObject
         ])
     }
 

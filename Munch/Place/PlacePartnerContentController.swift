@@ -199,8 +199,8 @@ extension PlacePartnerContentController: UICollectionViewDataSource, UICollectio
                 self.present(safari, animated: true, completion: nil)
             }
 
-            Analytics.logEvent("rip_extended_action", parameters: [
-                AnalyticsParameterItemCategory: "click_partner_content_article" as NSObject
+            Analytics.logEvent("rip_action", parameters: [
+                AnalyticsParameterItemCategory: "click_extended_partner_content_article" as NSObject
             ])
         case "instagram-media":
             if let username = content.instagramMedia?.username, let url = URL(string: "https://instagram.com/" + username) {
@@ -209,8 +209,8 @@ extension PlacePartnerContentController: UICollectionViewDataSource, UICollectio
                 self.present(safari, animated: true, completion: nil)
             }
 
-            Analytics.logEvent("rip_extended_action", parameters: [
-                AnalyticsParameterItemCategory: "click_partner_content_instagram" as NSObject
+            Analytics.logEvent("rip_action", parameters: [
+                AnalyticsParameterItemCategory: "click_extended_partner_content_instagram" as NSObject
             ])
         default: return
         }
@@ -341,8 +341,8 @@ fileprivate class PlacePartnerContentControllerCell: UICollectionViewCell {
         authorLabel.text = content.author
         descriptionLabel.text = content.description
 
-        Analytics.logEvent("rip_extended_view", parameters: [
-            AnalyticsParameterItemCategory: "partner_content" as NSObject
+        Analytics.logEvent("rip_view", parameters: [
+            AnalyticsParameterItemCategory: "extended_partner_content" as NSObject
         ])
     }
 
