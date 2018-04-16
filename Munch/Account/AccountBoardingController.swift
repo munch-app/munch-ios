@@ -9,21 +9,33 @@ import UIKit
 import Crashlytics
 import Kingfisher
 import SnapKit
+import SwiftRichString
 
 import FBSDKCoreKit
 import FBSDKLoginKit
 import GoogleSignIn
 import FirebaseAnalytics
 
+fileprivate struct OnboardingData {
+    var backgroundImage: UIImage?
+    var backgroundColor: UIColor
+    var contextImage: UIImage?
+
+    var title: String
+    var description: String
+}
+
 class AccountRootBoardingController: UINavigationController, UINavigationControllerDelegate {
 
     private let withCompletion: (AuthenticationState) -> Void
 
-    init(withCompletion: @escaping (AuthenticationState) -> Void) {
+    init(guestOption: Bool = false, withCompletion: @escaping (AuthenticationState) -> Void) {
         self.withCompletion = withCompletion
         super.init(nibName: nil, bundle: nil)
-        self.viewControllers = [AccountBoardingController(withCompletion: withCompletion)]
+        self.viewControllers = [AccountBoardingController(guestOption: guestOption, withCompletion: withCompletion)]
         self.delegate = self
+
+        AccountRootBoardingController.toShow = false
     }
 
     // Fix bug when pop gesture is enabled for the root controller
@@ -34,9 +46,36 @@ class AccountRootBoardingController: UINavigationController, UINavigationControl
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    class var toShow: Bool {
+        get {
+            if AccountAuthentication.isAuthenticated() {
+                return false
+            }
+            return UserDefaults.standard.string(forKey: "onboarding.load.version") != "2"
+        }
+        set(value) {
+            UserDefaults.standard.set(value ? nil : "2", forKey: "onboarding.load.version")
+        }
+    }
 }
 
 class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignInDelegate {
+    fileprivate let dataList: [OnboardingData] = [
+        OnboardingData(backgroundImage: UIImage(named: "Onboarding-Bg-1"),
+                backgroundColor: UIColor(hex: "fcab5a"), contextImage: nil,
+                title: "Welcome to Munch",
+                description: "Whether you're looking for the perfect date spot or the hottest bar in town - Munch helps you answer the question:\n\n<bold>'What do you want to eat?'</bold>"),
+        OnboardingData(backgroundImage: UIImage(named: "Onboarding-Bg-2"),
+                backgroundColor: UIColor(hex: "46b892"), contextImage: UIImage(named: "Onboarding-Singapore"),
+                title: "Discover Delicious",
+                description: "Explore thousands of restaurants, bars and hawkers in the app. Find places nearby or on the other end of the island."),
+        OnboardingData(backgroundImage: UIImage(named: "Onboarding-Bg-3"),
+                backgroundColor: UIColor(hex: "258edd"), contextImage: UIImage(named: "Onboarding-Collection"),
+                title: "Never Forget",
+                description: "Save places that you want to check out or create themed lists to keep track of places."),
+    ]
+
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = .zero
@@ -55,7 +94,12 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
         collectionView.register(BoardingCardCell.self, forCellWithReuseIdentifier: "BoardingCardCell")
         return collectionView
     }()
-
+    private let pageControl: UIPageControl = {
+        let control = UIPageControl()
+        control.pageIndicatorTintColor = UIColor(hex: "999999")
+        control.currentPageIndicatorTintColor = UIColor(hex: "FFFFFF")
+        return control
+    }()
     private let headerIconLabel: UIButton = {
         let button = UIButton()
         button.isUserInteractionEnabled = false
@@ -67,13 +111,15 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
         button.setTitleColor(.white, for: .normal)
         return button
     }()
-    private let headerView = HeaderView()
-    private let bottomView = BottomView()
+    private let headerView: HeaderView
+    private let bottomView: BottomView
 
     private let withCompletion: (AuthenticationState) -> Void
 
-    init(withCompletion: @escaping (AuthenticationState) -> Void) {
+    init(guestOption: Bool, withCompletion: @escaping (AuthenticationState) -> Void) {
         self.withCompletion = withCompletion
+        self.headerView = HeaderView(guestOption: guestOption)
+        self.bottomView = BottomView(guestOption: guestOption)
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -84,6 +130,7 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
         headerView.cancelButton.addTarget(self, action: #selector(action(_:)), for: .touchUpInside)
         bottomView.facebookButton.addTarget(self, action: #selector(action(_:)), for: .touchUpInside)
         bottomView.googleButton.addTarget(self, action: #selector(action(_:)), for: .touchUpInside)
+        bottomView.guestButton.addTarget(self, action: #selector(action(_:)), for: .touchUpInside)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -105,7 +152,9 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
         self.view.addSubview(headerView)
         self.view.addSubview(headerIconLabel)
         self.view.addSubview(bottomView)
+        self.view.addSubview(pageControl)
 
+        self.pageControl.numberOfPages = self.dataList.count
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
 
@@ -117,6 +166,11 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
             make.left.right.equalTo(self.view).inset(24)
             make.top.equalTo(headerView.snp.bottom).inset(-12)
             make.height.equalTo(60)
+        }
+
+        pageControl.snp.makeConstraints { make in
+            make.left.right.equalTo(self.view)
+            make.bottom.equalTo(collectionView.snp.bottom).inset(22)
         }
 
         collectionView.snp.makeConstraints { make in
@@ -142,7 +196,7 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
     }
 
     @objc func action(_ sender: UIButton) {
-        if sender == self.headerView.cancelButton {
+        if sender == self.headerView.cancelButton || sender == self.bottomView.guestButton {
             self.dismiss(state: .cancel)
         } else if sender == self.bottomView.facebookButton {
             FBSDKLoginManager().logIn(withReadPermissions: ["email", "public_profile", "user_friends"], from: self) { (result: FBSDKLoginManagerLoginResult!, error: Error!) in
@@ -231,8 +285,16 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
             return button
         }()
 
-        override init(frame: CGRect = CGRect.zero) {
-            super.init(frame: frame)
+        let guestButton: UIButton = {
+            let button = UIButton()
+            button.setTitle("Continue as Guest", for: .normal)
+            button.setTitleColor(UIColor.black.withAlphaComponent(0.75), for: .normal)
+            button.titleLabel?.font = .systemFont(ofSize: 15, weight: .regular)
+            return button
+        }()
+
+        init(guestOption: Bool) {
+            super.init(frame: CGRect.zero)
             self.backgroundColor = .white
             self.addSubview(facebookButton)
             self.addSubview(googleButton)
@@ -248,7 +310,22 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
                 make.height.equalTo(44)
 
                 make.top.equalTo(facebookButton.snp.bottom).inset(-12)
-                make.bottom.equalTo(self.safeArea.bottom).inset(18)
+
+                if !guestOption {
+                    make.bottom.equalTo(self.safeArea.bottom).inset(18)
+                }
+            }
+
+            if guestOption {
+                self.addSubview(guestButton)
+
+                guestButton.snp.makeConstraints { make in
+                    make.left.right.equalTo(self).inset(24)
+                    make.height.equalTo(30)
+
+                    make.top.equalTo(googleButton.snp.bottom).inset(-12)
+                    make.bottom.equalTo(self.safeArea.bottom).inset(18)
+                }
             }
         }
 
@@ -261,7 +338,7 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
             let labelView: UILabel = {
                 let label = UILabel()
                 label.textAlignment = .center
-                label.font = .systemFont(ofSize: 15, weight: .regular)
+                label.font = .systemFont(ofSize: 15, weight: .medium)
                 label.textColor = UIColor.black.withAlphaComponent(0.9)
                 return label
             }()
@@ -305,8 +382,8 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
             return button
         }()
 
-        override init(frame: CGRect = CGRect.zero) {
-            super.init(frame: frame)
+        init(guestOption: Bool) {
+            super.init(frame: CGRect.zero)
             self.addSubview(cancelButton)
 
             self.backgroundColor = .clear
@@ -335,55 +412,108 @@ extension AccountBoardingController: UICollectionViewDataSource, UICollectionVie
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        return dataList.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        return collectionView.dequeueReusableCell(withReuseIdentifier: "BoardingCardCell", for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BoardingCardCell", for: indexPath) as! BoardingCardCell
+        cell.render(data: dataList[indexPath.row])
+        return cell
+    }
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        let pageNumber = Int(round(scrollView.contentOffset.x / scrollView.frame.size.width))
+        pageControl.currentPage = pageNumber
     }
 }
 
 fileprivate class BoardingCardCell: UICollectionViewCell {
-    let imageView = UIImageView()
-    let headerLabel = UILabel()
-    let descriptionLabel = UILabel()
+    private let backgroundImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+    private let overlayView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(hex: "00000066")
+        return view
+    }()
+
+    private let contextImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.tintColor = .white
+        return imageView
+    }()
+    private let titleView: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.numberOfLines = 0
+
+        label.textColor = UIColor.white
+        label.font = UIFont.systemFont(ofSize: 28.0, weight: .semibold)
+        return label
+    }()
+    private let descriptionView: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.numberOfLines = 0
+
+        label.textColor = UIColor.white
+        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        return label
+    }()
+
+    static let boldStyle = Style("bold", {
+        $0.align = .center
+        $0.font = FontAttribute.init(font: UIFont.systemFont(ofSize: 17, weight: .bold))
+    })
 
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
-        self.addSubview(imageView)
-        self.addSubview(headerLabel)
-        self.addSubview(descriptionLabel)
-        self.initViews()
+        self.addSubview(backgroundImageView)
+        self.addSubview(overlayView)
+        self.addSubview(contextImageView)
+        self.addSubview(titleView)
+        self.addSubview(descriptionView)
+
+        initViews()
     }
 
     private func initViews() {
-        let url = URL(string: "https://s3.dualstack.ap-southeast-1.amazonaws.com/munch-static/iOS/onboarding_1.jpg")
-        imageView.kf.setImage(with: url)
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-
-        imageView.snp.makeConstraints { make in
+        backgroundImageView.snp.makeConstraints { make in
             make.edges.equalTo(self)
         }
 
-        headerLabel.text = "Discover Delicious"
-        headerLabel.textAlignment = .center
-        headerLabel.font = UIFont.systemFont(ofSize: 28.0, weight: .semibold)
-        headerLabel.textColor = UIColor.white
-        headerLabel.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(24)
-            make.bottom.equalTo(descriptionLabel.snp.top).inset(-18)
+        overlayView.snp.makeConstraints { make in
+            make.edges.equalTo(self)
         }
 
-        descriptionLabel.text = "Explore every corner of Singapore and discover delicious with Munch"
-        descriptionLabel.numberOfLines = 0
-        descriptionLabel.textAlignment = .center
-        descriptionLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
-        descriptionLabel.textColor = UIColor.white
-        descriptionLabel.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(24)
-            make.bottom.equalTo(self).inset(30)
+        contextImageView.snp.makeConstraints { make in
+            make.centerX.equalTo(self)
+            make.width.height.equalTo(150)
+            make.bottom.equalTo(titleView.snp.top).inset(-10)
         }
+
+        titleView.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(24)
+            make.bottom.equalTo(descriptionView.snp.top).inset(-18)
+        }
+
+        descriptionView.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(24)
+            make.bottom.equalTo(self).inset(70)
+        }
+    }
+
+    fileprivate func render(data: OnboardingData) {
+        self.backgroundImageView.image = data.backgroundImage
+        self.contextImageView.image = data.contextImage
+
+        self.titleView.text = data.title
+
+        let parser = MarkupString(source: data.description, styles: [BoardingCardCell.boldStyle])!
+        self.descriptionView.attributedText = parser.render()
     }
 
     required init?(coder aDecoder: NSCoder) {

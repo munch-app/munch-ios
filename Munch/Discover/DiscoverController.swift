@@ -79,8 +79,10 @@ class DiscoverController: UIViewController, UITableViewDelegate, UITableViewData
         edgePan.edges = .left
         self.view.addGestureRecognizer(edgePan)
 
-        if !OnboardingController.isShown {
-            self.present(OnboardingController(), animated: true)
+        if AccountRootBoardingController.toShow {
+            self.present(AccountRootBoardingController(guestOption: true, withCompletion: { state in
+                // Current does nothing
+            }), animated: true)
         }
     }
 
