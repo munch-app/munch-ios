@@ -5,6 +5,7 @@
 
 import Foundation
 import UIKit
+import SafariServices
 
 import SnapKit
 import SwiftyJSON
@@ -43,14 +44,17 @@ class PlacePartnerContentCard: PlaceCardView {
         collectionView.alwaysBounceHorizontal = true
         collectionView.backgroundColor = UIColor.white
         collectionView.register(PlacePartnerContentCardCell.self, forCellWithReuseIdentifier: "PlacePartnerContentCardCell")
+        collectionView.register(PlacePartnerContentInstagramCardCell.self, forCellWithReuseIdentifier: "PlacePartnerContentInstagramCardCell")
 
         return collectionView
     }()
+    private let decoder = JSONDecoder()
 
-    private var contents: [JSON] = []
+    private var contents: [PartnerContent] = []
 
     override func didLoad(card: PlaceCard) {
-        self.contents = card.data.array ?? []
+        let contents = try? self.decoder.decode([PartnerContent].self, from: card.data.rawData())
+        self.contents = contents ?? []
         self.addSubview(collectionView)
 
         self.collectionView.delegate = self
@@ -68,26 +72,58 @@ class PlacePartnerContentCard: PlaceCardView {
     }
 }
 
-extension PlacePartnerContentCard: UICollectionViewDataSource, UICollectionViewDelegate {
+extension PlacePartnerContentCard: UICollectionViewDataSource, UICollectionViewDelegate, SFSafariViewControllerDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return contents.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PlacePartnerContentCardCell", for: indexPath) as! PlacePartnerContentCardCell
-        cell.render(json: contents[indexPath.row])
-
         Analytics.logEvent("rip_view", parameters: [
             AnalyticsParameterItemCategory: "partner_content" as NSObject
         ])
 
-        return cell
+        let content = contents[indexPath.row]
+        switch content.type {
+        case "instagram-media":
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PlacePartnerContentInstagramCardCell", for: indexPath) as! PlacePartnerContentInstagramCardCell
+            cell.render(content: contents[indexPath.row])
+            return cell
+
+        case "article":
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PlacePartnerContentCardCell", for: indexPath) as! PlacePartnerContentCardCell
+            cell.render(content: contents[indexPath.row])
+            return cell
+
+        default:
+            return UICollectionViewCell()
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let content = contents[indexPath.row]
-        let controller = PlacePartnerContentController(place: self.controller.place!, startFromUniqueId: content["uniqueId"].string)
-        self.controller.navigationController!.pushViewController(controller, animated: true)
+        switch content.type {
+        case "article":
+            if let articleUrl = content.article?.url, let url = URL(string: articleUrl) {
+                let safari = SFSafariViewController(url: url)
+                safari.delegate = self
+                self.controller.present(safari, animated: true, completion: nil)
+            }
+
+            Analytics.logEvent("rip_action", parameters: [
+                AnalyticsParameterItemCategory: "click_partner_content_article" as NSObject
+            ])
+        case "instagram-media":
+            if let username = content.instagramMedia?.username, let url = URL(string: "https://instagram.com/" + username) {
+                let safari = SFSafariViewController(url: url)
+                safari.delegate = self
+                self.controller.present(safari, animated: true, completion: nil)
+            }
+
+            Analytics.logEvent("rip_action", parameters: [
+                AnalyticsParameterItemCategory: "click_partner_content_instagram" as NSObject
+            ])
+        default: return
+        }
     }
 
     private var collectionViewFlowLayout: UICollectionViewFlowLayout {
@@ -156,10 +192,15 @@ fileprivate class PlacePartnerContentCardCell: UICollectionViewCell {
         label.textColor = UIColor.black.withAlphaComponent(0.9)
         return label
     }()
-    private let authorLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 13.0, weight: .semibold)
-        label.textColor = UIColor.black.withAlphaComponent(0.55)
+    private let authorLabel: UIButton = {
+        let label = UIButton()
+        label.titleLabel?.font = UIFont.systemFont(ofSize: 11.0, weight: .regular)
+        label.setTitleColor(.white, for: .normal)
+        label.backgroundColor = UIColor.black.withAlphaComponent(0.66)
+        label.contentEdgeInsets = UIEdgeInsets(topBottom: 3, leftRight: 5)
+        label.layer.masksToBounds = true
+        label.layer.cornerRadius = 5
+        label.isUserInteractionEnabled = false
         return label
     }()
     private let descriptionLabel: UITextView = {
@@ -198,34 +239,127 @@ fileprivate class PlacePartnerContentCardCell: UICollectionViewCell {
             make.height.equalTo(containerView.snp.height).dividedBy(1.625).priority(999)
         }
 
+        authorLabel.snp.makeConstraints { make in
+            make.left.equalTo(bannerImageView).inset(5)
+            make.bottom.equalTo(bannerImageView).inset(5)
+        }
+
         titleLabel.snp.makeConstraints { (make) in
             make.left.right.equalTo(containerView)
             make.top.equalTo(bannerImageView.snp.bottom).inset(-8)
         }
 
-        authorLabel.snp.makeConstraints { make in
-            make.left.equalTo(containerView)
-            make.top.equalTo(titleLabel.snp.bottom).inset(-2)
-        }
-
         descriptionLabel.snp.makeConstraints { make in
             make.left.right.equalTo(containerView)
-            make.top.equalTo(authorLabel.snp.bottom).inset(-6)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-5)
             make.bottom.equalTo(containerView)
         }
     }
 
-    func render(json: JSON) {
-        let image = json["image"].dictionaryObject as? [String: String]
-        bannerImageView.render(images: image) { (image, error, type, url) -> Void in
+    func render(content: PartnerContent) {
+        bannerImageView.render(images: content.image) { (image, error, type, url) -> Void in
             if image == nil {
                 self.bannerImageView.render(named: "RIP-No-Image")
             }
         }
 
-        titleLabel.text = json["title"].string
-        authorLabel.text = json["author"].string
-        descriptionLabel.text = json["description"].string
+        titleLabel.text = content.title
+        authorLabel.setTitle(content.author, for: .normal)
+        descriptionLabel.text = content.description
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        bannerImageView.layer.cornerRadius = 4
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+fileprivate class PlacePartnerContentInstagramCardCell: UICollectionViewCell {
+    private let bannerImageView: ShimmerImageView = {
+        let imageView = ShimmerImageView()
+        imageView.layer.cornerRadius = 4
+        imageView.tintColor = .white
+        return imageView
+    }()
+    private let authorLabel: UIButton = {
+        let label = UIButton()
+        label.titleLabel?.font = UIFont.systemFont(ofSize: 11.0, weight: .regular)
+        label.setTitleColor(.white, for: .normal)
+        label.backgroundColor = UIColor.black.withAlphaComponent(0.67)
+        label.contentEdgeInsets.top = 3
+        label.contentEdgeInsets.bottom = 3
+        label.contentEdgeInsets.left = 4 + 5
+        label.contentEdgeInsets.right = 4
+
+        label.layer.masksToBounds = true
+        label.layer.cornerRadius = 5
+        label.isUserInteractionEnabled = false
+
+        label.tintColor = .white
+        label.setImage(UIImage(named: "RIP-Partner-Instagram"), for: .normal)
+        label.imageEdgeInsets.left = -5
+        return label
+    }()
+    private let descriptionLabel: UITextView = {
+        let nameLabel = UITextView()
+        nameLabel.font = UIFont.systemFont(ofSize: 13.0, weight: .regular)
+
+        nameLabel.textColor = UIColor.black.withAlphaComponent(0.8)
+        nameLabel.backgroundColor = .white
+
+        nameLabel.textContainer.maximumNumberOfLines = 3
+        nameLabel.textContainer.lineBreakMode = .byTruncatingTail
+        nameLabel.textContainer.lineFragmentPadding = 0
+        nameLabel.textContainerInset = UIEdgeInsets(topBottom: 0, leftRight: 0)
+        nameLabel.isUserInteractionEnabled = false
+        return nameLabel
+    }()
+
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        let containerView = UIView()
+        self.addSubview(containerView)
+        containerView.addSubview(bannerImageView)
+        containerView.addSubview(authorLabel)
+        containerView.addSubview(descriptionLabel)
+
+        containerView.snp.makeConstraints { make in
+            make.left.equalTo(self).inset(24)
+            make.right.equalTo(self)
+            make.top.bottom.equalTo(self)
+        }
+
+        bannerImageView.snp.makeConstraints { (make) in
+            make.left.right.equalTo(containerView)
+            make.top.equalTo(containerView)
+            make.height.equalTo(containerView.snp.height).dividedBy(1.625).priority(999)
+        }
+
+        authorLabel.snp.makeConstraints { make in
+            make.left.equalTo(bannerImageView).inset(5)
+            make.bottom.equalTo(bannerImageView).inset(5)
+        }
+
+        descriptionLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(containerView)
+            make.top.equalTo(bannerImageView.snp.bottom).inset(-8)
+            make.bottom.equalTo(containerView)
+        }
+    }
+
+    func render(content: PartnerContent) {
+        bannerImageView.render(images: content.image) { (image, error, type, url) -> Void in
+            if image == nil {
+                self.bannerImageView.render(named: "RIP-No-Image")
+            }
+        }
+
+        authorLabel.setTitle(content.author, for: .normal)
+        descriptionLabel.text = content.description
     }
 
     override func layoutSubviews() {
