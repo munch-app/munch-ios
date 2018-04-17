@@ -45,12 +45,13 @@ class DiscoverClient {
             query.latLng = MunchLocation.lastLatLng
 
             MunchApi.restful.post("/discover/filter/price", parameters: query.toParams()) { meta, json in
-                if meta.isOk() {
-                    let filterData = try! self.decoder.decode(FilterPriceRange.self, from: json["data"].rawData())
-                    callback(meta, filterData)
-                } else {
+                guard meta.isOk() else {
                     callback(meta, nil)
+                    return
                 }
+
+                let filterData = try? self.decoder.decode(FilterPriceRange.self, from: json["data"].rawData())
+                callback(meta, filterData)
             }
         }
 
@@ -83,10 +84,15 @@ class DiscoverClient {
 
 
                 MunchApi.restful.get("/discover/filter/locations/list") { meta, json in
+                    guard meta.isOk() else {
+                        callback(meta, [], [])
+                        return
+                    }
+
                     var locations = [Location]()
                     var containers = [Container]()
 
-                    if let array = json["data"].array{
+                    if let array = json["data"].array {
                         for data in array {
                             let result = SearchClient.parseResult(result: data)
                             if let location = result as? Location {
