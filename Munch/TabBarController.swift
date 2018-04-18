@@ -61,11 +61,11 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
     }
 
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-        if (viewController is AccountController) {
-            if AccountAuthentication.isAuthenticated() {
-                return true
-            }
+        switch viewController {
+        case is AccountController where AccountAuthentication.isAuthenticated():
+            return true
 
+        case is AccountController where !AccountAuthentication.isAuthenticated():
             AccountAuthentication.requireAuthentication(controller: self) { state in
                 switch state {
                 case .loggedIn:
@@ -74,10 +74,10 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
                     return
                 }
             }
-        }
+            return false
 
-        if let navigation = viewController as? UINavigationController {
-            if let controller = navigation.topViewController as? DiscoverController {
+        case let nav as UINavigationController:
+            if let controller = nav.topViewController as? DiscoverController {
                 if (self.previousController == viewController) {
                     sameTabCounter += 1
                     if (sameTabCounter >= 2) {
@@ -88,9 +88,9 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
                 }
                 self.previousController = viewController
             }
+            return true
+        default: return true
         }
-
-        return true
     }
 }
 

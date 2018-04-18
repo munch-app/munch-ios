@@ -96,6 +96,7 @@ class DiscoverController: UIViewController, UITableViewDelegate, UITableViewData
 
 //        self.goTo(extension: DiscoverFilterController.self)
 
+        self.cardTableView.reloadData()
     }
 
     private func initViews() {

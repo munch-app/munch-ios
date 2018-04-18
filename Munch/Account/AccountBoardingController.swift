@@ -491,7 +491,7 @@ fileprivate class BoardingCardCell: UICollectionViewCell {
 
         contextImageView.snp.makeConstraints { make in
             make.centerX.equalTo(self)
-            make.width.height.equalTo(150)
+            make.width.height.equalTo(75)
             make.bottom.equalTo(titleView.snp.top).inset(-10)
         }
 
