@@ -16,6 +16,12 @@ public enum AuthenticationState {
     case fail(Error)
 }
 
+struct AuthenticationError: LocalizedError {
+    var errorDescription: String? {
+        return "You may have logged in with multiple accounts previously. For security purposes, please log in with your Google account if you have done so before."
+    }
+}
+
 public class AccountAuthentication {
     public class func getToken(withCompletion: @escaping (_ token: String?) -> Void) {
         if let currentUser = Auth.auth().currentUser {
@@ -54,6 +60,10 @@ public class AccountAuthentication {
 
         Auth.auth().signIn(with: credential) { (user, error) in
             if let error = error {
+                if error.localizedDescription.starts(with: "An account already") {
+                    withCompletion(.fail(AuthenticationError()))
+                    return
+                }
                 Crashlytics.sharedInstance().recordError(error)
                 withCompletion(.fail(error))
                 return

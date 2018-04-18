@@ -191,7 +191,7 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
             self.withCompletion(state)
             self.dismiss(animated: true)
         case .fail(let error):
-            self.alert(error: error)
+            self.alert(title: "Account Sign In Error", error: error)
         }
     }
 
