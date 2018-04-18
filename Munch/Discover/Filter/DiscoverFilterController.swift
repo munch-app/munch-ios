@@ -357,7 +357,12 @@ fileprivate class DiscoverFilterHeaderView: UIView, MunchTagCollectionViewDelega
         for tag in tags {
             switch tag {
             case .location(let text):
-                self.tagCollection.add(type: .filterTag(text))
+                if text.lowercased() == "nearby" {
+                    self.tagCollection.add(type: .filterTag(text))
+                } else {
+                    self.tagCollection.add(type: .filterTagClose(text))
+                }
+
             case .hour(let text):
                 self.tagCollection.add(type: .filterTagClose(text))
             case .tag(let text):
@@ -371,17 +376,12 @@ fileprivate class DiscoverFilterHeaderView: UIView, MunchTagCollectionViewDelega
     func tagCollectionView(collectionView: MunchTagCollectionView, didSelect type: MunchTagCollectionType, index: Int) {
         switch tags[index] {
         case .location(let text):
-            if text.lowercased() == "nearby" {
-                let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-                alert.addAction(UIAlertAction(title: "Reset to Nearby", style: .destructive) { action in
-                    self.controller.manager.select(location: nil)
-                })
-                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-                self.controller.present(alert, animated: true)
+            if text.lowercased() != "nearby" {
+                self.controller.manager.select(location: nil)
+                Analytics.logEvent("filter_action", parameters: [
+                    AnalyticsParameterItemCategory: "click_reset_location" as NSObject
+                ])
             }
-            Analytics.logEvent("filter_action", parameters: [
-                AnalyticsParameterItemCategory: "click_reset_location" as NSObject
-            ])
 
         case .hour(let text):
             self.controller.manager.select(hour: text)
@@ -423,7 +423,7 @@ class DiscoverFilterBottomView: UIView {
         return applyBtn
     }()
     fileprivate let indicator: NVActivityIndicatorView = {
-        let indicator = NVActivityIndicatorView(frame: .zero, type: .ballBeat, color: .white, padding: 10)
+        let indicator = NVActivityIndicatorView(frame: .zero, type: .ballBeat, color: .primary600, padding: 10)
         indicator.stopAnimating()
         return indicator
     }()
@@ -465,7 +465,7 @@ class DiscoverFilterBottomView: UIView {
         } else {
             self.indicator.startAnimating()
             self.applyBtn.setTitle(nil, for: .normal)
-            self.applyBtn.backgroundColor = .primary
+            self.applyBtn.backgroundColor = .white
         }
     }
 
