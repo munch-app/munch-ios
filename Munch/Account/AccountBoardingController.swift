@@ -6,7 +6,6 @@
 import Foundation
 import UIKit
 
-import Crashlytics
 import Kingfisher
 import SnapKit
 import SwiftRichString
@@ -14,7 +13,10 @@ import SwiftRichString
 import FBSDKCoreKit
 import FBSDKLoginKit
 import GoogleSignIn
+
+import Crashlytics
 import FirebaseAnalytics
+import UserNotifications
 
 fileprivate struct OnboardingData {
     var backgroundImage: UIImage?
@@ -186,7 +188,13 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
 
     private func dismiss(state: AuthenticationState) {
         switch state {
-        case .loggedIn: fallthrough
+        case .loggedIn:
+            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+            UNUserNotificationCenter.current().requestAuthorization(
+                    options: authOptions,
+                    completionHandler: {_, _ in })
+
+            fallthrough
         case .cancel:
             self.withCompletion(state)
             self.dismiss(animated: true)
@@ -298,7 +306,7 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
             label.text = "By signing up, you agree to Munch's terms of use and privacy policy."
             label.numberOfLines = 0
 
-            label.textColor = UIColor(hex: "333333")
+            label.textColor = UIColor(hex: "3f3f3f")
             label.font = UIFont.systemFont(ofSize: 12.0, weight: .regular)
             label.textAlignment = .center
             return label
@@ -323,9 +331,7 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
 
                 make.top.equalTo(facebookButton.snp.bottom).inset(-12)
 
-                if !guestOption {
-                    make.bottom.equalTo(agreeLabel.snp.top).inset(-12)
-                }
+                make.bottom.equalTo(agreeLabel.snp.top).inset(-12)
             }
 
             agreeLabel.snp.makeConstraints { make in
@@ -333,17 +339,17 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
                 make.bottom.equalTo(self.safeArea.bottom).inset(12)
             }
 
-            if guestOption {
-                self.addSubview(guestButton)
-
-                guestButton.snp.makeConstraints { make in
-                    make.left.right.equalTo(self).inset(24)
-                    make.height.equalTo(30)
-
-                    make.top.equalTo(googleButton.snp.bottom).inset(-12)
-                    make.bottom.equalTo(agreeLabel.snp.top).inset(-12)
-                }
-            }
+//            if guestOption {
+//                self.addSubview(guestButton)
+//
+//                guestButton.snp.makeConstraints { make in
+//                    make.left.right.equalTo(self).inset(24)
+//                    make.height.equalTo(30)
+//
+//                    make.top.equalTo(googleButton.snp.bottom).inset(-12)
+//                    make.bottom.equalTo(agreeLabel.snp.top).inset(-12)
+//                }
+//            }
         }
 
         class ContinueButton: UIButton {
@@ -394,7 +400,6 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
             button.setTitle("CANCEL", for: .normal)
             button.setTitleColor(UIColor.white, for: .normal)
             button.titleLabel?.font = .systemFont(ofSize: 12, weight: .medium)
-            button.titleEdgeInsets.right = 24
             button.contentHorizontalAlignment = .right
             return button
         }()
@@ -404,12 +409,36 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
             self.addSubview(cancelButton)
 
             self.backgroundColor = .clear
-            cancelButton.snp.makeConstraints { make in
-                make.top.equalTo(self.safeArea.top)
-                make.bottom.equalTo(self)
-                make.height.equalTo(44)
-                make.width.equalTo(90)
-                make.right.equalTo(self)
+
+
+
+            if guestOption {
+                cancelButton.setTitle("SKIP", for: .normal)
+                cancelButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
+
+                cancelButton.layer.cornerRadius = 5
+                cancelButton.layer.borderWidth = 1.0
+                cancelButton.layer.borderColor = UIColor.white.cgColor
+
+                cancelButton.contentEdgeInsets.left = 16
+                cancelButton.contentEdgeInsets.right = 16
+
+                cancelButton.snp.makeConstraints { make in
+                    make.top.equalTo(self.safeArea.top).inset(6)
+                    make.bottom.equalTo(self).inset(6)
+                    make.height.equalTo(32)
+                    make.right.equalTo(self).inset(24)
+                }
+            } else {
+                cancelButton.titleEdgeInsets.right = 24
+
+                cancelButton.snp.makeConstraints { make in
+                    make.top.equalTo(self.safeArea.top)
+                    make.bottom.equalTo(self)
+                    make.height.equalTo(44)
+                    make.width.equalTo(90)
+                    make.right.equalTo(self)
+                }
             }
         }
 
