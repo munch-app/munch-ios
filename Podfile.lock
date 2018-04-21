@@ -26,6 +26,9 @@ PODS:
   - Firebase/Core (4.11.0):
     - FirebaseAnalytics (= 4.1.0)
     - FirebaseCore (= 4.0.18)
+  - Firebase/Messaging (4.11.0):
+    - Firebase/Core
+    - FirebaseMessaging (= 2.1.1)
   - Firebase/Performance (4.11.0):
     - Firebase/Core
     - FirebasePerformance (= 1.1.2)
@@ -42,6 +45,12 @@ PODS:
     - GoogleToolboxForMac/NSData+zlib (~> 2.1)
   - FirebaseInstanceID (2.0.10):
     - FirebaseCore (~> 4.0)
+  - FirebaseMessaging (2.1.1):
+    - FirebaseAnalytics (~> 4.1)
+    - FirebaseCore (~> 4.0)
+    - FirebaseInstanceID (~> 2.0)
+    - GoogleToolboxForMac/Logger (~> 2.1)
+    - Protobuf (~> 3.5)
   - FirebasePerformance (1.1.2):
     - FirebaseAnalytics (~> 4.1)
     - FirebaseInstanceID (~> 2.0)
@@ -119,6 +128,7 @@ DEPENDENCIES:
   - Fabric (~> 1.7.2)
   - Firebase/Auth
   - Firebase/Core
+  - Firebase/Messaging
   - Firebase/Performance
   - FirebaseUI/Facebook
   - GoogleSignIn
@@ -170,6 +180,7 @@ SPEC CHECKSUMS:
   FirebaseAuth: 147bf340a0706b44ca1753d6b41ebafd9687cfe6
   FirebaseCore: b981f47e5254cbcfdeb483355300d743f6fcab2c
   FirebaseInstanceID: 8d20d890d65c917f9f7d9950b6e10a760ad34321
+  FirebaseMessaging: db0e01c52ef7e1f42846431273558107d084ede4
   FirebasePerformance: 96c831a9eaf8d2ddf8bb37a4a6f6dd1b4bfe929f
   FirebaseSwizzlingUtilities: f1c49a5a372ac852c853722a5891a0a5e2344a6c
   FirebaseUI: 7f149d40db1a67c459df16540256b66d8f8e8c70
@@ -195,6 +206,6 @@ SPEC CHECKSUMS:
   TPKeyboardAvoiding: cb69d5ddbe90ce0170e4bc2db1e5e41d4a3ad9a4
   TTGTagCollectionView: 20cf236b538ea9a17d1f0538968148c8d304414a
 
-PODFILE CHECKSUM: ceb5d5a15edbe9fff9317158419d457b68c99f33
+PODFILE CHECKSUM: 528dc149f21ae5ae9a82ece17ab8c765129bd03e
 
 COCOAPODS: 1.3.1

@@ -15,6 +15,7 @@ target 'Munch' do
 
   # Firebase
   pod 'Firebase/Core'
+  pod 'Firebase/Messaging'
   pod 'Firebase/Performance'
   pod 'Firebase/Auth'
   pod 'FirebaseUI/Facebook'
