@@ -189,10 +189,11 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
     private func dismiss(state: AuthenticationState) {
         switch state {
         case .loggedIn:
-            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-            UNUserNotificationCenter.current().requestAuthorization(
-                    options: authOptions,
-                    completionHandler: {_, _ in })
+            // TODO Implement when ready
+//            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+//            UNUserNotificationCenter.current().requestAuthorization(
+//                    options: authOptions,
+//                    completionHandler: {_, _ in })
 
             fallthrough
         case .cancel:

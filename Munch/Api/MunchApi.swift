@@ -134,7 +134,30 @@ public class RestfulClient {
 }
 
 public enum RestfulError: Error {
-    case type(String, String?)
+    case type(Int, String, String?)
+}
+
+extension RestfulError: CustomNSError, LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .type(_, let _, let description):
+            return NSLocalizedString(description ?? "Unknown Error", comment: "")
+        }
+    }
+
+    public var failureReason: String? {
+        switch self {
+        case .type(_, let type, let _):
+            return NSLocalizedString(type, comment: "")
+        }
+    }
+
+    public var errorCode: Int {
+        switch self {
+        case .type(let code, _, _):
+            return code
+        }
+    }
 }
 
 /**
@@ -152,17 +175,19 @@ public struct MetaJSON {
     public let error: Error?
 
     public struct Error {
+        public let code: Int
         public let type: String?
         public let message: String?
 
-        public init(errorJson: JSON) {
+        public init(code: Int, errorJson: JSON) {
+            self.code = code
             self.type = errorJson["type"].string
             self.message = errorJson["message"].string
         }
 
         public var error: RestfulError? {
             if let type = self.type {
-                return RestfulError.type(type, message)
+                return RestfulError.type(code, type, message)
             }
             return nil
         }
@@ -171,7 +196,7 @@ public struct MetaJSON {
     public init(metaJson: JSON) {
         self.code = metaJson["code"].intValue
         if metaJson["error"].exists() {
-            self.error = Error(errorJson: metaJson["error"])
+            self.error = Error(code: code, errorJson: metaJson["error"])
         } else {
             self.error = nil
         }
