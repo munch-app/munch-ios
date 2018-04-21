@@ -293,11 +293,23 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
             return button
         }()
 
+        let agreeLabel: UILabel = {
+            let label = UILabel()
+            label.text = "By signing up, you agree to Munch's terms of use and privacy policy."
+            label.numberOfLines = 0
+
+            label.textColor = UIColor(hex: "333333")
+            label.font = UIFont.systemFont(ofSize: 12.0, weight: .regular)
+            label.textAlignment = .center
+            return label
+        }()
+
         init(guestOption: Bool) {
             super.init(frame: CGRect.zero)
             self.backgroundColor = .white
             self.addSubview(facebookButton)
             self.addSubview(googleButton)
+            self.addSubview(agreeLabel)
 
             facebookButton.snp.makeConstraints { make in
                 make.top.equalTo(self).inset(18)
@@ -312,8 +324,13 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
                 make.top.equalTo(facebookButton.snp.bottom).inset(-12)
 
                 if !guestOption {
-                    make.bottom.equalTo(self.safeArea.bottom).inset(18)
+                    make.bottom.equalTo(agreeLabel.snp.top).inset(-12)
                 }
+            }
+
+            agreeLabel.snp.makeConstraints { make in
+                make.left.right.equalTo(self).inset(24)
+                make.bottom.equalTo(self.safeArea.bottom).inset(12)
             }
 
             if guestOption {
@@ -324,7 +341,7 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
                     make.height.equalTo(30)
 
                     make.top.equalTo(googleButton.snp.bottom).inset(-12)
-                    make.bottom.equalTo(self.safeArea.bottom).inset(18)
+                    make.bottom.equalTo(agreeLabel.snp.top).inset(-12)
                 }
             }
         }
