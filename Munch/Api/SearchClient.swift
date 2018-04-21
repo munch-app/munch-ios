@@ -45,10 +45,10 @@ class SearchClient {
             case "Place": return Place(json: json)
 
             case "Location":
-                return try! decoder.decode(Location.self, from: try! json.rawData())
+                return try? decoder.decode(Location.self, from: try! json.rawData())
 
             case "Container":
-                return try! decoder.decode(Container.self, from: try! json.rawData())
+                return try? decoder.decode(Container.self, from: try! json.rawData())
             default: return nil
             }
         }
@@ -139,7 +139,6 @@ struct Container: SearchResult, Equatable, Encodable, Decodable {
     var name: String?
 
     var images: [SourcedImage]?
-    var ranking: Double = 0
 
     var location: Location?
 
@@ -154,7 +153,6 @@ struct Container: SearchResult, Equatable, Encodable, Decodable {
         params["name"] = name
 
         params["images"] = images?.map({ $0.toParams() })
-        params["ranking"] = ranking
 
         params["dataType"] = "Container"
         return params
@@ -173,11 +171,10 @@ struct Container: SearchResult, Equatable, Encodable, Decodable {
     }
 
     static func create(json: [String: Any]) -> Container? {
-        return Container.init(id: json["id"] as? String,
+        return Container(id: json["id"] as? String,
                 type: json["type"] as? String,
                 name: json["name"] as? String,
                 images: [],
-                ranking: 0,
                 location: nil)
     }
 }
