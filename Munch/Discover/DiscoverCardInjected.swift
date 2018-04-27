@@ -178,7 +178,8 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
 
         if let locationName = card["locationName"].string {
             titleLabel.text = "No Results in '\(locationName)'"
-            descriptionLabel.text = "We could find results in '\(locationName)' here are results for 'Anywhere'"
+            // We couldn't find results in "Nearby". Here are the results for "Anywhere".
+            descriptionLabel.text = "We could find results in '\(locationName)'. Here are the results for 'Anywhere'"
         } else {
             titleLabel.text = "No Results found 'Nearby'"
             descriptionLabel.text = "We could find results in 'Nearby' here are results for 'Anywhere'"
