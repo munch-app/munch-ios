@@ -92,7 +92,7 @@ class DiscoverController: UIViewController, UITableViewDelegate, UITableViewData
         // Suggest Testing
 //        self.goTo(extension: SearchSuggestController.self)
         // Place Testing
-//         self.navigationController!.pushViewController(PlaceViewController(placeId: "9512d8fd-5123-49be-b223-5d7e469d28b7"), animated: true)
+//         self.navigationController!.pushViewController(PlaceViewController(placeId: "40e23c7b-ea49-42e1-95e2-5135e5816958"), animated: true)
 
 //        self.goTo(extension: DiscoverFilterController.self)
 

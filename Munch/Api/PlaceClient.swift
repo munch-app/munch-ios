@@ -32,15 +32,25 @@ class PlaceClient {
         }
     }
 
-    func getPartnerContent(id: String, mediaMaxSort: String? = nil, articleMaxSort: String? = nil, callback:
-            @escaping (_ meta: MetaJSON, _ contents: [PartnerContent], _ mediaMaxSort: String?, _ articleMaxSort: String?) -> Void) {
+    func getArticle(id: String, maxSort: String? = nil, size: Int = 20, callback: @escaping (_ meta: MetaJSON, _ articles: [Article], _ nextMaxSort: String?) -> Void) {
         var params = Parameters()
-        params["mediaMaxSort"] = mediaMaxSort
-        params["articleMaxSort"] = articleMaxSort
+        params["maxSort"] = maxSort
+        params["size"] = size
 
-        MunchApi.restful.get("/places/\(id)/partners/content") { meta, json in
-            let contents = try? self.decoder.decode([PartnerContent].self, from: json["data"]["contents"].rawData())
-            callback(meta, contents ?? [], json["data"]["mediaMaxSort"].string, json["data"]["articleMaxSort"].string)
+        MunchApi.restful.get("/places/\(id)/partners/article", parameters: params) { meta, json in
+            let contents = try? self.decoder.decode([Article].self, from: json["data"].rawData())
+            callback(meta, contents ?? [], json["nextMaxSort"].string)
+        }
+    }
+
+    func getInstagram(id: String, maxSort: String? = nil, size: Int = 20, callback: @escaping (_ meta: MetaJSON, _ medias: [InstagramMedia], _ nextMaxSort: String?) -> Void) {
+        var params = Parameters()
+        params["maxSort"] = maxSort
+        params["size"] = size
+
+        MunchApi.restful.get("/places/\(id)/partners/instagram", parameters: params) { meta, json in
+            let contents = try? self.decoder.decode([InstagramMedia].self, from: json["data"].rawData())
+            callback(meta, contents ?? [], json["nextMaxSort"].string)
         }
     }
 }
@@ -50,6 +60,8 @@ class PlaceClient {
  Access json through the subscript
  */
 struct PlaceCard {
+    private static let decoder = JSONDecoder()
+
     var cardId: String
     private(set) var data: JSON
 
@@ -61,6 +73,10 @@ struct PlaceCard {
     init(json: JSON) {
         self.cardId = json["_cardId"].stringValue
         self.data = json["data"]
+    }
+
+    func decode<T>(_ type: T.Type) -> T? where T : Decodable {
+        return try? PlaceCard.decoder.decode(type, from: data.rawData())
     }
 
     /**

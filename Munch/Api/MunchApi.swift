@@ -140,14 +140,14 @@ public enum RestfulError: Error {
 extension RestfulError: CustomNSError, LocalizedError {
     public var errorDescription: String? {
         switch self {
-        case .type(_, let _, let description):
+        case .type(_, _, let description):
             return NSLocalizedString(description ?? "Unknown Error", comment: "")
         }
     }
 
     public var failureReason: String? {
         switch self {
-        case .type(_, let type, let _):
+        case .type(_, let type, _):
             return NSLocalizedString(type, comment: "")
         }
     }
@@ -185,6 +185,12 @@ public struct MetaJSON {
             self.message = errorJson["message"].string
         }
 
+        public init(code: Int, type: String, message: String) {
+            self.code = code
+            self.type = type
+            self.message = message
+        }
+
         public var error: RestfulError? {
             if let type = self.type {
                 return RestfulError.type(code, type, message)
@@ -197,6 +203,8 @@ public struct MetaJSON {
         self.code = metaJson["code"].intValue
         if metaJson["error"].exists() {
             self.error = Error(code: code, errorJson: metaJson["error"])
+        } else if code == 404 {
+            self.error = Error(code: code, type: "Not Found", message: "Resource could not be found.")
         } else {
             self.error = nil
         }
@@ -213,9 +221,9 @@ public struct MetaJSON {
      Create an UI Alert Controller with prefilled info to
      easily print error message as alert dialog
      */
-    public func createAlert() -> UIAlertController {
-        let type = error?.type ?? "Unknown Error"
-        let message = error?.message ?? "An unknown error has occurred."
+    public func createAlert(type: String = "Unknown Error", message: String = "An unknown error has occurred.") -> UIAlertController {
+        let type = error?.type ?? type
+        let message = error?.message ?? message
         let alert = UIAlertController(title: type, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
         return alert

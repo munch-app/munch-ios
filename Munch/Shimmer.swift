@@ -49,6 +49,39 @@ class ShimmerImageView: MunchImageView {
     }
 }
 
+class ScaledHeightShimmerImageView: MunchImageView {
+    private let indicator = ShimmerIndicator()
+
+    override init(frame: CGRect = CGRect()) {
+        super.init(frame: frame)
+        self.kf.indicatorType = .custom(indicator: indicator)
+
+        self.contentMode = .scaleAspectFill
+        self.clipsToBounds = true
+        self.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override var intrinsicContentSize: CGSize {
+        if let myImage = self.image {
+            let myImageWidth = myImage.size.width
+            let myImageHeight = myImage.size.height
+            let myViewWidth = self.frame.size.width
+
+            let ratio = myViewWidth/myImageWidth
+            let scaledHeight = myImageHeight * ratio
+
+            return CGSize(width: myViewWidth, height: scaledHeight)
+        }
+
+        return self.bounds.size
+    }
+
+}
+
 class ShimmerView: FBShimmeringView {
 
     init(frame: CGRect = CGRect(), color: UIColor = UIColor.black.withAlphaComponent(0.1)) {

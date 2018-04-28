@@ -30,7 +30,7 @@ class PlaceCardView: UITableViewCell {
     }
 
     let leftRight: CGFloat = 24.0
-    let topBottom: CGFloat = 8.0
+    let topBottom: CGFloat = 10.0
 
     class var cardId: String? {
         return nil

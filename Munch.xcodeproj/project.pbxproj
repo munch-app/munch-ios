@@ -56,6 +56,7 @@
 		B4B7380CD92347AB225B54EB /* PlaceCardAbout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737B2890DCC10B0DF0304 /* PlaceCardAbout.swift */; };
 		B4B7380CEE70044FE930F722 /* module.modulemap in Sources */ = {isa = PBXBuildFile; fileRef = B4B73D56D29ADB145295DB94 /* module.modulemap */; };
 		B4B7385BBBEB7A119E93D402 /* AccountClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73924CDDEE30BE2E2AF8A /* AccountClient.swift */; };
+		B4B738699DB23A9247897784 /* PlacePartnerInstagramController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B735A41C948647168EC5CC /* PlacePartnerInstagramController.swift */; };
 		B4B73883BC1EA4E672069982 /* FilterTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73B26D2C06996A50FDCFD /* FilterTagView.swift */; };
 		B4B738A7A9FED6C3EAB68353 /* RecentDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73C04AEC75362CDFAC648 /* RecentDatabase.swift */; };
 		B4B7394776204E20917961B8 /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73F5D951E505956C018F2 /* SearchController.swift */; };
@@ -68,7 +69,7 @@
 		B4B73BA7FADE13E2517C71F8 /* CollectionClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B735022631764CC931E8CA /* CollectionClient.swift */; };
 		B4B73C2A60EE351F094AED22 /* AccountDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7318BCB00B96424E50D14 /* AccountDataController.swift */; };
 		B4B73C7BC49F7B704F1FC361 /* DiscoverCardLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73BAF0144003D08D45799 /* DiscoverCardLocation.swift */; };
-		B4B73C8B3B229E8624AC9213 /* PlacePartnerContentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738B1399869060C50F0EC /* PlacePartnerContentController.swift */; };
+		B4B73C8B3B229E8624AC9213 /* PlacePartnerArticleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738B1399869060C50F0EC /* PlacePartnerArticleController.swift */; };
 		B4B73D2B7F6FEC9485A4DD54 /* DiscoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73824F859BACAFDBBDD34 /* DiscoverController.swift */; };
 		B4B73D54856661571066C8A0 /* DiscoverFilterControllerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73EF1579E836FFEE0FD7F /* DiscoverFilterControllerManager.swift */; };
 		B4B73E07CEB4EBC0BE5337C8 /* PlaceCardPartnersContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73D17F462A1DA9E75B6F0 /* PlaceCardPartnersContent.swift */; };
@@ -165,6 +166,7 @@
 		B4B733DCA665CD29B03D26BB /* PlaceCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCard.swift; sourceTree = "<group>"; };
 		B4B7344760EE7CB65B7A520A /* MunchTagView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchTagView.swift; sourceTree = "<group>"; };
 		B4B735022631764CC931E8CA /* CollectionClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionClient.swift; sourceTree = "<group>"; };
+		B4B735A41C948647168EC5CC /* PlacePartnerInstagramController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlacePartnerInstagramController.swift; sourceTree = "<group>"; };
 		B4B73674D52B48994B6BA4C8 /* DiscoverFilterControllerCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverFilterControllerCell.swift; sourceTree = "<group>"; };
 		B4B736D460DA6FB8F5E14597 /* DiscoverCardManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverCardManager.swift; sourceTree = "<group>"; };
 		B4B736D9D2BEAE7E96B61E78 /* DiscoverFilterControllerLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverFilterControllerLocation.swift; sourceTree = "<group>"; };
@@ -174,7 +176,7 @@
 		B4B737B2890DCC10B0DF0304 /* PlaceCardAbout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardAbout.swift; sourceTree = "<group>"; };
 		B4B73824F859BACAFDBBDD34 /* DiscoverController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverController.swift; sourceTree = "<group>"; };
 		B4B7382BCE4D3313B24B0494 /* DiscoverCardPlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverCardPlace.swift; sourceTree = "<group>"; };
-		B4B738B1399869060C50F0EC /* PlacePartnerContentController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlacePartnerContentController.swift; sourceTree = "<group>"; };
+		B4B738B1399869060C50F0EC /* PlacePartnerArticleController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlacePartnerArticleController.swift; sourceTree = "<group>"; };
 		B4B738EF6EA67EF16E54F617 /* PlaceCardLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardLocation.swift; sourceTree = "<group>"; };
 		B4B738F9E591F81CC551E7B0 /* DiscoverClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverClient.swift; sourceTree = "<group>"; };
 		B4B738FC6C7F484B97FA825F /* locations-popular.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "locations-popular.json"; sourceTree = "<group>"; };
@@ -369,7 +371,8 @@
 				B4B73A91A35296A0F8E94C42 /* PlaceCardUGC.swift */,
 				B4B7393EC9371A4BF34117EE /* PlaceCardAward.swift */,
 				B4B73D17F462A1DA9E75B6F0 /* PlaceCardPartnersContent.swift */,
-				B4B738B1399869060C50F0EC /* PlacePartnerContentController.swift */,
+				B4B738B1399869060C50F0EC /* PlacePartnerArticleController.swift */,
+				B4B735A41C948647168EC5CC /* PlacePartnerInstagramController.swift */,
 			);
 			path = Place;
 			sourceTree = "<group>";
@@ -911,7 +914,8 @@
 				B4B732B745E473C91052B79B /* MunchTagView.swift in Sources */,
 				B4B732F5A5B0B0895BA2F8CA /* DiscoverFilterControllerLocation.swift in Sources */,
 				B4B73E07CEB4EBC0BE5337C8 /* PlaceCardPartnersContent.swift in Sources */,
-				B4B73C8B3B229E8624AC9213 /* PlacePartnerContentController.swift in Sources */,
+				B4B73C8B3B229E8624AC9213 /* PlacePartnerArticleController.swift in Sources */,
+				B4B738699DB23A9247897784 /* PlacePartnerInstagramController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

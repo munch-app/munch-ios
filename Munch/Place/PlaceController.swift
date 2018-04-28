@@ -469,7 +469,8 @@ extension PlaceViewController {
 
         // Register Partner Content
         register(PlaceHeaderPartnerContentCard.self)
-        register(PlacePartnerContentCard.self)
+        register(PlacePartnerArticleCard.self)
+        register(PlacePartnerInstagramCard.self)
 
         // Register Review Cards
         register(PlaceHeaderReviewCard.self)

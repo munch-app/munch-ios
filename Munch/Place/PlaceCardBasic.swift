@@ -324,11 +324,11 @@ class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
 class PlaceBasicBusinessHourCard: PlaceCardView {
     static let openStyle = Style("open", {
         $0.color = UIColor.secondary
-        $0.font = FontAttribute(font: .systemFont(ofSize: 16.0, weight: .semibold))
+        $0.font = FontAttribute(font: .systemFont(ofSize: 17.0, weight: .semibold))
     })
     static let closeStyle = Style("close", {
         $0.color = UIColor.primary
-        $0.font = FontAttribute(font: .systemFont(ofSize: 16.0, weight: .semibold))
+        $0.font = FontAttribute(font: .systemFont(ofSize: 17.0, weight: .semibold))
     })
     static let hourStyle = Style("hour", {
         $0.color = UIColor.black
