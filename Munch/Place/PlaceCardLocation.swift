@@ -17,8 +17,8 @@ import FirebaseAnalytics
 
 class PlaceHeaderLocationCard: PlaceTitleCardView {
     override func didLoad(card: PlaceCard) {
-        self.title = "Map"
-        self.moreButton.isHidden = false
+        self.title = "Location"
+        self.moreButton.isHidden = true
     }
 
     override func didTap() {
@@ -40,22 +40,31 @@ class PlaceHeaderLocationCard: PlaceTitleCardView {
 class PlaceBasicLocationCard: PlaceCardView {
     private let mapView = UIImageView()
     private let pinImageView = UIImageView()
+    private let addressLabel = AddressLabel()
 
     override func didLoad(card: PlaceCard) {
         self.addSubview(mapView)
         self.addSubview(pinImageView)
+        self.addSubview(addressLabel)
 
-        mapView.snp.makeConstraints { make in
-            make.top.equalTo(self).inset(4)
-            make.bottom.equalTo(self)
-            make.left.right.equalTo(self)
-            make.height.equalTo(230).priority(999)
+        addressLabel.snp.makeConstraints { make in
+            make.top.equalTo(self).inset(4).priority(999)
+            make.left.right.equalTo(self).inset(leftRight)
         }
 
         pinImageView.snp.makeConstraints { make in
             make.center.equalTo(mapView)
         }
 
+        mapView.snp.makeConstraints { make in
+            make.top.equalTo(addressLabel.snp.bottom).inset(-topBottom*2).priority(999)
+            make.bottom.equalTo(self).inset(topBottom)
+            make.left.right.equalTo(self).inset(leftRight)
+            make.height.equalTo(230).priority(999)
+        }
+
+        mapView.clipsToBounds = true
+        mapView.layer.cornerRadius = 4
         render(location: card)
     }
 
@@ -84,6 +93,8 @@ class PlaceBasicLocationCard: PlaceCardView {
                 self.pinImageView.image = UIImage(named: "RIP-PlaceMarker")
             }
         }
+
+        self.addressLabel.render(card: card)
     }
 
     override class var cardId: String? {

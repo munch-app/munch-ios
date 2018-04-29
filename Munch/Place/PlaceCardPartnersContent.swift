@@ -23,7 +23,7 @@ class PlaceHeaderPartnerContentCard: PlaceTitleCardView {
 
 class PlacePartnerArticleCard: PlaceCardView {
     static let width = UIScreen.main.bounds.width - 24 - 60
-    static let height = width * 0.84
+    static let height = ceil(width * 0.84)
     private var indexOfCellBeforeDragging = 0
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()

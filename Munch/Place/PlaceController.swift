@@ -198,31 +198,6 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
                 }
             }
         })
-        alert.addAction(UIAlertAction(title: "Suggest Edit", style: UIAlertActionStyle.default) { alert in
-            AccountAuthentication.requireAuthentication(controller: self) { state in
-                switch state {
-                case .loggedIn:
-                    if let place = self.place {
-                        let urlComps = NSURLComponents(string: "https://airtable.com/shrfxcHiCwlSl1rjk")!
-                        urlComps.queryItems = [
-                            URLQueryItem(name: "prefill_Place.id", value: self.placeId),
-                            URLQueryItem(name: "prefill_Place.status", value: "Open"),
-                            URLQueryItem(name: "prefill_Place.name", value: place.name),
-                            URLQueryItem(name: "prefill_Place.Location.address", value: place.location.address)
-                        ]
-                        let safari = SFSafariViewController(url: urlComps.url!)
-                        safari.delegate = self
-                        self.present(safari, animated: true, completion: nil)
-
-                        Analytics.logEvent("rip_action", parameters: [
-                            AnalyticsParameterItemCategory: "click_suggest_edit" as NSObject
-                        ])
-                    }
-                default:
-                    return
-                }
-            }
-        })
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         self.present(alert, animated: true)
     }
@@ -490,9 +465,8 @@ extension PlaceViewController {
         // Register Extended Loaded Cards
         register(PlaceExtendedPlaceAwardCard.self)
 
-        // Register Experimental UGC Features
-        register(PlaceHeaderUGCCard.self)
-        register(PlaceUGCSuggestedTagCard.self)
+        // Register Suggest Edit Cards
+        register(PlaceSuggestEditCard.self)
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
