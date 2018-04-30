@@ -35,14 +35,16 @@ class PlacePartnerInstagramController: UIViewController, UIGestureRecognizerDele
         return tableView
     }()
 
-    private let headerView = PlacePartnerInstagramHeaderView()
+    private var headerView: PlaceHeaderView!
 
-    init(place: Place, medias: [InstagramMedia]) {
-        self.place = place
+    init(controller: PlaceViewController, medias: [InstagramMedia]) {
+        self.place = controller.place!
 
         self.medias = medias
         self.nextMaxSort = medias.last?.placeSort
         super.init(nibName: nil, bundle: nil)
+
+        self.headerView = PlaceHeaderView(controller: controller)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -63,8 +65,6 @@ class PlacePartnerInstagramController: UIViewController, UIGestureRecognizerDele
 
         self.tableView.delegate = self
         self.tableView.dataSource = self
-
-        self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
     }
 
     private func initViews() {
@@ -82,64 +82,8 @@ class PlacePartnerInstagramController: UIViewController, UIGestureRecognizerDele
         }
     }
 
-    @objc func onBackButton(_ sender: Any) {
-        navigationController?.popViewController(animated: true)
-    }
-
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-fileprivate class PlacePartnerInstagramHeaderView: UIView {
-    fileprivate let backButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "NavigationBar-Back"), for: .normal)
-        button.tintColor = .black
-        button.imageEdgeInsets.left = 18
-        button.contentHorizontalAlignment = .left
-        return button
-    }()
-    fileprivate let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Instagram"
-        label.font = .systemFont(ofSize: 16, weight: .semibold)
-        label.textColor = UIColor.black.withAlphaComponent(0.75)
-        return label
-    }()
-
-    override init(frame: CGRect = CGRect.zero) {
-        super.init(frame: frame)
-        self.initViews()
-    }
-
-    private func initViews() {
-        self.backgroundColor = .white
-        self.addSubview(backButton)
-        self.addSubview(titleLabel)
-
-        backButton.snp.makeConstraints { make in
-            make.top.equalTo(self.safeArea.top)
-            make.bottom.equalTo(self)
-            make.left.equalTo(self)
-
-            make.width.equalTo(54)
-            make.height.equalTo(44)
-        }
-        titleLabel.snp.makeConstraints { make in
-            make.left.equalTo(backButton.snp.right)
-            make.right.equalTo(self).inset(24)
-            make.top.bottom.equalTo(backButton)
-        }
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        self.shadow(vertical: 2)
     }
 
     required init?(coder aDecoder: NSCoder) {

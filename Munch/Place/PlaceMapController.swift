@@ -17,7 +17,7 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
     let placeId: String
     let place: Place
 
-    private let headerView = PlaceMapViewHeader()
+    private var headerView: PlaceHeaderView!
     private let bottomView = PlaceMapViewBottom()
     private let mapView: MKMapView = {
         let mapView = MKMapView()
@@ -87,10 +87,14 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
     private var lastCoordinate: CLLocationCoordinate2D?
     private var placeCoordinate: CLLocationCoordinate2D?
 
-    init(place: Place) {
-        self.placeId = place.id!
-        self.place = place
+    init(controller: PlaceViewController) {
+        self.placeId = controller.placeId
+        self.place = controller.place!
         super.init(nibName: nil, bundle: nil)
+
+        self.headerView = PlaceHeaderView(controller: controller)
+        self.headerView.backgroundView.isHidden = true
+        self.headerView.shadowView.isHidden = true
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -110,7 +114,6 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
 
         self.mapView.delegate = self
-        self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
         self.headingButton.addTarget(self, action: #selector(onShowHeading(_:)), for: .touchUpInside)
         self.appleButton.addTarget(self, action: #selector(onOpenMap(_:)), for: .touchUpInside)
         self.googleButton.addTarget(self, action: #selector(onOpenMap(_:)), for: .touchUpInside)
@@ -161,7 +164,6 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
     }
 
     private func render() {
-        self.headerView.render(place: place)
         self.bottomView.render(place: place)
 
         if let latLng = place.location.latLng, let coordinate = CLLocation(latLng: latLng)?.coordinate {
@@ -259,10 +261,6 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
         ])
     }
 
-    @objc func onBackButton(_ sender: Any) {
-        navigationController?.popViewController(animated: true)
-    }
-
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
@@ -322,57 +320,6 @@ fileprivate class LandmarkAnnotationView: MKAnnotationView {
         } else {
             self.image = UIImage(named: "RIP-Map-Landmark")
         }
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-fileprivate class PlaceMapViewHeader: UIView {
-    fileprivate let backButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "NavigationBar-Back"), for: .normal)
-        button.tintColor = .black
-        button.imageEdgeInsets.left = 18
-        button.contentHorizontalAlignment = .left
-        return button
-    }()
-
-    fileprivate let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.textColor = UIColor.black.withAlphaComponent(0.75)
-        return label
-    }()
-
-    override init(frame: CGRect = CGRect.zero) {
-        super.init(frame: frame)
-        self.initViews()
-    }
-
-    private func initViews() {
-        self.addSubview(backButton)
-        self.addSubview(titleLabel)
-
-        backButton.snp.makeConstraints { make in
-            make.top.equalTo(self.safeArea.top)
-            make.bottom.equalTo(self)
-            make.left.equalTo(self)
-
-            make.width.equalTo(64)
-            make.height.equalTo(44)
-        }
-
-        titleLabel.snp.makeConstraints { make in
-            make.left.equalTo(backButton.snp.right)
-            make.right.equalTo(self).inset(24)
-            make.top.bottom.equalTo(backButton)
-        }
-    }
-
-    func render(place: Place) {
-        self.titleLabel.text = place.name
     }
 
     required init?(coder aDecoder: NSCoder) {

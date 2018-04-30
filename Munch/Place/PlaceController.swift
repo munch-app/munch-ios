@@ -29,7 +29,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
     private var cellHeights = [CGFloat](repeating: UITableViewAutomaticDimension, count: 100)
 
     private let cardTableView = UITableView()
-    private let headerView = PlaceHeaderView()
+    private var headerView: PlaceHeaderView!
     private let bottomView = PlaceBottomView()
 
     init(placeId: String) {
@@ -37,6 +37,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         Crashlytics.sharedInstance().setObjectValue(placeId, forKey: "PlaceViewController.placeId")
         super.init(nibName: nil, bundle: nil)
 
+        self.headerView = PlaceHeaderView(controller: self, tintColor: .white, backgroundVisible: false, titleHidden: true)
         self.hidesBottomBarWhenPushed = true
         self.cells = [PlaceShimmerImageBannerCard.create(controller: self), PlaceShimmerNameTagCard.create(controller: self)]
     }
@@ -75,9 +76,6 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
 
         self.cardTableView.delegate = self
         self.cardTableView.dataSource = self
-        self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
-        self.headerView.heartButton.addTarget(self, action: #selector(onHeartButton(_:)), for: .touchUpInside)
-        self.headerView.moreButton.addTarget(self, action: #selector(onMoreButton(_:)), for: .touchUpInside)
 
         MunchApi.places.cards(id: placeId) { meta, place, cards, liked in
             if let place = place, meta.isOk() {
@@ -130,78 +128,6 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         }
     }
 
-    @objc func onBackButton(_ sender: Any) {
-        navigationController?.popViewController(animated: true)
-    }
-
-    @objc func onHeartButton(_ sender: Any) {
-        AccountAuthentication.requireAuthentication(controller: self) { state in
-            switch state {
-            case .loggedIn:
-                let generator = UIImpactFeedbackGenerator(style: .light)
-                generator.impactOccurred()
-
-                if let place = self.place, let liked = self.liked {
-                    self.liked = !liked
-                    self.headerView.render(place: place, liked: self.liked)
-
-                    if self.liked! {
-                        MunchApi.collections.liked.put(placeId: self.placeId) { meta in
-                            guard meta.isOk() else {
-                                self.present(meta.createAlert(), animated: true)
-                                return
-                            }
-                        }
-                    } else {
-                        MunchApi.collections.liked.delete(placeId: self.placeId) { meta in
-                            guard meta.isOk() else {
-                                self.present(meta.createAlert(), animated: true)
-                                return
-                            }
-                        }
-                    }
-                }
-
-                Analytics.logEvent("rip_action", parameters: [
-                    AnalyticsParameterItemCategory: "click_like" as NSObject
-                ])
-            default:
-                return
-            }
-        }
-    }
-
-    @objc func onMoreButton(_ sender: Any) {
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "Like", style: UIAlertActionStyle.default) { alert in
-            self.onHeartButton(sender)
-        })
-        alert.addAction(UIAlertAction(title: "Add To Collection", style: UIAlertActionStyle.default) { alert in
-            AccountAuthentication.requireAuthentication(controller: self) { state in
-                switch state {
-                case .loggedIn:
-                    let controller = CollectionSelectRootController(placeId: self.placeId) { placeCollection in
-                        if let collection = placeCollection, let name = collection.name {
-                            NativePopup.show(image: Preset.Feedback.done,
-                                    title: "Added to \(name)",
-                                    message: nil,
-                                    initialEffectType: .fadeIn)
-                        }
-
-                        Analytics.logEvent("rip_action", parameters: [
-                            AnalyticsParameterItemCategory: "click_add_collection" as NSObject
-                        ])
-                    }
-                    self.present(controller, animated: true)
-                default:
-                    return
-                }
-            }
-        })
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        self.present(alert, animated: true)
-    }
-
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
@@ -212,7 +138,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
 
 }
 
-fileprivate class PlaceHeaderView: UIView {
+class PlaceHeaderView: UIView {
     fileprivate let backButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "NavigationBar-Back"), for: .normal)
@@ -224,8 +150,8 @@ fileprivate class PlaceHeaderView: UIView {
     fileprivate let titleView: UILabel = {
         let titleView = UILabel()
         titleView.font = .systemFont(ofSize: 17, weight: .medium)
-        titleView.textAlignment = .center
-        titleView.isHidden = true
+        titleView.textAlignment = .left
+        titleView.textColor = .black
         return titleView
     }()
     fileprivate let heartButton: UIButton = {
@@ -234,7 +160,7 @@ fileprivate class PlaceHeaderView: UIView {
         button.tintColor = .white
         return button
     }()
-    fileprivate let moreButton: UIButton = {
+    fileprivate let addButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "RIP-Add"), for: .normal)
         button.tintColor = .white
@@ -244,9 +170,36 @@ fileprivate class PlaceHeaderView: UIView {
     let backgroundView = UIView()
     let shadowView = UIView()
 
-    override init(frame: CGRect = CGRect.zero) {
-        super.init(frame: frame)
+    var place: Place?
+    var placeId: String?
+    var liked: Bool?
+    var controller: UIViewController
+
+    init(controller: UIViewController, tintColor: UIColor = UIColor.black, backgroundVisible: Bool = true, titleHidden: Bool = false) {
+        self.controller = controller
+        super.init(frame: CGRect.zero)
         self.initViews()
+
+        self.titleView.isHidden = titleHidden
+        self.addButton.tintColor = tintColor
+        self.heartButton.tintColor = tintColor
+        self.backButton.tintColor = tintColor
+        self.titleView.textColor = tintColor
+
+        self.backgroundView.isHidden = !backgroundVisible
+        self.shadowView.isHidden = !backgroundVisible
+        if backgroundVisible {
+            self.backgroundView.backgroundColor = .white
+        }
+
+        self.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
+        self.heartButton.addTarget(self, action: #selector(onHeartButton(_:)), for: .touchUpInside)
+        self.addButton.addTarget(self, action: #selector(onAddButton(_:)), for: .touchUpInside)
+
+        if let controller = controller as? PlaceViewController,
+           let place = controller.place {
+            render(place: place, liked: controller.liked)
+        }
     }
 
     private func initViews() {
@@ -254,19 +207,20 @@ fileprivate class PlaceHeaderView: UIView {
         self.addSubview(shadowView)
         self.addSubview(backgroundView)
         self.addSubview(backButton)
+        self.addSubview(titleView)
 
         self.addSubview(heartButton)
-        self.addSubview(moreButton)
+        self.addSubview(addButton)
 
         backButton.snp.makeConstraints { make in
             make.top.equalTo(self.safeArea.top)
             make.left.equalTo(self)
             make.bottom.equalTo(self)
-            make.width.equalTo(64)
+            make.width.equalTo(56)
             make.height.equalTo(44)
         }
 
-        moreButton.snp.makeConstraints { make in
+        addButton.snp.makeConstraints { make in
             make.top.equalTo(self.safeArea.top)
             make.right.equalTo(self).inset(18)
             make.bottom.equalTo(self)
@@ -276,10 +230,16 @@ fileprivate class PlaceHeaderView: UIView {
 
         heartButton.snp.makeConstraints { make in
             make.top.equalTo(self.safeArea.top)
-            make.right.equalTo(moreButton.snp.left).inset(-10)
+            make.right.equalTo(addButton.snp.left).inset(-10)
             make.bottom.equalTo(self)
             make.width.equalTo(30)
             make.height.equalTo(44)
+        }
+
+        titleView.snp.makeConstraints { make in
+            make.top.bottom.equalTo(self.backButton)
+            make.left.equalTo(backButton.snp.right)
+            make.right.equalTo(heartButton.snp.left)
         }
 
         backgroundView.backgroundColor = .clear
@@ -292,12 +252,82 @@ fileprivate class PlaceHeaderView: UIView {
         }
     }
 
-    fileprivate func render(place: Place, liked: Bool?) {
+    func render(place: Place, liked: Bool?) {
         self.titleView.text = place.name
+        self.place = place
+        self.placeId = place.id
+        self.liked = liked
+
         if liked ?? false {
             heartButton.setImage(UIImage(named: "RIP-Heart-Filled"), for: .normal)
         } else {
             heartButton.setImage(UIImage(named: "RIP-Heart"), for: .normal)
+        }
+    }
+
+    @objc func onBackButton(_ sender: Any) {
+        self.controller.navigationController?.popViewController(animated: true)
+    }
+
+    @objc func onHeartButton(_ sender: Any) {
+        if let placeId = self.placeId, let place = self.place {
+            AccountAuthentication.requireAuthentication(controller: controller) { state in
+                switch state {
+                case .loggedIn:
+                    let generator = UIImpactFeedbackGenerator(style: .light)
+                    generator.impactOccurred()
+
+                    self.liked = !(self.liked ?? false)
+                    self.render(place: place, liked: self.liked)
+
+                    if self.liked! {
+                        MunchApi.collections.liked.put(placeId: placeId) { meta in
+                            guard meta.isOk() else {
+                                self.controller.present(meta.createAlert(), animated: true)
+                                return
+                            }
+                        }
+                    } else {
+                        MunchApi.collections.liked.delete(placeId: placeId) { meta in
+                            guard meta.isOk() else {
+                                self.controller.present(meta.createAlert(), animated: true)
+                                return
+                            }
+                        }
+                    }
+
+                    Analytics.logEvent("rip_action", parameters: [
+                        AnalyticsParameterItemCategory: "click_like" as NSObject
+                    ])
+                default:
+                    return
+                }
+            }
+        }
+    }
+
+    @objc func onAddButton(_ sender: Any) {
+        if let placeId = self.placeId {
+            AccountAuthentication.requireAuthentication(controller: controller) { state in
+                switch state {
+                case .loggedIn:
+                    let controller = CollectionSelectRootController(placeId: placeId) { placeCollection in
+                        if let collection = placeCollection, let name = collection.name {
+                            NativePopup.show(image: Preset.Feedback.done,
+                                    title: "Added to \(name)",
+                                    message: nil,
+                                    initialEffectType: .fadeIn)
+                        }
+
+                        Analytics.logEvent("rip_action", parameters: [
+                            AnalyticsParameterItemCategory: "click_add_collection" as NSObject
+                        ])
+                    }
+                    self.controller.present(controller, animated: true)
+                default:
+                    return
+                }
+            }
         }
     }
 
@@ -593,7 +623,7 @@ extension PlaceViewController {
         func updateTint(color: UIColor) {
             headerView.backButton.tintColor = color
             headerView.heartButton.tintColor = color
-            headerView.moreButton.tintColor = color
+            headerView.addButton.tintColor = color
         }
 
         // Starts from - 20
@@ -602,28 +632,23 @@ extension PlaceViewController {
             updateTint(color: .black)
             headerView.backgroundView.isHidden = true
             headerView.shadowView.isHidden = true
-            headerView.titleView.isHidden = true
         } else if (155 > y) {
             // Full Opacity
             updateTint(color: .white)
             headerView.backgroundView.isHidden = true
             headerView.shadowView.isHidden = true
-            headerView.titleView.isHidden = true
         } else if (175 < y) {
             // Full White
             updateTint(color: .black)
             headerView.backgroundView.isHidden = false
             headerView.backgroundView.backgroundColor = .white
             headerView.shadowView.isHidden = false
-            headerView.titleView.isHidden = false
         } else {
             let progress = 1.0 - (175 - y) / 20.0
             if progress > 0.5 {
                 updateTint(color: .black)
-                headerView.titleView.isHidden = false
             } else {
                 updateTint(color: .white)
-                headerView.titleView.isHidden = true
             }
             headerView.backgroundView.isHidden = false
             headerView.backgroundView.backgroundColor = UIColor.white.withAlphaComponent(progress)
@@ -691,7 +716,6 @@ class ReviewRatingUtils {
 }
 
 class ReviewRatingLabel: UIButton {
-
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
         self.isUserInteractionEnabled = false

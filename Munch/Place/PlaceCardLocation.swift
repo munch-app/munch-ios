@@ -22,10 +22,8 @@ class PlaceHeaderLocationCard: PlaceTitleCardView {
     }
 
     override func didTap() {
-        if let place = self.controller.place {
-            let controller = PlaceMapViewController.init(place: place)
-            self.controller.navigationController?.pushViewController(controller, animated: true)
-        }
+        let controller = PlaceMapViewController(controller: self.controller)
+        self.controller.navigationController?.pushViewController(controller, animated: true)
 
         Analytics.logEvent("rip_action", parameters: [
             AnalyticsParameterItemCategory: "click_map" as NSObject
@@ -69,10 +67,8 @@ class PlaceBasicLocationCard: PlaceCardView {
     }
 
     override func didTap() {
-        if let place = self.controller.place {
-            let controller = PlaceMapViewController.init(place: place)
-            self.controller.navigationController?.pushViewController(controller, animated: true)
-        }
+        let controller = PlaceMapViewController(controller: self.controller)
+        self.controller.navigationController?.pushViewController(controller, animated: true)
     }
 
     private func render(location card: PlaceCard) {
@@ -119,10 +115,8 @@ class PlaceBasicAddressCard: PlaceCardView {
     }
 
     override func didTap() {
-        if let place = self.controller.place {
-            let controller = PlaceMapViewController.init(place: place)
-            self.controller.navigationController?.pushViewController(controller, animated: true)
-        }
+        let controller = PlaceMapViewController(controller: self.controller)
+        self.controller.navigationController?.pushViewController(controller, animated: true)
 
         Analytics.logEvent("rip_action", parameters: [
             AnalyticsParameterItemCategory: "click_address" as NSObject

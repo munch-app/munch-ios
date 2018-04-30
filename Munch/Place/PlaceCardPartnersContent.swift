@@ -76,7 +76,7 @@ class PlacePartnerArticleCard: PlaceCardView {
     }
 
     @objc func onShowButton(_ sender: Any) {
-        let controller = PlacePartnerArticleController(place: self.controller.place!, articles: self.articles)
+        let controller = PlacePartnerArticleController(controller: self.controller, articles: self.articles)
         self.controller.navigationController!.pushViewController(controller, animated: true)
     }
 
@@ -323,7 +323,7 @@ class PlacePartnerInstagramCard: PlaceCardView {
     }
 
     @objc func onShowButton(_ sender: Any) {
-        let controller = PlacePartnerInstagramController(place: self.controller.place!, medias: self.medias)
+        let controller = PlacePartnerInstagramController(controller: self.controller, medias: self.medias)
         self.controller.navigationController!.pushViewController(controller, animated: true)
     }
 
@@ -349,7 +349,7 @@ extension PlacePartnerInstagramCard: UICollectionViewDataSource, UICollectionVie
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let controller = PlacePartnerInstagramController(place: self.controller.place!, medias: self.medias)
+        let controller = PlacePartnerInstagramController(controller: self.controller, medias: self.medias)
         self.controller.navigationController!.pushViewController(controller, animated: true)
 
         Analytics.logEvent("rip_action", parameters: [
