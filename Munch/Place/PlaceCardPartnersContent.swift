@@ -62,13 +62,13 @@ class PlacePartnerArticleCard: PlaceCardView {
 
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(self).inset(topBottom)
-            make.bottom.equalTo(showButton.snp.top).inset(-topBottom)
             make.height.equalTo(PlacePartnerArticleCard.height).priority(999)
             make.left.right.equalTo(self)
         }
 
         showButton.snp.makeConstraints { make in
-            make.bottom.equalTo(self).inset(topBottom)
+            make.top.equalTo(collectionView.snp.bottom).inset(-topBottomLarge)
+            make.bottom.equalTo(self).inset(topBottomLarge)
             make.left.right.equalTo(self).inset(leftRight)
         }
 
@@ -270,12 +270,13 @@ fileprivate class PlacePartnerArticleCardCell: UICollectionViewCell {
 
 class PlacePartnerInstagramCard: PlaceCardView {
     static let spacing: CGFloat = 12
-    static let height = (UIScreen.main.bounds.width - (24 * 2) - (spacing * 2)) / 3
+    static let width = ((UIScreen.main.bounds.width - (24 * 2) - (spacing * 2)) / 3)
+    static let height = width + 20
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
 
-        layout.itemSize = CGSize(width: height, height: height)
+        layout.itemSize = CGSize(width: width, height: height)
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = spacing
 
@@ -299,6 +300,7 @@ class PlacePartnerInstagramCard: PlaceCardView {
 
     override func didLoad(card: PlaceCard) {
         self.medias = card.decode([InstagramMedia].self) ?? []
+        self.medias = Array(self.medias.prefix(3))
         self.addSubview(collectionView)
         self.addSubview(showButton)
 
@@ -313,8 +315,8 @@ class PlacePartnerInstagramCard: PlaceCardView {
         }
 
         showButton.snp.makeConstraints { make in
-            make.top.equalTo(collectionView.snp.bottom).inset(-topBottom - 6)
-            make.bottom.equalTo(self).inset(topBottom)
+            make.top.equalTo(collectionView.snp.bottom).inset(-topBottomLarge)
+            make.bottom.equalTo(self).inset(topBottomLarge)
             make.left.right.equalTo(self).inset(leftRight)
         }
         self.showButton.addTarget(self, action: #selector(onShowButton(_:)), for: .touchUpInside)
@@ -347,8 +349,6 @@ extension PlacePartnerInstagramCard: UICollectionViewDataSource, UICollectionVie
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        let media = medias[indexPath.row]
-
         let controller = PlacePartnerInstagramController(place: self.controller.place!, medias: self.medias)
         self.controller.navigationController!.pushViewController(controller, animated: true)
 
@@ -365,16 +365,11 @@ fileprivate class PlacePartnerInstagramCardCell: UICollectionViewCell {
         imageView.tintColor = .white
         return imageView
     }()
-    private let authorLabel: UIButton = {
-        let label = UIButton()
-        label.titleLabel?.font = UIFont.systemFont(ofSize: 11.0, weight: .regular)
-        label.setTitleColor(.white, for: .normal)
-        label.backgroundColor = UIColor.black.withAlphaComponent(0.66)
-        label.contentEdgeInsets = UIEdgeInsets(topBottom: 3, leftRight: 5)
-        label.layer.masksToBounds = true
-        label.layer.cornerRadius = 5
-        label.isUserInteractionEnabled = false
-//        label.isHidden = true
+    private let authorLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 1
+        label.font = UIFont.systemFont(ofSize: 11.0, weight: .regular)
+        label.textColor = UIColor.black
         return label
     }()
 
@@ -386,13 +381,14 @@ fileprivate class PlacePartnerInstagramCardCell: UICollectionViewCell {
         containerView.addSubview(authorLabel)
 
         containerView.snp.makeConstraints { make in
-            make.edges.equalTo(self)
+            make.left.right.equalTo(self)
+            make.top.equalTo(self)
+            make.bottom.equalTo(self).inset(20)
         }
 
         authorLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(imageView).inset(5)
-            make.left.equalTo(imageView).inset(5)
-            make.right.lessThanOrEqualTo(imageView).inset(5)
+            make.left.right.equalTo(self)
+            make.bottom.equalTo(self)
         }
 
         imageView.snp.makeConstraints { (make) in
@@ -406,7 +402,8 @@ fileprivate class PlacePartnerInstagramCardCell: UICollectionViewCell {
                 self.imageView.render(named: "RIP-No-Image")
             }
         }
-        authorLabel.setTitle("@\(media.username ?? "")" , for: .normal)
+
+        authorLabel.text = "@\(media.username ?? "")"
     }
 
     override func layoutSubviews() {

@@ -30,7 +30,9 @@ class PlaceCardView: UITableViewCell {
     }
 
     let leftRight: CGFloat = 24.0
-    let topBottom: CGFloat = 10.0
+    let topBottom: CGFloat = 8.0
+    let topBottomLarge: CGFloat = 16.0
+    let topSeparator: CGFloat = 15.0
 
     class var cardId: String? {
         return nil
@@ -67,7 +69,7 @@ class PlaceTitleCardView: PlaceCardView {
         separatorLine.backgroundColor = UIColor(hex: "d5d4d8")
         separatorLine.snp.makeConstraints { make in
             make.left.right.equalTo(self)
-            make.top.equalTo(self).inset(15)
+            make.top.equalTo(self).inset(topSeparator)
             make.height.equalTo(1.0 / UIScreen.main.scale)
         }
 

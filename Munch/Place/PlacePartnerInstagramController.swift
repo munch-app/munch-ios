@@ -264,7 +264,7 @@ fileprivate class PlacePartnerInstagramControllerCell: UITableViewCell {
     private let readMoreButton: UILabel = {
         let label = UILabel()
         label.text = "More from"
-        label.textColor = UIColor.primary600
+        label.textColor = UIColor.black.withAlphaComponent(0.75)
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.backgroundColor = .white
         return label

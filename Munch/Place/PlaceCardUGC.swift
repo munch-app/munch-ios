@@ -28,9 +28,13 @@ class PlaceSuggestEditCard: PlaceCardView, SFSafariViewControllerDelegate {
     let button: UIButton = {
         let button = UIButton()
         button.setTitle("Suggest an edit", for: .normal)
-        button.setTitleColor(UIColor.primary600, for: .normal)
+        button.setTitleColor(UIColor.black.withAlphaComponent(0.85), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
         button.isUserInteractionEnabled = false
+
+        button.setImage(UIImage(named: "RIP-Pencil"), for: .normal)
+        button.tintColor = UIColor.black.withAlphaComponent(0.85)
+        button.imageEdgeInsets.right = 12
         return button
     }()
 
@@ -42,13 +46,13 @@ class PlaceSuggestEditCard: PlaceCardView, SFSafariViewControllerDelegate {
         separatorLine.backgroundColor = UIColor(hex: "d5d4d8")
         separatorLine.snp.makeConstraints { make in
             make.left.right.equalTo(self)
-            make.top.equalTo(self).inset(15)
+            make.top.equalTo(self).inset(topSeparator)
             make.height.equalTo(1.0 / UIScreen.main.scale)
         }
 
         button.snp.makeConstraints { make in
             make.left.right.equalTo(self)
-            make.top.equalTo(separatorLine.snp.bottom).inset(-topBottom)
+            make.top.equalTo(separatorLine.snp.bottom).inset(-topBottom + -topSeparator)
             make.bottom.equalTo(self).inset(topBottom)
         }
     }
@@ -63,8 +67,8 @@ class PlaceSuggestEditCard: PlaceCardView, SFSafariViewControllerDelegate {
 
     override func didLoad(card: PlaceCard) {
         self.placeId = card["placeId"].string
-        self.name = card["name"].string?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
-        self.address = card["address"].string?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+        self.name = card["name"].string
+        self.address = card["address"].string
     }
 
     override func didTap() {

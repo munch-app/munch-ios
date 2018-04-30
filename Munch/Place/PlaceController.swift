@@ -236,7 +236,7 @@ fileprivate class PlaceHeaderView: UIView {
     }()
     fileprivate let moreButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "RIP-Three-Dot"), for: .normal)
+        button.setImage(UIImage(named: "RIP-Add"), for: .normal)
         button.tintColor = .white
         return button
     }()
@@ -313,14 +313,33 @@ fileprivate class PlaceHeaderView: UIView {
 
 fileprivate class PlaceBottomView: UIView {
     private let mainButton = UIButton()
-    private let addressLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14.0, weight: .regular)
-        label.numberOfLines = 0
-        return label
+    private let ratingPercentLabel = ReviewRatingLabel()
+    private let ratingCountLabel = UILabel()
+    private let openLabel: UIButton = {
+        let button = UIButton()
+        button.setTitle("Closed Now", for: .normal)
+        button.setTitleColor(.primary700, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 11.0, weight: .medium)
+
+        button.setImage(UIImage(named: "RIP-Bottom-Clock"), for: .normal)
+        button.tintColor = .primary700
+        button.imageEdgeInsets.left = -8.0
+
+        button.backgroundColor = UIColor(hex: "eeeeee")
+        button.layer.cornerRadius = 3.0
+        button.contentEdgeInsets.left = 10
+        button.contentEdgeInsets.right = 10
+        return button
     }()
 
     var place: Place?
+
+    static let openStyle = Style("open", {
+        $0.color = UIColor.secondary
+    })
+    static let closeStyle = Style("close", {
+        $0.color = UIColor.primary
+    })
 
     override init(frame: CGRect = CGRect.zero) {
         super.init(frame: frame)
@@ -330,7 +349,9 @@ fileprivate class PlaceBottomView: UIView {
 
     private func initViews() {
         self.backgroundColor = .white
-        self.addSubview(addressLabel)
+        self.addSubview(ratingCountLabel)
+        self.addSubview(ratingPercentLabel)
+        self.addSubview(openLabel)
         self.addSubview(mainButton)
 
         mainButton.setTitle("ACTION", for: .normal)
@@ -347,22 +368,78 @@ fileprivate class PlaceBottomView: UIView {
             make.height.equalTo(40)
         }
 
-        addressLabel.snp.makeConstraints { make in
+        ratingPercentLabel.snp.makeConstraints { (make) in
             make.left.equalTo(self).inset(24)
-            make.right.equalTo(mainButton.snp.left).inset(-18)
-            make.top.bottom.equalTo(mainButton)
+            make.top.equalTo(self).inset(10)
+        }
+
+        ratingCountLabel.text = "0 Reviews"
+        ratingCountLabel.font = UIFont.systemFont(ofSize: 11.0, weight: .regular)
+        ratingCountLabel.textColor = UIColor.black.withAlphaComponent(0.8)
+        ratingCountLabel.textAlignment = .left
+        ratingCountLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(self).inset(12)
+        }
+
+        openLabel.snp.makeConstraints { make in
+            make.left.equalTo(self).inset(24)
+            make.bottom.equalTo(self.safeArea.bottom).inset(10)
+            make.height.equalTo(20)
         }
     }
 
     private func setHidden(isHidden: Bool) {
         self.mainButton.isHidden = isHidden
+        self.ratingPercentLabel.isHidden = isHidden
+        self.ratingCountLabel.isHidden = isHidden
+        self.openLabel.isHidden = isHidden
     }
 
     func render(place: Place) {
         self.setHidden(isHidden: false)
         self.place = place
 
-        self.addressLabel.text = place.location.address
+        if let average = place.review?.average {
+            self.ratingPercentLabel.render(average: average)
+
+            self.ratingCountLabel.text = "\(place.review?.total ?? 0) Reviews"
+
+            ratingCountLabel.snp.makeConstraints { (make) in
+                make.left.equalTo(ratingPercentLabel.snp.right).inset(-5)
+            }
+        } else {
+            // No Review
+            ratingCountLabel.snp.makeConstraints { (make) in
+                make.left.equalTo(self).inset(24)
+            }
+        }
+
+        if let hours = place.hours, !hours.isEmpty {
+            switch BusinessHour(hours: hours).isOpen() {
+            case .open:
+                openLabel.tintColor = .secondary700
+                openLabel.setTitleColor(.secondary700, for: .normal)
+                openLabel.setTitle("Open Now", for: .normal)
+            case .opening:
+                openLabel.tintColor = .secondary700
+                openLabel.setTitleColor(.secondary700, for: .normal)
+                openLabel.setTitle("Opening Soon", for: .normal)
+            case .closing:
+                openLabel.tintColor = .primary700
+                openLabel.setTitleColor(.primary700, for: .normal)
+                openLabel.setTitle("Closing Soon", for: .normal)
+            case .closed:fallthrough
+            case .none:
+                openLabel.tintColor = .primary700
+                openLabel.setTitleColor(.primary700, for: .normal)
+                openLabel.setTitle("Closed Now", for: .normal)
+            }
+        } else {
+            // No Opening Hour
+            openLabel.tintColor = UIColor(hex: "222222")
+            openLabel.setTitleColor(UIColor(hex: "222222"), for: .normal)
+            openLabel.setTitle("No Opening Hours", for: .normal)
+        }
 
         if place.phone != nil {
             mainButton.setTitle("CALL", for: .normal)
@@ -470,7 +547,7 @@ extension PlaceViewController {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cards.count
+        return cells.count
     }
 
     func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
@@ -499,7 +576,7 @@ extension PlaceViewController {
                 return cell
             }
             return PlaceStaticEmptyCard(card: card, controller: self)
-        }
+        } + [PlaceStaticLastCard(controller: self)]
     }
 }
 

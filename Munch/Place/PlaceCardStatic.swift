@@ -70,3 +70,28 @@ class PlaceStaticEmptyCard: PlaceCardView {
         return "static_PlaceStaticEmptyCard"
     }
 }
+
+class PlaceStaticLastCard: PlaceCardView {
+    override func didLoad(card: PlaceCard) {
+        self.backgroundColor = UIColor.clear
+
+        let view = UIView()
+        self.addSubview(view)
+        view.snp.makeConstraints { make in
+            make.height.equalTo(leftRight - topBottom).priority(999)
+            make.edges.equalTo(self)
+        }
+    }
+
+    required init(card: PlaceCard = PlaceCard(cardId: PlaceStaticLastCard.cardId!), controller: PlaceViewController) {
+        super.init(card: card, controller: controller)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override class var cardId: String? {
+        return "static_PlaceStaticLastCard"
+    }
+}

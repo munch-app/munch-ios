@@ -163,6 +163,7 @@ class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
     override func didLoad(card: PlaceCard) {
         self.selectionStyle = .default
         self.websiteUrl = card["website"].string
+
         self.addSubview(websiteTitleLabel)
         self.addSubview(websiteLabel)
 
@@ -177,7 +178,8 @@ class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
             make.width.equalTo(70)
         }
 
-        websiteLabel.attributedText = websiteUrl?.set(style: .default { make in
+        let domain = card["domain"].string ?? websiteUrl
+        websiteLabel.attributedText = domain?.set(style: .default { make in
             make.font = FontAttribute(font: UIFont.systemFont(ofSize: 15.0, weight: .regular))
             make.color = UIColor.black.withAlphaComponent(0.8)
         })
