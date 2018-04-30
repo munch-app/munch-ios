@@ -261,8 +261,8 @@ fileprivate class PlacePartnerInstagramControllerCell: UITableViewCell {
                 self.bannerImageView.render(named: "RIP-No-Image")
             }
 
-            controller.tableView.reloadRows(at: [indexPath], with: .none)
-            controller.cachedHeight[indexPath.row] = self.bounds.height
+//            controller.tableView.reloadRows(at: [indexPath], with: .none)
+//            controller.cachedHeight[indexPath.row] = self.bounds.height
         }
 
         authorLabel.setTitle("@\(media.username ?? "")", for: .normal)

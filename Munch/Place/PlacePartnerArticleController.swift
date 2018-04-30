@@ -283,9 +283,9 @@ fileprivate class PlacePartnerArticleControllerCell: UITableViewCell {
             if image == nil {
                 self.bannerImageView.render(named: "RIP-No-Image")
             }
-
-            controller.tableView.reloadRows(at: [indexPath], with: .none)
-            controller.cachedHeight[indexPath.row] = self.bounds.height
+            // Image Size Caching
+//            controller.tableView.reloadRows(at: [indexPath], with: .none)
+//            controller.cachedHeight[indexPath.row] = self.bounds.height
         }
 
         authorLabel.setTitle(article.brand, for: .normal)
