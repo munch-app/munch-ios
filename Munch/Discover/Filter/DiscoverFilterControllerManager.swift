@@ -401,7 +401,7 @@ extension DiscoverFilterControllerManager {
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1, execute: updateCountTask!)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.4, execute: updateCountTask!)
     }
 
     public func getLocationName() -> String {

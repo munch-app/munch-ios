@@ -15,6 +15,7 @@ class SearchClient {
     private static let decoder = JSONDecoder()
 
     func search(text: String, latLng: String?, query: SearchQuery, callback: @escaping (_ meta: MetaJSON,
+                                                                                        _ suggests: [String],
                                                                                         _ assumptions: [AssumptionQueryResult],
                                                                                         _ places: [Place]) -> Void) {
         var params = Parameters()
@@ -27,9 +28,11 @@ class SearchClient {
             params["query"] = query.toParams()
 
             MunchApi.restful.post("/search", parameters: params) { meta, json in
-                let assumptions = json["data"]["assumptions"].compactMap({ AssumptionQueryResult(json: $0.1) })
-                let places = json["data"]["places"].compactMap({ SearchClient.parseResult(result: $0.1) as? Place })
-                callback(meta, assumptions, places)
+                let data = json["data"]
+                let suggests = data["suggests"].compactMap({ $0.1.string })
+                let assumptions = data["assumptions"].compactMap({ AssumptionQueryResult(json: $0.1) })
+                let places = data["places"].compactMap({ SearchClient.parseResult(result: $0.1) as? Place })
+                callback(meta, suggests, assumptions, places)
             }
         }
     }

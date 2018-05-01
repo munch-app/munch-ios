@@ -127,9 +127,9 @@ class SearchController: UIViewController {
             self.tableView.reloadData()
 
             let latLng = DiscoverFilterControllerManager.getContextLatLng(searchQuery: searchQuery)
-            MunchApi.search.search(text: text, latLng: latLng, query: searchQuery) { meta, assumptions, places in
+            MunchApi.search.search(text: text, latLng: latLng, query: searchQuery) { meta, suggests, assumptions, places in
                 if meta.isOk() {
-                    self.results = SearchController.map(assumptions: assumptions, places: places)
+                    self.results = SearchController.map(suggests: suggests, assumptions: assumptions, places: places)
                     self.tableView.reloadData()
 
                     Analytics.logEvent(AnalyticsEventSearch, parameters: [
@@ -154,8 +154,11 @@ class SearchController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    class func map(assumptions: [AssumptionQueryResult], places: [Place]) -> [SearchResultType] {
+    class func map(suggests: [String], assumptions: [AssumptionQueryResult], places: [Place]) -> [SearchResultType] {
         var list = [SearchResultType]()
+        if !suggests.isEmpty {
+            list.append(.suggest(suggests))
+        }
 
         for assumption in assumptions {
             list.append(.assumption(assumption))
@@ -184,6 +187,7 @@ extension SearchController: UITableViewDataSource, UITableViewDelegate {
         tableView.register(SearchCellLoading.self, forCellReuseIdentifier: SearchCellLoading.id)
         tableView.register(SearchCellNoResult.self, forCellReuseIdentifier: SearchCellNoResult.id)
         tableView.register(SearchCellAssumptionQueryResult.self, forCellReuseIdentifier: SearchCellAssumptionQueryResult.id)
+        tableView.register(SearchCellSuggest.self, forCellReuseIdentifier: SearchCellSuggest.id)
     }
 
     var items: [SearchResultType] {
@@ -216,6 +220,11 @@ extension SearchController: UITableViewDataSource, UITableViewDelegate {
 
             let cell = tableView.dequeueReusableCell(withIdentifier: SearchCellPlace.id) as! SearchCellPlace
             cell.render(place: place)
+            return cell
+
+        case .suggest(let suggests):
+            let cell = tableView.dequeueReusableCell(withIdentifier: SearchCellSuggest.id) as! SearchCellSuggest
+            cell.render(suggests: suggests, controller: self)
             return cell
 
         case .assumption(let queryResult):
@@ -263,6 +272,11 @@ extension SearchController: UITableViewDataSource, UITableViewDelegate {
     func select(searchQuery: SearchQuery) {
         self.onExtensionDismiss(searchQuery)
         self.dismiss(animated: true)
+    }
+
+    func select(text: String?) {
+        self.headerView.textField.text = text
+        textFieldDidCommit(textField: self.headerView.textField)
     }
 }
 

@@ -16,6 +16,7 @@ enum SearchResultType {
     case place(Place)
     case assumption(AssumptionQueryResult)
     case recentlyViewed
+    case suggest([String])
 }
 
 class SearchCellHeaderRestaurant: UITableViewCell {
@@ -623,5 +624,113 @@ extension SearchCellRecentlyViewed: UICollectionViewDataSource, UICollectionView
             AnalyticsParameterItemID: "place-\(place.id ?? "")" as NSObject,
             AnalyticsParameterContentType: "recent_place" as NSObject
         ])
+    }
+}
+
+class SearchCellSuggest: UITableViewCell {
+    private let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+        layout.estimatedItemSize = CGSize(width: -1, height: -1)
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 12
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.backgroundColor = .white
+        collectionView.register(SearchCellSuggestTextCell.self, forCellWithReuseIdentifier: "SearchCellSuggestTextCell")
+        return collectionView
+    }()
+    var suggests: [String] = []
+    var controller: SearchController?
+
+    func render(suggests: [String], controller: SearchController) {
+        self.suggests = suggests
+        self.controller = controller
+        self.collectionView.reloadData()
+    }
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(collectionView)
+
+        self.collectionView.dataSource = self
+        self.collectionView.delegate = self
+
+        collectionView.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.top.bottom.equalTo(self).inset(10)
+            make.height.equalTo(SearchCellSuggestTextCell.height)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    class var id: String {
+        return "SearchCellSuggest"
+    }
+}
+
+extension SearchCellSuggest: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return suggests.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let margin = SearchCellSuggestTextCell.leftRight * 2
+        let font = SearchCellSuggestTextCell.font
+        let text = suggests[indexPath.row]
+        return CGSize(width: margin + UILabel.textWidth(font: font, text: text), height: SearchCellSuggestTextCell.height)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchCellSuggestTextCell", for: indexPath) as! SearchCellSuggestTextCell
+        cell.textLabel.text = suggests[indexPath.row]
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let text = suggests[indexPath.row]
+        self.controller?.select(text: text)
+    }
+}
+
+fileprivate class SearchCellSuggestTextCell: UICollectionViewCell {
+    static let leftRight: CGFloat = 10
+    static let height: CGFloat = 30
+    static let font = UIFont.systemFont(ofSize: 13.0, weight: .medium)
+    let textLabel: UILabel = {
+        let label = UILabel()
+        label.font = font
+        label.textColor = UIColor.black.withAlphaComponent(0.9)
+        label.isUserInteractionEnabled = false
+        label.backgroundColor = .clear
+        label.textAlignment = .center
+        return label
+    }()
+
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        self.addSubview(textLabel)
+        self.backgroundColor = .bgTag
+
+        textLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(SearchCellSuggestTextCell.leftRight)
+            make.top.bottom.equalTo(self)
+            make.height.equalTo(SearchCellSuggestTextCell.height)
+        }
+    }
+
+    fileprivate override func layoutSubviews() {
+        super.layoutSubviews()
+        self.layer.cornerRadius = 12
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
