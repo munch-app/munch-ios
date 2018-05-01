@@ -111,7 +111,7 @@ class SearchNoResultCard: UITableViewCell, SearchCardView {
             make.top.equalTo(self).inset(topBottom)
         }
 
-        descriptionLabel.text = "We couldn't find anything. Try broadening your search?"
+        descriptionLabel.text = "We could not find anything. Try broadening your search?"
         descriptionLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
         descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         descriptionLabel.numberOfLines = 0
@@ -158,7 +158,7 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
             make.top.equalTo(self).inset(topBottom)
         }
 
-        descriptionLabel.text = "We couldn't find anything in that location. Try searching anywhere instead?"
+        descriptionLabel.text = "We could not find anything in that location. Try searching 'Anywhere' instead?"
         descriptionLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
         descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         descriptionLabel.numberOfLines = 0
@@ -179,10 +179,10 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
         if let locationName = card["locationName"].string {
             titleLabel.text = "No Results in '\(locationName)'"
             // We couldn't find results in "Nearby". Here are the results for "Anywhere".
-            descriptionLabel.text = "We could find results in '\(locationName)'. Here are the results for 'Anywhere'"
+            descriptionLabel.text = "We could not find results in '\(locationName)'. Here are the results for 'Anywhere'"
         } else {
             titleLabel.text = "No Results found 'Nearby'"
-            descriptionLabel.text = "We could find results in 'Nearby' here are results for 'Anywhere'"
+            descriptionLabel.text = "We could not find results in 'Nearby' here are results for 'Anywhere'"
         }
     }
 
