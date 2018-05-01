@@ -195,6 +195,76 @@ class SearchStaticErrorCard: UITableViewCell, SearchCardView {
     }
 }
 
+class SearchStaticUnsupportedCard: UITableViewCell, SearchCardView {
+    private let titleImage = UIImageView()
+    private let titleLabel = UILabel()
+    private let descriptionLabel = UILabel()
+    private let actionButton = UIButton()
+
+    private var controller: DiscoverController!
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        self.addSubview(titleImage)
+        self.addSubview(titleLabel)
+        self.addSubview(descriptionLabel)
+        self.addSubview(actionButton)
+
+        titleLabel.text = "Welcome back to Munch!"
+        titleLabel.font = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
+        titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
+        titleLabel.backgroundColor = .white
+        titleLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(leftRight)
+            make.top.equalTo(self).inset(topBottom)
+        }
+
+        descriptionLabel.text = "While you were away, we have been working very hard to add more sugar and spice to the app to enhance your food discovery journey! Update Munch now to discover what's delicious!"
+        descriptionLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
+        descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.backgroundColor = .white
+        descriptionLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(leftRight)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-20)
+        }
+
+        actionButton.layer.cornerRadius = 3
+        actionButton.backgroundColor = .primary
+        actionButton.setTitle("Update Munch", for: .normal)
+        actionButton.contentEdgeInsets.left = 32
+        actionButton.contentEdgeInsets.right = 32
+        actionButton.setTitleColor(.white, for: .normal)
+        actionButton.titleLabel!.font = UIFont.systemFont(ofSize: 18, weight: .medium)
+        actionButton.snp.makeConstraints { (make) in
+            make.left.equalTo(self).inset(leftRight)
+            make.top.equalTo(descriptionLabel.snp.bottom).inset(-26)
+            make.height.equalTo(48)
+            make.bottom.equalTo(self).inset(24)
+        }
+        actionButton.addTarget(self, action: #selector(onUpdateButton(button:)), for: .touchUpInside)
+    }
+
+    @objc func onUpdateButton(button: UIButton) {
+        if let reviewURL = URL(string: "itms-apps://itunes.apple.com/us/app/apple-store/id1255436754?mt=8"), UIApplication.shared.canOpenURL(reviewURL) {
+            UIApplication.shared.open(reviewURL, options: [:], completionHandler: nil)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func render(card: SearchCard, controller: DiscoverController) {
+        self.controller = controller
+    }
+
+    static var cardId: String {
+        return "SearchStaticUnsupportedCard"
+    }
+}
+
 class SearchStaticLoadingCard: UITableViewCell, SearchCardView {
     private var indicator: NVActivityIndicatorView!
 

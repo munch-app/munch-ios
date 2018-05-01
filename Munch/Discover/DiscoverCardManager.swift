@@ -34,10 +34,14 @@ class SearchCardManager {
                         self.cards = cards
                         self.query!.from = self.query!.from! + self.query!.size!
                     }
+                    completion(meta, self)
+                } else if meta.error?.type == "UnsupportedException" {
+                    self.cards = [SearchStaticUnsupportedCard.card]
+                    completion(MetaJSON.ok, self)
                 } else {
                     self.cards = [SearchStaticErrorCard.create(meta: meta)]
+                    completion(meta, self)
                 }
-                completion(meta, self)
             }
         }
 

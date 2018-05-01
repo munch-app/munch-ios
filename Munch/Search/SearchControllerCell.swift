@@ -648,6 +648,7 @@ class SearchCellSuggest: UITableViewCell {
     func render(suggests: [String], controller: SearchController) {
         self.suggests = suggests
         self.controller = controller
+        self.collectionView.setContentOffset(.zero, animated: false)
         self.collectionView.reloadData()
     }
 

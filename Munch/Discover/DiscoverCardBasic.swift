@@ -24,6 +24,7 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
     static var bottom: Int = 0
     static var totalCount: Int = 0
 
+    let heartButton = HeartButton()
     let topImageView: ShimmerImageView = {
         let imageView = ShimmerImageView()
         imageView.layer.cornerRadius = 3
@@ -77,6 +78,7 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
         containerView.addSubview(topImageView)
         containerView.addSubview(containerLabel)
         containerView.addSubview(bottomView)
+        containerView.addSubview(heartButton)
         self.addSubview(containerView)
 
         containerLabel.addTarget(self, action: #selector(onContainerApply(_:)), for: .touchUpInside)
@@ -95,6 +97,10 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
             make.height.equalTo(75).priority(999)
         }
 
+        heartButton.snp.makeConstraints { make in
+            make.right.top.equalTo(topImageView).inset(10)
+        }
+
         containerView.snp.makeConstraints { make in
             let height = (UIScreen.main.bounds.width * 0.888) - (topBottom * 2)
             make.height.equalTo(height).priority(999)
@@ -107,8 +113,25 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    static var likedCache = [String: Bool]()
+
     func render(card: SearchCard, controller: DiscoverController) {
         self.controller = controller
+        heartButton.controller = controller
+
+        if let placeId = card.dict(name: "placeId") as? String {
+            heartButton.placeId = placeId
+            if let liked = DiscoverPlaceCard.likedCache[placeId] {
+                heartButton.liked = liked
+            } else {
+                heartButton.liked = card.dict(name: "liked") as? Bool ?? false
+            }
+
+            heartButton.likedCallback = { placeId, liked in
+                DiscoverPlaceCard.likedCache[placeId] = liked
+            }
+        }
+
 
         let startDate = Date()
 

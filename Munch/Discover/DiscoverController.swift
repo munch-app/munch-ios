@@ -295,6 +295,7 @@ extension DiscoverController {
         register(SearchStaticNoResultCard.self)
         register(SearchStaticLoadingCard.self)
         register(SearchStaticErrorCard.self)
+        register(SearchStaticUnsupportedCard.self)
 
         // Register Shimmer Cards
         register(SearchShimmerPlaceCard.self)

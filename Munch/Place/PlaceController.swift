@@ -154,12 +154,7 @@ class PlaceHeaderView: UIView {
         titleView.textColor = .black
         return titleView
     }()
-    fileprivate let heartButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "RIP-Heart"), for: .normal)
-        button.tintColor = .white
-        return button
-    }()
+    fileprivate let heartButton = HeartButton()
     fileprivate let addButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "RIP-Add"), for: .normal)
@@ -193,7 +188,6 @@ class PlaceHeaderView: UIView {
         }
 
         self.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
-        self.heartButton.addTarget(self, action: #selector(onHeartButton(_:)), for: .touchUpInside)
         self.addButton.addTarget(self, action: #selector(onAddButton(_:)), for: .touchUpInside)
 
         if let controller = controller as? PlaceViewController,
@@ -258,52 +252,13 @@ class PlaceHeaderView: UIView {
         self.placeId = place.id
         self.liked = liked
 
-        if liked ?? false {
-            heartButton.setImage(UIImage(named: "RIP-Heart-Filled"), for: .normal)
-        } else {
-            heartButton.setImage(UIImage(named: "RIP-Heart"), for: .normal)
-        }
+        self.heartButton.liked = liked ?? false
+        self.heartButton.placeId = placeId
+        self.heartButton.controller = controller
     }
 
     @objc func onBackButton(_ sender: Any) {
         self.controller.navigationController?.popViewController(animated: true)
-    }
-
-    @objc func onHeartButton(_ sender: Any) {
-        if let placeId = self.placeId, let place = self.place {
-            AccountAuthentication.requireAuthentication(controller: controller) { state in
-                switch state {
-                case .loggedIn:
-                    let generator = UIImpactFeedbackGenerator(style: .light)
-                    generator.impactOccurred()
-
-                    self.liked = !(self.liked ?? false)
-                    self.render(place: place, liked: self.liked)
-
-                    if self.liked! {
-                        MunchApi.collections.liked.put(placeId: placeId) { meta in
-                            guard meta.isOk() else {
-                                self.controller.present(meta.createAlert(), animated: true)
-                                return
-                            }
-                        }
-                    } else {
-                        MunchApi.collections.liked.delete(placeId: placeId) { meta in
-                            guard meta.isOk() else {
-                                self.controller.present(meta.createAlert(), animated: true)
-                                return
-                            }
-                        }
-                    }
-
-                    Analytics.logEvent("rip_action", parameters: [
-                        AnalyticsParameterItemCategory: "click_like" as NSObject
-                    ])
-                default:
-                    return
-                }
-            }
-        }
     }
 
     @objc func onAddButton(_ sender: Any) {
@@ -733,6 +688,71 @@ class ReviewRatingLabel: UIButton {
 
         self.setTitle(text, for: .normal)
         self.backgroundColor = color
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class HeartButton: UIButton {
+    var controller: UIViewController?
+    var placeId: String?
+    var likedCallback: ((String, Bool) -> ())?
+
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        self.setImage(UIImage(named: "RIP-Heart"), for: .normal)
+        self.tintColor = .white
+
+        self.addTarget(self, action: #selector(onHeartButton(_:)), for: .touchUpInside)
+    }
+
+    var liked: Bool = false {
+        didSet {
+            if self.liked {
+                self.setImage(UIImage(named: "RIP-Heart-Filled"), for: .normal)
+            } else {
+                self.setImage(UIImage(named: "RIP-Heart"), for: .normal)
+            }
+        }
+    }
+
+    @objc func onHeartButton(_ button: Any) {
+        if let controller = self.controller {
+            AccountAuthentication.requireAuthentication(controller: controller) { state in
+                switch state {
+                case .loggedIn:
+                    if let placeId = self.placeId {
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        self.liked = !self.liked
+                        self.likedCallback?(placeId, self.liked)
+
+                        if self.liked {
+                            MunchApi.collections.liked.put(placeId: placeId) { meta in
+                                guard meta.isOk() else {
+                                    self.controller?.present(meta.createAlert(), animated: true)
+                                    return
+                                }
+                            }
+                        } else {
+                            MunchApi.collections.liked.delete(placeId: placeId) { meta in
+                                guard meta.isOk() else {
+                                    self.controller?.present(meta.createAlert(), animated: true)
+                                    return
+                                }
+                            }
+                        }
+
+                        Analytics.logEvent("rip_action", parameters: [
+                            AnalyticsParameterItemCategory: "click_like" as NSObject
+                        ])
+                    }
+                default:
+                    return
+                }
+            }
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
