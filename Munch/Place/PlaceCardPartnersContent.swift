@@ -283,7 +283,7 @@ class PlacePartnerInstagramCard: PlaceCardView {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
-        collectionView.isScrollEnabled = false
+        collectionView.isScrollEnabled = true
         collectionView.backgroundColor = UIColor.white
         collectionView.register(PlacePartnerInstagramCardCell.self, forCellWithReuseIdentifier: "PlacePartnerInstagramCardCell")
         return collectionView
@@ -300,7 +300,6 @@ class PlacePartnerInstagramCard: PlaceCardView {
 
     override func didLoad(card: PlaceCard) {
         self.medias = card.decode([InstagramMedia].self) ?? []
-        self.medias = Array(self.medias.prefix(3))
         self.addSubview(collectionView)
         self.addSubview(showButton)
 
