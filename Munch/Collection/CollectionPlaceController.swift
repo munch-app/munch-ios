@@ -6,11 +6,26 @@
 import Foundation
 import UIKit
 
-import NVActivityIndicatorView
-import NativePopup
 import FirebaseAnalytics
 
+import NativePopup
+import NVActivityIndicatorView
+
 class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
+    private let toastStyle: ToastStyle = {
+        var style = ToastStyle()
+        style.backgroundColor = UIColor.bgTag
+        style.cornerRadius = 5
+        style.imageSize = CGSize(width: 20, height: 20)
+        style.fadeDuration = 6.0
+        style.messageColor = UIColor.black.withAlphaComponent(0.85)
+        style.messageFont = UIFont.systemFont(ofSize: 15, weight: .regular)
+        style.messageNumberOfLines = 2
+        style.messageAlignment = .left
+
+        return style
+    }()
+
     var userId: String?
     let collectionId: String
 
@@ -178,14 +193,11 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
         self.present(alert, animated: true, completion: nil)
     }
 
-    func deletePlace(placeId: String) {
+    func deletePlace(placeId: String, placeName: String) {
         MunchApi.collections.deletePlace(collectionId: self.collectionId, placeId: placeId) { metaJSON in
             if metaJSON.isOk() {
                 if let collection = self.placeCollection, let name = collection.name {
-                    NativePopup.show(image: Preset.Feedback.done,
-                            title: "Removed from \(name)",
-                            message: nil,
-                            initialEffectType: .fadeIn)
+                    self.view.makeToast("Removed \(placeName) from \(name) collection.", image: UIImage(named: "RIP-Toast-Close"), style: self.toastStyle)
                 }
                 self.addedPlaces = []
                 self.collectionView.reloadData()
@@ -462,10 +474,10 @@ fileprivate class CollectionPlaceCollectionCell: UICollectionViewCell {
     }
 
     @objc func onEditButton(_ sender: Any) {
-        if let placeId = addedPlace?.place.id {
+        if let placeId = addedPlace?.place.id, let placeName = addedPlace?.place.name {
             let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
             alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
-                self.controller.deletePlace(placeId: placeId)
+                self.controller.deletePlace(placeId: placeId, placeName: placeName)
             })
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
             self.controller.present(alert, animated: true)

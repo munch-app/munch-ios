@@ -9,14 +9,15 @@
 import Foundation
 import UIKit
 import MapKit
-
-import SwiftyJSON
-import SnapKit
-import SwiftRichString
 import SafariServices
+
+import SnapKit
+import SwiftyJSON
+import SwiftRichString
+import FirebaseAnalytics
+
 import TTGTagCollectionView
 
-import FirebaseAnalytics
 
 class PlaceBasicImageBannerCard: PlaceCardView {
     private let imageGradientView: UIView = {

@@ -44,7 +44,7 @@ class PlacePartnerInstagramController: UIViewController, UIGestureRecognizerDele
         self.nextMaxSort = medias.last?.placeSort
         super.init(nibName: nil, bundle: nil)
 
-        self.headerView = PlaceHeaderView(controller: controller)
+        self.headerView = PlaceHeaderView(controller: self, place: controller.place, liked: controller.liked)
     }
 
     override func viewWillAppear(_ animated: Bool) {

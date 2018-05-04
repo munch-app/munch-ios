@@ -1,4 +1,4 @@
-platform :ios, '9.0'
+platform :ios, '10.0'
 
 target 'Munch' do
   use_frameworks!
@@ -27,14 +27,15 @@ target 'Munch' do
   pod 'KMNavigationBarTransition', '~> 1.1'
 
   # UI Components Library
-  pod 'Charts'
-  pod 'TPKeyboardAvoiding', '~> 1.3'
+  pod 'Shimmer'
+  pod 'Toast-Swift', '~> 3.0.1'
+
   pod 'NVActivityIndicatorView', '~> 4.0'
   pod 'ESTabBarController-swift', '2.5'
-  pod 'Shimmer', '~> 1.0'
   pod 'TTGTagCollectionView', :git=> 'https://github.com/Fuxingloh/TTGTagCollectionView.git', :branch => 'master'
-  pod 'NativePopup', :git => 'https://github.com/Fuxingloh/NativePopup.git', :branch => 'master'
+  pod 'NativePopup', :git => 'https://github.com/Fuxingloh/NativePopup.git', :branch => 'master' # TODO Remove
 
+  pod 'Charts'
   pod 'SKPhotoBrowser', '~> 5.0'
   pod 'Cosmos', '~> 13.0'
   pod 'BEMCheckBox', '~> 1.4'

@@ -13,7 +13,6 @@ import UIKit
 
 import SnapKit
 import SwiftRichString
-import TTGTagCollectionView
 
 import Firebase
 
@@ -121,6 +120,8 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
 
         if let placeId = card.dict(name: "placeId") as? String {
             heartButton.placeId = placeId
+            heartButton.placeName = card.dict(name: "name") as? String
+
             if let liked = DiscoverPlaceCard.likedCache[placeId] {
                 heartButton.liked = liked
             } else {

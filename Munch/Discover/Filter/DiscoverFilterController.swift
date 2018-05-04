@@ -12,7 +12,6 @@ import UIKit
 import Firebase
 import SnapKit
 import SwiftyJSON
-import TPKeyboardAvoiding
 import NVActivityIndicatorView
 
 class DiscoverFilterRootController: UINavigationController, UINavigationControllerDelegate {

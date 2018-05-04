@@ -9,19 +9,8 @@ import SafariServices
 
 import SwiftyJSON
 import SnapKit
-import TTGTagCollectionView
 
 import FirebaseAnalytics
-
-class PlaceHeaderUGCCard: PlaceTitleCardView {
-    override func didLoad(card: PlaceCard) {
-        self.title = "Experimental Tags"
-    }
-
-    override class var cardId: String? {
-        return "header_UGC_20180219"
-    }
-}
 
 class PlaceSuggestEditCard: PlaceCardView, SFSafariViewControllerDelegate {
     let separatorLine = UIView()

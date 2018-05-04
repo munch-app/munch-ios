@@ -9,7 +9,6 @@ import MapKit
 import CoreLocation
 
 import SnapKit
-import TTGTagCollectionView
 
 import FirebaseAnalytics
 
@@ -92,7 +91,7 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
         self.place = controller.place!
         super.init(nibName: nil, bundle: nil)
 
-        self.headerView = PlaceHeaderView(controller: controller)
+        self.headerView = PlaceHeaderView(controller: self, place: controller.place, liked: controller.liked)
         self.headerView.backgroundView.isHidden = true
         self.headerView.shadowView.isHidden = true
     }

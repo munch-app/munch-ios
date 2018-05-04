@@ -10,13 +10,13 @@ import Foundation
 import UIKit
 import SafariServices
 
+import SnapKit
 import Firebase
 import Crashlytics
-import SnapKit
-import Cosmos
 import SwiftRichString
 
-import NativePopup
+import Cosmos
+import Toast_Swift
 
 class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, SFSafariViewControllerDelegate {
     let placeId: String
@@ -28,9 +28,11 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
     private var cellTypes = [String: PlaceCardView.Type]()
     private var cellHeights = [CGFloat](repeating: UITableViewAutomaticDimension, count: 100)
 
-    private let cardTableView = UITableView()
-    private var headerView: PlaceHeaderView!
-    private let bottomView = PlaceBottomView()
+    fileprivate let cardTableView = UITableView()
+    fileprivate var headerView: PlaceHeaderView!
+    fileprivate let bottomView = PlaceBottomView()
+
+    fileprivate let contentView = UIView()
 
     init(placeId: String) {
         self.placeId = placeId
@@ -101,9 +103,10 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
 
     private func initViews() {
-        self.view.addSubview(cardTableView)
-        self.view.addSubview(headerView)
+        self.view.addSubview(contentView)
         self.view.addSubview(bottomView)
+        contentView.addSubview(cardTableView)
+        contentView.addSubview(headerView)
 
         self.cardTableView.isScrollEnabled = false
         self.cardTableView.separatorStyle = .none
@@ -126,6 +129,10 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
         bottomView.snp.makeConstraints { make in
             make.bottom.left.right.equalTo(self.view)
         }
+
+        contentView.snp.makeConstraints { make in
+            make.edges.equalTo(cardTableView)
+        }
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -139,6 +146,20 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
 }
 
 class PlaceHeaderView: UIView {
+    private let toastStyle: ToastStyle = {
+        var style = ToastStyle()
+        style.backgroundColor = UIColor.bgTag
+        style.cornerRadius = 5
+        style.imageSize = CGSize(width: 20, height: 20)
+        style.fadeDuration = 6.0
+        style.messageColor = UIColor.black.withAlphaComponent(0.85)
+        style.messageFont = UIFont.systemFont(ofSize: 15, weight: .regular)
+        style.messageNumberOfLines = 2
+        style.messageAlignment = .left
+
+        return style
+    }()
+
     fileprivate let backButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "NavigationBar-Back"), for: .normal)
@@ -170,7 +191,8 @@ class PlaceHeaderView: UIView {
     var liked: Bool?
     var controller: UIViewController
 
-    init(controller: UIViewController, tintColor: UIColor = UIColor.black, backgroundVisible: Bool = true, titleHidden: Bool = false) {
+    init(controller: UIViewController, place: Place? = nil, liked: Bool? = nil,
+         tintColor: UIColor = UIColor.black, backgroundVisible: Bool = true, titleHidden: Bool = false) {
         self.controller = controller
         super.init(frame: CGRect.zero)
         self.initViews()
@@ -190,9 +212,8 @@ class PlaceHeaderView: UIView {
         self.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
         self.addButton.addTarget(self, action: #selector(onAddButton(_:)), for: .touchUpInside)
 
-        if let controller = controller as? PlaceViewController,
-           let place = controller.place {
-            render(place: place, liked: controller.liked)
+        if let place = place {
+            render(place: place, liked: liked)
         }
     }
 
@@ -254,6 +275,7 @@ class PlaceHeaderView: UIView {
 
         self.heartButton.liked = liked ?? false
         self.heartButton.placeId = placeId
+        self.heartButton.placeName = place.name
         self.heartButton.controller = controller
     }
 
@@ -267,11 +289,13 @@ class PlaceHeaderView: UIView {
                 switch state {
                 case .loggedIn:
                     let controller = CollectionSelectRootController(placeId: placeId) { placeCollection in
-                        if let collection = placeCollection, let name = collection.name {
-                            NativePopup.show(image: Preset.Feedback.done,
-                                    title: "Added to \(name)",
-                                    message: nil,
-                                    initialEffectType: .fadeIn)
+                        if let collection = placeCollection, let name = collection.name, let placeName = self.place?.name {
+                            if let controller = self.controller as? PlaceViewController {
+                                controller.contentView.makeToast("Added \(placeName) to \(name) collection.", image: UIImage(named: "RIP-Toast-Checkmark"), style: self.toastStyle)
+                            } else {
+                                self.controller.view.makeToast("Added \(placeName) to \(name) collection.", image: UIImage(named: "RIP-Toast-Checkmark"), style: self.toastStyle)
+                            }
+
                         }
 
                         Analytics.logEvent("rip_action", parameters: [
@@ -696,8 +720,23 @@ class ReviewRatingLabel: UIButton {
 }
 
 class HeartButton: UIButton {
+    private let toastStyle: ToastStyle = {
+        var style = ToastStyle()
+        style.backgroundColor = UIColor.bgTag
+        style.cornerRadius = 5
+        style.imageSize = CGSize(width: 20, height: 20)
+        style.fadeDuration = 6.0
+        style.messageColor = UIColor.black.withAlphaComponent(0.85)
+        style.messageFont = UIFont.systemFont(ofSize: 15, weight: .regular)
+        style.messageNumberOfLines = 2
+        style.messageAlignment = .left
+
+        return style
+    }()
+
     var controller: UIViewController?
     var placeId: String?
+    var placeName: String?
     var likedCallback: ((String, Bool) -> ())?
 
     override init(frame: CGRect = .zero) {
@@ -734,12 +773,28 @@ class HeartButton: UIButton {
                                     self.controller?.present(meta.createAlert(), animated: true)
                                     return
                                 }
+
+                                if let placeName = self.placeName {
+                                    if let controller = self.controller as? PlaceViewController {
+                                        controller.contentView.makeToast("Liked \(placeName)", image: UIImage(named: "RIP-Toast-Heart"), style: self.toastStyle)
+                                    } else {
+                                        self.controller?.view.makeToast("Liked \(placeName)", image: UIImage(named: "RIP-Toast-Heart"), style: self.toastStyle)
+                                    }
+                                }
                             }
                         } else {
                             MunchApi.collections.liked.delete(placeId: placeId) { meta in
                                 guard meta.isOk() else {
                                     self.controller?.present(meta.createAlert(), animated: true)
                                     return
+                                }
+
+                                if let placeName = self.placeName {
+                                    if let controller = self.controller as? PlaceViewController {
+                                        controller.contentView.makeToast("Unliked \(placeName)", image: UIImage(named: "RIP-Toast-Heart"), style: self.toastStyle)
+                                    } else {
+                                        self.controller?.view.makeToast("Unliked \(placeName)", image: UIImage(named: "RIP-Toast-Heart"), style: self.toastStyle)
+                                    }
                                 }
                             }
                         }

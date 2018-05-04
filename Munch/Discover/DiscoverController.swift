@@ -31,7 +31,7 @@ class DiscoverNavigationalController: UINavigationController, UINavigationContro
 }
 
 class DiscoverController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    private let cardTableView = UITableView()
+    let cardTableView = UITableView()
     let headerView = DiscoverHeaderView()
     private let refreshControl = UIRefreshControl()
     let imageSize: (Int, Int) = {

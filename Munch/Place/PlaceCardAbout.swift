@@ -11,7 +11,6 @@ import SwiftyJSON
 import SnapKit
 import SwiftRichString
 import SafariServices
-import TTGTagCollectionView
 
 import FirebaseAnalytics
 
