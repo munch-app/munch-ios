@@ -373,6 +373,8 @@ struct SearchQuery: Equatable {
  Access json through the subscript
  */
 struct SearchCard: Equatable {
+    private static let decoder = JSONDecoder()
+
     var cardId: String
     var uniqueId: String?
     var instanceId: String
@@ -404,6 +406,10 @@ struct SearchCard: Equatable {
 
     func dict(name: String) -> Any {
         return dictionary[name]
+    }
+
+    func decode<T>(name: String, _ type: T.Type) -> T? where T : Decodable {
+        return try? SearchCard.decoder.decode(type, from: json[name].rawData())
     }
 
     static func ==(lhs: SearchCard, rhs: SearchCard) -> Bool {

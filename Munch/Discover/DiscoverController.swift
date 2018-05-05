@@ -6,12 +6,15 @@
 //  Copyright © 2017 Munch Technologies. All rights reserved.
 //
 
+import os.log
+
 import Foundation
 import UIKit
 
 import SnapKit
-import Kingfisher
 import FirebaseAnalytics
+
+import Kingfisher
 
 class DiscoverNavigationalController: UINavigationController, UINavigationControllerDelegate {
     required init() {
@@ -308,6 +311,7 @@ extension DiscoverController {
         register(SearchContainersCard.self)
         register(SearchNewPlaceCard.self)
         register(SearchRecentPlaceCard.self)
+        register(SearchInstagramPartnerCard.self)
 
         register(SearchNoLocationCard.self)
         register(SearchNoResultCard.self)
@@ -341,6 +345,8 @@ extension DiscoverController {
                 if let cardView = cardTableView.dequeueReusableCell(withIdentifier: card.cardId) {
                     return cardView
                 }
+
+                os_log("Required Card: %@ Not Found, SearchStaticEmptyCard is used instead", type: .info, card.cardId)
             }
         case 2: // Loading card
             return cardTableView.dequeueReusableCell(withIdentifier: SearchStaticLoadingCard.cardId)!
