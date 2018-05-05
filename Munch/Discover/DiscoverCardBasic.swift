@@ -112,25 +112,13 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    static var likedCache = [String: Bool]()
-
     func render(card: SearchCard, controller: DiscoverController) {
         self.controller = controller
         heartButton.controller = controller
 
-        if let placeId = card.dict(name: "placeId") as? String {
-            heartButton.placeId = placeId
-            heartButton.placeName = card.dict(name: "name") as? String
-
-            if let liked = DiscoverPlaceCard.likedCache[placeId] {
-                heartButton.liked = liked
-            } else {
-                heartButton.liked = card.dict(name: "liked") as? Bool ?? false
-            }
-
-            heartButton.likedCallback = { placeId, liked in
-                DiscoverPlaceCard.likedCache[placeId] = liked
-            }
+        if let placeId = card.dict(name: "placeId") as? String, let placeName = card.dict(name: "name") as? String {
+            let liked = card.dict(name: "liked") as? Bool ?? false
+            heartButton.set(placeId: placeId, placeName: placeName, liked: liked)
         }
 
 

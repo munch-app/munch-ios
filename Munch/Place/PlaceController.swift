@@ -273,10 +273,10 @@ class PlaceHeaderView: UIView {
         self.placeId = place.id
         self.liked = liked
 
-        self.heartButton.liked = liked ?? false
-        self.heartButton.placeId = placeId
-        self.heartButton.placeName = place.name
-        self.heartButton.controller = controller
+        if let placeId = place.id, let name = place.name {
+            self.heartButton.controller = controller
+            self.heartButton.set(placeId: placeId, placeName: name, liked: liked ?? false)
+        }
     }
 
     @objc func onBackButton(_ sender: Any) {
@@ -293,7 +293,7 @@ class PlaceHeaderView: UIView {
                             if let controller = self.controller as? PlaceViewController {
                                 controller.contentView.makeToast("Added \(placeName) to \(name) collection.", image: UIImage(named: "RIP-Toast-Checkmark"), style: self.toastStyle)
                             } else {
-                                self.controller.view.makeToast("Added \(placeName) to \(name) collection.", image: UIImage(named: "RIP-Toast-Checkmark"), style: self.toastStyle)
+                                self.controller.view.makeToast("Added \(placeName) to \(name) collection.", image: UIImage(named: "RIP-Toast-Close"), style: self.toastStyle)
                             }
 
                         }
@@ -734,11 +734,6 @@ class HeartButton: UIButton {
         return style
     }()
 
-    var controller: UIViewController?
-    var placeId: String?
-    var placeName: String?
-    var likedCallback: ((String, Bool) -> ())?
-
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
         self.setImage(UIImage(named: "RIP-Heart"), for: .normal)
@@ -747,7 +742,11 @@ class HeartButton: UIButton {
         self.addTarget(self, action: #selector(onHeartButton(_:)), for: .touchUpInside)
     }
 
-    var liked: Bool = false {
+    var controller: UIViewController?
+
+    private(set) var placeName: String?
+    private(set) var placeId: String?
+    private(set) var liked: Bool = false {
         didSet {
             if self.liked {
                 self.setImage(UIImage(named: "RIP-Heart-Filled"), for: .normal)
@@ -757,6 +756,12 @@ class HeartButton: UIButton {
         }
     }
 
+    public func set(placeId: String, placeName: String, liked: Bool) {
+        self.placeName = placeName
+        self.placeId = placeId
+        self.liked = LikedPlaceManager.instance.isLiked(placeId: placeId, defaultLike: liked)
+    }
+
     @objc func onHeartButton(_ button: Any) {
         if let controller = self.controller {
             AccountAuthentication.requireAuthentication(controller: controller) { state in
@@ -764,8 +769,8 @@ class HeartButton: UIButton {
                 case .loggedIn:
                     if let placeId = self.placeId {
                         UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                        self.liked = !self.liked
-                        self.likedCallback?(placeId, self.liked)
+
+                        self.liked = LikedPlaceManager.instance.push(placeId: placeId, liked: !self.liked)
 
                         if self.liked {
                             MunchApi.collections.liked.put(placeId: placeId) { meta in
@@ -791,9 +796,9 @@ class HeartButton: UIButton {
 
                                 if let placeName = self.placeName {
                                     if let controller = self.controller as? PlaceViewController {
-                                        controller.contentView.makeToast("Unliked \(placeName)", image: UIImage(named: "RIP-Toast-Heart"), style: self.toastStyle)
+                                        controller.contentView.makeToast("Unliked \(placeName)", image: UIImage(named: "RIP-Toast-Close"), style: self.toastStyle)
                                     } else {
-                                        self.controller?.view.makeToast("Unliked \(placeName)", image: UIImage(named: "RIP-Toast-Heart"), style: self.toastStyle)
+                                        self.controller?.view.makeToast("Unliked \(placeName)", image: UIImage(named: "RIP-Toast-Close"), style: self.toastStyle)
                                     }
                                 }
                             }

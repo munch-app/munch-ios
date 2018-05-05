@@ -5,6 +5,35 @@
 
 import Foundation
 
-class LikedPlaceManager {
+import RealmSwift
+import SwiftyJSON
 
+fileprivate struct LikedPlaceState {
+    var placeId: String
+    var liked: Bool
+}
+
+class LikedPlaceManager {
+    static let instance = LikedPlaceManager()
+    private var stateHistory = [LikedPlaceState]()
+
+    public func push(placeId: String, liked: Bool) -> Bool {
+        stateHistory.append(.init(placeId: placeId, liked: liked))
+
+        if stateHistory.count > 10 {
+            stateHistory.remove(at: 0)
+        }
+
+        return liked
+    }
+
+    public func isLiked(placeId: String, defaultLike: Bool) -> Bool {
+        for history in stateHistory {
+            if history.placeId == placeId {
+                return history.liked
+            }
+        }
+
+        return defaultLike
+    }
 }

@@ -8,7 +8,7 @@ import UIKit
 
 import FirebaseAnalytics
 
-import NativePopup
+import Toast_Swift
 import NVActivityIndicatorView
 
 class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {

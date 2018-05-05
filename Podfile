@@ -33,7 +33,6 @@ target 'Munch' do
   pod 'NVActivityIndicatorView', '~> 4.0'
   pod 'ESTabBarController-swift', '2.5'
   pod 'TTGTagCollectionView', :git=> 'https://github.com/Fuxingloh/TTGTagCollectionView.git', :branch => 'master'
-  pod 'NativePopup', :git => 'https://github.com/Fuxingloh/NativePopup.git', :branch => 'master' # TODO Remove
 
   pod 'Charts'
   pod 'SKPhotoBrowser', '~> 5.0'
