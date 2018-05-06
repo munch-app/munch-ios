@@ -119,10 +119,10 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
     }
 
     @objc func onInfoClick() {
-        let alert = UIAlertController(title: "Munch Content Partner", message: "Open partner.munchapp.co?", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Munch Content Partner", message: "Open partner.munch.app?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(title: "Open", style: .default, handler: { action in
-            let safari = SFSafariViewController(url: URL(string: "https://partner.munchapp.co")!)
+            let safari = SFSafariViewController(url: URL(string: "https://partner.munch.app")!)
             safari.delegate = self
             self.controller.present(safari, animated: true, completion: nil)
         }))

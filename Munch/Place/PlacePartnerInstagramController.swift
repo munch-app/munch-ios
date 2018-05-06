@@ -8,6 +8,7 @@ import UIKit
 import SafariServices
 
 import SnapKit
+import SwiftyJSON
 import SwiftRichString
 import NVActivityIndicatorView
 import FirebaseAnalytics
@@ -18,7 +19,7 @@ class PlacePartnerInstagramController: UIViewController, UIGestureRecognizerDele
     fileprivate var cachedHeight = [Int: CGFloat]()
 
     fileprivate var medias: [InstagramMedia] = []
-    fileprivate var nextMaxSort: String? = nil
+    fileprivate var nextPlaceSort: String? = nil
 
     fileprivate let tableView: UITableView = {
         let tableView = UITableView()
@@ -37,11 +38,10 @@ class PlacePartnerInstagramController: UIViewController, UIGestureRecognizerDele
 
     private var headerView: PlaceHeaderView!
 
-    init(controller: PlaceViewController, medias: [InstagramMedia]) {
+    init(controller: PlaceViewController, medias: [InstagramMedia], nextPlaceSort: String?) {
         self.place = controller.place!
-
         self.medias = medias
-        self.nextMaxSort = medias.last?.placeSort
+        self.nextPlaceSort = nextPlaceSort
         super.init(nibName: nil, bundle: nil)
 
         self.headerView = PlaceHeaderView(controller: self, place: controller.place, liked: controller.liked)
@@ -150,16 +150,16 @@ extension PlacePartnerInstagramController {
     }
 
     private func appendLoad() {
-        if nextMaxSort != nil {
+        if nextPlaceSort != nil {
             let cell = self.tableView.cellForRow(at: .init(row: 0, section: 1)) as? PlacePartnerInstagramControllerCellLoading
             cell?.indicator.startAnimating()
 
-            MunchApi.places.getInstagram(id: self.place.id!, maxSort: nextMaxSort) { meta, medias, nextMaxSort in
+            MunchApi.places.getInstagram(id: self.place.id!, nextPlaceSort: self.nextPlaceSort) { meta, medias, nextPlaceSort in
                 if (meta.isOk()) {
                     self.medias.append(contentsOf: medias)
-                    self.nextMaxSort = nextMaxSort
+                    self.nextPlaceSort = nextPlaceSort
 
-                    if nextMaxSort == nil {
+                    if nextPlaceSort == nil {
                         cell?.indicator.stopAnimating()
                     }
                     self.tableView.reloadData()

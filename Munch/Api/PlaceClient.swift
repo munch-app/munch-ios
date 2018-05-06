@@ -32,25 +32,29 @@ class PlaceClient {
         }
     }
 
-    func getArticle(id: String, maxSort: String? = nil, size: Int = 20, callback: @escaping (_ meta: MetaJSON, _ articles: [Article], _ nextMaxSort: String?) -> Void) {
+    func getArticle(id: String, nextPlaceSort: String? = nil, size: Int = 20, callback: @escaping (_ meta: MetaJSON, _ articles: [Article], _ nextPlaceSort: String?) -> Void) {
         var params = Parameters()
-        params["maxSort"] = maxSort
         params["size"] = size
+        params["next.placeSort"] = nextPlaceSort
 
-        MunchApi.restful.get("/places/\(id)/partners/article", parameters: params) { meta, json in
+
+        MunchApi.restful.get("/places/\(id)/partners/articles", parameters: params) { meta, json in
             let contents = try? self.decoder.decode([Article].self, from: json["data"].rawData())
-            callback(meta, contents ?? [], json["nextMaxSort"].string)
+            let next = json["next"]["placeSort"].string
+            callback(meta, contents ?? [], next)
         }
     }
 
-    func getInstagram(id: String, maxSort: String? = nil, size: Int = 20, callback: @escaping (_ meta: MetaJSON, _ medias: [InstagramMedia], _ nextMaxSort: String?) -> Void) {
+    func getInstagram(id: String, nextPlaceSort: String? = nil,
+                      size: Int = 20, callback: @escaping (_ meta: MetaJSON, _ medias: [InstagramMedia], _ nextPlaceSort: String?) -> Void) {
         var params = Parameters()
-        params["maxSort"] = maxSort
         params["size"] = size
+        params["next.placeSort"] = nextPlaceSort
 
-        MunchApi.restful.get("/places/\(id)/partners/instagram", parameters: params) { meta, json in
+        MunchApi.restful.get("/places/\(id)/partners/instagram/medias", parameters: params) { meta, json in
             let contents = try? self.decoder.decode([InstagramMedia].self, from: json["data"].rawData())
-            callback(meta, contents ?? [], json["nextMaxSort"].string)
+            let next = json["next"]["placeSort"].string
+            callback(meta, contents ?? [], next)
         }
     }
 }
@@ -75,8 +79,12 @@ struct PlaceCard {
         self.data = json["data"]
     }
 
-    func decode<T>(_ type: T.Type) -> T? where T : Decodable {
+    func decode<T>(_ type: T.Type) -> T? where T: Decodable {
         return try? PlaceCard.decoder.decode(type, from: data.rawData())
+    }
+
+    func decode<T>(name: String, _ type: T.Type) -> T? where T: Decodable {
+        return try? PlaceCard.decoder.decode(type, from: data[name].rawData())
     }
 
     /**
@@ -402,14 +410,13 @@ struct Place: SearchResult, Equatable {
                         }
 
                         // Is Open
-                        if toOpening <= 0 && toClosing > 0{
+                        if toOpening <= 0 && toClosing > 0 {
                             // Is Closing
                             if toClosing <= 30 {
                                 return .closing
                             }
                             return .open
                         }
-
 
 
                     }

@@ -194,12 +194,11 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
         case .logout:
             self.logout()
         case .instagramConnect:
-            // Safari http://partner.munchapp.co
-            let safari = SFSafariViewController(url: URL(string: "http://partner.munchapp.co")!)
+            let safari = SFSafariViewController(url: URL(string: "https://partner.munch.app")!)
             safari.delegate = self
             present(safari, animated: true, completion: nil)
         case .feedback:
-            if let url = URL(string: "mailto:feedback@munchapp.co") {
+            if let url = URL(string: "mailto:feedback@munch.space") {
                 UIApplication.shared.open(url)
             }
         default:

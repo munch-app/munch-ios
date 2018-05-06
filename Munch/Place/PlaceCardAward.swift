@@ -30,7 +30,7 @@ class PlaceExtendedPlaceAwardCard: PlaceCardView {
     private var awardList = [JSON]()
 
     override func didLoad(card: PlaceCard) {
-        self.awardList = card.data.array ?? []
+        self.awardList = card.data["contents"].array ?? []
         self.addSubview(collectionView)
 
         self.collectionView.delegate = self
@@ -56,7 +56,7 @@ class PlaceExtendedPlaceAwardCard: PlaceCardView {
     }
 
     override class var cardId: String? {
-        return "extended_PlaceAward_20180305"
+        return "extended_PlaceAward_20180506"
     }
 }
 

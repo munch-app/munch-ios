@@ -18,7 +18,7 @@ class PlacePartnerArticleController: UIViewController, UIGestureRecognizerDelega
     fileprivate var cachedHeight = [Int: CGFloat]()
 
     fileprivate var articles: [Article] = []
-    fileprivate var nextMaxSort: String? = nil
+    fileprivate var nextPlaceSort: String?
 
     fileprivate let tableView: UITableView = {
         let tableView = UITableView()
@@ -37,10 +37,10 @@ class PlacePartnerArticleController: UIViewController, UIGestureRecognizerDelega
 
     private var headerView: PlaceHeaderView!
 
-    init(controller: PlaceViewController, articles: [Article]) {
+    init(controller: PlaceViewController, articles: [Article], nextPlaceSort: String?) {
         self.place = controller.place!
         self.articles = articles
-        self.nextMaxSort = articles.last?.placeSort
+        self.nextPlaceSort = nextPlaceSort
         super.init(nibName: nil, bundle: nil)
 
         self.headerView = PlaceHeaderView(controller: self, place: controller.place, liked: controller.liked)
@@ -150,16 +150,16 @@ extension PlacePartnerArticleController {
 
 
     private func appendLoad() {
-        if nextMaxSort != nil {
+        if nextPlaceSort != nil {
             let cell = self.tableView.cellForRow(at: .init(row: 0, section: 1)) as? PlacePartnerArticleControllerCellLoading
             cell?.indicator.startAnimating()
 
-            MunchApi.places.getArticle(id: self.place.id!, maxSort: nextMaxSort) { meta, articles, nextMaxSort in
+            MunchApi.places.getArticle(id: self.place.id!, nextPlaceSort: self.nextPlaceSort) { meta, articles, nextPlaceSort in
                 if (meta.isOk()) {
                     self.articles.append(contentsOf: articles)
-                    self.nextMaxSort = nextMaxSort
+                    self.nextPlaceSort = nextPlaceSort
 
-                    if nextMaxSort == nil {
+                    if nextPlaceSort == nil {
                         cell?.indicator.stopAnimating()
                     }
                     self.tableView.reloadData()

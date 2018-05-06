@@ -7,9 +7,10 @@ import Foundation
 import UIKit
 import SafariServices
 
-import SnapKit
-import SwiftyJSON
 import FirebaseAnalytics
+import SnapKit
+
+import SwiftyJSON
 
 class PlaceHeaderPartnerContentCard: PlaceTitleCardView {
     override func didLoad(card: PlaceCard) {
@@ -51,9 +52,12 @@ class PlacePartnerArticleCard: PlaceCardView {
         return button
     }()
     private var articles: [Article] = []
+    private var nextPlaceSort: String?
 
     override func didLoad(card: PlaceCard) {
-        self.articles = card.decode([Article].self) ?? []
+        self.articles = card.decode(name: "contents", [Article].self) ?? []
+        self.nextPlaceSort = card["next"]["placeSort"].string
+
         self.addSubview(collectionView)
         self.addSubview(showButton)
 
@@ -76,12 +80,12 @@ class PlacePartnerArticleCard: PlaceCardView {
     }
 
     @objc func onShowButton(_ sender: Any) {
-        let controller = PlacePartnerArticleController(controller: self.controller, articles: self.articles)
+        let controller = PlacePartnerArticleController(controller: self.controller, articles: self.articles, nextPlaceSort: nextPlaceSort)
         self.controller.navigationController!.pushViewController(controller, animated: true)
     }
 
     override class var cardId: String? {
-        return "extended_PartnerArticle_20180427"
+        return "extended_PartnerArticle_20180506"
     }
 }
 
@@ -297,9 +301,12 @@ class PlacePartnerInstagramCard: PlaceCardView {
         return button
     }()
     private var medias: [InstagramMedia] = []
+    private var nextPlaceSort: String?
 
     override func didLoad(card: PlaceCard) {
-        self.medias = card.decode([InstagramMedia].self) ?? []
+        self.medias = card.decode(name: "contents", [InstagramMedia].self) ?? []
+        self.nextPlaceSort = card["next"]["placeSort"].string
+
         self.addSubview(collectionView)
         self.addSubview(showButton)
 
@@ -322,12 +329,12 @@ class PlacePartnerInstagramCard: PlaceCardView {
     }
 
     @objc func onShowButton(_ sender: Any) {
-        let controller = PlacePartnerInstagramController(controller: self.controller, medias: self.medias)
+        let controller = PlacePartnerInstagramController(controller: self.controller, medias: self.medias, nextPlaceSort: nextPlaceSort)
         self.controller.navigationController!.pushViewController(controller, animated: true)
     }
 
     override class var cardId: String? {
-        return "extended_PartnerInstagramMedia_20180427"
+        return "extended_PartnerInstagramMedia_20180506"
     }
 }
 
@@ -348,7 +355,7 @@ extension PlacePartnerInstagramCard: UICollectionViewDataSource, UICollectionVie
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let controller = PlacePartnerInstagramController(controller: self.controller, medias: self.medias)
+        let controller = PlacePartnerInstagramController(controller: self.controller, medias: self.medias, nextPlaceSort: nextPlaceSort)
         self.controller.navigationController!.pushViewController(controller, animated: true)
 
         Analytics.logEvent("rip_action", parameters: [
