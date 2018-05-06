@@ -49,19 +49,11 @@ extension UILabel {
     }
 
     class func textWidth(font: UIFont, text: String) -> CGFloat {
-        let myText = text as NSString
-
-        let rect = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        let labelSize = myText.boundingRect(with: rect, options: .usesLineFragmentOrigin, attributes: [NSAttributedStringKey.font: font], context: nil)
-        return ceil(labelSize.width)
+        return textSize(font: font, text: text).width
     }
 
-    class func textSize(font: UIFont, text: String) -> CGSize {
-        let myText = text as NSString
-
-        let rect = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        let labelSize = myText.boundingRect(with: rect, options: .usesLineFragmentOrigin, attributes: [NSAttributedStringKey.font: font], context: nil)
-        return labelSize.size
+    class func textHeight(withWidth width: CGFloat, font: UIFont, text: String) -> CGFloat {
+        return textSize(font: font, text: text, width: width).height
     }
 
     class func textSize(font: UIFont, text: String, extra: CGSize) -> CGSize {
@@ -69,6 +61,14 @@ extension UILabel {
         size.width = size.width + extra.width
         size.height = size.height + extra.height
         return size
+    }
+
+    class func textSize(font: UIFont, text: String, width: CGFloat = .greatestFiniteMagnitude, height: CGFloat = .greatestFiniteMagnitude) -> CGSize {
+        let myText = text as NSString
+
+        let rect = CGSize(width: width, height: height)
+        let labelSize = myText.boundingRect(with: rect, options: .usesLineFragmentOrigin, attributes: [NSAttributedStringKey.font: font], context: nil)
+        return labelSize.size
     }
 }
 

@@ -33,8 +33,10 @@ class DiscoverNavigationalController: UINavigationController, UINavigationContro
     }
 }
 
-class DiscoverController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class DiscoverController: UIViewController {
     let cardTableView = UITableView()
+    var cardTypes = [String: SearchCardView.Type]()
+
     let headerView = DiscoverHeaderView()
     private let refreshControl = UIRefreshControl()
     let imageSize: (Int, Int) = {
@@ -286,10 +288,11 @@ class DiscoverController: UIViewController, UITableViewDelegate, UITableViewData
 }
 
 // Card CollectionView
-extension DiscoverController {
+extension DiscoverController: UITableViewDelegate, UITableViewDataSource {
     private func registerCards() {
         func register(_ cellClass: SearchCardView.Type) {
             cardTableView.register(cellClass as? Swift.AnyClass, forCellReuseIdentifier: cellClass.cardId)
+            cardTypes[cellClass.cardId] = cellClass
         }
 
         // Register Static Cards
@@ -340,7 +343,6 @@ extension DiscoverController {
         case 0:
             return cardTableView.dequeueReusableCell(withIdentifier: SearchStaticTopCard.cardId)!
         case 1:
-            // Index out of bound in debug mode
             if let card = cards.get(indexPath.row) {
                 if let cardView = cardTableView.dequeueReusableCell(withIdentifier: card.cardId) {
                     return cardView
@@ -357,12 +359,11 @@ extension DiscoverController {
         return cardTableView.dequeueReusableCell(withIdentifier: SearchStaticEmptyCard.cardId)!
     }
 
-    func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
         case 1:
-            // Improve performance for this card
-            if let card = cards.get(indexPath.row), card.cardId == DiscoverPlaceCard.cardId {
-                return UIScreen.main.bounds.width * 0.888
+            if let card = cards.get(indexPath.row), let type = cardTypes[card.cardId] {
+                return type.height(card: card)
             }
         default: break
         }

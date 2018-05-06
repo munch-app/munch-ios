@@ -59,6 +59,10 @@ class SearchNewPlaceCard: UITableViewCell, SearchCardView {
         }
     }
 
+    static func height(card: SearchCard) -> CGFloat {
+        return UIScreen.main.bounds.width * 0.888
+    }
+
     func render(card: SearchCard, controller: DiscoverController) {
         if self.card?.instanceId == card.instanceId {
             return

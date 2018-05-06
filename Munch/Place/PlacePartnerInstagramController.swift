@@ -238,9 +238,9 @@ fileprivate class PlacePartnerInstagramControllerCell: UITableViewCell {
 
         bannerImageView.snp.makeConstraints { (make) in
             make.left.right.equalTo(containerView)
-            make.top.equalTo(containerView).priority(999)
+            make.top.equalTo(containerView)
 
-            make.height.greaterThanOrEqualTo(UIScreen.main.bounds.width / 2)
+            make.height.greaterThanOrEqualTo(UIScreen.main.bounds.width / 2).priority(999)
         }
 
         descriptionLabel.snp.makeConstraints { make in

@@ -120,6 +120,12 @@ protocol SearchCardView {
     var leftRight: CGFloat { get }
     var topBottom: CGFloat { get }
 
+    static var leftRight: CGFloat { get }
+    static var topBottom: CGFloat { get }
+
+    // Height for card view
+    static func height(card: SearchCard) -> CGFloat
+
     static var cardId: String { get }
 }
 
@@ -130,6 +136,23 @@ extension SearchCardView {
 
     var topBottom: CGFloat {
         return 16.0
+    }
+
+    static var leftRight: CGFloat {
+        return 24.0
+    }
+
+    static var topBottom: CGFloat {
+        return 16.0
+    }
+
+    static var width: CGFloat {
+        return UIScreen.main.bounds.width
+    }
+
+    // Default: Autosizing
+    static func height(card: SearchCard) -> CGFloat {
+        return UITableViewAutomaticDimension
     }
 
     static var card: SearchCard {

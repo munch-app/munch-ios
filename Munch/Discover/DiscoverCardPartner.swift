@@ -11,13 +11,13 @@ import SnapKit
 import SwiftyJSON
 
 class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewControllerDelegate {
+    private static let titleFont = UIFont.systemFont(ofSize: 18.0, weight: .medium)
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 13.0, weight: .medium)
+        label.font = titleFont
         label.textColor = .white
         label.backgroundColor = .clear
-        label.numberOfLines = 2
-        label.text = " "
+        label.numberOfLines = 0
         return label
     }()
     private let infoButton: UIButton = {
@@ -57,6 +57,7 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
     private var contents = [InstagramPartnerCardContent]()
     private var card: SearchCard?
     private var username: String?
+    private var heightContraint: Constraint!
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -72,9 +73,8 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
 
         titleLabel.snp.makeConstraints { make in
             make.left.equalTo(self).inset(leftRight)
-            make.right.equalTo(infoButton.snp.left).inset(-12)
+            make.right.equalTo(infoButton.snp.left).inset(-10)
             make.top.equalTo(self).inset(topBottom)
-            make.height.equalTo(32)
         }
 
         infoButton.snp.makeConstraints { make in
@@ -100,10 +100,17 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
         actionButton.addTarget(self, action: #selector(onActionClick), for: .touchUpInside)
     }
 
+    static func height(card: SearchCard) -> CGFloat {
+        // Title Label + CollectionView + Action Button
+        let title = card.dict(name: "title") as? String ?? " "
+        let titleWidth = width - (leftRight + 10 + 20 + leftRight)
+
+        return topBottom + UILabel.textHeight(withWidth: titleWidth, font: titleFont, text: title) // Title Label
+                + topBottom + collectionHeight // Collection View
+                + 24 + 42 + topBottom // Action Button
+    }
+
     func render(card: SearchCard, controller: DiscoverController) {
-        if self.card?.instanceId == card.instanceId {
-            return
-        }
         self.controller = controller
         self.card = card
 
@@ -113,9 +120,13 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
             self.actionButton.setTitle("More from @\(username)", for: .normal)
         }
 
+
         self.contents = card.decode(name: "contents", [InstagramPartnerCardContent].self) ?? []
-        self.collectionView.setContentOffset(.zero, animated: false)
         self.collectionView.reloadData()
+
+        if self.card?.instanceId != card.instanceId {
+            self.collectionView.setContentOffset(.zero, animated: false)
+        }
     }
 
     @objc func onInfoClick() {
