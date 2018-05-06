@@ -172,9 +172,13 @@ extension PlacePartnerArticleController {
 }
 
 fileprivate class PlacePartnerArticleControllerCell: UITableViewCell {
-    private let bannerImageView: ScaledHeightShimmerImageView = {
-        let imageView = ScaledHeightShimmerImageView()
+    static let imageHeight = UIScreen.main.bounds.width / 3
+    let bannerImageView: ShimmerImageView = {
+        let imageView = ShimmerImageView()
         imageView.tintColor = .white
+
+        let width = Int(UIScreen.main.bounds.width - 48)
+        imageView.size = (width, Int(imageHeight))
         return imageView
     }()
     private let authorLabel: UIButton = {
@@ -253,7 +257,7 @@ fileprivate class PlacePartnerArticleControllerCell: UITableViewCell {
             make.left.right.equalTo(containerView)
             make.top.equalTo(containerView).priority(999)
 
-            make.height.greaterThanOrEqualTo(UIScreen.main.bounds.width / 4)
+            make.height.equalTo(PlacePartnerArticleControllerCell.imageHeight)
         }
 
         authorLabel.snp.makeConstraints { make in

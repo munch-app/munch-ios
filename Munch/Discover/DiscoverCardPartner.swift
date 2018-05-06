@@ -86,7 +86,7 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
         collectionView.snp.makeConstraints { make in
             make.left.right.equalTo(self)
             make.top.equalTo(titleLabel.snp.bottom).inset(-topBottom)
-            make.height.equalTo(SearchInstagramPartnerCard.collectionHeight)
+            make.height.equalTo(SearchInstagramPartnerCard.collectionHeight + 1)
         }
 
         actionButton.snp.makeConstraints { make in

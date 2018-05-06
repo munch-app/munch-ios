@@ -172,9 +172,12 @@ extension PlacePartnerInstagramController {
 }
 
 fileprivate class PlacePartnerInstagramControllerCell: UITableViewCell {
-    private let bannerImageView: ScaledHeightShimmerImageView = {
-        let imageView = ScaledHeightShimmerImageView()
+    let bannerImageView: ShimmerImageView = {
+        let imageView = ShimmerImageView()
         imageView.tintColor = .white
+
+        let width = Int(UIScreen.main.bounds.width - 48)
+        imageView.size = (width, width)
         return imageView
     }()
     private let authorLabel: UIButton = {
@@ -239,8 +242,7 @@ fileprivate class PlacePartnerInstagramControllerCell: UITableViewCell {
         bannerImageView.snp.makeConstraints { (make) in
             make.left.right.equalTo(containerView)
             make.top.equalTo(containerView)
-
-            make.height.greaterThanOrEqualTo(UIScreen.main.bounds.width / 2).priority(999)
+            make.height.equalTo(UIScreen.main.bounds.width - 48)
         }
 
         descriptionLabel.snp.makeConstraints { make in
@@ -260,9 +262,6 @@ fileprivate class PlacePartnerInstagramControllerCell: UITableViewCell {
             if image == nil {
                 self.bannerImageView.render(named: "RIP-No-Image")
             }
-
-//            controller.tableView.reloadRows(at: [indexPath], with: .none)
-//            controller.cachedHeight[indexPath.row] = self.bounds.height
         }
 
         authorLabel.setTitle("@\(media.username ?? "")", for: .normal)
