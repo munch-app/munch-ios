@@ -16,7 +16,7 @@ class PlaceSuggestEditCard: PlaceCardView, SFSafariViewControllerDelegate {
     let separatorLine = UIView()
     let button: UIButton = {
         let button = UIButton()
-        button.setTitle("Suggest an edit", for: .normal)
+        button.setTitle("Suggest Edits", for: .normal)
         button.setTitleColor(UIColor.black.withAlphaComponent(0.85), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
         button.isUserInteractionEnabled = false
