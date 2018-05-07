@@ -359,7 +359,7 @@ extension DiscoverController: UITableViewDelegate, UITableViewDataSource {
         return cardTableView.dequeueReusableCell(withIdentifier: SearchStaticEmptyCard.cardId)!
     }
 
-    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
         case 1:
             if let card = cards.get(indexPath.row), let type = cardTypes[card.cardId] {

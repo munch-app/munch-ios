@@ -291,9 +291,9 @@ class PlaceHeaderView: UIView {
                     let controller = CollectionSelectRootController(placeId: placeId) { placeCollection in
                         if let collection = placeCollection, let name = collection.name, let placeName = self.place?.name {
                             if let controller = self.controller as? PlaceViewController {
-                                controller.contentView.makeToast("Added \(placeName) to \(name) collection.", image: UIImage(named: "RIP-Toast-Checkmark"), style: self.toastStyle)
+                                controller.contentView.makeToast("Added \(placeName) to '\(name)' collection.", image: UIImage(named: "RIP-Toast-Checkmark"), style: self.toastStyle)
                             } else {
-                                self.controller.view.makeToast("Added \(placeName) to \(name) collection.", image: UIImage(named: "RIP-Toast-Close"), style: self.toastStyle)
+                                self.controller.view.makeToast("Added \(placeName) to '\(name)' collection.", image: UIImage(named: "RIP-Toast-Checkmark"), style: self.toastStyle)
                             }
 
                         }

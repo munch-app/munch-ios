@@ -49,14 +49,14 @@ class SearchCardManager {
         if MunchLocation.isEnabled {
             MunchLocation.waitFor(completion: { latLng, error in
                 if let error = error {
-                    let meta = MetaJSON.error(type: "Location Error", message: error.localizedDescription)
+                    let meta = MetaJSON.error(type: "No Location Detected", message: "Try refreshing or moving to another spot.")
                     self.cards = [SearchStaticErrorCard.create(meta: meta)]
                     completion(meta, self)
                 } else if let latLng = latLng {
                     self.query?.latLng = latLng
                     search()
                 } else {
-                    let meta = MetaJSON.error(type: "Location Error", message: "No Error or Location Data")
+                    let meta = MetaJSON.error(type: "No Location Detected", message: "Try refreshing or moving to another spot.")
                     self.cards = [SearchStaticErrorCard.create(meta: meta)]
                     completion(meta, self)
                 }

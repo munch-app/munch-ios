@@ -93,6 +93,7 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
             make.left.equalTo(self).inset(24)
             make.right.lessThanOrEqualTo(self).inset(24)
             make.top.equalTo(collectionView.snp.bottom).inset(-24)
+            make.height.equalTo(42)
             make.bottom.equalTo(self).inset(topBottom)
         }
 
@@ -104,8 +105,9 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
         // Title Label + CollectionView + Action Button
         let title = card.dict(name: "title") as? String ?? " "
         let titleWidth = width - (leftRight + 10 + 20 + leftRight)
+        let titleHeight = UILabel.textHeight(withWidth: titleWidth, font: titleFont, text: title)
 
-        return topBottom + UILabel.textHeight(withWidth: titleWidth, font: titleFont, text: title) // Title Label
+        return topBottom + ceil(titleHeight) + 1 // Title Label
                 + topBottom + collectionHeight // Collection View
                 + 24 + 42 + topBottom // Action Button
     }

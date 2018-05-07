@@ -197,7 +197,7 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
         MunchApi.collections.deletePlace(collectionId: self.collectionId, placeId: placeId) { metaJSON in
             if metaJSON.isOk() {
                 if let collection = self.placeCollection, let name = collection.name {
-                    self.view.makeToast("Removed \(placeName) from \(name) collection.", image: UIImage(named: "RIP-Toast-Close"), style: self.toastStyle)
+                    self.view.makeToast("Removed \(placeName) from '\(name)' collection.", image: UIImage(named: "RIP-Toast-Close"), style: self.toastStyle)
                 }
                 self.addedPlaces = []
                 self.collectionView.reloadData()
