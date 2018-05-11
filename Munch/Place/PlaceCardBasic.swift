@@ -196,6 +196,7 @@ class PlaceBasicClosedCard: PlaceCardView {
 }
 
 class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
+    private static let size = CGSize(width: 18, height: 8)
     let nameLabel: UILabel = {
         let nameLabel = UILabel()
         nameLabel.font = UIFont.systemFont(ofSize: 26.0, weight: .medium)
@@ -277,18 +278,18 @@ class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
             tagSelectedBackgroundColor = UIColor.bgTag
             tagSelectedCornerRadius = 3
 
-            tagExtraSpace = CGSize(width: 18, height: 8)
+            tagExtraSpace = PlaceBasicNameTagCard.size
         }
     }
 
     private func numberOfLines(tags: [String]) -> Int {
         let font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
-        let workingWidth = UIScreen.main.bounds.width - 48
+        let workingWidth = UIScreen.main.bounds.width - (leftRight * 2)
 
         var lines = 0
         var currentRemaining: CGFloat = 0
         for tag in tags {
-            let width = UILabel.textWidth(font: font, text: tag) + 15
+            let width = UILabel.textSize(font: font, text: tag, extra: PlaceBasicNameTagCard.size).width
             if currentRemaining - width <= 0 {
                 // Not Enough Space, New Line
                 lines += 1
