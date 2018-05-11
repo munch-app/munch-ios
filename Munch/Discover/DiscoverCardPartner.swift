@@ -7,6 +7,8 @@ import Foundation
 import UIKit
 import SafariServices
 
+import FirebaseAnalytics
+
 import SnapKit
 import SwiftyJSON
 
@@ -138,6 +140,11 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
             let safari = SFSafariViewController(url: URL(string: "https://partner.munch.app")!)
             safari.delegate = self
             self.controller.present(safari, animated: true, completion: nil)
+
+            Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
+                AnalyticsParameterItemID: "partner-ig-\(self.username ?? "")" as NSObject,
+                AnalyticsParameterContentType: "discover_partner_info" as NSObject
+            ])
         }))
         controller.present(alert, animated: true, completion: nil)
     }
@@ -147,6 +154,11 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
             let safari = SFSafariViewController(url: url)
             safari.delegate = self
             controller.present(safari, animated: true, completion: nil)
+
+            Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
+                AnalyticsParameterItemID: "partner-ig-\(self.username ?? "")" as NSObject,
+                AnalyticsParameterContentType: "discover_partner_more_from" as NSObject
+            ])
         }
     }
 
