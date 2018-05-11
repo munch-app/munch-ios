@@ -247,6 +247,7 @@ class SearchCellAssumptionQueryResult: UITableViewCell {
         }
 
         self.collectionView.reloadData()
+        self.collectionView.setContentOffset(.zero, animated: false)
 
         let title = DiscoverFilterBottomView.countTitle(count: queryResult.count, prefix: "Show all")
         applyButton.setTitle(title, for: .normal)
@@ -581,7 +582,9 @@ class SearchCellRecentlyViewed: UITableViewCell {
                 .compactMap({ $1 })
                 .compactMap({ SearchClient.parseResult(result: $0) })
                 .compactMap({ $0 as? Place })
+
         self.collectionView.reloadData()
+        self.collectionView.setContentOffset(.zero, animated: false)
 
         if places.isEmpty {
             labelView.isHidden = true
