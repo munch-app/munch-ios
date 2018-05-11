@@ -27,6 +27,7 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
     }()
 
     var userId: String?
+    var publicContent: Bool
     let collectionId: String
 
     var placeCollection: PlaceCollection?
@@ -59,18 +60,22 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
     init(collectionId: String) {
         self.userId = nil
         self.collectionId = collectionId
+        self.publicContent = true
         super.init(nibName: nil, bundle: nil)
     }
 
     init(collectionId: String, placeCollection: PlaceCollection) {
         self.collectionId = collectionId
         self.placeCollection = placeCollection
+        self.userId = placeCollection.userId
+        self.publicContent = self.userId != UserAccount.sub
         super.init(nibName: nil, bundle: nil)
     }
 
     init(userId: String, collectionId: String) {
         self.userId = userId
         self.collectionId = collectionId
+        self.publicContent = self.userId != UserAccount.sub
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -102,7 +107,7 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
         self.headerView.editButton.addTarget(self, action: #selector(actionEdit(_:)), for: .touchUpInside)
 
 
-        if let userId = self.userId, UserAccount.sub != userId {
+        if publicContent {
             // Load Public
             self.headerView.editButton.isHidden = true
 
@@ -160,9 +165,10 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
     }
 
     @objc func actionEdit(_ sender: Any) {
-        guard UserAccount.sub == userId else {
+        if publicContent {
             return
         }
+
         let alert = UIAlertController(title: "Edit Collection", message: "Enter a new name for this collection", preferredStyle: .alert)
         alert.addTextField { textField in
             textField.text = nil
@@ -467,10 +473,7 @@ fileprivate class CollectionPlaceCollectionCell: UICollectionViewCell {
         imageView.render(sourcedImage: addedPlace.place.images?.get(0))
         nameLabel.text = addedPlace.place.name
 
-        if controller.userId != nil {
-            editLabel.isHidden = true
-            editLabel.isUserInteractionEnabled = false
-        }
+        editLabel.isHidden = controller.publicContent
     }
 
     @objc func onEditButton(_ sender: Any) {
