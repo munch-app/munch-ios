@@ -27,7 +27,7 @@ class SearchClient {
             query.latLng = MunchLocation.lastLatLng
             params["query"] = query.toParams()
 
-            MunchApi.restful.post("/search", parameters: params) { meta, json in
+            MunchApi.restful.post("/search/search", parameters: params) { meta, json in
                 let data = json["data"]
                 let suggests = data["suggests"].compactMap({ $0.1.string })
                 let assumptions = data["assumptions"].compactMap({ AssumptionQueryResult(json: $0.1) })

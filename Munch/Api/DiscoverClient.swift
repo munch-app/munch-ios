@@ -17,7 +17,7 @@ class DiscoverClient {
     let filter = FilterClient()
 
     func discover(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ results: [SearchCard]) -> Void) {
-        MunchApi.restful.post("/discover", parameters: query.toParams()) { meta, json in
+        MunchApi.restful.post("/search", parameters: query.toParams()) { meta, json in
             callback(meta, json["data"].map({ SearchCard(json: $0.1) }))
         }
     }
@@ -30,7 +30,7 @@ class DiscoverClient {
             var query = query
             query.latLng = MunchLocation.lastLatLng
 
-            MunchApi.restful.post("/discover/filter/count", parameters: query.toParams()) { meta, json in
+            MunchApi.restful.post("/search/filter/count", parameters: query.toParams()) { meta, json in
                 if meta.isOk() {
                     let filterData = try! self.decoder.decode(FilterCount.self, from: json["data"].rawData())
                     callback(meta, filterData)
@@ -44,7 +44,7 @@ class DiscoverClient {
             var query = query
             query.latLng = MunchLocation.lastLatLng
 
-            MunchApi.restful.post("/discover/filter/price", parameters: query.toParams()) { meta, json in
+            MunchApi.restful.post("/search/filter/price", parameters: query.toParams()) { meta, json in
                 guard meta.isOk() else {
                     callback(meta, nil)
                     return
@@ -83,7 +83,7 @@ class DiscoverClient {
                 }
 
 
-                MunchApi.restful.get("/discover/filter/locations/list") { meta, json in
+                MunchApi.restful.get("/search/filter/locations/list") { meta, json in
                     guard meta.isOk() else {
                         callback(meta, [], [])
                         return
@@ -112,7 +112,7 @@ class DiscoverClient {
             }
 
             func search(text: String, callback: @escaping (_ meta: MetaJSON, _ results: [SearchResult]) -> Void) {
-                MunchApi.restful.get("/discover/filter/locations/search", parameters: ["text": text]) { meta, json in
+                MunchApi.restful.get("/search/filter/locations/search", parameters: ["text": text]) { meta, json in
                     callback(meta, json["data"].compactMap({ SearchClient.parseResult(result: $0.1) }))
                 }
             }
