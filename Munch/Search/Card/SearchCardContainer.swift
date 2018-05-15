@@ -186,11 +186,12 @@ extension SearchContainersCard: UICollectionViewDataSource, UICollectionViewDele
 }
 
 class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
+    static let contentWidth = width - (leftRight + leftRight)
     static let nameFont = UIFont.systemFont(ofSize: 21.0, weight: .medium)
     static let descriptionFont = UIFont.systemFont(ofSize: 15.0, weight: .regular)
     static let imageSize: CGSize = {
         let imageWidth = width - leftRight - leftRight
-        return CGSize(width: imageWidth, height: imageWidth/3.3)
+        return CGSize(width: imageWidth, height: imageWidth / 3.3)
     }()
 
     private let topImageView: ShimmerImageView = {
@@ -218,8 +219,8 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
     private let hourLineView = HourLineView()
     private let grid = UIView()
 
-    private var addressConstraint: Constraint!
-    private var hourConstraint: Constraint!
+    private var descriptionAddressConstraint: Constraint!
+    private var imageAddressConstraint: Constraint!
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -251,23 +252,19 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
         descriptionLabel.snp.makeConstraints { make in
             make.left.right.equalTo(grid)
             make.top.equalTo(topImageView.snp.bottom).inset(-8)
-            self.addressConstraint = make.bottom.equalTo(addressLineView.snp.top).inset(-8).constraint
-            self.hourConstraint = make.bottom.equalTo(hourLineView.snp.top).inset(-8).constraint
         }
-
-        self.hourConstraint.deactivate()
-        self.addressConstraint.deactivate()
 
         addressLineView.snp.makeConstraints { make in
             make.left.right.equalTo(grid)
             make.height.equalTo(AddressLineView.height).priority(999)
-            make.bottom.equalTo(grid)
+            make.top.greaterThanOrEqualTo(topImageView.snp.bottom).inset(-8).priority(999)
+            self.descriptionAddressConstraint = make.top.equalTo(descriptionLabel.snp.bottom).inset(-8).priority(1000).constraint
         }
 
         hourLineView.snp.makeConstraints { make in
             make.left.right.equalTo(grid)
             make.height.equalTo(AddressLineView.height).priority(999)
-            make.bottom.equalTo(addressLineView.snp.top)
+            make.bottom.equalTo(grid)
         }
     }
 
@@ -276,10 +273,16 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
         topImageView.render(sourcedImage: images.get(0))
 
         nameLabel.text = card.string(name: "name")
-        descriptionLabel.text = card.string(name: "description")
+        if let description = card.string(name: "description") {
+            descriptionLabel.text = description
+            let lines = descriptionLabel.countLines(width: SearchContainerHeaderCard.contentWidth)
+            descriptionLabel.numberOfLines = lines > 3 ? 3 : lines
 
-        self.addressConstraint.deactivate()
-        self.hourConstraint.deactivate()
+            descriptionAddressConstraint.activate()
+        } else {
+            descriptionAddressConstraint.deactivate()
+            descriptionLabel.text = nil
+        }
 
         // Address Line
         if let address = card.string(name: "address"), let latLng = card.string(name: "latLng"), let count = card.int(name: "count") {
@@ -296,17 +299,8 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
         if !hours.isEmpty {
             self.hourLineView.hours = hours
             self.hourLineView.isHidden = false
-
-            self.hourConstraint.activate()
         } else {
             self.hourLineView.isHidden = true
-        }
-
-        if !addressLineView.isHidden {
-            self.addressConstraint.activate()
-        }
-        if !hourLineView.isHidden {
-            self.hourConstraint.activate()
         }
     }
 

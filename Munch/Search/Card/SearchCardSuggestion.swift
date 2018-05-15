@@ -14,9 +14,12 @@ import SwiftRichString
 import SwiftyJSON
 
 class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
+    private static let titleFont = UIFont.systemFont(ofSize: 20.0, weight: .medium)
     private let titleLabel: SearchHeaderCardLabel = {
         let label = SearchHeaderCardLabel()
+        label.font = titleFont
         label.textColor = .white
+        label.numberOfLines = 0
         return label
     }()
     private static let tagSize = CGSize(width: 120, height: 70)
@@ -63,9 +66,11 @@ class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
 
     func render(card: SearchCard, controller: DiscoverController) {
         if let locationName = card.string(name: "locationName") {
-            self.titleLabel.text = "Popular in '\(locationName)'"
+            let text = "Having trouble finding a place to eat? Here are some suggestions of popular places in \(locationName)"
+            self.titleLabel.text = text
         } else {
-            self.titleLabel.text = "Popular Nearby"
+            let text = "Having trouble finding a place to eat? Here are some suggestions of popular places nearby."
+            self.titleLabel.text = text
         }
 
         self.controller = controller
@@ -78,6 +83,20 @@ class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
 
         self.collectionView.setContentOffset(.zero, animated: false)
         self.collectionView.reloadData()
+    }
+
+    class func height(card: SearchCard) -> CGFloat {
+        let height = tagSize.height + topBottom * 3
+
+        let titleWidth = width - (leftRight + leftRight)
+
+        if let locationName = card.string(name: "locationName") {
+            let text = "Having trouble finding a place to eat? Here are some suggestions of popular places in \(locationName)"
+            return UILabel.textHeight(withWidth: titleWidth, font: titleFont, text: text) + height
+        } else {
+            let text = "Having trouble finding a place to eat? Here are some suggestions of popular places nearby."
+            return UILabel.textHeight(withWidth: titleWidth, font: titleFont, text: text) + height
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
