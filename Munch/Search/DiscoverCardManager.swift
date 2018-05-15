@@ -48,7 +48,7 @@ class SearchCardManager {
         // Check if Location is Enabled, Inject Location
         if MunchLocation.isEnabled {
             MunchLocation.waitFor(completion: { latLng, error in
-                if let error = error {
+                if error != nil {
                     let meta = MetaJSON.error(type: "No Location Detected", message: "Try refreshing or moving to another spot.")
                     self.cards = [SearchStaticErrorCard.create(meta: meta)]
                     completion(meta, self)

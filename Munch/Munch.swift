@@ -158,10 +158,23 @@ extension UIColor {
 
 // Need to deprecate this class, giving me headaches
 public class MunchImageView: UIImageView {
-    var size: (Int, Int)?
-    var images: [(Int, Int, String)]?
+    var size: CGSize?
+    var images: [(CGSize, String)]?
     var rendered = false
     var completionHandler: CompletionHandler?
+    let overlay = UIView()
+
+    public override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        self.addSubview(overlay)
+        overlay.snp.makeConstraints { make in
+            make.edges.equalTo(self)
+        }
+    }
+
+    public required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     func render(named: String) {
         self.image = UIImage(named: named)
@@ -195,7 +208,7 @@ public class MunchImageView: UIImageView {
 
         // s3.dualstack.ap-southeast-1.amazonaws.com
         // s3-ap-southeast-1.amazonaws.com
-        let url = url.replacingOccurrences(of: "s3-ap-southeast-1.amazonaws.com", with: "s3.dualstack.ap-southeast-1.amazonaws.com")
+//        let url = url.replacingOccurrences(of: "s3-ap-southeast-1.amazonaws.com", with: "s3.dualstack.ap-southeast-1.amazonaws.com")
         return URL(string: url)
     }
 
@@ -218,24 +231,24 @@ public class MunchImageView: UIImageView {
         }
     }
 
-    class func selectImage(images: [(Int, Int, String)], size: (Int, Int)) -> String? {
+    class func selectImage(images: [(CGSize, String)], size: CGSize) -> String? {
         let fitting = images.filter {
-                    $0.0 >= size.0 && $0.1 >= size.1
+                    $0.0.width >= size.width && $0.0.height >= size.height
                 }
                 .sorted {
-                    $0.0 * $0.1 < $1.0 * $1.1
+                    $0.0.width * $0.0.height < $1.0.width * $1.0.height
                 }
 
         if let fit = fitting.get(0) {
             // Found the smallest fitting image
-            return fit.2
+            return fit.1
         } else {
             // No fitting image found, take largest image
             let images = images.sorted {
-                $0.0 * $0.1 > $1.0 * $1.1
+                $0.0.width * $0.0.height > $1.0.width * $1.0.height
             }
             if let image = images.get(0) {
-                return image.2
+                return image.1
             } else {
                 return nil
             }
@@ -245,27 +258,27 @@ public class MunchImageView: UIImageView {
     /**
      Parse [WidthxHeight: Url] into [(Width, Height, Url)]
      */
-    class func imageList(images: [String: String]?) -> [(Int, Int, String)]? {
+    class func imageList(images: [String: String]?) -> [(CGSize, String)]? {
         if let images = images {
-            return images.map { key, value -> (Int, Int, String) in
+            return images.map { key, value -> (CGSize, String) in
                 let widthHeight = key.lowercased().components(separatedBy: "x")
                 if (widthHeight.count == 2) {
                     if let width = Int(widthHeight[0]), let height = Int(widthHeight[1]) {
-                        return (width, height, value)
+                        return (CGSize(width: width, height: height), value)
                     }
                 } else if key == "original" {
                     // Original Image will be the max
-                    return (10000, 10000, value)
+                    return (CGSize(width: 10000, height: 10000), value)
                 }
 
                 // AnyFormat that cannot be parsed will be 0,0
-                return (0, 0, value)
+                return (CGSize(width: 0, height: 0), value)
             }
         }
         return nil
     }
 
-    class func prefetch(imageList: [[String: String]], size: (Int, Int)) {
+    class func prefetch(imageList: [[String: String]], size: CGSize) {
         let images: [URL] = imageList.compactMap({
             if let images = MunchImageView.imageList(images: $0) {
                 if let image = selectImage(images: images, size: size) {
@@ -289,11 +302,11 @@ public class MunchImageView: UIImageView {
     /**
      Return width and height in pixel
      */
-    private func frameSize() -> (Int, Int) {
+    private func frameSize() -> CGSize {
         let scale = UIScreen.main.scale
         let width = frame.size.width
         let height = frame.size.height
-        return (Int(width * scale), Int(height * scale))
+        return CGSize(width: width * scale, height: height * scale)
     }
 }
 

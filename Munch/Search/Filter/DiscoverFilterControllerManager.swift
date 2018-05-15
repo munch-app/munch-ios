@@ -38,7 +38,7 @@ enum DiscoverFilterCategory {
     case cuisine
     case cuisineMore
     case establishment
-    case others
+    case amenities
 }
 
 class DiscoverFilterControllerManager {
@@ -122,8 +122,8 @@ class DiscoverFilterControllerManager {
             list.append(contentsOf: map(all: "cuisine"))
         case .establishment:
             list.append(contentsOf: map(all: "establishment"))
-        case .others:
-            list.append(contentsOf: map(all: "others"))
+        case .amenities:
+            list.append(contentsOf: map(all: "amenities"))
         }
 
         self.suggestions = list
@@ -293,7 +293,7 @@ extension DiscoverFilterControllerManager {
         "establishment": ["Hawker", "Drinks", "Bakery", "Dessert", "Snacks", "Cafe", "Bars & Pubs", "Fast Food", "BBQ", "Buffet", "Hotpot & Steamboat", "High Tea", "Fine Dining"],
         "amenities": ["Child-Friendly", "Large Group", "Vegetarian Options", "Halal", "Healthy", "Alcohol", "Vegetarian", "Private Dining", "Budget", "Pet-Friendly", "Live Music", "Vegan", "Vegan Options"],
         "occasion": ["Romantic", "Supper", "Brunch", "Business Meal", "Scenic View"],
-        "others": ["Romantic", "Supper", "Brunch", "Business Meal", "Scenic View", "Child-Friendly", "Large Group", "Vegetarian Options", "Halal", "Healthy", "Alcohol", "Vegetarian", "Private Dining", "Budget", "Pet-Friendly", "Live Music", "Vegan", "Vegan Options"]
+        "amenities": ["Romantic", "Supper", "Brunch", "Business Meal", "Scenic View", "Child-Friendly", "Large Group", "Vegetarian Options", "Halal", "Healthy", "Alcohol", "Vegetarian", "Private Dining", "Budget", "Pet-Friendly", "Live Music", "Vegan", "Vegan Options"]
     ]
 
     private static var priorityTypes: [String: [String]] = [

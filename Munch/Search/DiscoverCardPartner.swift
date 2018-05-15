@@ -105,7 +105,7 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
 
     static func height(card: SearchCard) -> CGFloat {
         // Title Label + CollectionView + Action Button
-        let title = card.dict(name: "title") as? String ?? " "
+        let title = card.string(name: "title") ?? " "
         let titleWidth = width - (leftRight + 10 + 20 + leftRight)
         let titleHeight = UILabel.textHeight(withWidth: titleWidth, font: titleFont, text: title)
 

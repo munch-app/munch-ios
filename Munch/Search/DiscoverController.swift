@@ -39,9 +39,8 @@ class DiscoverController: UIViewController {
 
     let headerView = DiscoverHeaderView()
     private let refreshControl = UIRefreshControl()
-    let imageSize: (Int, Int) = {
-        let width = Int(UIScreen.main.bounds.width)
-        return (width, width)
+    let imageSize: CGSize = {
+        return CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width)
     }()
 
     private let backIndicatorView = BackIndicatorView()
@@ -314,12 +313,18 @@ extension DiscoverController: UITableViewDelegate, UITableViewDataSource {
         register(SearchContainersCard.self)
         register(SearchNewPlaceCard.self)
         register(SearchRecentPlaceCard.self)
-        register(SearchInstagramPartnerCard.self)
 
         register(SearchNoLocationCard.self)
         register(SearchNoResultCard.self)
         register(SearchNoResultLocationCard.self)
         register(SearchQueryReplaceCard.self)
+
+        // Register Top Cards
+        register(SearchContainerHeaderCard.self)
+
+        // Register Middle Cards
+        register(SearchCardSuggestionTag.self)
+        register(SearchInstagramPartnerCard.self)
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {

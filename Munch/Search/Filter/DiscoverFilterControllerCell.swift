@@ -1343,7 +1343,7 @@ class DiscoverFilterCellTagMore: UITableViewCell {
 class DiscoverFilterCellHeaderCategory: UITableViewCell {
     private let containerView = UIView()
     private let segmentControl: UISegmentedControl = {
-        let control = UISegmentedControl(items: ["Cuisine", "Establishment", "Others"])
+        let control = UISegmentedControl(items: ["Cuisine", "Establishment", "Amenities"])
         control.tintColor = UIColor.primary500
         control.selectedSegmentIndex = 0
         return control
@@ -1381,7 +1381,7 @@ class DiscoverFilterCellHeaderCategory: UITableViewCell {
             ])
 
         case 2:
-            controller.manager.select(category: .others)
+            controller.manager.select(category: .amenities)
             Analytics.logEvent("filter_action", parameters: [
                 AnalyticsParameterItemID: "timing-others" as NSObject,
                 AnalyticsParameterItemCategory: "apply_category" as NSObject

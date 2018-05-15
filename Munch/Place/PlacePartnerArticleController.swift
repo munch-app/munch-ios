@@ -177,8 +177,7 @@ fileprivate class PlacePartnerArticleControllerCell: UITableViewCell {
         let imageView = ShimmerImageView()
         imageView.tintColor = .white
 
-        let width = Int(UIScreen.main.bounds.width - 48)
-        imageView.size = (width, Int(imageHeight))
+        imageView.size = CGSize(width: UIScreen.main.bounds.width - 48, height: imageHeight)
         return imageView
     }()
     private let authorLabel: UIButton = {

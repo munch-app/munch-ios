@@ -176,8 +176,8 @@ fileprivate class PlacePartnerInstagramControllerCell: UITableViewCell {
         let imageView = ShimmerImageView()
         imageView.tintColor = .white
 
-        let width = Int(UIScreen.main.bounds.width - 48)
-        imageView.size = (width, width)
+        let width = UIScreen.main.bounds.width - 48
+        imageView.size = CGSize(width: width, height: width)
         return imageView
     }()
     private let authorLabel: UIButton = {

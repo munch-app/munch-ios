@@ -404,8 +404,16 @@ struct SearchCard: Equatable {
         return json[name]
     }
 
-    func dict(name: String) -> Any {
+    func dict(name: String) -> Any? {
         return dictionary[name]
+    }
+
+    func string(name: String) -> String? {
+        return dict(name: name) as? String
+    }
+
+    func int(name: String) -> Int? {
+        return dict(name: name) as? Int
     }
 
     func decode<T>(name: String, _ type: T.Type) -> T? where T : Decodable {

@@ -28,8 +28,7 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
         let imageView = ShimmerImageView()
         imageView.layer.cornerRadius = 3
 
-        let width = Int(UIScreen.main.bounds.width)
-        imageView.size = (width, width)
+        imageView.size = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width)
         return imageView
     }()
     let containerLabel: UIButton = {
@@ -293,14 +292,6 @@ class DiscoverPlaceCardBottomView: UIView {
     private func render(tag card: SearchCard) {
         // Count is Controlled by View
         self.tagView.removeAll()
-
-        if let review = card.dict(name: "review") as? [String: Any] {
-            if let average = review["average"] as? Double {
-                let percent = CGFloat(average)
-                let text = ReviewRatingUtils.text(percent: percent)
-                self.tagView.add(text: text, config: RatingTagViewConfig(percent: percent))
-            }
-        }
 
         if let tags = card.dict(name: "tags") as? [String] {
             for tag in tags.prefix(3) {

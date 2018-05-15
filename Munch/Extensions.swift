@@ -70,6 +70,26 @@ extension UILabel {
         let labelSize = myText.boundingRect(with: rect, options: .usesLineFragmentOrigin, attributes: [NSAttributedStringKey.font: font], context: nil)
         return labelSize.size
     }
+
+    class func countLines(font: UIFont, text: String, width: CGFloat = .greatestFiniteMagnitude, height: CGFloat = .greatestFiniteMagnitude) -> Int {
+        // Call self.layoutIfNeeded() if your view uses auto layout
+        let myText = text as NSString
+
+        let rect = CGSize(width: width, height: height)
+        let labelSize = myText.boundingRect(with: rect, options: .usesLineFragmentOrigin, attributes: [NSAttributedStringKey.font: font], context: nil)
+
+        return Int(ceil(CGFloat(labelSize.height) / font.lineHeight))
+    }
+
+    func countLines(width: CGFloat = .greatestFiniteMagnitude, height: CGFloat = .greatestFiniteMagnitude) -> Int {
+        // Call self.layoutIfNeeded() if your view uses auto layout
+        let myText = (self.text ?? "") as NSString
+
+        let rect = CGSize(width: width, height: height)
+        let labelSize = myText.boundingRect(with: rect, options: .usesLineFragmentOrigin, attributes: [NSAttributedStringKey.font: self.font], context: nil)
+
+        return Int(ceil(CGFloat(labelSize.height) / self.font.lineHeight))
+    }
 }
 
 class SRCopyableLabel: UILabel {
