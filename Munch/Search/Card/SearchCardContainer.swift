@@ -29,7 +29,7 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
-        collectionView.backgroundColor = UIColor.white
+        collectionView.backgroundColor = UIColor.clear
         collectionView.register(SearchContainersCardContainerCell.self, forCellWithReuseIdentifier: "SearchContainersCardContainerCell")
         return collectionView
     }()
@@ -41,6 +41,7 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
+//        self.backgroundColor = .bgTag
         self.addSubview(titleLabel)
         self.addSubview(collectionView)
 
@@ -131,6 +132,8 @@ extension SearchContainersCard: UICollectionViewDataSource, UICollectionViewDele
             nameLabel.textContainer.lineFragmentPadding = 2
             nameLabel.textContainerInset = UIEdgeInsets(topBottom: 4, leftRight: 4)
             nameLabel.isUserInteractionEnabled = false
+
+//            nameLabel.roundCorners([.bottomLeft, .bottomRight], radius: 3)
             return nameLabel
         }()
 
@@ -138,6 +141,7 @@ extension SearchContainersCard: UICollectionViewDataSource, UICollectionViewDele
             super.init(frame: frame)
 
             let containerView = UIView()
+            containerView.backgroundColor = .clear
             containerView.layer.cornerRadius = 3
             containerView.layer.borderWidth = 1
             containerView.layer.borderColor = UIColor(hex: "DDDDDD").cgColor
@@ -185,8 +189,8 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
     static let nameFont = UIFont.systemFont(ofSize: 21.0, weight: .medium)
     static let descriptionFont = UIFont.systemFont(ofSize: 15.0, weight: .regular)
     static let imageSize: CGSize = {
-        let width = UIScreen.main.bounds.width - leftRight * 2
-        return CGSize(width: width, height: width/3.3)
+        let imageWidth = width - leftRight - leftRight
+        return CGSize(width: imageWidth, height: imageWidth/3.3)
     }()
 
     private let topImageView: ShimmerImageView = {
@@ -220,6 +224,7 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
+//        self.backgroundColor = .bgTag
 
         grid.addSubview(topImageView)
         grid.addSubview(nameLabel)
@@ -235,7 +240,7 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
 
         topImageView.snp.makeConstraints { make in
             make.top.left.right.equalTo(grid)
-            make.height.equalTo(SearchContainerHeaderCard.imageSize.height).priority(999)
+            make.height.equalTo(SearchContainerHeaderCard.imageSize.height)
         }
 
         nameLabel.snp.makeConstraints { make in
@@ -273,10 +278,14 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
         nameLabel.text = card.string(name: "name")
         descriptionLabel.text = card.string(name: "description")
 
+        self.addressConstraint.deactivate()
+        self.hourConstraint.deactivate()
+
         // Address Line
-        if let address = card.string(name: "address"), let latLng = card.string(name: "latLng") {
+        if let address = card.string(name: "address"), let latLng = card.string(name: "latLng"), let count = card.int(name: "count") {
             self.addressLineView.address = address
             self.addressLineView.latLng = latLng
+            self.addressLineView.count = count
             self.addressLineView.isHidden = false
         } else {
             self.addressLineView.isHidden = true
@@ -284,18 +293,20 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
 
         // Hour Line
         let hours = card["hours"].compactMap({ Place.Hour(json: $0.1) })
-        if let count = card.int(name: "count"), !hours.isEmpty {
+        if !hours.isEmpty {
             self.hourLineView.hours = hours
-            self.hourLineView.count = count
             self.hourLineView.isHidden = false
 
             self.hourConstraint.activate()
-            self.addressConstraint.deactivate()
         } else {
             self.hourLineView.isHidden = true
+        }
 
-            self.hourConstraint.deactivate()
+        if !addressLineView.isHidden {
             self.addressConstraint.activate()
+        }
+        if !hourLineView.isHidden {
+            self.hourConstraint.activate()
         }
     }
 
@@ -348,12 +359,29 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
             $0.font = FontAttribute(font: .systemFont(ofSize: 15.0, weight: .regular))
         })
 
+        static let countStyle = Style("close", {
+            $0.color = UIColor.black
+            $0.font = FontAttribute(font: .systemFont(ofSize: 15.0, weight: .regular))
+            $0.align = .center
+        })
+        static let placeStyle = Style("open", {
+            $0.color = UIColor.black
+            $0.font = FontAttribute(font: .systemFont(ofSize: 13.0, weight: .medium))
+            $0.align = .center
+        })
+
         static let height: CGFloat = 52
-        static let rightWidth: CGFloat = 80
+        static let rightWidth: CGFloat = 60
         private let leftLabel: UILabel = {
             let label = UILabel()
             label.font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
             label.numberOfLines = 0
+            return label
+        }()
+        private let rightLabel: UILabel = {
+            let label = UILabel()
+            label.numberOfLines = 0
+            label.textAlignment = .center
             return label
         }()
 
@@ -365,7 +393,18 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
                 self.leftLabel.attributedText = attributedText
             }
         }
-
+        var count: Int? {
+            didSet {
+                if let count = self.count {
+                    let attributedText = NSMutableAttributedString()
+                    attributedText.append("\(count)\n".set(style: AddressLineView.countStyle))
+                    attributedText.append("places".set(style: AddressLineView.placeStyle))
+                    self.rightLabel.attributedText = attributedText
+                } else {
+                    self.rightLabel.text = nil
+                }
+            }
+        }
         var latLng: String?
 
         override var copyableText: String? {
@@ -375,9 +414,17 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
         override init(frame: CGRect = .zero) {
             super.init(frame: frame)
             self.addSubview(leftLabel)
+            self.addSubview(rightLabel)
 
             leftLabel.snp.makeConstraints { make in
-                make.left.right.top.bottom.equalTo(self)
+                make.left.top.bottom.equalTo(self)
+                make.right.equalTo(self.rightLabel.snp.left).inset(-18)
+            }
+
+            rightLabel.snp.makeConstraints { make in
+                make.right.top.bottom.equalTo(self)
+                make.height.equalTo(AddressLineView.height)
+                make.width.equalTo(AddressLineView.rightWidth)
             }
         }
 
@@ -410,13 +457,6 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
             label.numberOfLines = 2
             return label
         }()
-        private let rightLabel: UILabel = {
-            let label = UILabel()
-            label.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
-            label.numberOfLines = 2
-            label.textAlignment = .center
-            return label
-        }()
 
         var hours: [Place.Hour]? {
             didSet {
@@ -442,30 +482,13 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
                 }
             }
         }
-        var count: Int? {
-            didSet {
-                if let count = self.count {
-                    self.rightLabel.text = "\(count)\nplaces"
-                } else {
-                    self.rightLabel.text = nil
-                }
-            }
-        }
 
         override init(frame: CGRect = .zero) {
             super.init(frame: frame)
             self.addSubview(leftLabel)
-            self.addSubview(rightLabel)
 
             leftLabel.snp.makeConstraints { make in
-                make.left.top.bottom.equalTo(self)
-                make.right.equalTo(self.rightLabel.snp.left).inset(-18)
-            }
-
-            rightLabel.snp.makeConstraints { make in
-                make.right.top.bottom.equalTo(self)
-                make.height.equalTo(AddressLineView.height)
-                make.width.equalTo(AddressLineView.rightWidth)
+                make.left.right.top.bottom.equalTo(self)
             }
         }
 

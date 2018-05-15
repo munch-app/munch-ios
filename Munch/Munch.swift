@@ -46,6 +46,8 @@ extension UIColor {
 
     static let bgTag = UIColor(hex: "F0F0F7")
 
+    static let bgRed = UIColor(hex: "ffddea")
+
     // MARK: Color Palette of Munch App
     static let primary = UIColor.primary500
 
@@ -69,43 +71,16 @@ extension UIColor {
         return UIColor(hex: "ffa89c")
     }
 
-    class var primary100: UIColor {
-        return UIColor(hex: "ff9788")
-    }
-
-    class var primary200: UIColor {
-        return UIColor(hex: "ff8674")
-    }
-
-    class var primary300: UIColor {
-        return UIColor(hex: "ff7560")
-    }
-
-    class var primary400: UIColor {
-        return UIColor(hex: "ff644d")
-    }
-
+    static let primary100 = UIColor(hex: "ff9788")
+    static let primary200 = UIColor(hex: "ff8674")
+    static let primary300 = UIColor(hex: "ff7560")
+    static let primary400 = UIColor(hex: "ff644d")
     static let primary500 = UIColor(hex: "ff5339")
-
-    class var primary600: UIColor {
-        return UIColor(hex: "ff4225")
-    }
-
-    class var primary700: UIColor {
-        return UIColor(hex: "ff3112")
-    }
-
-    class var primary800: UIColor {
-        return UIColor(hex: "BA3D2A")
-    }
-
-    class var primary900: UIColor {
-        return UIColor(hex: "A33525")
-    }
-
-    class var primary950: UIColor {
-        return UIColor(hex: "8C2E20")
-    }
+    static let primary600 = UIColor(hex: "ff4225")
+    static let primary700 = UIColor(hex: "ff3112")
+    static let primary800 = UIColor(hex: "BA3D2A")
+    static let primary900 = UIColor(hex: "A33525")
+    static let primary950 = UIColor(hex: "8C2E20")
 
     class var secondary: UIColor {
         return .secondary500

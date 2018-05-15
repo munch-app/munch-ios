@@ -224,35 +224,18 @@ class SearchHeaderCard: UITableViewCell, SearchCardView {
     }
 }
 
-class SearchHeaderCardLabel: UIView {
-    private let label: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 20.0, weight: .medium)
-        label.textColor = UIColor(hex: "434343")
-        label.backgroundColor = .white
-        label.text = " "
-        return label
-    }()
-
+class SearchHeaderCardLabel: UILabel {
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
 
-        self.addSubview(label)
-        self.label.snp.makeConstraints { make in
-            make.left.right.equalTo(self)
-            make.top.equalTo(self)
-            make.bottom.equalTo(self)
-        }
+        self.font = UIFont.systemFont(ofSize: 20.0, weight: .medium)
+        self.textColor = UIColor(hex: "434343")
+        self.backgroundColor = .clear
+        self.text = " "
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    var text: String? {
-        didSet {
-            self.label.text = text
-        }
     }
 }
 

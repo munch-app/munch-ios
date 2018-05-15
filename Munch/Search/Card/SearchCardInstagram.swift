@@ -199,62 +199,62 @@ extension SearchInstagramPartnerCard: UICollectionViewDataSource, UICollectionVi
             controller.select(placeId: placeId)
         }
     }
-}
 
-fileprivate class SearchInstagramPartnerContentCell: UICollectionViewCell {
-    let imageView: ShimmerImageView = {
-        let imageView = ShimmerImageView()
-        imageView.backgroundColor = UIColor(hex: "dedede")
-        imageView.contentMode = .scaleAspectFill
-        return imageView
-    }()
-    let titleLabel: UITextView = {
-        let nameLabel = UITextView()
-        nameLabel.font = UIFont.systemFont(ofSize: 14.0, weight: .regular)
-        nameLabel.textColor = .white
-        nameLabel.backgroundColor = .clear
+    fileprivate class SearchInstagramPartnerContentCell: UICollectionViewCell {
+        let imageView: ShimmerImageView = {
+            let imageView = ShimmerImageView()
+            imageView.backgroundColor = UIColor(hex: "dedede")
+            imageView.contentMode = .scaleAspectFill
+            return imageView
+        }()
+        let titleLabel: UITextView = {
+            let nameLabel = UITextView()
+            nameLabel.font = UIFont.systemFont(ofSize: 14.0, weight: .regular)
+            nameLabel.textColor = .white
+            nameLabel.backgroundColor = .clear
 
-        nameLabel.textContainer.maximumNumberOfLines = 2
-        nameLabel.textContainer.lineBreakMode = .byTruncatingTail
-        nameLabel.textContainer.lineFragmentPadding = 2
-        nameLabel.textContainerInset = UIEdgeInsets(topBottom: 0, leftRight: -2)
-        nameLabel.isUserInteractionEnabled = false
-        return nameLabel
-    }()
+            nameLabel.textContainer.maximumNumberOfLines = 2
+            nameLabel.textContainer.lineBreakMode = .byTruncatingTail
+            nameLabel.textContainer.lineFragmentPadding = 2
+            nameLabel.textContainerInset = UIEdgeInsets(topBottom: 0, leftRight: -2)
+            nameLabel.isUserInteractionEnabled = false
+            return nameLabel
+        }()
 
-    override init(frame: CGRect = .zero) {
-        super.init(frame: frame)
-        self.addSubview(imageView)
-        self.addSubview(titleLabel)
+        override init(frame: CGRect = .zero) {
+            super.init(frame: frame)
+            self.addSubview(imageView)
+            self.addSubview(titleLabel)
 
-        imageView.snp.makeConstraints { make in
-            make.left.right.equalTo(self)
-            make.top.equalTo(self)
+            imageView.snp.makeConstraints { make in
+                make.left.right.equalTo(self)
+                make.top.equalTo(self)
+            }
+
+            titleLabel.snp.makeConstraints { make in
+                make.left.right.equalTo(self)
+                make.top.equalTo(imageView.snp.bottom).inset(-5)
+                make.bottom.equalTo(self)
+
+                make.height.equalTo(35)
+            }
         }
 
-        titleLabel.snp.makeConstraints { make in
-            make.left.right.equalTo(self)
-            make.top.equalTo(imageView.snp.bottom).inset(-5)
-            make.bottom.equalTo(self)
+        func render(content: InstagramPartnerCardContent, username: String) {
+            imageView.render(images: content.images)
 
-            make.height.equalTo(35)
+            if let name = content.place?.name {
+                titleLabel.text = name + " by @\(username)"
+            }
         }
-    }
 
-    func render(content: InstagramPartnerCardContent, username: String) {
-        imageView.render(images: content.images)
-
-        if let name = content.place?.name {
-            titleLabel.text = name + " by @\(username)"
+        fileprivate override func layoutSubviews() {
+            super.layoutSubviews()
+            self.imageView.layer.cornerRadius = 3
         }
-    }
 
-    fileprivate override func layoutSubviews() {
-        super.layoutSubviews()
-        self.imageView.layer.cornerRadius = 3
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
     }
 }

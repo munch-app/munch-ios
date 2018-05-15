@@ -16,7 +16,7 @@ import SwiftyJSON
 class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
     private let titleLabel: SearchHeaderCardLabel = {
         let label = SearchHeaderCardLabel()
-        label.text = "Popular Tags Near You"
+        label.textColor = .white
         return label
     }()
     private static let tagSize = CGSize(width: 120, height: 70)
@@ -30,8 +30,8 @@ class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
-        collectionView.backgroundColor = UIColor.white
         collectionView.register(SearchCardTagCell.self, forCellWithReuseIdentifier: "SearchCardTagCell")
+        collectionView.backgroundColor = .clear
         return collectionView
     }()
 
@@ -41,6 +41,7 @@ class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
+        self.backgroundColor = .primary300
         self.addSubview(titleLabel)
         self.addSubview(collectionView)
 
@@ -62,9 +63,9 @@ class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
 
     func render(card: SearchCard, controller: DiscoverController) {
         if let locationName = card.string(name: "locationName") {
-            self.titleLabel.text = "Popular tags in '\(locationName)'"
+            self.titleLabel.text = "Popular in '\(locationName)'"
         } else {
-            self.titleLabel.text = "Popular tags nearby"
+            self.titleLabel.text = "Popular Nearby"
         }
 
         self.controller = controller
@@ -120,7 +121,7 @@ extension SearchCardSuggestionTag: UICollectionViewDataSource, UICollectionViewD
     fileprivate class SearchCardTagCell: UICollectionViewCell {
         let grid: UIView = {
             let view = UIView()
-            view.backgroundColor = UIColor.bgTag
+            view.backgroundColor = UIColor.white
             return view
         }()
         let nameLabel: UILabel = {

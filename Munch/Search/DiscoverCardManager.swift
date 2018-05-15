@@ -122,6 +122,7 @@ protocol SearchCardView {
 
     static var leftRight: CGFloat { get }
     static var topBottom: CGFloat { get }
+    static var width: CGFloat { get }
 
     // Height for card view
     static func height(card: SearchCard) -> CGFloat
