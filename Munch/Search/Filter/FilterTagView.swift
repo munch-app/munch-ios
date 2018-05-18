@@ -46,7 +46,7 @@ class FilterTagView: UIView, TTGTextTagCollectionViewDelegate {
         render(tags: FilterTagView.resolve(query: query))
     }
 
-    class func resolve(query: SearchQuery) -> [FilterTagType]{
+    class func resolve(query: SearchQuery) -> [FilterTagType] {
         var tags = [FilterTagType]()
 
         // FirstTag is always Location Tag

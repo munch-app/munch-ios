@@ -22,6 +22,12 @@ class DiscoverHeaderView: UIView, FilterTagViewDelegate {
     let backButton = DiscoverBackButton()
     let textButton = DiscoverTextButton()
     let filterButton = DiscoverFilterButton()
+    let tagButton: UIButton = {
+        let button = UIButton()
+        button.tintColor = UIColor(hex: "dbdbdb")
+        button.setImage(UIImage(named: "Search-Filter-Tag"), for: .normal)
+        return button
+    }()
     let tagCollection = FilterTagView()
 
     var topConstraint: Constraint! = nil
@@ -36,6 +42,7 @@ class DiscoverHeaderView: UIView, FilterTagViewDelegate {
     private func initViews() {
         self.backgroundColor = .white
 
+        self.addSubview(tagButton)
         self.addSubview(tagCollection)
         self.addSubview(textButton)
         self.addSubview(backButton)
@@ -46,6 +53,7 @@ class DiscoverHeaderView: UIView, FilterTagViewDelegate {
         filterButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
         textButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
         backButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
+        tagButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
 
 
         filterButton.snp.makeConstraints { make in
@@ -69,8 +77,14 @@ class DiscoverHeaderView: UIView, FilterTagViewDelegate {
             make.height.equalTo(56)
         }
 
+        tagButton.snp.makeConstraints { make in
+            make.left.equalTo(self).inset(24)
+            make.top.bottom.equalTo(tagCollection)
+        }
+
         tagCollection.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(24)
+            make.left.equalTo(tagButton.snp.right).inset(-6)
+            make.right.equalTo(self)
             self.topConstraint = make.top.equalTo(textButton.snp.bottom).constraint
             make.bottom.equalTo(self).inset(8)
             make.height.equalTo(34)
@@ -84,6 +98,8 @@ class DiscoverHeaderView: UIView, FilterTagViewDelegate {
             // When back button is clicked
             renderPrevious()
         } else if view is DiscoverFilterButton {
+            controller.goTo(extension: DiscoverFilterController.self)
+        } else if view == tagButton {
             controller.goTo(extension: DiscoverFilterController.self)
         }
     }
