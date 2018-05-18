@@ -365,7 +365,7 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
         })
 
         static let height: CGFloat = 52
-        static let rightWidth: CGFloat = 60
+        static let rightWidth: CGFloat = 70
         private let leftLabel: UILabel = {
             let label = UILabel()
             label.font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
@@ -392,7 +392,7 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
                 if let count = self.count {
                     let attributedText = NSMutableAttributedString()
                     attributedText.append("\(count)\n".set(style: AddressLineView.countStyle))
-                    attributedText.append("places".set(style: AddressLineView.placeStyle))
+                    attributedText.append("food spots".set(style: AddressLineView.placeStyle))
                     self.rightLabel.attributedText = attributedText
                 } else {
                     self.rightLabel.text = nil
