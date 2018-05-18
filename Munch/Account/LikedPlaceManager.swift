@@ -18,9 +18,9 @@ class LikedPlaceManager {
     private var stateHistory = [LikedPlaceState]()
 
     public func push(placeId: String, liked: Bool) -> Bool {
-        stateHistory.append(.init(placeId: placeId, liked: liked))
+        stateHistory.insert(.init(placeId: placeId, liked: liked), at: 0)
 
-        if stateHistory.count > 10 {
+        if stateHistory.count > 13 {
             stateHistory.remove(at: 0)
         }
 
