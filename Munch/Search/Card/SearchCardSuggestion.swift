@@ -14,10 +14,18 @@ import SwiftRichString
 import SwiftyJSON
 
 class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
-    private static let titleFont = UIFont.systemFont(ofSize: 20.0, weight: .medium)
+    private static let descriptionFont = UIFont.systemFont(ofSize: 17.0, weight: .regular)
     private let titleLabel: SearchHeaderCardLabel = {
         let label = SearchHeaderCardLabel()
-        label.font = titleFont
+        label.text = "Can’t decide?"
+        label.textColor = .white
+        label.numberOfLines = 1
+        return label
+    }()
+    private let descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.backgroundColor = .clear
+        label.font = descriptionFont
         label.textColor = .white
         label.numberOfLines = 0
         return label
@@ -46,6 +54,7 @@ class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
         self.selectionStyle = .none
         self.backgroundColor = .primary300
         self.addSubview(titleLabel)
+        self.addSubview(descriptionLabel)
         self.addSubview(collectionView)
 
         self.collectionView.dataSource = self
@@ -54,11 +63,17 @@ class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(self).inset(topBottom)
+            make.height.equalTo(24.0)
+        }
+
+        descriptionLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(self).inset(leftRight)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-topBottom)
         }
 
         collectionView.snp.makeConstraints { make in
             make.left.right.equalTo(self)
-            make.top.equalTo(titleLabel.snp.bottom).inset(-topBottom)
+            make.top.equalTo(descriptionLabel.snp.bottom).inset(-topBottom)
             make.bottom.equalTo(self).inset(topBottom)
             make.height.equalTo(SearchCardSuggestionTag.tagSize.height)
         }
@@ -66,11 +81,9 @@ class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
 
     func render(card: SearchCard, controller: DiscoverController) {
         if let locationName = card.string(name: "locationName") {
-            let text = "Having trouble finding a place to eat? Here are some suggestions of popular places in \(locationName)"
-            self.titleLabel.text = text
+            self.descriptionLabel.text = "Here are some suggestions of what’s good in \(locationName)."
         } else {
-            let text = "Having trouble finding a place to eat? Here are some suggestions of popular places nearby."
-            self.titleLabel.text = text
+            self.descriptionLabel.text = "Here are some suggestions of what’s good nearby."
         }
 
         self.controller = controller
@@ -86,16 +99,17 @@ class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
     }
 
     class func height(card: SearchCard) -> CGFloat {
-        let height = tagSize.height + topBottom * 3
+        let height = tagSize.height + (topBottom * 4)
+                // For first label height
+            + 24.0
 
         let titleWidth = width - (leftRight + leftRight)
-
         if let locationName = card.string(name: "locationName") {
-            let text = "Having trouble finding a place to eat? Here are some suggestions of popular places in \(locationName)"
-            return UILabel.textHeight(withWidth: titleWidth, font: titleFont, text: text) + height
+            let text = "Here are some suggestions of what’s good in \(locationName)."
+            return UILabel.textHeight(withWidth: titleWidth, font: descriptionFont, text: text) + height
         } else {
-            let text = "Having trouble finding a place to eat? Here are some suggestions of popular places nearby."
-            return UILabel.textHeight(withWidth: titleWidth, font: titleFont, text: text) + height
+            let text = "Here are some suggestions of what’s good nearby."
+            return UILabel.textHeight(withWidth: titleWidth, font: descriptionFont, text: text) + height
         }
     }
 
