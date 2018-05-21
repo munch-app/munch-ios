@@ -149,7 +149,6 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
             ]),
             ("SEARCH PREFERENCE", [
                 SettingCellType.preferenceTag("Halal"),
-                SettingCellType.preferenceTag("Vegetarian Options"),
             ]),
             ("ACCOUNT", [
                 SettingCellType.feedback,

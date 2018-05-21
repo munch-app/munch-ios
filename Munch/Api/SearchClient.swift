@@ -226,7 +226,7 @@ protocol SearchQueryToken {
 class SearchQueryPreferenceManager {
     static let instance = SearchQueryPreferenceManager()
 
-    let managed = ["halal", "vegetarian options"]
+    let managed = ["halal"]
     var userSetting = UserSetting.instance
 
     func edit(filter: SearchQuery.Filter) -> SearchQuery.Filter {
