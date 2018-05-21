@@ -7,11 +7,13 @@ import Foundation
 import UIKit
 import SafariServices
 
+import BEMCheckBox
 import SnapKit
 
 class AccountSettingController: UIViewController, UIGestureRecognizerDelegate, SFSafariViewControllerDelegate {
     private let headerView = HeaderView()
     private let tableView = UITableView()
+    private var setting = UserSetting.instance
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -43,10 +45,10 @@ class AccountSettingController: UIViewController, UIGestureRecognizerDelegate, S
         tableView.separatorInset.left = 24
         tableView.allowsSelection = true
         tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.sectionHeaderHeight = 40
+        tableView.sectionHeaderHeight = 44
         tableView.estimatedRowHeight = 50
 
-        tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 12))
+        tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 12))
         tableView.snp.makeConstraints { make in
             make.top.equalTo(headerView.snp.bottom)
@@ -124,6 +126,8 @@ enum SettingCellType {
     case instagramConnect
     case feedback
     case logout
+
+    case preferenceTag(String)
 }
 
 extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
@@ -135,15 +139,22 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
         register(cellClass: SettingInstagramCell.self)
         register(cellClass: SettingLogoutCell.self)
         register(cellClass: SettingFeedbackCell.self)
+        register(cellClass: SettingPreferenceTagCell.self)
     }
 
     private var items: [(String?, [SettingCellType])] {
         return [
-//            ("Content Partner", [SettingCellType.instagramConnect]),
-            ("Account", [
+            ("CONTENT PARTNER", [
+                SettingCellType.instagramConnect
+            ]),
+            ("SEARCH PREFERENCE", [
+                SettingCellType.preferenceTag("Halal"),
+                SettingCellType.preferenceTag("Vegetarian Options"),
+            ]),
+            ("ACCOUNT", [
                 SettingCellType.feedback,
                 SettingCellType.logout,
-            ])
+            ]),
         ]
     }
 
@@ -162,8 +173,9 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header = view as! UITableViewHeaderFooterView
         header.tintColor = .white
-        header.textLabel!.font = UIFont.systemFont(ofSize: 22, weight: .medium)
-        header.textLabel!.textColor = UIColor.black.withAlphaComponent(0.85)
+        header.textLabel!.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        header.textLabel!.textColor = UIColor.black
+        header.backgroundView?.backgroundColor = .bgTag
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -181,6 +193,10 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
             return dequeue(cellClass: SettingLogoutCell.self)
         case .feedback:
             return dequeue(cellClass: SettingFeedbackCell.self)
+        case .preferenceTag(let text):
+            let cell = dequeue(cellClass: SettingPreferenceTagCell.self) as! SettingPreferenceTagCell
+            cell.render(tag: text, checked: setting?.search.tags.contains(text.lowercased()) ?? false)
+            return cell
         default:
             return UITableViewCell()
         }
@@ -198,8 +214,22 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
             safari.delegate = self
             present(safari, animated: true, completion: nil)
         case .feedback:
-            if let url = URL(string: "mailto:feedback@munch.space") {
+            if let url = URL(string: "mailto:feedback@munch.app") {
                 UIApplication.shared.open(url)
+            }
+        case .preferenceTag(let text):
+            if let setting = setting {
+                if setting.search.tags.contains(text.lowercased()) {
+                    SearchQueryPreferenceManager.instance.remove(tag: text.lowercased(), controller: self)
+
+                    let cell = tableView.cellForRow(at: indexPath) as! SettingPreferenceTagCell
+                    cell.checkButton.setOn(false, animated: true)
+                } else {
+                    SearchQueryPreferenceManager.instance.add(tag: text.lowercased(), controller: self)
+
+                    let cell = tableView.cellForRow(at: indexPath) as! SettingPreferenceTagCell
+                    cell.checkButton.setOn(true, animated: true)
+                }
             }
         default:
             return
@@ -227,6 +257,57 @@ fileprivate class SettingInstagramCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+fileprivate class SettingPreferenceTagCell: UITableViewCell {
+    private let titleView: UILabel = {
+        let titleView = UILabel()
+        titleView.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        titleView.textColor = .black
+        return titleView
+    }()
+
+    fileprivate let checkButton: BEMCheckBox = {
+        let checkButton = BEMCheckBox(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
+        checkButton.boxType = .circle
+        checkButton.lineWidth = 1.5
+        checkButton.tintColor = UIColor(hex: "444444")
+        checkButton.animationDuration = 0.25
+        checkButton.isEnabled = false
+
+        checkButton.onCheckColor = .white
+        checkButton.onTintColor = .primary
+        checkButton.onFillColor = .primary
+        return checkButton
+    }()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.addSubview(titleView)
+        self.addSubview(checkButton)
+
+        titleView.snp.makeConstraints { make in
+            make.left.equalTo(self).inset(24)
+            make.right.equalTo(checkButton.snp.left).inset(-12)
+            make.top.bottom.equalTo(self).inset(10)
+        }
+
+        checkButton.snp.makeConstraints { make in
+            make.top.bottom.equalTo(self).inset(10)
+            make.right.equalTo(self).inset(18)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func render(tag: String, checked: Bool) {
+        self.titleView.text = tag
+
+        checkButton.setOn(checked, animated: false)
+    }
+}
+
 
 fileprivate class SettingFeedbackCell: UITableViewCell {
     let titleView = UILabel()

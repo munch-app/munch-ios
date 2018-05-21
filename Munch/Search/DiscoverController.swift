@@ -10,12 +10,12 @@ import os.log
 
 import Foundation
 import UIKit
+import Moya
 
 import SnapKit
 import FirebaseAnalytics
 
 import Kingfisher
-import Moya
 import FirebaseAuth
 
 class DiscoverNavigationalController: UINavigationController, UINavigationControllerDelegate {
@@ -88,7 +88,7 @@ class DiscoverController: UIViewController {
         // Future: Change AccountRootBoardingController version and remove force re authenticate
         if AccountRootBoardingController.toShow {
             self.present(AccountRootBoardingController(guestOption: true, withCompletion: { state in
-                // Current does nothing
+                // Currently does nothing
             }), animated: true)
         } else if Auth.auth().currentUser != nil {
             Authentication.authenticate { state in
@@ -193,6 +193,18 @@ class DiscoverController: UIViewController {
         // Reset ContentView first
         resetView()
         search(searchQuery: searchQuery)
+
+        DispatchQueue.main.async {
+            if let tag = SearchQueryPreferenceManager.instance.check(searchQuery: searchQuery) {
+                let message = "Hi \(UserProfile.instance?.name ?? ""), we noticed you require ‘\(tag.capitalized)’ food often. Would you like ‘\(tag.capitalized)’ to be included in all future searches?\n\nDon’t worry, you may edit this from your profile if required."
+                let alert = UIAlertController(title: "Search Preference", message: message, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                alert.addAction(UIAlertAction(title: "Add", style: .default) { action in
+                    SearchQueryPreferenceManager.instance.add(tag: tag, controller: self)
+                })
+                self.present(alert, animated: true)
+            }
+        }
     }
 
     func reset() {

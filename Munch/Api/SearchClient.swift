@@ -10,6 +10,7 @@ import Foundation
 import Alamofire
 
 import SwiftyJSON
+import Toast_Swift
 
 class SearchClient {
     private static let decoder = JSONDecoder()
@@ -222,6 +223,111 @@ protocol SearchQueryToken {
 
 }
 
+class SearchQueryPreferenceManager {
+    static let instance = SearchQueryPreferenceManager()
+
+    let managed = ["halal", "vegetarian options"]
+    var userSetting = UserSetting.instance
+
+    func edit(filter: SearchQuery.Filter) -> SearchQuery.Filter {
+        var filter = filter
+
+        if let setting = userSetting {
+            for tag in setting.search.tags {
+                filter.tag.positives.insert(tag.capitalized)
+            }
+        }
+
+        return filter
+    }
+
+    func refresh() {
+        self.userSetting = UserSetting.instance
+    }
+
+    func check(searchQuery: SearchQuery) -> String? {
+        for tag in searchQuery.filter.tag.positives {
+            if check(tag: tag) {
+                return tag
+            }
+        }
+        return nil
+    }
+
+    func check(tag: String) -> Bool {
+        let tag = tag.lowercased()
+        if let setting = userSetting {
+            if setting.search.tags.contains(tag) {
+                return false
+            }
+
+            if managed.contains(tag) {
+                let count = UserDefaults.standard.integer(forKey: "SearchQueryManager.\(tag)") + 1
+                UserDefaults.standard.set(count, forKey: "SearchQueryManager.\(tag)")
+
+                if count == 3 {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    private let toastStyle: ToastStyle = {
+        var style = ToastStyle()
+        style.backgroundColor = UIColor.bgTag
+        style.cornerRadius = 5
+        style.imageSize = CGSize(width: 20, height: 20)
+        style.fadeDuration = 6.0
+        style.messageColor = UIColor.black.withAlphaComponent(0.85)
+        style.messageFont = UIFont.systemFont(ofSize: 15, weight: .regular)
+        style.messageNumberOfLines = 2
+        style.messageAlignment = .left
+
+        return style
+    }()
+
+    func add(tag: String, controller: UIViewController) {
+        let tag = tag.lowercased()
+
+        if var setting = userSetting {
+            setting.search.tags.append(tag)
+            UserSetting.instance = setting
+            let provider = MunchProvider<UserService>()
+            provider.request(.patchSetting(search: setting.search)) { result in
+                switch result {
+                case .failure(let error):
+                    controller.alert(error: error)
+                case .success:
+                    controller.view.makeToast("Added '\(tag.capitalized)' to Search Preference.", image: UIImage(named: "RIP-Toast-Checkmark"), style: self.toastStyle)
+                }
+            }
+        }
+    }
+
+    func remove(tag: String, controller: UIViewController) {
+        let tag = tag.lowercased()
+
+        if var setting = userSetting {
+            if let index = setting.search.tags.index(of: tag) {
+                setting.search.tags.remove(at: index)
+            }
+
+            UserSetting.instance = setting
+            let provider = MunchProvider<UserService>()
+            provider.request(.patchSetting(search: setting.search)) { result in
+                switch result {
+                case .failure(let error):
+                    controller.alert(error: error)
+                case .success:
+                    controller.view.makeToast("Removed '\(tag.capitalized)' from Search Preference.", image: UIImage(named: "RIP-Toast-Close"), style: self.toastStyle)
+                }
+            }
+        }
+    }
+}
+
 /**
  SearchQuery object from munch-core/service-places
  This is a input and output data
@@ -238,8 +344,8 @@ struct SearchQuery: Equatable {
     var sort: Sort
 
     init() {
-        filter = Filter()
         sort = Sort()
+        filter = SearchQueryPreferenceManager.instance.edit(filter: Filter())
     }
 
     init(json: JSON) {
@@ -270,7 +376,7 @@ struct SearchQuery: Equatable {
             price.min = json["price"]["min"].double
             price.max = json["price"]["max"].double
 
-            tag.positives = Set(json["tag"]["positives"].arrayValue.map({ $0.stringValue }))
+            tag.positives = Set<String>(json["tag"]["positives"].arrayValue.map({ $0.stringValue }))
 
             hour.name = json["hour"]["name"].string
             hour.day = json["hour"]["day"].string
@@ -345,7 +451,7 @@ struct SearchQuery: Equatable {
         params["sort"] = sort.toParams()
 
         params["userInfo"] = [
-            "day": Place.Hour.Formatter.dayNow().lowercased(),
+            "day":Place.Hour.Formatter.dayNow().lowercased(),
             "time": Place.Hour.Formatter.timeNow(),
             "latLng": MunchLocation.lastLatLng
         ]
@@ -416,7 +522,7 @@ struct SearchCard: Equatable {
         return dict(name: name) as? Int
     }
 
-    func decode<T>(name: String, _ type: T.Type) -> T? where T : Decodable {
+    func decode<T>(name: String, _ type: T.Type) -> T? where T: Decodable {
         return try? SearchCard.decoder.decode(type, from: json[name].rawData())
     }
 
