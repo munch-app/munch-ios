@@ -276,7 +276,7 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
         if let description = card.string(name: "description") {
             descriptionLabel.text = description
             let lines = descriptionLabel.countLines(width: SearchContainerHeaderCard.contentWidth)
-            descriptionLabel.numberOfLines = lines > 3 ? 3 : lines
+            descriptionLabel.numberOfLines = lines
 
             descriptionAddressConstraint.activate()
         } else {
@@ -314,7 +314,7 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
         // Description
         if let description = card.string(name: "description") {
             let lines = UILabel.countLines(font: descriptionFont, text: description, width: titleWidth)
-            height += CGFloat(lines > 3 ? 3 : lines) * ceil(descriptionFont.lineHeight)
+            height += CGFloat(lines) * ceil(descriptionFont.lineHeight)
             height += 8
             height += 8
         }
