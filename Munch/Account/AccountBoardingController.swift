@@ -51,7 +51,7 @@ class AccountRootBoardingController: UINavigationController, UINavigationControl
 
     class var toShow: Bool {
         get {
-            if AccountAuthentication.isAuthenticated() {
+            if Authentication.isAuthenticated() {
                 return false
             }
             return UserDefaults.standard.string(forKey: "onboarding.load.version") != "2"
@@ -222,7 +222,7 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
 
                 if result!.grantedPermissions.contains("email") && result!.grantedPermissions.contains("public_profile") {
                     if let token = FBSDKAccessToken.current()?.tokenString {
-                        AccountAuthentication.login(facebook: token) { state in
+                        Authentication.login(facebook: token) { state in
                             Analytics.logEvent(AnalyticsEventSignUp, parameters: [
                                 AnalyticsParameterSignUpMethod: "facebook" as NSObject
                             ])
@@ -249,7 +249,7 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
         }
 
         if let authentication = user.authentication {
-            AccountAuthentication.login(google: authentication.idToken, accessToken: authentication.accessToken) { state in
+            Authentication.login(google: authentication.idToken, accessToken: authentication.accessToken) { state in
                 Analytics.logEvent(AnalyticsEventSignUp, parameters: [
                     AnalyticsParameterSignUpMethod: "google" as NSObject
                 ])
@@ -261,7 +261,7 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
     }
 
     func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
-        AccountAuthentication.logout()
+        Authentication.logout()
         self.dismiss(state: .cancel)
     }
 

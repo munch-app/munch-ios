@@ -10,222 +10,138 @@ import UIKit
 import Foundation
 
 import Crashlytics
-import Alamofire
 import SwiftyJSON
 
-import Firebase
+import Moya
+import Result
 
-let MunchApi = MunchClient()
+class MunchProvider<Target>: MoyaProvider<Target> where Target: Moya.TargetType {
+    public final class ErrorIntercept: PluginType {
+        public func process(_ result: Result<Moya.Response, MoyaError>, target: TargetType) -> Result<Moya.Response, MoyaError> {
+            switch result {
+            case .success(let response):
+                switch response.statusCode {
+                case 200, 204:
+                    return result
 
-public class MunchClient {
-    public static let url = MunchPlist.get(asString: "MunchApi-Url")!
+                case 502, 503:
+                    let json = JSON(["meta": ["code": 502, "error": [
+                        "type": "ServiceUnavailable",
+                        "message": "Server temporary down, try again later."
+                    ]]])
+                    let response = Response(statusCode: response.statusCode, data: try! json.rawData())
+                    return Result.failure(MoyaError.statusCode(response))
 
-    let restful = RestfulClient()
-    let discover = DiscoverClient()
-    let search = SearchClient()
-    let places = PlaceClient()
-    let locations = LocationClient()
-    let collections = CollectionClient()
-}
+                case 301, 410:
+                    let json = JSON(["meta": ["code": 410, "error": [
+                        "type": "UnsupportedException",
+                        "message": "Your application version is not supported. Please update the app."
+                    ]]])
+                    let response = Response(statusCode: response.statusCode, data: try! json.rawData())
+                    return Result.failure(MoyaError.statusCode(response))
 
-public class RestfulClient {
-    private let url: String
-    private let version: String
-    private let build: String
+                case 500:
+                    let json = JSON(["meta": ["code": 410, "error": [
+                        "type": "UnknownError",
+                        "message": "Unknown Error"
+                    ]]])
+                    let response = Response(statusCode: response.statusCode, data: try! json.rawData())
+                    return Result.failure(MoyaError.statusCode(response))
 
-    init(_ url: String = MunchClient.url) {
-        self.url = url
-        self.version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
-        self.build = Bundle.main.infoDictionary?["CFBundleVersion"] as! String
-    }
-
-    /**
-     Params Encoding is query string
-     */
-    func get(_ path: String, parameters: Parameters = [:], callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
-        request(method: .get, path: path, parameters: parameters, encoding: URLEncoding.default, callback: callback)
-    }
-
-    /**
-     Params Encoding is json
-     */
-    func post(_ path: String, parameters: Parameters = [:], callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
-        request(method: .post, path: path, parameters: parameters, encoding: JSONEncoding.default, callback: callback)
-    }
-
-    /**
-     Params Encoding is json
-     */
-    func put(_ path: String, parameters: Parameters = [:], callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
-        request(method: .put, path: path, parameters: parameters, encoding: JSONEncoding.default, callback: callback)
-    }
-
-    /**
-     Params Encoding is json
-     */
-    func delete(_ path: String, parameters: Parameters = [:], callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
-        request(method: .delete, path: path, parameters: parameters, encoding: JSONEncoding.default, callback: callback)
-    }
-
-    /**
-     method: HttpMethod
-     path: After domain
-     paramters: json or query string both supported
-     encoding: encoding of paramters
-     callback: Meta and Json
-     */
-    fileprivate func request(method: Alamofire.HTTPMethod, path: String, parameters: Parameters, encoding: ParameterEncoding, callback: @escaping (_ meta: MetaJSON, _ json: JSON) -> Void) {
-        var headers = [String: String]()
-        headers["Application-Version"] = version
-        headers["Application-Build"] = build
-
-        // Always set latLng if available, only to get from header for logging, debugging purpose only
-        // Otherwise, use the explicit value declared
-        if let latLng = MunchLocation.getLatLng() {
-            headers["Location-LatLng"] = latLng
-        }
-
-        AccountAuthentication.getToken { token in
-            if let token = token {
-                headers["Authorization"] = "Bearer \(token)"
-            }
-
-            Alamofire.request(self.url + path, method: method, parameters: parameters, encoding: encoding, headers: headers)
-                    .responseJSON { response in
-                        switch response.result {
-                        case .success(let value):
-                            let json = JSON(value)
-                            let meta = MetaJSON(metaJson: json["meta"])
-                            if let error = meta.error?.error {
-                                Crashlytics.sharedInstance().recordError(error)
-                            }
-                            callback(meta, json)
-                        case .failure(let error):
-                            Crashlytics.sharedInstance().recordError(error)
-                            switch response.response?.statusCode ?? 500 {
-                            case 502: fallthrough
-                            case 503:
-                                let json = JSON(["meta": ["code": 502, "error": [
-                                    "type": "ServiceUnavailable",
-                                    "message": "Server temporary down, try again later."
-                                ]]])
-                                callback(MetaJSON(metaJson: json["meta"]), json)
-
-                            case 410: fallthrough
-                            case 301:
-                                let json = JSON(["meta": ["code": 410, "error": [
-                                    "type": "UnsupportedException",
-                                    "message": "Your application version is not supported. Please update the app."
-                                ]]])
-                                callback(MetaJSON(metaJson: json["meta"]), json)
-
-                            default:
-                                let json = JSON(["meta": ["code": 500, "error": [
-                                    "type": "Unknown Error",
-                                    "message": error.localizedDescription
-                                ]]])
-                                callback(MetaJSON(metaJson: json["meta"]), json)
-                            }
-                        }
+                default:
+                    if let error = response.error {
+                        return Result.failure(MoyaError.underlying(error, response))
                     }
+                    return result
+                }
 
-        }
-    }
-}
-
-public enum RestfulError: Error {
-    case type(Int, String, String?)
-}
-
-extension RestfulError: CustomNSError, LocalizedError {
-    public var errorDescription: String? {
-        switch self {
-        case .type(_, _, let description):
-            return NSLocalizedString(description ?? "Unknown Error", comment: "")
-        }
-    }
-
-    public var failureReason: String? {
-        switch self {
-        case .type(_, let type, _):
-            return NSLocalizedString(type, comment: "")
-        }
-    }
-
-    public var errorCode: Int {
-        switch self {
-        case .type(let code, _, _):
-            return code
-        }
-    }
-}
-
-/**
- Meta Json in response
- {meta: {}}
- */
-public struct MetaJSON {
-    public static let ok = MetaJSON(metaJson: JSON(["code": 200]))
-
-    public static func error(type: String, message: String) -> MetaJSON {
-        return MetaJSON(metaJson: JSON(["code": 200, "error": ["type": type, "message": message]]))
-    }
-
-    public let code: Int!
-    public let error: Error?
-
-    public struct Error {
-        public let code: Int
-        public let type: String?
-        public let message: String?
-
-        public init(code: Int, errorJson: JSON) {
-            self.code = code
-            self.type = errorJson["type"].string
-            self.message = errorJson["message"].string
-        }
-
-        public init(code: Int, type: String, message: String) {
-            self.code = code
-            self.type = type
-            self.message = message
-        }
-
-        public var error: RestfulError? {
-            if let type = self.type {
-                return RestfulError.type(code, type, message)
+            default:
+                return result
             }
-            return nil
         }
     }
 
-    public init(metaJson: JSON) {
-        self.code = metaJson["code"].intValue
-        if metaJson["error"].exists() {
-            self.error = Error(code: code, errorJson: metaJson["error"])
-        } else if code == 404 {
-            self.error = Error(code: code, type: "Not Found", message: "Resource could not be found.")
-        } else {
-            self.error = nil
+    public final class LoggingPlugin: PluginType {
+        public func process(_ result: Result<Moya.Response, MoyaError>, target: TargetType) -> Result<Moya.Response, MoyaError> {
+            switch result {
+            case let .failure(error):
+                Crashlytics.sharedInstance().recordError(error)
+            default: break
+            }
+            return result
         }
     }
 
-    /**
-     Returns true if meta is successful
-     */
-    public func isOk() -> Bool {
-        return code == 200
+    public final class func requestMapping(for endpoint: Endpoint, closure: @escaping RequestResultClosure) {
+        do {
+            var request = try endpoint.urlRequest()
+            Authentication.getToken { token in
+                if let token = token {
+                    request.addValue("Bearer " + token, forHTTPHeaderField: "Authorization")
+                }
+                closure(.success(request))
+            }
+        } catch MoyaError.requestMapping(let url) {
+            closure(.failure(MoyaError.requestMapping(url)))
+        } catch MoyaError.parameterEncoding(let error) {
+            closure(.failure(MoyaError.parameterEncoding(error)))
+        } catch {
+            closure(.failure(MoyaError.underlying(error, nil)))
+        }
     }
 
-    /**
-     Create an UI Alert Controller with prefilled info to
-     easily print error message as alert dialog
-     */
-    public func createAlert(type: String = "Unknown Error", message: String = "An unknown error has occurred.") -> UIAlertController {
-        let type = error?.type ?? type
-        let message = error?.message ?? message
-        let alert = UIAlertController(title: type, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
-        return alert
+    public init() {
+        super.init(requestClosure: MunchProvider.requestMapping, plugins: [ErrorIntercept(), LoggingPlugin()])
+    }
+}
+
+struct Meta: Codable {
+    var error: Error?
+
+    struct Error: Codable {
+        var type: String?
+        var message: String?
+    }
+}
+
+extension Moya.Response {
+    func map<D: Decodable>(data type: D.Type, failsOnEmptyData: Bool = true) throws -> D {
+        return try map(type, atKeyPath: "data", failsOnEmptyData: failsOnEmptyData)
+    }
+
+    var meta: Meta {
+        return try! map(Meta.self, atKeyPath: "meta")
+    }
+
+    var error: RestfulError? {
+        let meta = self.meta
+        if let error = meta.error, let type = error.type {
+            return RestfulError.type(statusCode, type, error.message)
+        }
+        return nil
+    }
+}
+
+extension UIViewController {
+    func alert(error moyaError: MoyaError) {
+        switch moyaError {
+        case let .statusCode(response):
+            if let error = response.meta.error {
+                alert(error: error, moyaError: moyaError)
+                return
+            }
+        case let .underlying(_, response):
+            if let error = response?.meta.error {
+                alert(error: error, moyaError: moyaError)
+                return
+            }
+        default: break
+        }
+
+        alert(title: "Unhandled Error", message: moyaError.localizedDescription)
+    }
+
+    private func alert(error: Meta.Error, moyaError: MoyaError) {
+        alert(title: error.type ?? "Unhandled Error", message: error.message ?? moyaError.localizedDescription)
     }
 }

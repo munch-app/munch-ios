@@ -61,7 +61,7 @@ class PlaceSuggestEditCard: PlaceCardView, SFSafariViewControllerDelegate {
     }
 
     override func didTap() {
-        AccountAuthentication.requireAuthentication(controller: self.controller) { state in
+        Authentication.requireAuthentication(controller: self.controller) { state in
             switch state {
             case .loggedIn:
                 let urlComps = NSURLComponents(string: "https://airtable.com/shrfxcHiCwlSl1rjk")!

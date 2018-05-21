@@ -60,7 +60,7 @@ class AccountProfileController: UIViewController {
         super.viewDidAppear(animated)
         self.headerView.render()
 
-        if AccountAuthentication.isAuthenticated() {
+        if Authentication.isAuthenticated() {
             if loadedDate == nil || loadedDate! != MunchApi.collections.changedDate {
                 self.dataLoader.resetAll()
                 self.collectionView.reloadData()
@@ -71,7 +71,7 @@ class AccountProfileController: UIViewController {
 
         // Check if user is logged in, push to AccountBoardingController if not
         // Only reload profile if is empty, to reduce network requests
-        AccountAuthentication.requireAuthentication(controller: self) { state in
+        Authentication.requireAuthentication(controller: self) { state in
             switch state {
             case .loggedIn:
                 // Reload HeaderView on load
@@ -254,11 +254,11 @@ class AccountHeaderView: UIView {
     }
 
     func render() {
-        if let pictureUrl = UserAccount.pictureUrl {
+        if let pictureUrl = UserProfile.instance?.photoUrl {
             self.profileImageView.render(images: ["original": pictureUrl])
         }
-        self.nameLabel.text = UserAccount.name
-        self.emailLabel.text = UserAccount.email
+        self.nameLabel.text = UserProfile.instance?.name
+        self.emailLabel.text = UserProfile.instance?.email
     }
 
     @objc fileprivate func onSelectTab(selected: AccountTabButton) {

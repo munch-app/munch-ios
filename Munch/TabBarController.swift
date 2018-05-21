@@ -62,11 +62,11 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
 
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         switch viewController {
-        case is AccountController where AccountAuthentication.isAuthenticated():
+        case is AccountController where Authentication.isAuthenticated():
             return true
 
-        case is AccountController where !AccountAuthentication.isAuthenticated():
-            AccountAuthentication.requireAuthentication(controller: self) { state in
+        case is AccountController where !Authentication.isAuthenticated():
+            Authentication.requireAuthentication(controller: self) { state in
                 switch state {
                 case .loggedIn:
                     tabBarController.selectedViewController = self.accountController

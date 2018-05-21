@@ -68,14 +68,14 @@ class CollectionPlaceController: UIViewController, UIGestureRecognizerDelegate {
         self.collectionId = collectionId
         self.placeCollection = placeCollection
         self.userId = placeCollection.userId
-        self.publicContent = self.userId != UserAccount.sub
+        self.publicContent = self.userId != UserProfile.instance?.userId
         super.init(nibName: nil, bundle: nil)
     }
 
     init(userId: String, collectionId: String) {
         self.userId = userId
         self.collectionId = collectionId
-        self.publicContent = self.userId != UserAccount.sub
+        self.publicContent = self.userId != UserProfile.instance?.userId
         super.init(nibName: nil, bundle: nil)
     }
 

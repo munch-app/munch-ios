@@ -15,6 +15,8 @@ import SnapKit
 import FirebaseAnalytics
 
 import Kingfisher
+import Moya
+import FirebaseAuth
 
 class DiscoverNavigationalController: UINavigationController, UINavigationControllerDelegate {
     required init() {
@@ -83,10 +85,20 @@ class DiscoverController: UIViewController {
         edgePan.edges = .left
         self.view.addGestureRecognizer(edgePan)
 
+        // Future: Change AccountRootBoardingController version and remove force re authenticate
         if AccountRootBoardingController.toShow {
             self.present(AccountRootBoardingController(guestOption: true, withCompletion: { state in
                 // Current does nothing
             }), animated: true)
+        } else if Auth.auth().currentUser != nil {
+            Authentication.authenticate { state in
+                switch state {
+                case .fail(let error):
+                    self.alert(error: error)
+                default:
+                    return
+                }
+            }
         }
     }
 

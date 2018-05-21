@@ -45,32 +45,15 @@ extension UIColor {
     }
 
     static let bgTag = UIColor(hex: "F0F0F7")
-
     static let bgRed = UIColor(hex: "ffddea")
 
     // MARK: Color Palette of Munch App
     static let primary = UIColor.primary500
-
-    class var primary010: UIColor {
-        return UIColor(hex: "ffedea")
-    }
-
-    class var primary020: UIColor {
-        return UIColor(hex: "ffdcd7")
-    }
-
-    class var primary030: UIColor {
-        return UIColor(hex: "ffcac3")
-    }
-
-    class var primary040: UIColor {
-        return UIColor(hex: "ffb9b0")
-    }
-
-    class var primary050: UIColor {
-        return UIColor(hex: "ffa89c")
-    }
-
+    static let primary010 = UIColor(hex: "ffedea")
+    static let primary020 = UIColor(hex: "ffdcd7")
+    static let primary030 = UIColor(hex: "ffcac3")
+    static let primary040 = UIColor(hex: "ffb9b0")
+    static let primary050 = UIColor(hex: "ffa89c")
     static let primary100 = UIColor(hex: "ff9788")
     static let primary200 = UIColor(hex: "ff8674")
     static let primary300 = UIColor(hex: "ff7560")
@@ -82,53 +65,18 @@ extension UIColor {
     static let primary900 = UIColor(hex: "A33525")
     static let primary950 = UIColor(hex: "8C2E20")
 
-    class var secondary: UIColor {
-        return .secondary500
-    }
-
-    class var secondary050: UIColor {
-        return UIColor(hex: "76D5A9")
-    }
-
-    class var secondary100: UIColor {
-        return UIColor(hex: "5FCE9B")
-    }
-
-    class var secondary200: UIColor {
-        return UIColor(hex: "48C78C")
-    }
-
-    class var secondary300: UIColor {
-        return UIColor(hex: "31C07E")
-    }
-
-    class var secondary400: UIColor {
-        return UIColor(hex: "1AB970")
-    }
-
-    class var secondary500: UIColor {
-        return UIColor(hex: "04B262")
-    }
-
-    class var secondary600: UIColor {
-        return UIColor(hex: "04A25A")
-    }
-
-    class var secondary700: UIColor {
-        return UIColor(hex: "049251")
-    }
-
-    class var secondary800: UIColor {
-        return UIColor(hex: "038248")
-    }
-
-    class var secondary900: UIColor {
-        return UIColor(hex: "03723F")
-    }
-
-    class var secondary950: UIColor {
-        return UIColor(hex: "036236")
-    }
+    static let secondary = UIColor.secondary500
+    static let secondary050 = UIColor(hex: "76D5A9")
+    static let secondary100 = UIColor(hex: "5FCE9B")
+    static let secondary200 = UIColor(hex: "48C78C")
+    static let secondary300 = UIColor(hex: "31C07E")
+    static let secondary400 = UIColor(hex: "1AB970")
+    static let secondary500 = UIColor(hex: "04B262")
+    static let secondary600 = UIColor(hex: "04A25A")
+    static let secondary700 = UIColor(hex: "049251")
+    static let secondary800 = UIColor(hex: "038248")
+    static let secondary900 = UIColor(hex: "03723F")
+    static let secondary950 = UIColor(hex: "036236")
 }
 
 // Need to deprecate this class, giving me headaches
@@ -285,25 +233,6 @@ public class MunchImageView: UIImageView {
     }
 }
 
-public class MunchPlist {
-    private static let instance = MunchPlist()
-
-    let dictionary: [String: Any]
-
-    init() {
-        let path = Bundle.main.path(forResource: "Munch", ofType: "plist")!
-        self.dictionary = NSDictionary(contentsOfFile: path) as! [String: Any]
-    }
-
-    class func get(key: String) -> Any? {
-        return instance.dictionary[key]
-    }
-
-    class func get(asString key: String) -> String? {
-        return instance.dictionary[key] as? String
-    }
-}
-
 extension Calendar {
     static func millis(from: Date, to: Date) -> Int {
         return Calendar.current.dateComponents(Set<Calendar.Component>([.nanosecond]), from: from, to: to).nanosecond! / 1000000
@@ -311,5 +240,15 @@ extension Calendar {
 
     static func micro(from: Date, to: Date) -> Int {
         return Calendar.current.dateComponents(Set<Calendar.Component>([.nanosecond]), from: from, to: to).nanosecond! / 1000
+    }
+}
+
+extension String {
+    var urlEscaped: String {
+        return addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
+    }
+
+    var utf8Encoded: Data {
+        return data(using: .utf8)!
     }
 }

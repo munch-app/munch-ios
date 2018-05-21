@@ -285,7 +285,7 @@ class PlaceHeaderView: UIView {
 
     @objc func onAddButton(_ sender: Any) {
         if let placeId = self.placeId {
-            AccountAuthentication.requireAuthentication(controller: controller) { state in
+            Authentication.requireAuthentication(controller: controller) { state in
                 switch state {
                 case .loggedIn:
                     let controller = CollectionSelectRootController(placeId: placeId) { placeCollection in
@@ -764,7 +764,7 @@ class HeartButton: UIButton {
 
     @objc func onHeartButton(_ button: Any) {
         if let controller = self.controller {
-            AccountAuthentication.requireAuthentication(controller: controller) { state in
+            Authentication.requireAuthentication(controller: controller) { state in
                 switch state {
                 case .loggedIn:
                     if let placeId = self.placeId {

@@ -5,6 +5,8 @@
 
 import Foundation
 import UIKit
+import Moya
+import RxSwift
 
 import Firebase
 import FirebaseAuth
@@ -22,7 +24,9 @@ struct AuthenticationError: LocalizedError {
     }
 }
 
-public class AccountAuthentication {
+public class Authentication {
+    private static let provider = MunchProvider<UserService>()
+
     public class func getToken(withCompletion: @escaping (_ token: String?) -> Void) {
         if let currentUser = Auth.auth().currentUser {
             currentUser.getIDTokenForcingRefresh(true) { idToken, error in
@@ -41,7 +45,7 @@ public class AccountAuthentication {
     }
 
     public class func isAuthenticated() -> Bool {
-        return Auth.auth().currentUser != nil
+        return UserProfile.instance != nil
     }
 
     public class func requireAuthentication(controller: UIViewController, withCompletion: @escaping (_ state: AuthenticationState) -> Void) {
@@ -69,8 +73,7 @@ public class AccountAuthentication {
                 return
             }
             // User is now signed in
-            UserAccount.update(user: Auth.auth().currentUser!)
-            withCompletion(.loggedIn)
+            authenticate(withCompletion: withCompletion)
         }
     }
 
@@ -84,86 +87,35 @@ public class AccountAuthentication {
                 return
             }
             // User is now signed in
-            UserAccount.update(user: Auth.auth().currentUser!)
-            withCompletion(.loggedIn)
+            authenticate(withCompletion: withCompletion)
         }
     }
 
+    // Temporary Method to authenticate user silently due to migration of version
+    class func authenticate(withCompletion: @escaping(_ state: AuthenticationState) -> Void) {
+        provider.rx.request(.authenticate)
+                .map { response throws -> UserData in
+                    try response.map(data: UserData.self)
+                }
+                .subscribe { event in
+                    switch event {
+                    case let .success(userData):
+                        UserProfile.instance = userData.profile
+                        UserSetting.instance = userData.setting
+                        withCompletion(.loggedIn)
+                    case let .error(error):
+                        withCompletion(.fail(error))
+                    }
+                }
+    }
+
     public class func logout() {
-        UserAccount.removeAll()
+        UserProfile.instance = nil
+        UserSetting.instance = nil
         do {
             try Auth.auth().signOut()
         } catch {
             Crashlytics.sharedInstance().recordError(error)
         }
-    }
-}
-
-public class UserAccount {
-    // Sub is JWT version of UserId
-    public static var sub: String? {
-        get {
-            return UserDefaults.standard.string(forKey: "user.sub")
-        }
-
-        set(value) {
-            UserDefaults.standard.set(value, forKey: "user.sub")
-        }
-    }
-
-    public static var name: String? {
-        get {
-            return UserDefaults.standard.string(forKey: "user.name")
-        }
-
-        set(value) {
-            UserDefaults.standard.set(value, forKey: "user.name")
-        }
-    }
-
-    public static var email: String? {
-        get {
-            return UserDefaults.standard.string(forKey: "user.email")
-        }
-
-        set(value) {
-            UserDefaults.standard.set(value, forKey: "user.email")
-        }
-    }
-
-    public static var pictureUrl: String? {
-        get {
-            return UserDefaults.standard.string(forKey: "user.pictureUrl")
-        }
-
-        set(value) {
-            UserDefaults.standard.set(value, forKey: "user.pictureUrl")
-        }
-    }
-
-    /**
-     Check if the name is nil, if nil means that no user data yet loaded
-     */
-    public static var isEmpty: Bool {
-        return name == nil
-    }
-
-
-    fileprivate class func update(user: UserInfo) {
-        sub = user.uid
-        name = user.displayName
-        email = user.email
-        pictureUrl = user.photoURL?.absoluteString
-
-        Crashlytics.sharedInstance().setUserIdentifier(sub)
-        Crashlytics.sharedInstance().setUserName(name)
-        Crashlytics.sharedInstance().setUserEmail(email)
-    }
-
-    public class func removeAll() {
-        self.sub = nil
-        self.name = nil
-        self.email = nil
-        self.pictureUrl = nil
     }
 }

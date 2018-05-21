@@ -4,6 +4,11 @@ target 'Munch' do
   use_frameworks!
 
   # Core Pods for Munch
+  pod 'RxSwift', '~> 4.0'
+  pod 'RxCocoa', '~> 4.0'
+  pod 'Moya', '~> 11.0'
+  pod 'Moya/RxSwift', '~> 11.0'
+
   pod 'RealmSwift', '~> 3.0'
   pod 'Alamofire', '~> 4.5'
   pod 'SwiftyJSON', '~> 4.0'
@@ -32,15 +37,13 @@ target 'Munch' do
 
   pod 'NVActivityIndicatorView', '~> 4.0'
   pod 'ESTabBarController-swift', '2.5'
-  pod 'TTGTagCollectionView', :git=> 'https://github.com/Fuxingloh/TTGTagCollectionView.git', :branch => 'master'
+  pod 'TTGTagCollectionView', :git => 'https://github.com/Fuxingloh/TTGTagCollectionView.git', :branch => 'master'
 
   pod 'Charts'
   pod 'SKPhotoBrowser', '~> 5.0'
   pod 'Cosmos', '~> 13.0'
   pod 'BEMCheckBox', '~> 1.4'
   pod 'RangeSeekSlider', '~> 1.7'
-
-  # pod 'MVCarouselCollectionView'
 
   # Pods for Testing
   target 'MunchTests' do

@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 
 import SnapKit
+import Moya
 
 /**
  Hairline constraint is used to draw hairline divider
@@ -272,7 +273,11 @@ extension Array {
 extension UIViewController {
 
     func alert(error: Error) {
-        alert(title: "Unhandled Error", message: error.localizedDescription)
+        if let error = error as? MoyaError {
+            alert(error: error)
+        } else {
+            alert(title: "Unhandled Error", message: error.localizedDescription)
+        }
     }
 
     func alert(title: String, error: Error) {
