@@ -149,6 +149,7 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
             ]),
             ("SEARCH PREFERENCE", [
                 SettingCellType.preferenceTag("Halal"),
+                SettingCellType.preferenceTag("Vegetarian Options"),
             ]),
             ("ACCOUNT", [
                 SettingCellType.feedback,
@@ -219,12 +220,16 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
         case .preferenceTag(let text):
             if let setting = setting {
                 if setting.search.tags.contains(text.lowercased()) {
-                    SearchQueryPreferenceManager.instance.remove(tag: text.lowercased(), controller: self)
+                    SearchQueryPreferenceManager.instance.remove(tag: text.lowercased(), controller: self) { setting in
+                        self.setting = setting
+                    }
 
                     let cell = tableView.cellForRow(at: indexPath) as! SettingPreferenceTagCell
                     cell.checkButton.setOn(false, animated: true)
                 } else {
-                    SearchQueryPreferenceManager.instance.add(tag: text.lowercased(), controller: self)
+                    SearchQueryPreferenceManager.instance.add(tag: text.lowercased(), controller: self) { setting in
+                        self.setting = setting
+                    }
 
                     let cell = tableView.cellForRow(at: indexPath) as! SettingPreferenceTagCell
                     cell.checkButton.setOn(true, animated: true)

@@ -226,23 +226,18 @@ protocol SearchQueryToken {
 class SearchQueryPreferenceManager {
     static let instance = SearchQueryPreferenceManager()
 
-    let managed = ["halal"]
-    var userSetting = UserSetting.instance
+    let managed = ["halal", "vegetarian options"]
 
     func edit(filter: SearchQuery.Filter) -> SearchQuery.Filter {
         var filter = filter
 
-        if let setting = userSetting {
+        if let setting = UserSetting.instance {
             for tag in setting.search.tags {
                 filter.tag.positives.insert(tag.capitalized)
             }
         }
 
         return filter
-    }
-
-    func refresh() {
-        self.userSetting = UserSetting.instance
     }
 
     func check(searchQuery: SearchQuery) -> String? {
@@ -256,7 +251,7 @@ class SearchQueryPreferenceManager {
 
     func check(tag: String) -> Bool {
         let tag = tag.lowercased()
-        if let setting = userSetting {
+        if let setting = UserSetting.instance {
             if setting.search.tags.contains(tag) {
                 return false
             }
@@ -288,10 +283,10 @@ class SearchQueryPreferenceManager {
         return style
     }()
 
-    func add(tag: String, controller: UIViewController) {
+    func add(tag: String, controller: UIViewController, onCompletion: @escaping (UserSetting) -> Void) {
         let tag = tag.lowercased()
 
-        if var setting = userSetting {
+        if var setting = UserSetting.instance {
             setting.search.tags.append(tag)
             UserSetting.instance = setting
             let provider = MunchProvider<UserService>()
@@ -302,14 +297,15 @@ class SearchQueryPreferenceManager {
                 case .success:
                     controller.view.makeToast("Added '\(tag.capitalized)' to Search Preference.", image: UIImage(named: "RIP-Toast-Checkmark"), style: self.toastStyle)
                 }
+                onCompletion(setting)
             }
         }
     }
 
-    func remove(tag: String, controller: UIViewController) {
+    func remove(tag: String, controller: UIViewController, onCompletion: @escaping (UserSetting) -> Void) {
         let tag = tag.lowercased()
 
-        if var setting = userSetting {
+        if var setting = UserSetting.instance {
             if let index = setting.search.tags.index(of: tag) {
                 setting.search.tags.remove(at: index)
             }
@@ -323,6 +319,7 @@ class SearchQueryPreferenceManager {
                 case .success:
                     controller.view.makeToast("Removed '\(tag.capitalized)' from Search Preference.", image: UIImage(named: "RIP-Toast-Close"), style: self.toastStyle)
                 }
+                onCompletion(setting)
             }
         }
     }

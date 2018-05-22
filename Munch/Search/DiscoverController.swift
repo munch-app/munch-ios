@@ -200,7 +200,8 @@ class DiscoverController: UIViewController {
                 let alert = UIAlertController(title: "Search Preference", message: message, preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
                 alert.addAction(UIAlertAction(title: "Add", style: .default) { action in
-                    SearchQueryPreferenceManager.instance.add(tag: tag, controller: self)
+                    SearchQueryPreferenceManager.instance.add(tag: tag, controller: self) { setting in
+                    }
                 })
                 self.present(alert, animated: true)
             }
