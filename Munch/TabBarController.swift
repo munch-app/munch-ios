@@ -92,6 +92,18 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
         default: return true
         }
     }
+
+    func render(searchQuery: SearchQuery) {
+        if let controllers = viewControllers {
+            for controller in controllers {
+                if let controller = (controller as? UINavigationController)?.topViewController as? DiscoverController {
+                    controller.render(searchQuery: searchQuery)
+                    return
+                }
+            }
+        }
+    }
+
 }
 
 /**

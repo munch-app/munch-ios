@@ -222,6 +222,7 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
                 if setting.search.tags.contains(text.lowercased()) {
                     SearchQueryPreferenceManager.instance.remove(tag: text.lowercased(), controller: self) { setting in
                         self.setting = setting
+                        (self.tabBarController as? TabBarController)?.render(searchQuery: SearchQuery())
                     }
 
                     let cell = tableView.cellForRow(at: indexPath) as! SettingPreferenceTagCell
@@ -229,6 +230,7 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
                 } else {
                     SearchQueryPreferenceManager.instance.add(tag: text.lowercased(), controller: self) { setting in
                         self.setting = setting
+                        (self.tabBarController as? TabBarController)?.render(searchQuery: SearchQuery())
                     }
 
                     let cell = tableView.cellForRow(at: indexPath) as! SettingPreferenceTagCell
