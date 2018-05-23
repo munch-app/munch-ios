@@ -6,7 +6,9 @@
 import Foundation
 import UIKit
 import SafariServices
+import Toast_Swift
 
+import Moya
 import BEMCheckBox
 import SnapKit
 
@@ -218,23 +220,47 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
                 UIApplication.shared.open(url)
             }
         case .preferenceTag(let text):
-            if let setting = setting {
-                if setting.search.tags.contains(text.lowercased()) {
-                    SearchQueryPreferenceManager.instance.remove(tag: text.lowercased(), controller: self) { setting in
-                        self.setting = setting
-                        (self.tabBarController as? TabBarController)?.render(searchQuery: SearchQuery())
-                    }
+            let tag = text.lowercased()
 
+            if let setting = self.setting {
+                if setting.search.tags.contains(tag) {
                     let cell = tableView.cellForRow(at: indexPath) as! SettingPreferenceTagCell
                     cell.checkButton.setOn(false, animated: true)
-                } else {
-                    SearchQueryPreferenceManager.instance.add(tag: text.lowercased(), controller: self) { setting in
-                        self.setting = setting
-                        (self.tabBarController as? TabBarController)?.render(searchQuery: SearchQuery())
-                    }
 
+                    UserSetting.apply(search: { search in
+                        var search = search
+                        if let index = search.tags.index(of: tag) {
+                            search.tags.remove(at: index)
+                        }
+                        return search
+                    }) { result in
+                        switch result {
+                        case .success(let setting):
+                            self.setting = setting
+                            self.view.makeToast("Removed '\(tag.capitalized)' from Search Preference.", image: UIImage(named: "RIP-Toast-Close"), style: DefaultToastStyle)
+                            (self.tabBarController as? TabBarController)?.discoverController?.reset(force: true)
+                        case .error(let error):
+                            self.alert(error: error)
+                        }
+                    }
+                } else {
                     let cell = tableView.cellForRow(at: indexPath) as! SettingPreferenceTagCell
                     cell.checkButton.setOn(true, animated: true)
+
+                    UserSetting.apply(search: { search in
+                        var search = search
+                        search.tags.append(tag)
+                        return search
+                    }) { result in
+                        switch result {
+                        case .success(let setting):
+                            self.setting = setting
+                            self.view.makeToast("Added '\(tag.capitalized)' to Search Preference.", image: UIImage(named: "RIP-Toast-Checkmark"), style: DefaultToastStyle)
+                            (self.tabBarController as? TabBarController)?.discoverController?.reset(force: true)
+                        case .error(let error):
+                            self.alert(error: error)
+                        }
+                    }
                 }
             }
         default:

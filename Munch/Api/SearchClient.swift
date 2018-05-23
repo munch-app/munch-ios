@@ -223,115 +223,13 @@ protocol SearchQueryToken {
 
 }
 
-class SearchQueryPreferenceManager {
-    static let instance = SearchQueryPreferenceManager()
-
-    let managed = ["halal", "vegetarian options"]
-
-    func edit(filter: SearchQuery.Filter) -> SearchQuery.Filter {
-        var filter = filter
-
-        if let setting = UserSetting.instance {
-            for tag in setting.search.tags {
-                filter.tag.positives.insert(tag.capitalized)
-            }
-        }
-
-        return filter
-    }
-
-    func check(searchQuery: SearchQuery) -> String? {
-        for tag in searchQuery.filter.tag.positives {
-            if check(tag: tag) {
-                return tag
-            }
-        }
-        return nil
-    }
-
-    func check(tag: String) -> Bool {
-        let tag = tag.lowercased()
-        if let setting = UserSetting.instance {
-            if setting.search.tags.contains(tag) {
-                return false
-            }
-
-            if managed.contains(tag) {
-                let count = UserDefaults.standard.integer(forKey: "SearchQueryManager.\(tag)") + 1
-                UserDefaults.standard.set(count, forKey: "SearchQueryManager.\(tag)")
-
-                if count == 3 {
-                    return true
-                }
-            }
-        }
-
-        return false
-    }
-
-    private let toastStyle: ToastStyle = {
-        var style = ToastStyle()
-        style.backgroundColor = UIColor.bgTag
-        style.cornerRadius = 5
-        style.imageSize = CGSize(width: 20, height: 20)
-        style.fadeDuration = 6.0
-        style.messageColor = UIColor.black.withAlphaComponent(0.85)
-        style.messageFont = UIFont.systemFont(ofSize: 15, weight: .regular)
-        style.messageNumberOfLines = 2
-        style.messageAlignment = .left
-
-        return style
-    }()
-
-    func add(tag: String, controller: UIViewController, onCompletion: @escaping (UserSetting) -> Void) {
-        let tag = tag.lowercased()
-
-        if var setting = UserSetting.instance {
-            setting.search.tags.append(tag)
-            UserSetting.instance = setting
-            let provider = MunchProvider<UserService>()
-            provider.request(.patchSetting(search: setting.search)) { result in
-                switch result {
-                case .failure(let error):
-                    controller.alert(error: error)
-                case .success:
-                    controller.view.makeToast("Added '\(tag.capitalized)' to Search Preference.", image: UIImage(named: "RIP-Toast-Checkmark"), style: self.toastStyle)
-                }
-                onCompletion(setting)
-            }
-        }
-    }
-
-    func remove(tag: String, controller: UIViewController, onCompletion: @escaping (UserSetting) -> Void) {
-        let tag = tag.lowercased()
-
-        if var setting = UserSetting.instance {
-            if let index = setting.search.tags.index(of: tag) {
-                setting.search.tags.remove(at: index)
-            }
-
-            UserSetting.instance = setting
-            let provider = MunchProvider<UserService>()
-            provider.request(.patchSetting(search: setting.search)) { result in
-                switch result {
-                case .failure(let error):
-                    controller.alert(error: error)
-                case .success:
-                    controller.view.makeToast("Removed '\(tag.capitalized)' from Search Preference.", image: UIImage(named: "RIP-Toast-Close"), style: self.toastStyle)
-                }
-                onCompletion(setting)
-            }
-        }
-    }
-}
-
 /**
  SearchQuery object from munch-core/service-places
  This is a input and output data
  */
 struct SearchQuery: Equatable {
     var from: Int? = 0
-    var size: Int? = 20
+    var size: Int? = 50
     var query: String? // Visual Representation of SearchQuery
 
     var latLng: String?
@@ -342,7 +240,13 @@ struct SearchQuery: Equatable {
 
     init() {
         sort = Sort()
-        filter = SearchQueryPreferenceManager.instance.edit(filter: Filter())
+        filter = Filter()
+
+        if let tags = UserSetting.instance?.search.tags {
+            for tag in tags {
+                filter.tag.positives.insert(tag.capitalized)
+            }
+        }
     }
 
     init(json: JSON) {

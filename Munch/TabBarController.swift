@@ -93,17 +93,16 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
         }
     }
 
-    func render(searchQuery: SearchQuery) {
+    var discoverController: DiscoverController? {
         if let controllers = viewControllers {
             for controller in controllers {
                 if let controller = (controller as? UINavigationController)?.topViewController as? DiscoverController {
-                    controller.render(searchQuery: searchQuery)
-                    return
+                    return controller
                 }
             }
         }
+        return nil
     }
-
 }
 
 /**

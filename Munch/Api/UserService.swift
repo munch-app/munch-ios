@@ -4,9 +4,9 @@
 //
 
 import Foundation
-import Moya
 import Cache
-
+import Moya
+import RxSwift
 import Crashlytics
 
 enum UserService {
@@ -100,6 +100,70 @@ extension UserSetting {
         set(value) {
             UserDefaults.standard.set(try? PropertyListEncoder().encode(value), forKey: "UserSetting")
         }
+    }
+
+    /**
+     Apply changes to UserSetting, closure will only be called if it exists
+     */
+    static func apply(search editing: @escaping (UserSetting.Search) -> UserSetting.Search, onComplete: @escaping (SingleEvent<UserSetting>) -> Void) {
+        guard var editable = UserSetting.instance else {
+            return
+        }
+        let changed = editing(editable.search)
+        editable.search = changed
+        UserSetting.instance = editable
+
+        let provider = MunchProvider<UserService>()
+        provider.rx.request(.patchSetting(search: changed))
+                .map { response throws -> UserSetting in
+                    try response.map(data: UserSetting.self)
+                }
+                .subscribe(onComplete)
+    }
+
+    static let managed = ["halal", "vegetarian options"]
+
+    static func request(toPerm searchQuery: SearchQuery) -> String? {
+        for tag in searchQuery.filter.tag.positives {
+            if request(toPerm: tag) {
+                return tag
+            }
+        }
+        return nil
+    }
+
+    static func request(toPerm tag: String) -> Bool {
+        let tag = tag.lowercased()
+        if let setting = UserSetting.instance {
+            if setting.search.tags.contains(tag) {
+                return false
+            }
+
+            if managed.contains(tag) {
+                let count = UserDefaults.standard.integer(forKey: "SearchQueryManager.\(tag)") + 1
+                UserDefaults.standard.set(count, forKey: "SearchQueryManager.\(tag)")
+
+                if count == 3 {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    /**
+     Check if action is allowed
+     */
+    static func allow(remove tag: String, controller: UIViewController) -> Bool {
+        if let tags = UserSetting.instance?.search.tags {
+            if tags.contains(tag.lowercased()) {
+                controller.alert(title: "Search Preference", message: "You have set this as a permanent filter from your profile page. Please remove it from your user profile if you wish to discontinue this permanent filter.")
+                return false
+            }
+        }
+
+        return true
     }
 }
 

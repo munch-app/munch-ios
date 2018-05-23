@@ -138,6 +138,10 @@ class DiscoverHeaderView: UIView, FilterTagViewDelegate {
     }
 
     func tagCollection(selectedTag name: String, for tagCollection: FilterTagView) {
+        if !UserSetting.allow(remove: name.lowercased(), controller: self.controller) {
+            return
+        }
+
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
             var searchQuery = self.controller.searchQuery

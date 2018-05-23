@@ -12,6 +12,8 @@ import UIKit
 import SnapKit
 import Moya
 
+import Toast_Swift
+
 /**
  Hairline constraint is used to draw hairline divider
  */
@@ -402,3 +404,17 @@ class UICollectionViewLeftAlignedLayout: UICollectionViewFlowLayout {
         return self.sectionInset
     }
 }
+
+let DefaultToastStyle: Toast_Swift.ToastStyle = {
+    var style = ToastStyle()
+    style.backgroundColor = UIColor.bgTag
+    style.cornerRadius = 5
+    style.imageSize = CGSize(width: 20, height: 20)
+    style.fadeDuration = 6.0
+    style.messageColor = UIColor.black.withAlphaComponent(0.85)
+    style.messageFont = UIFont.systemFont(ofSize: 15, weight: .regular)
+    style.messageNumberOfLines = 2
+    style.messageAlignment = .left
+
+    return style
+}()

@@ -239,6 +239,12 @@ extension DiscoverFilterController: UITableViewDataSource, UITableViewDelegate {
         switch items[indexPath.row] {
         case .tag(let tag):
             let text = tag.name ?? ""
+            if manager.isSelected(tag: text) {
+                if !UserSetting.allow(remove: text.lowercased(), controller: self) {
+                    return
+                }
+            }
+
             manager.select(tag: text, selected: !manager.isSelected(tag: text))
             Analytics.logEvent("filter_action", parameters: [
                 AnalyticsParameterItemID: "tag-\(text)" as NSObject,
@@ -389,6 +395,10 @@ fileprivate class DiscoverFilterHeaderView: UIView, MunchTagCollectionViewDelega
             ])
 
         case .tag(let text):
+            if !UserSetting.allow(remove: text.lowercased(), controller: self.controller) {
+                return
+            }
+
             self.controller.manager.reset(tags: [text])
             Analytics.logEvent("filter_action", parameters: [
                 AnalyticsParameterItemCategory: "click_reset_tag" as NSObject

@@ -227,24 +227,7 @@ class DiscoverFilterControllerManager {
      Reset everything except for location and containers
      */
     func reset() {
-        searchQuery.filter.tag.positives = []
-        searchQuery.filter.location = nil
-        searchQuery.filter.containers = []
-
-
-        // Filters Hour
-        searchQuery.filter.hour.name = nil
-        searchQuery.filter.hour.day = nil
-        searchQuery.filter.hour.open = nil
-        searchQuery.filter.hour.close = nil
-
-        // Filters Price
-        searchQuery.filter.price.name = nil
-        searchQuery.filter.price.min = nil
-        searchQuery.filter.price.max = nil
-
-        // Sort
-        searchQuery.sort.type = nil
+        searchQuery = SearchQuery()
         runHooks()
     }
 

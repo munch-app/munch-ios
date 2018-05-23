@@ -18,6 +18,8 @@ import FirebaseAnalytics
 import Kingfisher
 import FirebaseAuth
 
+import Toast_Swift
+
 class DiscoverNavigationalController: UINavigationController, UINavigationControllerDelegate {
     required init() {
         super.init(nibName: nil, bundle: nil)
@@ -195,12 +197,29 @@ class DiscoverController: UIViewController {
         search(searchQuery: searchQuery)
 
         DispatchQueue.main.async {
-            if let tag = SearchQueryPreferenceManager.instance.check(searchQuery: searchQuery) {
+            if let tag = UserSetting.request(toPerm: searchQuery) {
                 let message = "Hi \(UserProfile.instance?.name ?? ""), we noticed you require ‘\(tag.capitalized)’ food often. Would you like ‘\(tag.capitalized)’ to be included in all future searches?\n\nDon’t worry, you may edit this from your profile if required."
                 let alert = UIAlertController(title: "Search Preference", message: message, preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
                 alert.addAction(UIAlertAction(title: "Add", style: .default) { action in
-                    SearchQueryPreferenceManager.instance.add(tag: tag, controller: self) { setting in
+                    Authentication.requireAuthentication(controller: self) { state in
+                        switch state {
+                        case .loggedIn:
+                            UserSetting.apply(search: { search in
+                                var search = search
+                                search.tags.append(tag.lowercased())
+                                return search
+                            }) { result in
+                                switch result {
+                                case .success:
+                                    self.view.makeToast("Added '\(tag.capitalized)' to Search Preference.", image: UIImage(named: "RIP-Toast-Checkmark"), style: DefaultToastStyle)
+                                case .error(let error):
+                                    self.alert(error: error)
+                                }
+                            }
+                        default:
+                            return
+                        }
                     }
                 })
                 self.present(alert, animated: true)
@@ -208,13 +227,19 @@ class DiscoverController: UIViewController {
         }
     }
 
-    func reset() {
-        if let time = cardManager?.time, time.addingTimeInterval(60 * 60) < Date() {
-            // Query requires refresh as it expired in 1 hour
+    func reset(force: Bool = false) {
+        func applyReset() {
             searchQuery = SearchQuery()
             contentView(search: searchQuery)
             headerView.searchQueryHistories.removeAll()
             headerView.render(query: searchQuery)
+        }
+
+        if let time = cardManager?.time, time.addingTimeInterval(60 * 60) < Date() {
+            // Query requires refresh as it expired in 1 hour
+            applyReset()
+        } else if force {
+            applyReset()
         }
     }
 
