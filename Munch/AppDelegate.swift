@@ -13,7 +13,6 @@ import UserNotifications
 import FirebaseMessaging
 
 import Crashlytics
-import GoogleSignIn
 import FBSDKCoreKit
 import FBSDKLoginKit
 
@@ -45,8 +44,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Configure FBSDK
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
-        // Configure Google ID
-        GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
 
         return true
     }
@@ -56,13 +53,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if FBSDKApplicationDelegate.sharedInstance().application(application, open: url, options: options) {
             return true
         }
-
-        if GIDSignIn.sharedInstance().handle(url,
-                sourceApplication: options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String,
-                annotation: [:]) {
-            return true
-        }
-
         return false
     }
 

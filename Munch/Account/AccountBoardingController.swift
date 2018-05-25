@@ -62,7 +62,7 @@ class AccountRootBoardingController: UINavigationController, UINavigationControl
     }
 }
 
-class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignInDelegate {
+class AccountBoardingController: UIViewController {
     fileprivate let dataList: [OnboardingData] = [
         OnboardingData(backgroundImage: UIImage(named: "Onboarding-Bg-1"),
                 backgroundColor: UIColor(hex: "fcab5a"), contextImage: nil,
@@ -131,7 +131,6 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
 
         headerView.cancelButton.addTarget(self, action: #selector(action(_:)), for: .touchUpInside)
         bottomView.facebookButton.addTarget(self, action: #selector(action(_:)), for: .touchUpInside)
-        bottomView.googleButton.addTarget(self, action: #selector(action(_:)), for: .touchUpInside)
         bottomView.guestButton.addTarget(self, action: #selector(action(_:)), for: .touchUpInside)
     }
 
@@ -233,36 +232,7 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
                     }
                 }
             }
-        } else if sender == self.bottomView.googleButton {
-            GIDSignIn.sharedInstance().delegate = self
-            GIDSignIn.sharedInstance().uiDelegate = self
-            GIDSignIn.sharedInstance().signIn()
         }
-    }
-
-    // MARK: Google Sign In
-    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error?) {
-        if let error = error {
-            Crashlytics.sharedInstance().recordError(error)
-            self.dismiss(state: .fail(error))
-            return
-        }
-
-        if let authentication = user.authentication {
-            Authentication.login(google: authentication.idToken, accessToken: authentication.accessToken) { state in
-                Analytics.logEvent(AnalyticsEventSignUp, parameters: [
-                    AnalyticsParameterSignUpMethod: "google" as NSObject
-                ])
-                self.dismiss(state: state)
-            }
-        } else {
-            self.dismiss(state: .cancel)
-        }
-    }
-
-    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
-        Authentication.logout()
-        self.dismiss(state: .cancel)
     }
 
     class BottomView: UIView {
@@ -276,21 +246,6 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
 
             button.backgroundColor = UIColor(hex: "#4267b2")
             button.layer.cornerRadius = 3
-            return button
-        }()
-
-        let googleButton: ContinueButton = {
-            let button = ContinueButton()
-            button.labelView.text = "Continue with Google"
-            button.labelView.textColor = UIColor.black.withAlphaComponent(0.85)
-
-            button.iconView.image = UIImage(named: "Boarding-Google")
-            button.iconView.tintColor = .white
-
-            button.backgroundColor = .white
-            button.layer.cornerRadius = 3
-            button.layer.borderWidth = 1.0
-            button.layer.borderColor = UIColor.black.withAlphaComponent(0.6).cgColor
             return button
         }()
 
@@ -317,20 +272,12 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
             super.init(frame: CGRect.zero)
             self.backgroundColor = .white
             self.addSubview(facebookButton)
-            self.addSubview(googleButton)
             self.addSubview(agreeLabel)
 
             facebookButton.snp.makeConstraints { make in
                 make.top.equalTo(self).inset(18)
                 make.left.right.equalTo(self).inset(24)
                 make.height.equalTo(44)
-            }
-
-            googleButton.snp.makeConstraints { make in
-                make.left.right.equalTo(self).inset(24)
-                make.height.equalTo(44)
-
-                make.top.equalTo(facebookButton.snp.bottom).inset(-12)
 
                 make.bottom.equalTo(agreeLabel.snp.top).inset(-12)
             }
@@ -339,18 +286,6 @@ class AccountBoardingController: UIViewController, GIDSignInUIDelegate, GIDSignI
                 make.left.right.equalTo(self).inset(24)
                 make.bottom.equalTo(self.safeArea.bottom).inset(12)
             }
-
-//            if guestOption {
-//                self.addSubview(guestButton)
-//
-//                guestButton.snp.makeConstraints { make in
-//                    make.left.right.equalTo(self).inset(24)
-//                    make.height.equalTo(30)
-//
-//                    make.top.equalTo(googleButton.snp.bottom).inset(-12)
-//                    make.bottom.equalTo(agreeLabel.snp.top).inset(-12)
-//                }
-//            }
         }
 
         class ContinueButton: UIButton {

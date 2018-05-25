@@ -24,6 +24,7 @@ target 'Munch' do
   pod 'Firebase/Performance'
   pod 'Firebase/Auth'
   pod 'FirebaseUI/Facebook'
+  # TODO: Remove GoogleSignIn
   pod 'GoogleSignIn'
   pod 'Fabric', '~> 1.7.2'
   pod 'Crashlytics', '~> 3.10.0'

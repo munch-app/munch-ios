@@ -18,12 +18,6 @@ public enum AuthenticationState {
     case fail(Error)
 }
 
-struct AuthenticationError: LocalizedError {
-    var errorDescription: String? {
-        return "You may have logged in with multiple accounts previously. For security purposes, please log in with your Google account if you have done so before."
-    }
-}
-
 public class Authentication {
     private static let provider = MunchProvider<UserService>()
 
@@ -45,6 +39,15 @@ public class Authentication {
     }
 
     public class func isAuthenticated() -> Bool {
+        if let providers = Auth.auth().currentUser?.providerData {
+            for provider in providers {
+                if provider.providerID == "google.com" {
+                    Auth.auth().currentUser?.delete()
+                    self.logout()
+                    return false
+                }
+            }
+        }
         return UserProfile.instance != nil
     }
 
@@ -65,23 +68,9 @@ public class Authentication {
         Auth.auth().signIn(with: credential) { (user, error) in
             if let error = error {
                 if error.localizedDescription.starts(with: "An account already") {
-                    withCompletion(.fail(AuthenticationError()))
+                    // TODO Delete Account?
                     return
                 }
-                Crashlytics.sharedInstance().recordError(error)
-                withCompletion(.fail(error))
-                return
-            }
-            // User is now signed in
-            authenticate(withCompletion: withCompletion)
-        }
-    }
-
-    public class func login(google idToken: String, accessToken: String, withCompletion: @escaping(_ state: AuthenticationState) -> Void) {
-        let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
-
-        Auth.auth().signIn(with: credential) { (user, error) in
-            if let error = error {
                 Crashlytics.sharedInstance().recordError(error)
                 withCompletion(.fail(error))
                 return
