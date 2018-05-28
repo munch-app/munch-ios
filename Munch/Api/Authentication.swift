@@ -68,7 +68,7 @@ public class Authentication {
         Auth.auth().signIn(with: credential) { (user, error) in
             if let error = error {
                 if error.localizedDescription.starts(with: "An account already") {
-                    // TODO Delete Account?
+                    withCompletion(.fail(error))
                     return
                 }
                 Crashlytics.sharedInstance().recordError(error)
