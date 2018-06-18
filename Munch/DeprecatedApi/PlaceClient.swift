@@ -16,16 +16,16 @@ import SwiftyJSON
 class PlaceClient {
     private let decoder = JSONDecoder()
 
-    func get(id: String, callback: @escaping (_ meta: MetaJSON, _ place: Place?) -> Void) {
+    func get(id: String, callback: @escaping (_ meta: MetaJSON, _ place: DeprecatedPlace?) -> Void) {
         MunchApi.restful.get("/places/\(id)") { meta, json in
-            callback(meta, Place(json: json["data"]))
+            callback(meta, DeprecatedPlace(json: json["data"]))
         }
     }
 
-    func cards(id: String, callback: @escaping (_ meta: MetaJSON, _ place: Place?, _ cards: [PlaceCard], _ liked: Bool?) -> Void) {
+    func cards(id: String, callback: @escaping (_ meta: MetaJSON, _ place: DeprecatedPlace?, _ cards: [PlaceCard], _ liked: Bool?) -> Void) {
         MunchApi.restful.get("/places/\(id)/cards") { meta, json in
             callback(meta,
-                    Place(json: json["data"]["place"]),
+                    DeprecatedPlace(json: json["data"]["place"]),
                     json["data"]["cards"].map({ PlaceCard(json: $0.1) }),
                     json["data"]["user"]["liked"].bool
             )
@@ -98,7 +98,7 @@ struct PlaceCard {
 /**
  Place data type from munch-core/service-places
  */
-struct Place: SearchResult, Equatable {
+struct DeprecatedPlace: SearchResult, Equatable {
     var id: String?
     var open: Bool?
 
@@ -348,7 +348,7 @@ struct Place: SearchResult, Equatable {
                 return nil
             }
 
-            class func isBetween(hour: Place.Hour, date: Date, opening: Int = 0, closing: Int = 0) -> Bool {
+            class func isBetween(hour: DeprecatedPlace.Hour, date: Date, opening: Int = 0, closing: Int = 0) -> Bool {
                 let now = timeAs(int: instance.inFormatter.string(from: date))!
                 let open = timeAs(int: hour.open)
                 let close = timeAs(int: hour.close)
@@ -450,7 +450,7 @@ struct Place: SearchResult, Equatable {
         return params
     }
 
-    static func ==(lhs: Place, rhs: Place) -> Bool {
+    static func ==(lhs: DeprecatedPlace, rhs: DeprecatedPlace) -> Bool {
         if (lhs.id == nil || rhs.id == nil) {
             return false
         }
@@ -470,10 +470,10 @@ class BusinessHour {
         return formatter
     }()
 
-    let hours: [Place.Hour]
+    let hours: [DeprecatedPlace.Hour]
     let dayHours: [String: String]
 
-    init(hours: [Place.Hour]) {
+    init(hours: [DeprecatedPlace.Hour]) {
         self.hours = hours
 
         var dayHours = [String: String]()
@@ -494,11 +494,11 @@ class BusinessHour {
     }
 
     func isToday(day: String) -> Bool {
-        return day == Place.Hour.Formatter.dayNow().lowercased()
+        return day == DeprecatedPlace.Hour.Formatter.dayNow().lowercased()
     }
 
-    func isOpen() -> Place.Hour.Formatter.Open {
-        return Place.Hour.Formatter.isOpen(hours: hours)
+    func isOpen() -> DeprecatedPlace.Hour.Formatter.Open {
+        return DeprecatedPlace.Hour.Formatter.isOpen(hours: hours)
     }
 
     var today: String {
@@ -507,7 +507,7 @@ class BusinessHour {
     }
 
     var todayTime: String {
-        return self[Place.Hour.Formatter.dayNow().lowercased()]
+        return self[DeprecatedPlace.Hour.Formatter.dayNow().lowercased()]
     }
 }
 

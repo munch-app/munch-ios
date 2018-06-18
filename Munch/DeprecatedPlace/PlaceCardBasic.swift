@@ -379,7 +379,7 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
             make.right.equalTo(indicator.snp.left)
         }
 
-        let hours = BusinessHour(hours: card["hours"].compactMap({ Place.Hour(json: $0.1) }))
+        let hours = BusinessHour(hours: card["hours"].compactMap({ DeprecatedPlace.Hour(json: $0.1) }))
         dayView.render(hours: hours)
         dayView.isHidden = true
 

@@ -159,11 +159,11 @@ class AddressLabel: SRCopyableView {
 
     func render(card: PlaceCard) {
         render(lineOne: card["address"].string)
-        let landmarks = card["landmarks"].compactMap({ Place.Location.Landmark(json: $0.1) })
+        let landmarks = card["landmarks"].compactMap({ DeprecatedPlace.Location.Landmark(json: $0.1) })
         render(lineTwo: card["latLng"].string, landmarks: landmarks)
     }
 
-    func render(place: Place) {
+    func render(place: DeprecatedPlace) {
         render(lineOne: place.location.address)
         render(lineTwo: place.location.latLng, landmarks: place.location.landmarks)
     }
@@ -172,7 +172,7 @@ class AddressLabel: SRCopyableView {
         lineOneLabel.text = address
     }
 
-    private func render(lineTwo latLng: String?, landmarks: [Place.Location.Landmark]?) {
+    private func render(lineTwo latLng: String?, landmarks: [DeprecatedPlace.Location.Landmark]?) {
         let attributedText = NSMutableAttributedString()
 
         if let latLng = latLng, MunchLocation.isEnabled {

@@ -71,10 +71,10 @@ class DiscoverClient {
                 }
             }
 
-            func list(callback: @escaping (_ meta: MetaJSON, _ locations: [Location], _ containers: [Container]) -> Void) {
+            func list(callback: @escaping (_ meta: MetaJSON, _ locations: [DeprecatedLocation], _ containers: [Container]) -> Void) {
                 if let storage = storage {
                     try? storage.removeExpiredObjects()
-                    let locations = try? storage.object(ofType: [Location].self, forKey: "locations")
+                    let locations = try? storage.object(ofType: [DeprecatedLocation].self, forKey: "locations")
                     let containers = try? storage.object(ofType: [Container].self, forKey: "containers")
                     if let locations = locations, let containers = containers {
                         callback(.ok, locations, containers)
@@ -89,13 +89,13 @@ class DiscoverClient {
                         return
                     }
 
-                    var locations = [Location]()
+                    var locations = [DeprecatedLocation]()
                     var containers = [Container]()
 
                     if let array = json["data"].array {
                         for data in array {
                             let result = SearchClient.parseResult(result: data)
-                            if let location = result as? Location {
+                            if let location = result as? DeprecatedLocation {
                                 locations.append(location)
                             } else if let container = result as? Container {
                                 containers.append(container)

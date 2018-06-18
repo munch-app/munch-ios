@@ -7,7 +7,7 @@ import Foundation
 import UIKit
 
 class DiscoverFilterControllerLocation: UIViewController {
-    private let onExtensionDismiss: ((Location?, Container?) -> Void)
+    private let onExtensionDismiss: ((DeprecatedLocation?, Container?) -> Void)
 
     fileprivate let headerView = DiscoverFilterLocationHeaderView()
 
@@ -28,7 +28,7 @@ class DiscoverFilterControllerLocation: UIViewController {
     private var results: [(String?, [DiscoverFilterLocation])] = []
     private var searchResults: [DiscoverFilterLocation]? = nil
 
-    init(searchQuery: SearchQuery, extensionDismiss: @escaping((Location?, Container?) -> Void)) {
+    init(searchQuery: SearchQuery, extensionDismiss: @escaping((DeprecatedLocation?, Container?) -> Void)) {
         self.onExtensionDismiss = extensionDismiss
         self.searchQuery = searchQuery
         super.init(nibName: nil, bundle: nil)
@@ -161,7 +161,7 @@ class DiscoverFilterControllerLocation: UIViewController {
                     for result in results {
                         if let container = result as? Container {
                             self.searchResults?.append(DiscoverFilterLocation.container(container))
-                        } else if let location = result as? Location {
+                        } else if let location = result as? DeprecatedLocation {
                             self.searchResults?.append(DiscoverFilterLocation.location(location))
                         }
                     }

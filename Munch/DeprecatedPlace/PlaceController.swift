@@ -20,7 +20,7 @@ import Toast_Swift
 
 class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, SFSafariViewControllerDelegate {
     let placeId: String
-    var place: Place?
+    var place: DeprecatedPlace?
     var liked: Bool?
 
     private var cards = [PlaceShimmerImageBannerCard.card, PlaceShimmerNameTagCard.card]
@@ -186,12 +186,12 @@ class PlaceHeaderView: UIView {
     let backgroundView = UIView()
     let shadowView = UIView()
 
-    var place: Place?
+    var place: DeprecatedPlace?
     var placeId: String?
     var liked: Bool?
     var controller: UIViewController
 
-    init(controller: UIViewController, place: Place? = nil, liked: Bool? = nil,
+    init(controller: UIViewController, place: DeprecatedPlace? = nil, liked: Bool? = nil,
          tintColor: UIColor = UIColor.black, backgroundVisible: Bool = true, titleHidden: Bool = false) {
         self.controller = controller
         super.init(frame: CGRect.zero)
@@ -267,7 +267,7 @@ class PlaceHeaderView: UIView {
         }
     }
 
-    func render(place: Place, liked: Bool?) {
+    func render(place: DeprecatedPlace, liked: Bool?) {
         self.titleView.text = place.name
         self.place = place
         self.placeId = place.id
@@ -341,7 +341,7 @@ fileprivate class PlaceBottomView: UIView {
         return button
     }()
 
-    var place: Place?
+    var place: DeprecatedPlace?
 
     static let openStyle = Style("open", {
         $0.color = UIColor.secondary
@@ -404,7 +404,7 @@ fileprivate class PlaceBottomView: UIView {
         self.openLabel.isHidden = isHidden
     }
 
-    func render(place: Place) {
+    func render(place: DeprecatedPlace) {
         self.setHidden(isHidden: false)
         self.place = place
 
@@ -657,7 +657,7 @@ class ReviewRatingUtils {
     static let med: (CGFloat, CGFloat, CGFloat) = (0.90, 0.40, 0.0)
     static let max: (CGFloat, CGFloat, CGFloat) = (0.00, 0.77, 0.0)
 
-    class func create(review: Place.Review?) -> NSAttributedString? {
+    class func create(review: DeprecatedPlace.Review?) -> NSAttributedString? {
         if let percent = review?.average {
             return create(percent: CGFloat(percent))
         }

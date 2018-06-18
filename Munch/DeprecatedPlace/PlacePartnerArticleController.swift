@@ -13,7 +13,7 @@ import NVActivityIndicatorView
 import FirebaseAnalytics
 
 class PlacePartnerArticleController: UIViewController, UIGestureRecognizerDelegate {
-    let place: Place
+    let place: DeprecatedPlace
 
     fileprivate var cachedHeight = [Int: CGFloat]()
 

@@ -18,9 +18,6 @@ enum UserService {
 
 // MARK: - UserService Protocol Implementation
 extension UserService: TargetType {
-    var baseURL: URL {
-        return URL(string: MunchClient.url)!
-    }
     var path: String {
         switch self {
         case .authenticate:
@@ -50,12 +47,6 @@ extension UserService: TargetType {
         case .patchSetting(let search):
             return .requestJSONEncodable(search)
         }
-    }
-    var sampleData: Data {
-        fatalError("sampleData has not been implemented")
-    }
-    var headers: [String: String]? {
-        return ["Content-Type": "application/json"]
     }
 }
 

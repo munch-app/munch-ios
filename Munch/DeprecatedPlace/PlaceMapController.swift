@@ -14,7 +14,7 @@ import FirebaseAnalytics
 
 class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKMapViewDelegate, CLLocationManagerDelegate {
     let placeId: String
-    let place: Place
+    let place: DeprecatedPlace
 
     private var headerView: PlaceHeaderView!
     private let bottomView = PlaceMapViewBottom()
@@ -270,9 +270,9 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
 }
 
 fileprivate class LandmarkAnnotation: NSObject, MKAnnotation {
-    let landmark: Place.Location.Landmark
+    let landmark: DeprecatedPlace.Location.Landmark
 
-    init(landmark: Place.Location.Landmark) {
+    init(landmark: DeprecatedPlace.Location.Landmark) {
         self.landmark = landmark
     }
 
@@ -350,7 +350,7 @@ fileprivate class PlaceMapViewBottom: UIView {
         }
     }
 
-    func render(place: Place) {
+    func render(place: DeprecatedPlace) {
         self.addressLabel.text = place.location.address
     }
 

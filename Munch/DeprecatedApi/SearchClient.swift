@@ -18,7 +18,7 @@ class SearchClient {
     func search(text: String, latLng: String?, query: SearchQuery, callback: @escaping (_ meta: MetaJSON,
                                                                                         _ suggests: [String],
                                                                                         _ assumptions: [AssumptionQueryResult],
-                                                                                        _ places: [Place]) -> Void) {
+                                                                                        _ places: [DeprecatedPlace]) -> Void) {
         var params = Parameters()
         params["text"] = text
         params["latLng"] = latLng
@@ -32,7 +32,7 @@ class SearchClient {
                 let data = json["data"]
                 let suggests = data["suggests"].compactMap({ $0.1.string })
                 let assumptions = data["assumptions"].compactMap({ AssumptionQueryResult(json: $0.1) })
-                let places = data["places"].compactMap({ SearchClient.parseResult(result: $0.1) as? Place })
+                let places = data["places"].compactMap({ SearchClient.parseResult(result: $0.1) as? DeprecatedPlace })
                 callback(meta, suggests, assumptions, places)
             }
         }
@@ -45,11 +45,11 @@ class SearchClient {
     public static func parseResult(result json: JSON?) -> SearchResult? {
         if let json = json {
             switch json["dataType"].stringValue {
-            case "Tag": return Tag(json: json)
-            case "Place": return Place(json: json)
+            case "Tag": return DeprecatedTag(json: json)
+            case "Place": return DeprecatedPlace(json: json)
 
             case "Location":
-                return try? decoder.decode(Location.self, from: try! json.rawData())
+                return try? decoder.decode(DeprecatedLocation.self, from: try! json.rawData())
 
             case "Container":
                 return try? decoder.decode(Container.self, from: try! json.rawData())
@@ -113,7 +113,7 @@ protocol SearchResult {
 /**
  Tag object from munch-core/munch-data
  */
-struct Tag: SearchResult {
+struct DeprecatedTag: SearchResult {
     var id: String?
     var name: String?
 
@@ -186,7 +186,7 @@ struct Container: SearchResult, Equatable, Encodable, Decodable {
 struct AssumptionQueryResult {
     var searchQuery: SearchQuery
     var tokens: [SearchQueryToken]
-    var places: [Place]
+    var places: [DeprecatedPlace]
     var count: Int
 
     init?(json: JSON) {
@@ -195,7 +195,7 @@ struct AssumptionQueryResult {
         }
         self.searchQuery = SearchQuery(json: json["searchQuery"])
         self.tokens = json["tokens"].compactMap({ AssumptionQueryResult.parseToken(result: $0.1) })
-        self.places = json["places"].compactMap({ SearchClient.parseResult(result: $0.1) as? Place })
+        self.places = json["places"].compactMap({ SearchClient.parseResult(result: $0.1) as? DeprecatedPlace })
         self.count = json["count"].int ?? 0
     }
 
@@ -265,7 +265,7 @@ struct SearchQuery: Equatable {
         var price = Price()
         var tag = Tag()
         var hour = Hour()
-        var location: Location?
+        var location: DeprecatedLocation?
         var containers: [Container]?
 
         init() {
@@ -284,7 +284,7 @@ struct SearchQuery: Equatable {
             hour.open = json["hour"]["open"].string
             hour.close = json["hour"]["close"].string
 
-            location = Location.create(json: json["location"])
+            location = DeprecatedLocation.create(json: json["location"])
             containers = json["containers"].map({ Container.create(json: $0.1)! })
         }
 
@@ -352,8 +352,8 @@ struct SearchQuery: Equatable {
         params["sort"] = sort.toParams()
 
         params["userInfo"] = [
-            "day":Place.Hour.Formatter.dayNow().lowercased(),
-            "time": Place.Hour.Formatter.timeNow(),
+            "day":DeprecatedPlace.Hour.Formatter.dayNow().lowercased(),
+            "time": DeprecatedPlace.Hour.Formatter.timeNow(),
             "latLng": MunchLocation.lastLatLng
         ]
         return params

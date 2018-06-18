@@ -13,7 +13,7 @@ enum SearchResultType {
     case empty
     case loading
     case headerRestaurant
-    case place(Place)
+    case place(DeprecatedPlace)
     case assumption(AssumptionQueryResult)
     case recentlyViewed
     case suggest([String])
@@ -188,7 +188,7 @@ class SearchCellAssumptionQueryResult: UITableViewCell {
 
     private var controller: SearchController!
     private var searchQuery: SearchQuery!
-    private var places = [Place]()
+    private var places = [DeprecatedPlace]()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -366,7 +366,7 @@ fileprivate class SearchCellAssumptionPlace: UICollectionViewCell {
         self.layoutIfNeeded()
     }
 
-    func render(place: Place) {
+    func render(place: DeprecatedPlace) {
         imageView.render(sourcedImage: place.images?.get(0))
         nameLabel.text = place.name
         let neighbourhood = place.location.neighbourhood ?? ""
@@ -456,7 +456,7 @@ class SearchCellPlace: UITableViewCell {
         }
     }
 
-    func render(place: Place) {
+    func render(place: DeprecatedPlace) {
         placeImageView.render(sourcedImage: place.images?.get(0))
         nameLabel.text = place.name
 
@@ -541,7 +541,7 @@ class SearchCellRecentlyViewed: UITableViewCell {
     }()
 
     private var controller: SearchController!
-    private var places = [Place]()
+    private var places = [DeprecatedPlace]()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -581,7 +581,7 @@ class SearchCellRecentlyViewed: UITableViewCell {
         self.places = recentDatabase.get()
                 .compactMap({ $1 })
                 .compactMap({ SearchClient.parseResult(result: $0) })
-                .compactMap({ $0 as? Place })
+                .compactMap({ $0 as? DeprecatedPlace })
 
         self.collectionView.reloadData()
         self.collectionView.setContentOffset(.zero, animated: false)

@@ -317,7 +317,7 @@ class DiscoverPlaceCardBottomView: UIView {
 
         // Open Now
         let hours = card.dict(name: "hours") as? [[String: String]] ?? []
-        switch Place.Hour.Formatter.isOpen(hours: hours) {
+        switch DeprecatedPlace.Hour.Formatter.isOpen(hours: hours) {
         case .opening:
             line.append(DiscoverPlaceCardBottomView.periodText)
             line.append(DiscoverPlaceCardBottomView.openingSoonText)

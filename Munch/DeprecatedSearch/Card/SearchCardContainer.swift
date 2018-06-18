@@ -295,7 +295,7 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
         }
 
         // Hour Line
-        let hours = card["hours"].compactMap({ Place.Hour(json: $0.1) })
+        let hours = card["hours"].compactMap({ DeprecatedPlace.Hour(json: $0.1) })
         if !hours.isEmpty {
             self.hourLineView.hours = hours
             self.hourLineView.isHidden = false
@@ -452,7 +452,7 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
             return label
         }()
 
-        var hours: [Place.Hour]? {
+        var hours: [DeprecatedPlace.Hour]? {
             didSet {
                 if let hours = self.hours {
                     let hours = BusinessHour(hours: hours)

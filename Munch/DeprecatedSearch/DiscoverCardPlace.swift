@@ -34,7 +34,7 @@ class SearchNewPlaceCard: UITableViewCell, SearchCardView {
     }()
 
     private var controller: DiscoverController!
-    private var places = [Place]()
+    private var places = [DeprecatedPlace]()
     private var card: SearchCard?
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -71,7 +71,7 @@ class SearchNewPlaceCard: UITableViewCell, SearchCardView {
         self.controller = controller
         self.card = card
 
-        let places = card["places"].compactMap({ Place(json: $0.1) })
+        let places = card["places"].compactMap({ DeprecatedPlace(json: $0.1) })
         if self.places != places {
             self.places = places
             self.collectionView.setContentOffset(.zero, animated: false)
@@ -128,7 +128,7 @@ class SearchRecentPlaceCard: UITableViewCell, SearchCardView {
     }()
 
     private var controller: DiscoverController!
-    private var places = [Place]()
+    private var places = [DeprecatedPlace]()
     private var card: SearchCard?
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -161,7 +161,7 @@ class SearchRecentPlaceCard: UITableViewCell, SearchCardView {
         self.controller = controller
         self.card = card
 
-        let places = card["places"].compactMap({ Place(json: $0.1) })
+        let places = card["places"].compactMap({ DeprecatedPlace(json: $0.1) })
         if self.places != places {
             self.places = places
             self.collectionView.setContentOffset(.zero, animated: false)
@@ -253,7 +253,7 @@ fileprivate class SearchPlaceCardPlaceCell: UICollectionViewCell {
         self.layoutIfNeeded()
     }
 
-    func render(place: Place) {
+    func render(place: DeprecatedPlace) {
         imageView.render(sourcedImage: place.images?.get(0))
         nameLabel.text = place.name
         let neighbourhood = place.location.neighbourhood ?? ""

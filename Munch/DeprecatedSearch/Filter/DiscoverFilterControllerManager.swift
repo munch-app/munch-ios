@@ -14,15 +14,15 @@ enum DiscoverFilterType {
     case location([DiscoverFilterLocation])
     case priceRange
     case time([DiscoverFilterTiming])
-    case tag(Tag)
+    case tag(DeprecatedTag)
     case tagMore(String)
     case headerCategory
 }
 
 enum DiscoverFilterLocation {
     case nearby
-    case anywhere(Location)
-    case location(Location)
+    case anywhere(DeprecatedLocation)
+    case location(DeprecatedLocation)
     case container(Container)
 }
 
@@ -129,7 +129,7 @@ class DiscoverFilterControllerManager {
         self.suggestions = list
     }
 
-    func select(location: Location?, save: Bool = true) {
+    func select(location: DeprecatedLocation?, save: Bool = true) {
         if save, let name = location?.name {
             recentLocationDatabase.put(text: name, dictionary: location!.toParams())
         }
@@ -143,7 +143,7 @@ class DiscoverFilterControllerManager {
         update(location: nil, containers: [container])
     }
 
-    private func update(location: Location?, containers: [Container]) {
+    private func update(location: DeprecatedLocation?, containers: [Container]) {
         searchQuery.filter.location = location
         searchQuery.filter.containers = containers
 
@@ -247,7 +247,7 @@ class DiscoverFilterControllerManager {
                 || searchQuery.filter.tag.positives.contains(tag.lowercased())
     }
 
-    func isSelected(location: Location?) -> Bool {
+    func isSelected(location: DeprecatedLocation?) -> Bool {
         if let containers = searchQuery.filter.containers, !containers.isEmpty {
             return false
         }
@@ -286,8 +286,8 @@ extension DiscoverFilterControllerManager {
 //        "occasion": ["Romantic", "Supper", "Brunch", "Business Meal", "Scenic View"]
     ]
 
-    public static var anywhere: Location {
-        var singapore = Location()
+    public static var anywhere: DeprecatedLocation {
+        var singapore = DeprecatedLocation()
         singapore.id = "singapore"
         singapore.name = "Singapore"
         singapore.country = "singapore"
@@ -302,7 +302,7 @@ extension DiscoverFilterControllerManager {
                 .compactMap({ $1 })
                 .compactMap({ SearchClient.parseResult(result: $0) })
                 .compactMap { result in
-                    if let location = result as? Location {
+                    if let location = result as? DeprecatedLocation {
                         return DiscoverFilterLocation.location(location)
                     } else if let container = result as? Container {
                         return DiscoverFilterLocation.container(container)
@@ -322,7 +322,7 @@ extension DiscoverFilterControllerManager {
                     }
                     return searchQuery.filter.tag.positives.contains(bef)
                 })
-                .map({ DiscoverFilterType.tag(Tag(name: $0)) })
+                .map({ DiscoverFilterType.tag(DeprecatedTag(name: $0)) })
     }
 
     private func map(all type: String) -> [DiscoverFilterType] {
@@ -335,16 +335,16 @@ extension DiscoverFilterControllerManager {
                     }
                     return searchQuery.filter.tag.positives.contains(bef)
                 })
-                .map({ DiscoverFilterType.tag(Tag(name: $0)) })
+                .map({ DiscoverFilterType.tag(DeprecatedTag(name: $0)) })
     }
 
-    class func map(locations: [SearchResult], tags: [Tag]) -> [DiscoverFilterType] {
+    class func map(locations: [SearchResult], tags: [DeprecatedTag]) -> [DiscoverFilterType] {
         var list = [DiscoverFilterType]()
 
         if !locations.isEmpty {
             list.append(.headerLocation)
             list.append(DiscoverFilterType.location(locations.compactMap({
-                if let location = $0 as? Location {
+                if let location = $0 as? DeprecatedLocation {
                     return DiscoverFilterLocation.location(location)
                 } else if let container = $0 as? Container {
                     return DiscoverFilterLocation.container(container)

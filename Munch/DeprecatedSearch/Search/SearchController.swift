@@ -154,7 +154,7 @@ class SearchController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    class func map(suggests: [String], assumptions: [AssumptionQueryResult], places: [Place]) -> [SearchResultType] {
+    class func map(suggests: [String], assumptions: [AssumptionQueryResult], places: [DeprecatedPlace]) -> [SearchResultType] {
         var list = [SearchResultType]()
         if !suggests.isEmpty {
             list.append(.suggest(suggests))

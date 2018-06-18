@@ -136,12 +136,12 @@ class CollectionClient {
 
 
 struct LikedPlace {
-    var place: Place
+    var place: DeprecatedPlace
     var sortKey: Int
     var createdDate: Date
 
     init(json: JSON) {
-        self.place = Place(json: json["place"])!
+        self.place = DeprecatedPlace(json: json["place"])!
         self.sortKey = json["sortKey"].intValue
         self.createdDate = Date(timeIntervalSince1970: (json["createdDate"].doubleValue / 1000.0))
     }
@@ -207,12 +207,12 @@ struct PlaceCollection {
     }
 
     struct AddedPlace {
-        var place: Place
+        var place: DeprecatedPlace
         var sortKey: Int
         var createdDate: Date
 
         init(json: JSON) {
-            self.place = Place(json: json["place"])!
+            self.place = DeprecatedPlace(json: json["place"])!
             self.sortKey = json["sortKey"].intValue
             self.createdDate = Date(timeIntervalSince1970: (json["createdDate"].doubleValue / 1000.0))
         }

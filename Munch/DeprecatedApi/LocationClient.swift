@@ -15,10 +15,10 @@ import SwiftyJSON
  that is direct proxy to LocationService in munch-core/service-location
  */
 class LocationClient {
-    func popular(callback: @escaping (_ meta: MetaJSON, _ locations: [Location]) -> Void) {
+    func popular(callback: @escaping (_ meta: MetaJSON, _ locations: [DeprecatedLocation]) -> Void) {
         MunchApi.restful.get("/locations/popular") { meta, json in
             callback(meta, json["data"].map {
-                Location.create(json: $0.1)!
+                DeprecatedLocation.create(json: $0.1)!
             })
         }
     }
@@ -40,7 +40,7 @@ class LocationClient {
  Location object form munch-core/service-location
  Used in search for munch-core/service-places
  */
-struct Location: SearchResult, Equatable, Encodable, Decodable {
+struct DeprecatedLocation: SearchResult, Equatable, Encodable, Decodable {
     static let decoder = JSONDecoder()
 
     var id: String?
@@ -64,15 +64,15 @@ struct Location: SearchResult, Equatable, Encodable, Decodable {
         return params
     }
 
-    static func ==(lhs: Location, rhs: Location) -> Bool {
+    static func ==(lhs: DeprecatedLocation, rhs: DeprecatedLocation) -> Bool {
         return lhs.id == rhs.id
     }
 
-    static func create(json: JSON) -> Location? {
+    static func create(json: JSON) -> DeprecatedLocation? {
         if (!json.exists()) {
             return nil
         }
 
-        return try? decoder.decode(Location.self, from: try! json.rawData())
+        return try? decoder.decode(DeprecatedLocation.self, from: try! json.rawData())
     }
 }
