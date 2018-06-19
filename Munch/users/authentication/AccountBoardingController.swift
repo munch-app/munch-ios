@@ -67,16 +67,18 @@ class AccountBoardingController: UIViewController {
     fileprivate let dataList: [OnboardingData] = [
         OnboardingData(backgroundImage: UIImage(named: "Onboarding-Bg-1"),
                 backgroundColor: UIColor(hex: "fcab5a"), contextImage: nil,
-                title: "Welcome to Munch",
-                description: "Whether you're looking for the perfect date spot or the hottest bar in town - Munch helps you answer the question:\n\n<bold>'What do you want to eat?'</bold>"),
+                title: "users.account.onboarding.card.1.title".localized(),
+                description: "users.account.onboarding.card.1.description".localized()),
+
         OnboardingData(backgroundImage: UIImage(named: "Onboarding-Bg-2"),
                 backgroundColor: UIColor(hex: "46b892"), contextImage: UIImage(named: "Onboarding-Singapore"),
-                title: "Discover Delicious",
-                description: "Explore thousands of restaurants, bars and hawkers in the app. Find places nearby or on the other end of the island."),
+                title: "users.account.onboarding.card.2.title".localized(),
+                description: "users.account.onboarding.card.2.description".localized()),
+
         OnboardingData(backgroundImage: UIImage(named: "Onboarding-Bg-3"),
                 backgroundColor: UIColor(hex: "258edd"), contextImage: UIImage(named: "Onboarding-Collection"),
-                title: "Never Forget",
-                description: "Save places that you want to check out or create themed lists to keep track of places."),
+                title: "users.account.onboarding.card.3.title".localized(),
+                description: "users.account.onboarding.card.3.description".localized()),
     ]
 
     private let collectionView: UICollectionView = {
@@ -239,7 +241,7 @@ class AccountBoardingController: UIViewController {
     class BottomView: UIView {
         let facebookButton: ContinueButton = {
             let button = ContinueButton()
-            button.labelView.text = "Continue with Facebook"
+            button.labelView.text = "users.account.onboarding.facebook".localized()
             button.labelView.textColor = .white
 
             button.iconView.image = UIImage(named: "Boarding-Facebook")
@@ -252,7 +254,7 @@ class AccountBoardingController: UIViewController {
 
         let guestButton: UIButton = {
             let button = UIButton()
-            button.setTitle("Continue as Guest", for: .normal)
+            button.setTitle("users.account.onboarding.guest".localized(), for: .normal)
             button.setTitleColor(UIColor.black.withAlphaComponent(0.75), for: .normal)
             button.titleLabel?.font = .systemFont(ofSize: 15, weight: .regular)
             return button
@@ -260,7 +262,7 @@ class AccountBoardingController: UIViewController {
 
         let agreeLabel: UILabel = {
             let label = UILabel()
-            label.text = "By signing up, you agree to Munch's terms of use and privacy policy."
+            label.text = "users.account.onboarding.terms".localized()
             label.numberOfLines = 0
 
             label.textColor = UIColor(hex: "3f3f3f")
@@ -334,7 +336,7 @@ class AccountBoardingController: UIViewController {
     class HeaderView: UIView {
         let cancelButton: UIButton = {
             let button = UIButton()
-            button.setTitle("CANCEL", for: .normal)
+            button.setTitle("CANCEL".localized(), for: .normal)
             button.setTitleColor(UIColor.white, for: .normal)
             button.titleLabel?.font = .systemFont(ofSize: 12, weight: .medium)
             button.contentHorizontalAlignment = .right
@@ -347,7 +349,7 @@ class AccountBoardingController: UIViewController {
             self.backgroundColor = .clear
 
             if guestOption {
-                cancelButton.setTitle("SKIP", for: .normal)
+                cancelButton.setTitle("SKIP".localized(), for: .normal)
                 cancelButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
 
                 cancelButton.layer.cornerRadius = 5

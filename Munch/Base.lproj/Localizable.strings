@@ -1,3 +1,31 @@
+// MARK: Commons
+"CANCEL" = "CANCEL";
+"SKIP" = "SKIP";
+
+// MARK: Core Module
+
+// MARK: Bottom Tab Bar
 "tab.search" = "Search";
 "tab.profile" = "Profile";
+
+// MARK: Users Module
+
+// MARK: Account Onboarding
+"users.account.onboarding.terms" = "By signing up, you agree to Munch's terms of use and privacy policy.";
+"users.account.onboarding.facebook" = "Continue with Facebook";
+"users.account.onboarding.guest" = "Continue as Guest";
+
+// MARK: Account Onboarding Cards
+"users.account.onboarding.card.1.title" = "Welcome to Munch";
+"users.account.onboarding.card.1.description" = "Whether you're looking for the perfect date spot or the hottest bar in town - Munch helps you answer the question:\\n\\n<bold>'What do you want to eat?'</bold>";
+
+"users.account.onboarding.card.2.title" = "Discover Delicious";
+"users.account.onboarding.card.2.description" = "Explore thousands of restaurants, bars and hawkers in the app. Find places nearby or on the other end of the island.";
+
+"users.account.onboarding.card.3.title" = "Never Forget";
+"users.account.onboarding.card.3.description" = "Save places that you want to check out or create themed lists to keep track of places.";
+
+// MARK: Search Module
+
+// MARK: Places Module
 
