@@ -22,7 +22,6 @@
 		03CD276D1F6286FC003562A1 /* PlaceCardBasic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD276A1F6286FC003562A1 /* PlaceCardBasic.swift */; };
 		03CD276E1F6286FC003562A1 /* PlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD276B1F6286FC003562A1 /* PlaceController.swift */; };
 		03CD27741F62BD5C003562A1 /* PlaceCardStatic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CD27731F62BD5C003562A1 /* PlaceCardStatic.swift */; };
-		03D2335C1F9D3851000F5F05 /* AccountController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2335B1F9D3851000F5F05 /* AccountController.swift */; };
 		03D3FEE21E8947D200ACFF50 /* MunchClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FEE01E8947D200ACFF50 /* MunchClientTests.swift */; };
 		03D3FEE41E89494300ACFF50 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89301E82EF8B00AD3818 /* Alamofire.framework */; };
 		03D3FEE51E89494600ACFF50 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89331E82F14A00AD3818 /* SwiftyJSON.framework */; };
@@ -45,10 +44,10 @@
 		B4B7328EA1644B7350AB75A5 /* CollectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B731358DC763BF5447E963 /* CollectionController.swift */; };
 		B4B732A48087AEDBC0BCB2D9 /* PlaceCardLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738EF6EA67EF16E54F617 /* PlaceCardLocation.swift */; };
 		B4B732D0913D41B80467751C /* DiscoverCardStatic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737074C4561047C9BFEF7 /* DiscoverCardStatic.swift */; };
-		B4B732DD92904EA6B71DC806 /* SettingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73CEBAA298AA8928EA653 /* SettingController.swift */; };
 		B4B732F5A5B0B0895BA2F8CA /* DiscoverFilterControllerLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B736D9D2BEAE7E96B61E78 /* DiscoverFilterControllerLocation.swift */; };
 		B4B7330044930BED8EC5549C /* SearchSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732FCCBF2F564E6DCE741 /* SearchSearchController.swift */; };
 		B4B733B083D8DF8F2DDFF66D /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73695F4F2693D0E750704 /* ViewExtensions.swift */; };
+		B4B733C48DCACF9F5A977BE1 /* ProfileTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738C639DA188BF1AFD8CE /* ProfileTabController.swift */; };
 		B4B733EEBE521904835D9326 /* SearchCardContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73616797AF5D83FA2C498 /* SearchCardContainer.swift */; };
 		B4B7345BDD641E863C08D682 /* DiscoverFilterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73DF7C5AD7467F10DFD01 /* DiscoverFilterController.swift */; };
 		B4B736456F46544A4F60A056 /* UserPlaceActivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73EFF14F03342F33D4B42 /* UserPlaceActivityService.swift */; };
@@ -67,6 +66,7 @@
 		B4B7393A474C78AE30F0B91A /* MunchUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7329A88030A09DC2A5187 /* MunchUser.swift */; };
 		B4B7394871CE904DFB47BB71 /* PlaceCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B733DCA665CD29B03D26BB /* PlaceCard.swift */; };
 		B4B73994A58E6A119A38712B /* PlaceCardUGC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73A91A35296A0F8E94C42 /* PlaceCardUGC.swift */; };
+		B4B739A826B911E094D4A616 /* ProfileSettingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73BF6B8D464037F4FC986 /* ProfileSettingController.swift */; };
 		B4B73A8BD16561824718B41D /* CollectionPlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73EBA645A014851F10D53 /* CollectionPlaceController.swift */; };
 		B4B73A99E335E46C1E77221F /* DiscoverClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738F9E591F81CC551E7B0 /* DiscoverClient.swift */; };
 		B4B73AEF40CD73CA66934629 /* DiscoverHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73EE893236D718B7BFC9A /* DiscoverHeaderView.swift */; };
@@ -76,7 +76,6 @@
 		B4B73BA7FADE13E2517C71F8 /* CollectionClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B735022631764CC931E8CA /* CollectionClient.swift */; };
 		B4B73BBC419593C4FD7A7F0A /* MunchTagCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7375F54B00CC6DF37E159 /* MunchTagCollectionView.swift */; };
 		B4B73C0195F30A0851713F53 /* SearchCardInstagram.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73DAB05D9D28B69463039 /* SearchCardInstagram.swift */; };
-		B4B73C2A60EE351F094AED22 /* AccountDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7318BCB00B96424E50D14 /* AccountDataController.swift */; };
 		B4B73C4483DFF7CD8C6813DC /* FoundationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732E7ED481C66B5E5C06F /* FoundationExtensions.swift */; };
 		B4B73C8B3B229E8624AC9213 /* PlacePartnerArticleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738B1399869060C50F0EC /* PlacePartnerArticleController.swift */; };
 		B4B73D2B7F6FEC9485A4DD54 /* DiscoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73824F859BACAFDBBDD34 /* DiscoverController.swift */; };
@@ -150,7 +149,6 @@
 		03CD276B1F6286FC003562A1 /* PlaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceController.swift; sourceTree = "<group>"; };
 		03CD27731F62BD5C003562A1 /* PlaceCardStatic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardStatic.swift; sourceTree = "<group>"; };
 		03CF0A9B1E96A7B100A3FD1F /* ESTabBarController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ESTabBarController.framework; path = Carthage/Build/iOS/ESTabBarController.framework; sourceTree = "<group>"; };
-		03D2335B1F9D3851000F5F05 /* AccountController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountController.swift; sourceTree = "<group>"; };
 		03D3FEE01E8947D200ACFF50 /* MunchClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchClientTests.swift; sourceTree = "<group>"; };
 		03D3FEE61E89589B00ACFF50 /* HandyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HandyJSON.framework; path = Carthage/Build/iOS/HandyJSON.framework; sourceTree = "<group>"; };
 		03D3FEEF1E8A647E00ACFF50 /* SwiftLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftLocation.framework; path = Carthage/Build/iOS/SwiftLocation.framework; sourceTree = "<group>"; };
@@ -172,7 +170,6 @@
 		B4B731358DC763BF5447E963 /* CollectionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionController.swift; sourceTree = "<group>"; };
 		B4B7317F970E30DB9E0F4B54 /* UserPlaceCollectionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPlaceCollectionService.swift; sourceTree = "<group>"; };
 		B4B7318107D8ECA3F9373589 /* ProfileController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileController.swift; sourceTree = "<group>"; };
-		B4B7318BCB00B96424E50D14 /* AccountDataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountDataController.swift; sourceTree = "<group>"; };
 		B4B7328C901389DA7A42570B /* SearchSearchControllerCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchSearchControllerCell.swift; sourceTree = "<group>"; };
 		B4B7329A88030A09DC2A5187 /* MunchUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchUser.swift; sourceTree = "<group>"; };
 		B4B732B20AE677AF6243099A /* MunchTagView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchTagView.swift; sourceTree = "<group>"; };
@@ -200,6 +197,7 @@
 		B4B7382BCE4D3313B24B0494 /* DiscoverCardPlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverCardPlace.swift; sourceTree = "<group>"; };
 		B4B7383508F19AECBAA6D7BF /* FileService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileService.swift; sourceTree = "<group>"; };
 		B4B738B1399869060C50F0EC /* PlacePartnerArticleController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlacePartnerArticleController.swift; sourceTree = "<group>"; };
+		B4B738C639DA188BF1AFD8CE /* ProfileTabController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileTabController.swift; sourceTree = "<group>"; };
 		B4B738EF6EA67EF16E54F617 /* PlaceCardLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardLocation.swift; sourceTree = "<group>"; };
 		B4B738F9E591F81CC551E7B0 /* DiscoverClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverClient.swift; sourceTree = "<group>"; };
 		B4B7391AB84C1BDDC4CDBB3A /* DiscoverCardBasic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverCardBasic.swift; sourceTree = "<group>"; };
@@ -218,7 +216,7 @@
 		B4B73B26D2C06996A50FDCFD /* FilterTagView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterTagView.swift; sourceTree = "<group>"; };
 		B4B73B4027BDB40E3CC44F31 /* PlaceMapController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceMapController.swift; sourceTree = "<group>"; };
 		B4B73B8C080EA9D51F87FE13 /* MunchLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchLocation.swift; sourceTree = "<group>"; };
-		B4B73CEBAA298AA8928EA653 /* SettingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingController.swift; sourceTree = "<group>"; };
+		B4B73BF6B8D464037F4FC986 /* ProfileSettingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileSettingController.swift; sourceTree = "<group>"; };
 		B4B73D17F462A1DA9E75B6F0 /* PlaceCardPartnersContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardPartnersContent.swift; sourceTree = "<group>"; };
 		B4B73D56D29ADB145295DB94 /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		B4B73DAB05D9D28B69463039 /* SearchCardInstagram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardInstagram.swift; sourceTree = "<group>"; };
@@ -374,9 +372,6 @@
 		034847271F9D20810049BDF7 /* DeprecatedAccount */ = {
 			isa = PBXGroup;
 			children = (
-				03D2335B1F9D3851000F5F05 /* AccountController.swift */,
-				B4B73CEBAA298AA8928EA653 /* SettingController.swift */,
-				B4B7318BCB00B96424E50D14 /* AccountDataController.swift */,
 				B4B7339BF0F601BE0B72D11F /* LikedPlaceManager.swift */,
 			);
 			path = DeprecatedAccount;
@@ -438,6 +433,8 @@
 				B4B7329A88030A09DC2A5187 /* MunchUser.swift */,
 				B4B7318107D8ECA3F9373589 /* ProfileController.swift */,
 				B4B73F1C7E70CF782261761E /* authentication */,
+				B4B73BF6B8D464037F4FC986 /* ProfileSettingController.swift */,
+				B4B738C639DA188BF1AFD8CE /* ProfileTabController.swift */,
 			);
 			path = users;
 			sourceTree = "<group>";
@@ -967,7 +964,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				03D2335C1F9D3851000F5F05 /* AccountController.swift in Sources */,
 				0314786A1F6A18CC00246BCD /* LocationClient.swift in Sources */,
 				031478661F6A16F900246BCD /* SearchClient.swift in Sources */,
 				031478641F6A16ED00246BCD /* PlaceClient.swift in Sources */,
@@ -978,12 +974,10 @@
 				03CD276D1F6286FC003562A1 /* PlaceCardBasic.swift in Sources */,
 				B4B7394871CE904DFB47BB71 /* PlaceCard.swift in Sources */,
 				B4B73FECE8D26C31A28E9DE9 /* PlaceCardReview.swift in Sources */,
-				B4B732DD92904EA6B71DC806 /* SettingController.swift in Sources */,
 				B4B7319B6239909F0C37875F /* PlaceCardMenu.swift in Sources */,
 				B4B73BA7FADE13E2517C71F8 /* CollectionClient.swift in Sources */,
 				B4B7328EA1644B7350AB75A5 /* CollectionController.swift in Sources */,
 				B4B730544AF1361565440B2C /* PlaceMapController.swift in Sources */,
-				B4B73C2A60EE351F094AED22 /* AccountDataController.swift in Sources */,
 				B4B73A8BD16561824718B41D /* CollectionPlaceController.swift in Sources */,
 				B4B7380CD92347AB225B54EB /* PlaceCardAbout.swift in Sources */,
 				B4B732A48087AEDBC0BCB2D9 /* PlaceCardLocation.swift in Sources */,
@@ -1036,6 +1030,8 @@
 				B4B73D6CD0AB4666A9983FB6 /* Authentication.swift in Sources */,
 				B4B73BBC419593C4FD7A7F0A /* MunchTagCollectionView.swift in Sources */,
 				B4B73B07AABF07B6FDE8D393 /* AccountBoardingController.swift in Sources */,
+				B4B739A826B911E094D4A616 /* ProfileSettingController.swift in Sources */,
+				B4B733C48DCACF9F5A977BE1 /* ProfileTabController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

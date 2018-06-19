@@ -97,7 +97,7 @@ class AccountProfileController: UIViewController {
     }
 
     @objc func onActionSetting(_ sender: Any) {
-        navigationController?.pushViewController(AccountSettingController(), animated: true)
+        navigationController?.pushViewController(ProfileSettingController(), animated: true)
     }
 
     @objc fileprivate func onActionSelectTab(selected: AccountTabButton) {

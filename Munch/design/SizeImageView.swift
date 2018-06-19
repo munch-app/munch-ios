@@ -12,10 +12,19 @@ class SizeImageView: UIImageView {
 
     let minWidth, minHeight: Int
 
-    init(minWidth: Int, minHeight: Int, frame: CGRect = .zero) {
-        self.minWidth = minWidth
-        self.minHeight = minHeight
+    // In Pixels
+    init(pixels width: Int, height: Int, frame: CGRect = .zero) {
+        self.minWidth = width
+        self.minHeight = height
         super.init(frame: frame)
+    }
+
+    // In Points
+    init(points width: Int, height: Int) {
+        let scale = UIScreen.main.scale
+        self.minWidth = Int(scale * CGFloat(width))
+        self.minHeight = Int(scale * CGFloat(height))
+        super.init(frame: CGRect(x: 0, y: 0, width: width, height: height))
     }
 
     func render(named: String) {
@@ -34,8 +43,12 @@ class SizeImageView: UIImageView {
         }
     }
 
-    func render(url: String) {
-        kf.setImage(with: URL(string: url))
+    func render(url: String?) {
+        self.image = nil
+
+        if let url = url {
+            kf.setImage(with: URL(string: url))
+        }
     }
 
     class func find(sizes: [Image.Size], minWidth: Int, minHeight: Int) -> Image.Size? {

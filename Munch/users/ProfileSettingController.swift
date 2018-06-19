@@ -6,13 +6,15 @@
 import Foundation
 import UIKit
 import SafariServices
+
 import Toast_Swift
+import Localize_Swift
 
 import Moya
 import BEMCheckBox
 import SnapKit
 
-class AccountSettingController: UIViewController, UIGestureRecognizerDelegate, SFSafariViewControllerDelegate {
+class ProfileSettingController: UIViewController, UIGestureRecognizerDelegate, SFSafariViewControllerDelegate {
     private let headerView = HeaderView()
     private let tableView = UITableView()
     private var setting = UserSetting.instance
@@ -132,7 +134,7 @@ enum SettingCellType {
     case preferenceTag(String)
 }
 
-extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
+extension ProfileSettingController: UITableViewDataSource, UITableViewDelegate {
     func registerCell() {
         func register(cellClass: UITableViewCell.Type) {
             tableView.register(cellClass, forCellReuseIdentifier: String(describing: cellClass))
@@ -146,14 +148,14 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
 
     private var items: [(String?, [SettingCellType])] {
         return [
-            ("CONTENT PARTNER", [
+            ("users.profile.settings.header.partner".localized(), [
                 SettingCellType.instagramConnect
             ]),
-            ("SEARCH PREFERENCE", [
+            ("users.profile.settings.header.preference".localized(), [
                 SettingCellType.preferenceTag("Halal"),
                 SettingCellType.preferenceTag("Vegetarian Options"),
             ]),
-            ("ACCOUNT", [
+            ("users.profile.settings.header.account".localized(), [
                 SettingCellType.feedback,
                 SettingCellType.logout,
             ]),
@@ -236,10 +238,9 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
                     }) { result in
                         switch result {
                         case .success(let setting):
-                            return
-                            // TODO After User Module
-//                            self.setting = setting
-//                            self.view.makeToast("Removed '\(tag.capitalized)' from Search Preference.", image: UIImage(named: "RIP-Toast-Close"), style: DefaultToastStyle)
+                            self.setting = setting
+                            self.view.makeToast("Removed '\(tag.capitalized)' from Search Preference.", image: UIImage(named: "RIP-Toast-Close"), style: DefaultToastStyle)
+                                // TODO After User Module
 //                            (self.tabBarController as? TabBarController)?.discoverController?.reset(force: true)
                         case .error(let error):
                             self.alert(error: error)
@@ -256,10 +257,9 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
                     }) { result in
                         switch result {
                         case .success(let setting):
-                        return
-                        // TODO After User Module
-//                            self.setting = setting
-//                            self.view.makeToast("Added '\(tag.capitalized)' to Search Preference.", image: UIImage(named: "RIP-Toast-Checkmark"), style: DefaultToastStyle)
+                            self.setting = setting
+                            self.view.makeToast("Added '\(tag.capitalized)' to Search Preference.", image: UIImage(named: "RIP-Toast-Checkmark"), style: DefaultToastStyle)
+                                // TODO After User Module
 //                            (self.tabBarController as? TabBarController)?.discoverController?.reset(force: true)
                         case .error(let error):
                             self.alert(error: error)
@@ -280,7 +280,7 @@ fileprivate class SettingInstagramCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.addSubview(titleView)
 
-        titleView.text = "Manage Instagram Partner"
+        titleView.text = "users.profile.settings.instagram".localized()
         titleView.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         titleView.textColor = .black
         titleView.snp.makeConstraints { make in
@@ -351,7 +351,7 @@ fileprivate class SettingFeedbackCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.addSubview(titleView)
 
-        titleView.text = "Send Feedback"
+        titleView.text = "users.profile.settings.send_feedback".localized()
         titleView.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         titleView.textColor = .black
         titleView.snp.makeConstraints { make in
@@ -372,7 +372,7 @@ fileprivate class SettingLogoutCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.addSubview(titleView)
 
-        titleView.text = "Logout"
+        titleView.text = "users.profile.settings.logout".localized()
         titleView.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         titleView.textColor = .black
         titleView.snp.makeConstraints { make in

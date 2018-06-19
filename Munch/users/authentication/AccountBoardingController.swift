@@ -5,6 +5,7 @@
 
 import Foundation
 import UIKit
+import Toast_Swift
 import Localize_Swift
 
 import Kingfisher
@@ -223,6 +224,8 @@ class AccountBoardingController: UIViewController {
                 }
 
                 if result!.grantedPermissions.contains("email") && result!.grantedPermissions.contains("public_profile") {
+                    self.view.makeToastActivity(.center)
+
                     if let token = FBSDKAccessToken.current()?.tokenString {
                         Authentication.login(facebook: token) { state in
                             Analytics.logEvent(AnalyticsEventSignUp, parameters: [
@@ -233,6 +236,8 @@ class AccountBoardingController: UIViewController {
                     } else {
                         self.dismiss(state: .cancel)
                     }
+                } else {
+                    self.alert(title: "Authentication Error", message: "Failed to Authenticate because required permission not given.")
                 }
             }
         }

@@ -1,14 +1,14 @@
-// MARK: Commons
+//// MARK: Commons
 "CANCEL" = "CANCEL";
 "SKIP" = "SKIP";
 
-// MARK: Core Module
+//// MARK: Core Module
 
 // MARK: Bottom Tab Bar
 "tab.search" = "Search";
 "tab.profile" = "Profile";
 
-// MARK: Users Module
+//// MARK: Users Module
 
 // MARK: Account Onboarding
 "users.account.onboarding.terms" = "By signing up, you agree to Munch's terms of use and privacy policy.";
@@ -25,7 +25,25 @@
 "users.account.onboarding.card.3.title" = "Never Forget";
 "users.account.onboarding.card.3.description" = "Save places that you want to check out or create themed lists to keep track of places.";
 
-// MARK: Search Module
+// MARK: Profile Settings
+"users.profile.settings.header.partner"="CONTENT PARTNER";
+"users.profile.settings.header.preference"="SEARCH PREFERENCE";
+"users.profile.settings.header.account"="ACCOUNT";
 
-// MARK: Places Module
+"users.profile.settings.logout"="Logout";
+"users.profile.settings.send_feedback"="Send Feedback";
+"users.profile.settings.instagram"="Manage Instagram Partner";
+
+// MARK: Profile Tabs
+"users.profile.tabs.collections"="COLLECTIONS";
+"users.profile.tabs.reviews"="REVIEWS";
+"users.profile.tabs.munches"="MUNCHES";
+
+
+// MARK: Profile
+
+//// MARK: Search Module
+
+
+//// MARK: Places Module
 
