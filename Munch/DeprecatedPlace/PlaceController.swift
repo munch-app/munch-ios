@@ -93,7 +93,7 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
                 self.scrollViewDidScroll(self.cardTableView)
 
                 MunchApi.collections.recent.put(placeId: self.placeId) { meta in
-                    let recentDatabase = RecentDatabase(name: "RecentlyViewedPlace", maxItems: 20)
+                    let recentDatabase = RecentJSONDatabase(name: "RecentlyViewedPlace", maxItems: 20)
                     recentDatabase.put(text: self.placeId, dictionary: place.toParams())
                 }
             } else {

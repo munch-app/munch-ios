@@ -61,7 +61,7 @@ class DiscoverFilterControllerManager {
     private var updateCountTask: DispatchWorkItem?
     private var selectedCategory: DiscoverFilterCategory = .cuisine
 
-    let recentLocationDatabase = RecentDatabase(name: "SearchLocation", maxItems: 8)
+    let recentLocationDatabase = RecentJSONDatabase(name: "SearchLocation", maxItems: 8)
     private var updateHooks = [(SearchQuery) -> Void]()
 
     var suggestions: [DiscoverFilterType] = []
@@ -101,7 +101,7 @@ class DiscoverFilterControllerManager {
 
     func select(category: DiscoverFilterCategory) {
         self.selectedCategory = category
-        let locationDatabase = RecentDatabase(name: "SearchLocation", maxItems: 8)
+        let locationDatabase = RecentJSONDatabase(name: "SearchLocation", maxItems: 8)
         let recentLocations = DiscoverFilterControllerManager.readRecentLocations(database: locationDatabase)
 
         var list = [DiscoverFilterType]()
@@ -297,7 +297,7 @@ extension DiscoverFilterControllerManager {
         return singapore
     }
 
-    private class func readRecentLocations(database: RecentDatabase) -> [DiscoverFilterLocation] {
+    private class func readRecentLocations(database: RecentJSONDatabase) -> [DiscoverFilterLocation] {
         return database.get()
                 .compactMap({ $1 })
                 .compactMap({ SearchClient.parseResult(result: $0) })

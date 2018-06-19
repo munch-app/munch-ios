@@ -1,5 +1,5 @@
 //
-//  Shimmer.swift
+//  ShimmerView.swift
 //  Munch
 //
 //  Created by Fuxing Loh on 16/9/17.

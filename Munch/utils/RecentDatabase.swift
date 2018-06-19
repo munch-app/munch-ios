@@ -16,7 +16,93 @@ class RecentHistory: Object {
     @objc dynamic var json: Data?
 }
 
-class RecentDatabase {
+class RecentData: Object {
+    @objc dynamic var _name: String = ""
+    @objc dynamic var _date = Int(Date().timeIntervalSince1970)
+
+
+    @objc dynamic var id: String = ""
+    @objc dynamic var data: Data?
+}
+
+class RecentDataDatabase<T> where T: Codable {
+    private let type: T.Type
+    private let name: String
+    private let maxSize: Int
+
+    private let decoder = JSONDecoder()
+    private let encoder = JSONEncoder()
+
+    /*
+     * type: Type for Codable
+     * name: name of database
+     * maxSize: max size of number of data to store in database
+     */
+    init(type: T.Type, name: String, maxSize: Int) {
+        self.type = type
+        self.name = name
+        self.maxSize = maxSize
+    }
+
+    func add(id: String, data: T) {
+        let realm = try! Realm()
+        if let exist = realm.objects(RecentData.self)
+                .filter("_name == '\(name)' AND id == '\(id)'").first {
+            try! realm.write {
+                exist._date = Int(Date().timeIntervalSince1970)
+                exist.data = encoder.encode(data)
+            }
+        } else {
+            try! realm.write {
+                let recent = RecentData()
+                recent._name = name
+                recent.id = id
+                recent.data = encoder.encode(data)
+
+                realm.add(recent)
+                self.deleteLimit(realm: realm)
+            }
+        }
+    }
+
+    func list() -> [T] {
+        let realm = try! Realm()
+        let dataList = realm.objects(RecentData.self)
+                .filter("_name == '\(name)'")
+                .sorted(byKeyPath: "_date", ascending: false)
+
+        var list = [T]()
+        for recent in dataList {
+            if let data = recent.data {
+                list.append(decoder.decode(type, from: data))
+            }
+
+            // If hit max items, auto return
+            if (list.count >= maxSize) {
+                return list
+            }
+        }
+        return list
+    }
+
+    private func deleteLimit(realm: Realm = try! Realm()) {
+        let saved = realm.objects(RecentHistory.self)
+                .filter("_name == '\(name)'")
+                .sorted(byKeyPath: "_date", ascending: false)
+
+        // Delete if more then maxItems
+        if (saved.count > maxSize) {
+            for (index, element) in saved.enumerated() {
+                if (index > maxSize) {
+                    realm.delete(element)
+                }
+            }
+        }
+    }
+}
+
+// TODO Remove After Deprecated
+class RecentJSONDatabase {
     private let name: String
     private let maxItems: Int
 

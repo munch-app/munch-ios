@@ -577,7 +577,7 @@ class SearchCellRecentlyViewed: UITableViewCell {
 
     func render(controller: SearchController) {
         self.controller = controller
-        let recentDatabase = RecentDatabase(name: "RecentlyViewedPlace", maxItems: 20)
+        let recentDatabase = RecentJSONDatabase(name: "RecentlyViewedPlace", maxItems: 20)
         self.places = recentDatabase.get()
                 .compactMap({ $1 })
                 .compactMap({ SearchClient.parseResult(result: $0) })

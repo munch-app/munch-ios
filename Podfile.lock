@@ -91,6 +91,7 @@ PODS:
     - GTMSessionFetcher/Core (= 1.1.14)
   - Kingfisher (4.6.4)
   - KMNavigationBarTransition (1.1.5)
+  - Localize-Swift (2.0.0)
   - Moya (11.0.1):
     - Moya/Core (= 11.0.1)
   - Moya/Core (11.0.1):
@@ -145,6 +146,7 @@ DEPENDENCIES:
   - GoogleSignIn
   - Kingfisher (~> 4.2)
   - KMNavigationBarTransition (~> 1.1)
+  - Localize-Swift
   - Moya (~> 11.0)
   - Moya/RxSwift (~> 11.0)
   - NVActivityIndicatorView (~> 4.0)
@@ -198,6 +200,7 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 390ea358e5a0d0133153806f744662dad933d06b
   Kingfisher: 68498a706e46c2a050b0c9572f100e5db407f6e0
   KMNavigationBarTransition: 7a52c9bc25b39b6e3343e980b453facee1591b82
+  Localize-Swift: c798ec9286494866f7068f85f7c71283ac5bdab4
   Moya: 3d594ada51a21cc02b18739ab578a1984f900c8a
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   NVActivityIndicatorView: 60109b9bf46efc2e71ab81453196ccdfdfeea870
@@ -217,6 +220,6 @@ SPEC CHECKSUMS:
   Toast-Swift: ba0b01b095aada709d915f9beb1d38184a2721c3
   TTGTagCollectionView: 20cf236b538ea9a17d1f0538968148c8d304414a
 
-PODFILE CHECKSUM: 5a61778ea2b9ca81139d6ee03f0b86218004db21
+PODFILE CHECKSUM: f0d862316fcd5080e376a146fdca88e956510e1f
 
 COCOAPODS: 1.3.1
