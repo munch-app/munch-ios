@@ -67,14 +67,11 @@ public class Authentication {
 
         Auth.auth().signIn(with: credential) { (user, error) in
             if let error = error {
-                if error.localizedDescription.starts(with: "An account already") {
-                    withCompletion(.fail(error))
-                    return
-                }
                 Crashlytics.sharedInstance().recordError(error)
                 withCompletion(.fail(error))
                 return
             }
+
             // User is now signed in
             authenticate(withCompletion: withCompletion)
         }
@@ -92,6 +89,7 @@ public class Authentication {
                         UserProfile.instance = userData.profile
                         UserSetting.instance = userData.setting
                         withCompletion(.loggedIn)
+
                     case let .error(error):
                         withCompletion(.fail(error))
                     }
@@ -101,6 +99,7 @@ public class Authentication {
     public class func logout() {
         UserProfile.instance = nil
         UserSetting.instance = nil
+
         do {
             try Auth.auth().signOut()
         } catch {

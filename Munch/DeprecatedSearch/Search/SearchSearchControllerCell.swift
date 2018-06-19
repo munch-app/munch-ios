@@ -186,7 +186,7 @@ class SearchCellAssumptionQueryResult: UITableViewCell {
         return button
     }()
 
-    private var controller: SearchController!
+    private var controller: SearchSearchController!
     private var searchQuery: SearchQuery!
     private var places = [DeprecatedPlace]()
 
@@ -232,7 +232,7 @@ class SearchCellAssumptionQueryResult: UITableViewCell {
         }
     }
 
-    func render(queryResult: AssumptionQueryResult, controller: SearchController) {
+    func render(queryResult: AssumptionQueryResult, controller: SearchSearchController) {
         self.controller = controller
         self.searchQuery = queryResult.searchQuery
         self.places = queryResult.places
@@ -540,7 +540,7 @@ class SearchCellRecentlyViewed: UITableViewCell {
         return collectionView
     }()
 
-    private var controller: SearchController!
+    private var controller: SearchSearchController!
     private var places = [DeprecatedPlace]()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -575,7 +575,7 @@ class SearchCellRecentlyViewed: UITableViewCell {
         }
     }
 
-    func render(controller: SearchController) {
+    func render(controller: SearchSearchController) {
         self.controller = controller
         let recentDatabase = RecentJSONDatabase(name: "RecentlyViewedPlace", maxItems: 20)
         self.places = recentDatabase.get()
@@ -646,9 +646,9 @@ class SearchCellSuggest: UITableViewCell {
         return collectionView
     }()
     var suggests: [String] = []
-    var controller: SearchController?
+    var controller: SearchSearchController?
 
-    func render(suggests: [String], controller: SearchController) {
+    func render(suggests: [String], controller: SearchSearchController) {
         self.suggests = suggests
         self.controller = controller
         self.collectionView.setContentOffset(.zero, animated: false)

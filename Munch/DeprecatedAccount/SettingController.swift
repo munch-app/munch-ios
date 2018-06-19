@@ -236,9 +236,11 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
                     }) { result in
                         switch result {
                         case .success(let setting):
-                            self.setting = setting
-                            self.view.makeToast("Removed '\(tag.capitalized)' from Search Preference.", image: UIImage(named: "RIP-Toast-Close"), style: DefaultToastStyle)
-                            (self.tabBarController as? TabBarController)?.discoverController?.reset(force: true)
+                            return
+                            // TODO After User Module
+//                            self.setting = setting
+//                            self.view.makeToast("Removed '\(tag.capitalized)' from Search Preference.", image: UIImage(named: "RIP-Toast-Close"), style: DefaultToastStyle)
+//                            (self.tabBarController as? TabBarController)?.discoverController?.reset(force: true)
                         case .error(let error):
                             self.alert(error: error)
                         }
@@ -254,9 +256,11 @@ extension AccountSettingController: UITableViewDataSource, UITableViewDelegate {
                     }) { result in
                         switch result {
                         case .success(let setting):
-                            self.setting = setting
-                            self.view.makeToast("Added '\(tag.capitalized)' to Search Preference.", image: UIImage(named: "RIP-Toast-Checkmark"), style: DefaultToastStyle)
-                            (self.tabBarController as? TabBarController)?.discoverController?.reset(force: true)
+                        return
+                        // TODO After User Module
+//                            self.setting = setting
+//                            self.view.makeToast("Added '\(tag.capitalized)' to Search Preference.", image: UIImage(named: "RIP-Toast-Checkmark"), style: DefaultToastStyle)
+//                            (self.tabBarController as? TabBarController)?.discoverController?.reset(force: true)
                         case .error(let error):
                             self.alert(error: error)
                         }
@@ -339,7 +343,6 @@ fileprivate class SettingPreferenceTagCell: UITableViewCell {
         checkButton.setOn(checked, animated: false)
     }
 }
-
 
 fileprivate class SettingFeedbackCell: UITableViewCell {
     let titleView = UILabel()

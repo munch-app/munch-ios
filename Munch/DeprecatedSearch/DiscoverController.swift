@@ -256,8 +256,8 @@ class DiscoverController: UIViewController {
                 }
             }
             self.present(controller, animated: true)
-        } else if type == SearchController.self {
-            let controller = SearchRootController(searchQuery: self.searchQuery) { searchQuery in
+        } else if type == SearchSearchController.self {
+            let controller = SearchSearchRootController(searchQuery: self.searchQuery) { searchQuery in
                 if let searchQuery = searchQuery {
                     self.render(searchQuery: searchQuery)
                 }

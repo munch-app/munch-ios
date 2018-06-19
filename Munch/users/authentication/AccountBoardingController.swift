@@ -5,6 +5,7 @@
 
 import Foundation
 import UIKit
+import Localize_Swift
 
 import Kingfisher
 import SnapKit
@@ -343,10 +344,7 @@ class AccountBoardingController: UIViewController {
         init(guestOption: Bool) {
             super.init(frame: CGRect.zero)
             self.addSubview(cancelButton)
-
             self.backgroundColor = .clear
-
-
 
             if guestOption {
                 cancelButton.setTitle("SKIP", for: .normal)

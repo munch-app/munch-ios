@@ -8,10 +8,10 @@ import UIKit
 
 import FirebaseAnalytics
 
-class SearchRootController: UINavigationController, UINavigationControllerDelegate {
+class SearchSearchRootController: UINavigationController, UINavigationControllerDelegate {
     init(searchQuery: SearchQuery, extensionDismiss: @escaping((SearchQuery?) -> Void)) {
         super.init(nibName: nil, bundle: nil)
-        self.viewControllers = [SearchController(searchQuery: searchQuery, extensionDismiss: extensionDismiss)]
+        self.viewControllers = [SearchSearchController(searchQuery: searchQuery, extensionDismiss: extensionDismiss)]
         self.delegate = self
     }
 
@@ -25,7 +25,7 @@ class SearchRootController: UINavigationController, UINavigationControllerDelega
     }
 }
 
-class SearchController: UIViewController {
+class SearchSearchController: UIViewController {
     private let onExtensionDismiss: ((SearchQuery?) -> Void)
 
     fileprivate let headerView = SearchHeaderView()
@@ -129,7 +129,7 @@ class SearchController: UIViewController {
             let latLng = DiscoverFilterControllerManager.getContextLatLng(searchQuery: searchQuery)
             MunchApi.search.search(text: text, latLng: latLng, query: searchQuery) { meta, suggests, assumptions, places in
                 if meta.isOk() {
-                    self.results = SearchController.map(suggests: suggests, assumptions: assumptions, places: places)
+                    self.results = SearchSearchController.map(suggests: suggests, assumptions: assumptions, places: places)
                     self.tableView.reloadData()
 
                     Analytics.logEvent(AnalyticsEventSearch, parameters: [
@@ -179,7 +179,7 @@ class SearchController: UIViewController {
     }
 }
 
-extension SearchController: UITableViewDataSource, UITableViewDelegate {
+extension SearchSearchController: UITableViewDataSource, UITableViewDelegate {
     func registerCell() {
         tableView.register(SearchCellHeaderRestaurant.self, forCellReuseIdentifier: SearchCellHeaderRestaurant.id)
         tableView.register(SearchCellRecentlyViewed.self, forCellReuseIdentifier: SearchCellRecentlyViewed.id)

@@ -73,14 +73,14 @@ struct Place: ElasticObject, Codable {
         var article: Article?
         var instagram: Instagram?
 
-        struct Article {
+        struct Article: Codable {
             var profile: Int
             var single: Int
             var list: Int
             var total: Int
         }
 
-        struct Instagram {
+        struct Instagram: Codable {
             var profile: Int
             var total: Int
         }

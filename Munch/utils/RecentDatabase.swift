@@ -45,19 +45,21 @@ class RecentDataDatabase<T> where T: Codable {
     }
 
     func add(id: String, data: T) {
+        let encoded = try? encoder.encode(data)
+
         let realm = try! Realm()
         if let exist = realm.objects(RecentData.self)
                 .filter("_name == '\(name)' AND id == '\(id)'").first {
             try! realm.write {
                 exist._date = Int(Date().timeIntervalSince1970)
-                exist.data = encoder.encode(data)
+                exist.data = encoded
             }
         } else {
             try! realm.write {
                 let recent = RecentData()
                 recent._name = name
                 recent.id = id
-                recent.data = encoder.encode(data)
+                recent.data = encoded
 
                 realm.add(recent)
                 self.deleteLimit(realm: realm)
@@ -73,8 +75,8 @@ class RecentDataDatabase<T> where T: Codable {
 
         var list = [T]()
         for recent in dataList {
-            if let data = recent.data {
-                list.append(decoder.decode(type, from: data))
+            if let data = recent.data, let decoded = try? decoder.decode(type, from: data) {
+                list.append(decoded)
             }
 
             // If hit max items, auto return

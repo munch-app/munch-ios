@@ -12,9 +12,10 @@ class SizeImageView: UIImageView {
 
     let minWidth, minHeight: Int
 
-    init(minWidth: Int, minHeight: Int) {
+    init(minWidth: Int, minHeight: Int, frame: CGRect = .zero) {
         self.minWidth = minWidth
         self.minHeight = minHeight
+        super.init(frame: frame)
     }
 
     func render(named: String) {
