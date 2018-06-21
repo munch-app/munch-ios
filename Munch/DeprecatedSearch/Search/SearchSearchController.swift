@@ -28,7 +28,7 @@ class SearchSearchRootController: UINavigationController, UINavigationController
 class SearchSearchController: UIViewController {
     private let onExtensionDismiss: ((SearchQuery?) -> Void)
 
-    fileprivate let headerView = SearchHeaderView()
+    fileprivate let headerView = SearchSearchHeaderView()
 
     fileprivate let tableView: UITableView = {
         let tableView = UITableView()
@@ -280,7 +280,7 @@ extension SearchSearchController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-fileprivate class SearchHeaderView: UIView {
+fileprivate class SearchSearchHeaderView: UIView {
     fileprivate let textField: SearchTextField = {
         let textField = SearchTextField()
         textField.clearButtonMode = .whileEditing

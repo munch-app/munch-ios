@@ -16,22 +16,15 @@ import SwiftRichString
 
 import Firebase
 
-class DiscoverPlaceCard: UITableViewCell, SearchCardView {
-    static var total: Int = 0
-    static var container: Int = 0
-    static var image: Int = 0
-    static var bottom: Int = 0
-    static var totalCount: Int = 0
-
-    let heartButton = HeartButton()
-    let topImageView: ShimmerImageView = {
-        let imageView = ShimmerImageView()
+class SearchPlaceCard: UITableViewCell, SearchCardView {
+    let addButton = PlaceAddButton()
+    let topImageView: SizeImageView = {
+        let width = UIScreen.main.bounds.width
+        let imageView = SizeImageView(points: width, height: width)
         imageView.layer.cornerRadius = 3
-
-        imageView.size = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width)
         return imageView
     }()
-    let containerLabel: UIButton = {
+    let areaLabel: UIButton = {
         let label = UIButton()
         for view in label.subviews {
             view.isOpaque = true
@@ -63,10 +56,10 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
         label.tintColor = UIColor(hex: "202020")
         return label
     }()
-    let bottomView = DiscoverPlaceCardBottomView()
+    fileprivate let bottomView = SearchPlaceCardBottomView()
 
-    var controller: DiscoverController!
-    var containers: [[String: Any]] = []
+    var controller: SearchController!
+    var place: Place!
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -74,13 +67,13 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
 
         let containerView = UIView()
         containerView.addSubview(topImageView)
-        containerView.addSubview(containerLabel)
+        containerView.addSubview(areaLabel)
         containerView.addSubview(bottomView)
-        containerView.addSubview(heartButton)
+        containerView.addSubview(addButton)
         self.addSubview(containerView)
 
-        containerLabel.addTarget(self, action: #selector(onContainerApply(_:)), for: .touchUpInside)
-        containerLabel.snp.makeConstraints { make in
+        areaLabel.addTarget(self, action: #selector(onAreaApply(_:)), for: .touchUpInside)
+        areaLabel.snp.makeConstraints { make in
             make.left.equalTo(topImageView).inset(8)
             make.bottom.equalTo(topImageView).inset(8)
         }
@@ -95,7 +88,7 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
             make.height.equalTo(75).priority(999)
         }
 
-        heartButton.snp.makeConstraints { make in
+        addButton.snp.makeConstraints { make in
             make.right.top.equalTo(topImageView).inset(10)
         }
 
@@ -111,75 +104,39 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func render(card: SearchCard, controller: DiscoverController) {
+    func render(card: SearchCard, controller: SearchController) {
         self.controller = controller
-        heartButton.controller = controller
+        self.place = card.decode(name: "place", Place.self)
 
-        if let placeId = card.dict(name: "placeId") as? String, let placeName = card.dict(name: "name") as? String {
-            let liked = card.dict(name: "liked") as? Bool ?? false
-            heartButton.set(placeId: placeId, placeName: placeName, liked: liked)
-        }
+        addButton.controller = controller
+        addButton.place = self.place
 
-
-        let startDate = Date()
-
-        self.containers = card.dict(name: "containers") as? [[String: Any]] ?? []
-        render(containers: containers)
-        let containerDate = Date()
-
-        // Top Image Rendering
-        if let images = card.dict(name: "images") as? [[String: Any]], let image = images.get(0) {
-            topImageView.render(images: image["images"] as? [String: String])
-        } else {
-            topImageView.render(images: [:])
-        }
-
-        let imageDate = Date()
+        topImageView.render(image: self.place.images.get(0))
+        render(areas: place.areas)
         bottomView.render(card: card)
-        let bottomDate = Date()
-
-        let total = Calendar.micro(from: startDate, to: Date())
-        let container = Calendar.micro(from: startDate, to: containerDate)
-        let image = Calendar.micro(from: containerDate, to: imageDate)
-        let bottom = Calendar.micro(from: imageDate, to: bottomDate)
-        os_log("DiscoverPlaceCard finished card:controller: rendering in (micro) total:%lu container:%lu image:%lu bottom:%lu", type: .info,
-                total, container, image, bottom)
-
-        DiscoverPlaceCard.total += total
-        DiscoverPlaceCard.container += container
-        DiscoverPlaceCard.image += image
-        DiscoverPlaceCard.bottom += bottom
-        DiscoverPlaceCard.totalCount += 1
-        if DiscoverPlaceCard.totalCount % 10 == 0 {
-            os_log("DiscoverPlaceCard benchmark for %lu card:controller: rendering in (micro) total:%lu container:%lu image:%lu bottom:%lu", type: .info,
-                    DiscoverPlaceCard.totalCount,
-                    DiscoverPlaceCard.total / DiscoverPlaceCard.totalCount,
-                    DiscoverPlaceCard.container / DiscoverPlaceCard.totalCount,
-                    DiscoverPlaceCard.image / DiscoverPlaceCard.totalCount,
-                    DiscoverPlaceCard.bottom / DiscoverPlaceCard.totalCount)
-        }
     }
 
-    private func render(containers: [[String: Any]]) {
-        if controller.searchQuery.filter.containers?.isEmpty ?? true {
-            for container in containers {
-                if let type = container["type"] as? String, type.lowercased() != "area" {
-                    containerLabel.setTitle(container["name"] as? String, for: .normal)
-                    containerLabel.isHidden = false
-                    return
-                }
+    private func render(areas: [Area]) {
+        guard controller.searchQuery.filter.area?.type == .Cluster else {
+            areaLabel.isHidden = true
+            return
+        }
+
+        for area in areas {
+            if area.type == .Cluster {
+                areaLabel.setTitle(area.name, for: .normal)
+                areaLabel.isHidden = false
+                return
             }
         }
-
-        containerLabel.isHidden = true
+        areaLabel.isHidden = true
     }
 
-    @objc func onContainerApply(_ sender: Any) {
-        if let json = containers.get(0), let container = Container.create(json: json) {
-            var searchQuery = self.controller.searchQuery
-            searchQuery.filter.containers = [container]
-            searchQuery.filter.location = nil
-            self.controller.render(searchQuery: searchQuery)
+    @objc func onAreaApply(_ sender: Any) {
+        if let area = self.place.areas.get(0) {
+            self.controller.search { query in
+                query.filter.area = area
+            }
         }
     }
 
@@ -188,13 +145,12 @@ class DiscoverPlaceCard: UITableViewCell, SearchCardView {
     }
 }
 
-class DiscoverSmallPlaceCard: UITableViewCell, SearchCardView {
-    let bottomView = DiscoverPlaceCardBottomView()
+class SearchSmallPlaceCard: UITableViewCell, SearchCardView {
+    fileprivate let bottomView = SearchPlaceCardBottomView()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
-
         self.addSubview(bottomView)
 
         bottomView.snp.makeConstraints { make in
@@ -208,10 +164,8 @@ class DiscoverSmallPlaceCard: UITableViewCell, SearchCardView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func render(card: SearchCard, controller: DiscoverController) {
-        bottomView.render(card: card)
-        setNeedsLayout()
-        layoutIfNeeded()
+    func render(card: SearchCard, controller: SearchController) {
+        bottomView.render(place: card.decode(name: "place", Place.self))
     }
 
     static var cardId: String {
@@ -219,7 +173,7 @@ class DiscoverSmallPlaceCard: UITableViewCell, SearchCardView {
     }
 }
 
-class DiscoverPlaceCardBottomView: UIView {
+fileprivate class SearchPlaceCardBottomView: UIView {
     let nameLabel = UILabel()
     let tagView = MunchTagView(count: 4)
     let locationLabel = UILabel()
@@ -283,68 +237,50 @@ class DiscoverPlaceCardBottomView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func render(card: SearchCard) {
-        nameLabel.text = card.dict(name: "name") as? String
-        render(tag: card)
-        render(location: card)
+    func render(place: Place) {
+        nameLabel.text = place.name
+        render(tag: place)
+        render(location: place)
     }
 
-    private func render(tag card: SearchCard) {
+    private func render(tag place: Place) {
         // Count is Controlled by View
         self.tagView.removeAll()
-
-        if let tags = card.dict(name: "tags") as? [String] {
-            for tag in tags.prefix(3) {
-                self.tagView.add(text: tag.capitalized)
-            }
+        for tag in place.tags.prefix(3) {
+            self.tagView.add(text: tag.name)
         }
     }
 
-    private func render(location card: SearchCard) {
+    private func render(location place: Place) {
         let line = NSMutableAttributedString()
 
-        if let location = card.dict(name: "location") as? [String: Any] {
-            if let latLng = location["latLng"] as? String, let distance = MunchLocation.distance(asMetric: latLng) {
-                line.append(NSAttributedString(string: "\(distance) - "))
-            }
+        if let latLng = place.location.latLng, let distance = MunchLocation.distance(asMetric: latLng) {
+            line.append(NSAttributedString(string: "\(distance) - "))
+        }
 
-            if let neighbourhood = location["neighbourhood"] as? String {
-                line.append(NSAttributedString(string: neighbourhood))
-            } else {
-                line.append(NSAttributedString(string: "Singapore"))
-            }
+        if let neighbourhood = place.location.neighbourhood {
+            line.append(NSAttributedString(string: neighbourhood))
+        } else {
+            line.append(NSAttributedString(string: "Singapore"))
         }
 
         // Open Now
-        let hours = card.dict(name: "hours") as? [[String: String]] ?? []
-        switch DeprecatedPlace.Hour.Formatter.isOpen(hours: hours) {
+        switch Hour.Formatter.isOpen(hours: place.hours) {
         case .opening:
-            line.append(DiscoverPlaceCardBottomView.periodText)
-            line.append(DiscoverPlaceCardBottomView.openingSoonText)
+            line.append(SearchPlaceCardBottomView.periodText)
+            line.append(SearchPlaceCardBottomView.openingSoonText)
         case .open:
-            line.append(DiscoverPlaceCardBottomView.periodText)
-            line.append(DiscoverPlaceCardBottomView.openNowText)
+            line.append(SearchPlaceCardBottomView.periodText)
+            line.append(SearchPlaceCardBottomView.openNowText)
         case .closed:
-            line.append(DiscoverPlaceCardBottomView.periodText)
-            line.append(DiscoverPlaceCardBottomView.closedNowText)
+            line.append(SearchPlaceCardBottomView.periodText)
+            line.append(SearchPlaceCardBottomView.closedNowText)
         case .closing:
-            line.append(DiscoverPlaceCardBottomView.periodText)
-            line.append(DiscoverPlaceCardBottomView.closingSoonText)
+            line.append(SearchPlaceCardBottomView.periodText)
+            line.append(SearchPlaceCardBottomView.closingSoonText)
         case .none:
             break
         }
         self.locationLabel.attributedText = line
-    }
-
-    struct RatingTagViewConfig: MunchTagViewConfig {
-        let font = UIFont.systemFont(ofSize: 13.0, weight: .medium)
-        let textColor = UIColor.white
-        let backgroundColor: UIColor
-
-        let extra = CGSize(width: 14, height: 8)
-
-        init(percent: CGFloat) {
-            self.backgroundColor = ReviewRatingUtils.color(percent: percent)
-        }
     }
 }

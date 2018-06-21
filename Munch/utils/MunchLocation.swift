@@ -8,8 +8,9 @@
 
 import Foundation
 import CoreLocation
-
 import SwiftLocation
+
+import RxSwift
 
 /**
  Delegated Munch App User Location tracker
@@ -19,6 +20,9 @@ public class MunchLocation {
     // Last latLng of userLocation, can be nil
     public static var lastLatLng: String?
     public static var lastLocation: CLLocation?
+    public class var lastCoordinate: CLLocationCoordinate2D? {
+        return self.lastLocation?.coordinate
+    }
 
     // Expiry every 200 seconds
     private static var expiryIncrement: TimeInterval = 200
@@ -36,77 +40,60 @@ public class MunchLocation {
         }
     }
 
-    public class var lastCoordinate: CLLocationCoordinate2D? {
-        return self.lastLocation?.coordinate
-    }
-
-    public class func requestLocation() {
+    public class func requestLocation() -> Single<String?> {
         switch Locator.state {
         case .notDetermined:
-            MunchLocation.scheduleOnce()
+            return request(force: true)
         case .disabled:
-            if let url = URL(string: "App-Prefs:root=Privacy&path=LOCATION") {
-                UIApplication.shared.open(url)
+            return Single<String?>.create { single in
+                if let url = URL(string: "App-Prefs:root=Privacy&path=LOCATION") {
+                    UIApplication.shared.open(url)
+                }
+                single(.success(nil))
+                return Disposables.create()
             }
         case .denied:
-            if let url = URL(string: "App-Prefs:root=Privacy&path=LOCATION/co.munch.MunchApp") {
-                UIApplication.shared.open(url)
+            return Single<String?>.create { single in
+                if let url = URL(string: "App-Prefs:root=Privacy&path=LOCATION/co.munch.MunchApp") {
+                    UIApplication.shared.open(url)
+                }
+                single(.success(nil))
+                return Disposables.create()
             }
-        default: break
-        }
-    }
-
-    /**
-     Wait util an accurate location is available
-     Will return nil latLng if not found
-     */
-    public class func waitFor(completion: @escaping (_ latLng: String?, _ error: Error?) -> Void) {
-        if (!isEnabled) {
-            // If not enabled, just return nil latLng
-            completion(nil, nil)
-        } else if let latLng = lastLatLng, locationExpiry > Date() {
-            // Already have latLng, and not yet expired
-            completion(latLng, nil)
-        } else {
-            // Location already expired, query again
-            Locator.currentPosition(accuracy: .city, timeout: .delayed(15), onSuccess: { (location) -> (Void) in
-                let coord = location.coordinate
-                MunchLocation.locationExpiry = Date().addingTimeInterval(expiryIncrement)
-                MunchLocation.lastLatLng = "\(coord.latitude),\(coord.longitude)"
-                MunchLocation.lastLocation = location
-
-                completion(lastLatLng, nil)
-            }) { (error, location) -> (Void) in
-                completion(lastLatLng, error)
+        default:
+            return Single<String?>.create { single in
+                single(.success(nil))
+                return Disposables.create()
             }
         }
     }
 
-    /**
-     Get latLng immediately
-     And schedule a load once
-     */
-    public class func getLatLng() -> String? {
-        if (isEnabled) {
-            scheduleOnce()
-        }
-        return lastLatLng
-    }
+    public class func request(force: Bool = false) -> Single<String?> {
+        return Single<String?>.create { single in
+            guard isEnabled else {
+                single(.success(nil))
+                return Disposables.create()
+            }
 
-    /**
-     Start location monitoring
-     This method update lastLocation to lastLatLng
-     */
-    public class func scheduleOnce() {
-        Locator.currentPosition(accuracy: .city, onSuccess: { (location) -> (Void) in
-            let coord = location.coordinate
-            MunchLocation.lastLatLng = "\(coord.latitude),\(coord.longitude)"
-            MunchLocation.lastLocation = location
+            if let latLng = lastLatLng, locationExpiry > Date(), !force {
+                single(.success(latLng))
+                return Disposables.create()
+            } else {
+                let locating = Locator.currentPosition(accuracy: .city, timeout: .delayed(15), onSuccess: { (location) -> (Void) in
+                    let coord = location.coordinate
+                    MunchLocation.locationExpiry = Date().addingTimeInterval(expiryIncrement)
+                    MunchLocation.lastLatLng = "\(coord.latitude),\(coord.longitude)"
+                    MunchLocation.lastLocation = location
 
-            locationExpiry = Date().addingTimeInterval(expiryIncrement)
-        }) { (error, location) in
-            // Failed to schedule once, no feedback required for this.
-            print(error)
+                    single(.success(MunchLocation.lastLatLng))
+                }) { (error, location) -> (Void) in
+                    single(.error(error))
+                }
+
+                return Disposables.create {
+                    locating.stop()
+                }
+            }
         }
     }
 

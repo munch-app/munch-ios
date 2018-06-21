@@ -20,10 +20,10 @@ class SizeImageView: UIImageView {
     }
 
     // In Points
-    init(points width: Int, height: Int) {
+    init(points width: CGFloat, height: CGFloat) {
         let scale = UIScreen.main.scale
-        self.minWidth = Int(scale * CGFloat(width))
-        self.minHeight = Int(scale * CGFloat(height))
+        self.minWidth = Int(scale * width)
+        self.minHeight = Int(scale * height)
         super.init(frame: CGRect(x: 0, y: 0, width: width, height: height))
     }
 
@@ -31,8 +31,8 @@ class SizeImageView: UIImageView {
         self.image = UIImage(named: named)
     }
 
-    func render(image: Image) {
-        render(sizes: image.sizes)
+    func render(image: Image?) {
+        render(sizes: image?.sizes ?? [])
     }
 
     func render(sizes: [Image.Size]) {

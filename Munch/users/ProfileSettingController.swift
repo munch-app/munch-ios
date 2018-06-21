@@ -91,7 +91,7 @@ class ProfileSettingController: UIViewController, UIGestureRecognizerDelegate, S
             self.addSubview(titleView)
             self.addSubview(backButton)
 
-            titleView.text = "Setting"
+            titleView.text = "users.profile.settings.header".localized()
             titleView.font = .systemFont(ofSize: 17, weight: .regular)
             titleView.textAlignment = .center
             titleView.snp.makeConstraints { make in

@@ -78,8 +78,8 @@ public class Authentication {
     }
 
     // Temporary Method to authenticate user silently due to migration of version
-    class func authenticate(withCompletion: @escaping(_ state: AuthenticationState) -> Void) {
-        provider.rx.request(.authenticate)
+    class func authenticate(withCompletion: @escaping(_ state: AuthenticationState) -> Void) -> Disposable {
+        return provider.rx.request(.authenticate)
                 .map { response throws -> UserData in
                     try response.map(data: UserData.self)
                 }

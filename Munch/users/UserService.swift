@@ -96,16 +96,16 @@ extension UserSetting {
     /**
      Apply changes to UserSetting, closure will only be called if it exists
      */
-    static func apply(search editing: @escaping (UserSetting.Search) -> UserSetting.Search, onComplete: @escaping (SingleEvent<UserSetting>) -> Void) {
+    static func apply(search editing: @escaping (UserSetting.Search) -> UserSetting.Search, onComplete: @escaping (SingleEvent<UserSetting>) -> Void) -> Disposable{
         guard var editable = UserSetting.instance else {
-            return
+            return Disposables.create()
         }
         let changed = editing(editable.search)
         editable.search = changed
         UserSetting.instance = editable
 
         let provider = MunchProvider<UserService>()
-        provider.rx.request(.patchSetting(search: changed))
+        return provider.rx.request(.patchSetting(search: changed))
                 .map { response throws -> UserSetting in
                     try response.map(data: UserSetting.self)
                 }

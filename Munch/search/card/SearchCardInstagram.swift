@@ -55,7 +55,7 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
         return collectionView
     }()
 
-    private var controller: DiscoverController!
+    private var controller: SearchController!
     private var contents = [InstagramPartnerCardContent]()
     private var card: SearchCard?
     private var username: String?
@@ -114,7 +114,7 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
                 + 24 + 42 + topBottom // Action Button
     }
 
-    func render(card: SearchCard, controller: DiscoverController) {
+    func render(card: SearchCard, controller: SearchController) {
         self.controller = controller
         self.card = card
 

@@ -227,6 +227,110 @@ struct Hour: Codable {
             }
         }
     }
+
+    class Formatter {
+        private let inFormatter = DateFormatter()
+        private let outFormatter = DateFormatter()
+        private let dayFormatter = DateFormatter()
+
+        public enum Open {
+            case open
+            case opening
+            case closed
+            case closing
+            case none
+        }
+
+        init() {
+            inFormatter.locale = Locale(identifier: "en_US_POSIX")
+            inFormatter.dateFormat = "HH:mm"
+
+            outFormatter.locale = Locale(identifier: "en_US_POSIX")
+            outFormatter.dateFormat = "h:mma"
+            outFormatter.amSymbol = "am"
+            outFormatter.pmSymbol = "pm"
+
+            dayFormatter.locale = Locale(identifier: "en_US_POSIX")
+            dayFormatter.dateFormat = "EEE"
+        }
+
+        private static let instance = Formatter()
+
+        class func parse(open: String, close: String) -> String {
+            return "\(parse(time: open)) - \(parse(time: close))"
+        }
+
+        class func parse(time: String) -> String {
+            // 24:00 problem
+            if (time == "24:00" || time == "23:59") {
+                return "Midnight"
+            }
+            let date = instance.inFormatter.date(from: time)
+            return instance.outFormatter.string(from: date!)
+        }
+
+        class func timeNow() -> String {
+            return instance.inFormatter.string(from: Date())
+        }
+
+        class func dayNow() -> String {
+            return instance.dayFormatter.string(from: Date())
+        }
+
+        class func day(addingDay day: Int = 0) -> String {
+            let dateTmr = Calendar.current.date(byAdding: .day, value: day, to: Date())
+            return instance.dayFormatter.string(from: dateTmr!)
+        }
+
+        class func timeAs(int time: String?) -> Int? {
+            if let time = time {
+                let split = time.split(separator: ":")
+                if let hour = split.get(0), let min = split.get(1) {
+                    if let h = Int(hour), let m = Int(min) {
+                        return h * 60 + m
+                    }
+                }
+            }
+            return nil
+        }
+
+        class func isBetween(hour: Hour, date: Date, opening: Int = 0, closing: Int = 0) -> Bool {
+            let now = timeAs(int: instance.inFormatter.string(from: date))!
+            let open = timeAs(int: hour.open)
+            let close = timeAs(int: hour.close)
+
+            if let open = open, let close = close {
+                if (close < open) {
+                    return open - opening <= now && now + closing <= 2400
+                }
+                return open - opening <= now && now + closing <= close
+            }
+            return false
+        }
+
+        class func isOpen(hours: [Hour], opening: Int = 30) -> Open {
+            if (hours.isEmpty) {
+                return Open.none
+            }
+
+            let date = Date()
+            let currentDay = day().lowercased()
+            let currentHours = hours.filter({ $0.day.rawValue == currentDay })
+
+            for hour in currentHours {
+                if (isBetween(hour: hour, date: date)) {
+                    if (!isBetween(hour: hour, date: date, closing: 30)) {
+                        return Open.closing
+                    }
+                    return Open.open
+                } else if isBetween(hour: hour, date: date, opening: 30) {
+                    return Open.opening
+                }
+            }
+
+            return Open.closed
+        }
+    }
 }
 
 protocol ElasticObject: Codable {

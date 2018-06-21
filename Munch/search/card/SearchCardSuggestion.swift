@@ -46,7 +46,7 @@ class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
         return collectionView
     }()
 
-    private var controller: DiscoverController!
+    private var controller: SearchController!
     private var tags = [(String, Int)]()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -79,7 +79,7 @@ class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
         }
     }
 
-    func render(card: SearchCard, controller: DiscoverController) {
+    func render(card: SearchCard, controller: SearchController) {
         if let locationName = card.string(name: "locationName") {
             self.descriptionLabel.text = "Here are some suggestions of what’s good in \(locationName)."
         } else {

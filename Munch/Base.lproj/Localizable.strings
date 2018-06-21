@@ -26,6 +26,7 @@
 "users.account.onboarding.card.3.description" = "Save places that you want to check out or create themed lists to keep track of places.";
 
 // MARK: Profile Settings
+"users.profile.settings.header"="Setting";
 "users.profile.settings.header.partner"="CONTENT PARTNER";
 "users.profile.settings.header.preference"="SEARCH PREFERENCE";
 "users.profile.settings.header.account"="ACCOUNT";
@@ -39,11 +40,13 @@
 "users.profile.tabs.reviews"="REVIEWS";
 "users.profile.tabs.munches"="MUNCHES";
 
-
-// MARK: Profile
-
 //// MARK: Search Module
+// MARK: Card
+"search.card.error.location.header"="No Location Detected";
+"search.card.error.location.message"="Try refreshing or moving to another spot.";
 
+"search.card.error.unknown.header"="Unknown Error";
+"search.card.error.unknown.message"="Unknown Error has occurred.";
 
 //// MARK: Places Module
 

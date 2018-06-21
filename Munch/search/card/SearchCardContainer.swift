@@ -34,7 +34,7 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
         return collectionView
     }()
 
-    private var controller: DiscoverController!
+    private var controller: SearchController!
     private var containers = [Container]()
     private var card: SearchCard?
 
@@ -61,7 +61,7 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
         }
     }
 
-    func render(card: SearchCard, controller: DiscoverController) {
+    func render(card: SearchCard, controller: SearchController) {
         if self.card?.instanceId == card.instanceId {
             return
         }
@@ -268,7 +268,7 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
         }
     }
 
-    func render(card: SearchCard, controller: DiscoverController) {
+    func render(card: SearchCard, controller: SearchController) {
         let images = card["images"].compactMap({ SourcedImage(json: $0.1) })
         topImageView.render(sourcedImage: images.get(0))
 

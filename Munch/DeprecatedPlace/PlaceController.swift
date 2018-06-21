@@ -175,7 +175,7 @@ class PlaceHeaderView: UIView {
         titleView.textColor = .black
         return titleView
     }()
-    fileprivate let heartButton = HeartButton()
+    fileprivate let heartButton = PlaceAddButton()
     fileprivate let addButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "RIP-Add"), for: .normal)
@@ -719,7 +719,7 @@ class ReviewRatingLabel: UIButton {
     }
 }
 
-class HeartButton: UIButton {
+class PlaceAddButton: UIButton {
     private let toastStyle: ToastStyle = {
         var style = ToastStyle()
         style.backgroundColor = UIColor.bgTag
@@ -736,81 +736,32 @@ class HeartButton: UIButton {
 
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
+        // TODO Change Button Icon
         self.setImage(UIImage(named: "RIP-Heart"), for: .normal)
         self.tintColor = .white
 
-        self.addTarget(self, action: #selector(onHeartButton(_:)), for: .touchUpInside)
+        self.addTarget(self, action: #selector(onButton(_:)), for: .touchUpInside)
     }
 
     var controller: UIViewController?
+    var place: Place?
 
-    private(set) var placeName: String?
-    private(set) var placeId: String?
-    private(set) var liked: Bool = false {
-        didSet {
-            if self.liked {
-                self.setImage(UIImage(named: "RIP-Heart-Filled"), for: .normal)
-            } else {
-                self.setImage(UIImage(named: "RIP-Heart"), for: .normal)
-            }
+    @objc func onButton(_ button: Any) {
+        guard let controller = self.controller, let place = self.place else {
+            return
         }
-    }
 
-    public func set(placeId: String, placeName: String, liked: Bool) {
-        self.placeName = placeName
-        self.placeId = placeId
-        self.liked = LikedPlaceManager.instance.isLiked(placeId: placeId, defaultLike: liked)
-    }
+        Authentication.requireAuthentication(controller: controller) { state in
+            switch state {
+            case .loggedIn:
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                // TODO
 
-    @objc func onHeartButton(_ button: Any) {
-        if let controller = self.controller {
-            Authentication.requireAuthentication(controller: controller) { state in
-                switch state {
-                case .loggedIn:
-                    if let placeId = self.placeId {
-                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-
-                        self.liked = LikedPlaceManager.instance.push(placeId: placeId, liked: !self.liked)
-
-                        if self.liked {
-                            MunchApi.collections.liked.put(placeId: placeId) { meta in
-                                guard meta.isOk() else {
-                                    self.controller?.present(meta.createAlert(), animated: true)
-                                    return
-                                }
-
-                                if let placeName = self.placeName {
-                                    if let controller = self.controller as? PlaceViewController {
-                                        controller.contentView.makeToast("Liked \(placeName)", image: UIImage(named: "RIP-Toast-Heart"), style: self.toastStyle)
-                                    } else {
-                                        self.controller?.view.makeToast("Liked \(placeName)", image: UIImage(named: "RIP-Toast-Heart"), style: self.toastStyle)
-                                    }
-                                }
-                            }
-                        } else {
-                            MunchApi.collections.liked.delete(placeId: placeId) { meta in
-                                guard meta.isOk() else {
-                                    self.controller?.present(meta.createAlert(), animated: true)
-                                    return
-                                }
-
-                                if let placeName = self.placeName {
-                                    if let controller = self.controller as? PlaceViewController {
-                                        controller.contentView.makeToast("Unliked \(placeName)", image: UIImage(named: "RIP-Toast-Close"), style: self.toastStyle)
-                                    } else {
-                                        self.controller?.view.makeToast("Unliked \(placeName)", image: UIImage(named: "RIP-Toast-Close"), style: self.toastStyle)
-                                    }
-                                }
-                            }
-                        }
-
-                        Analytics.logEvent("rip_action", parameters: [
-                            AnalyticsParameterItemCategory: "click_like" as NSObject
-                        ])
-                    }
-                default:
-                    return
-                }
+                Analytics.logEvent("rip_action", parameters: [
+                    AnalyticsParameterItemCategory: "click_add" as NSObject
+                ])
+            default:
+                return
             }
         }
     }

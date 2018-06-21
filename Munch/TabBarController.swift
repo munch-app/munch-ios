@@ -56,7 +56,7 @@ extension TabBarController {
             return false
 
         case let root as SearchRootController:
-            if let controller = root.topViewController as? DiscoverController {
+            if let controller = root.topViewController as? SearchController {
                 if (self.previousController == viewController) {
                     sameTabCounter += 1
                     if (sameTabCounter >= 2) {

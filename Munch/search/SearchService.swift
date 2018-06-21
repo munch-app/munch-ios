@@ -1,61 +1,98 @@
 //
-// Created by Fuxing Loh on 17/3/18.
+// Created by Fuxing Loh on 20/6/18.
 // Copyright (c) 2018 Munch Technologies. All rights reserved.
 //
 
 import Foundation
-import Alamofire
-
-import SwiftyJSON
+import Moya
+import RxSwift
 import Crashlytics
-import Cache
 
-/**
- DiscoveryClient from DiscoveryService in munch-core/munch-api
- */
-class DiscoverClient {
-    let filter = FilterClient()
+enum SearchService {
+    case search(SearchQuery, Int, Int)
+    case suggest(String, SearchQuery)
+}
 
-    func discover(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ results: [SearchCard]) -> Void) {
-        MunchApi.restful.post("/search", parameters: query.toParams()) { meta, json in
-            callback(meta, json["data"].map({ SearchCard(json: $0.1) }))
+enum SearchFilterService {
+    case count(SearchQuery)
+    case price(SearchQuery)
+}
+
+enum SearchFilterAreaService {
+    case head
+    case get
+}
+
+extension SearchService: TargetType {
+    var path: String {
+        switch self {
+        case .search:
+            return "/search"
+        case .suggest:
+            return "/search/suggest"
+        }
+    }
+    var method: Moya.Method {
+        return .post
+    }
+    var task: Task {
+        switch self {
+        case .search(let searchQuery):
+            return .requestJSONEncodable(searchQuery)
+        case .suggest(let text, let searchQuery):
+            return .requestJSONEncodable(SearchSearchRequest(text: text, searchQuery: searchQuery))
         }
     }
 
-    class FilterClient {
-        let locations = LocationClient()
-        let decoder = JSONDecoder()
+    struct SearchSearchRequest: Codable {
+        var text: String
+        var searchQuery: SearchQuery
+    }
+}
 
-        func count(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ filterData: FilterCount?) -> Void) {
-            var query = query
-            query.latLng = MunchLocation.lastLatLng
-
-            MunchApi.restful.post("/search/filter/count", parameters: query.toParams()) { meta, json in
-                if meta.isOk() {
-                    let filterData = try! self.decoder.decode(FilterCount.self, from: json["data"].rawData())
-                    callback(meta, filterData)
-                } else {
-                    callback(meta, nil)
-                }
-            }
+extension SearchFilterService: TargetType {
+    var path: String {
+        switch self {
+        case .count:
+            return "/search/filter/count"
+        case .price:
+            return "/search/filter/price"
         }
-
-        func price(query: SearchQuery, callback: @escaping (_ meta: MetaJSON, _ filterData: FilterPriceRange?) -> Void) {
-            var query = query
-            query.latLng = MunchLocation.lastLatLng
-
-            MunchApi.restful.post("/search/filter/price", parameters: query.toParams()) { meta, json in
-                guard meta.isOk() else {
-                    callback(meta, nil)
-                    return
-                }
-
-                let filterData = try? self.decoder.decode(FilterPriceRange.self, from: json["data"].rawData())
-                callback(meta, filterData)
-            }
+    }
+    var method: Moya.Method {
+        return .post
+    }
+    var task: Task {
+        switch self {
+        case .count(let searchQuery):
+            return .requestJSONEncodable(searchQuery)
+        case .price(let searchQuery):
+            return .requestJSONEncodable(searchQuery)
         }
+    }
+}
 
-        class LocationClient {
+extension SearchFilterAreaService: TargetType {
+    var path: String {
+        return "/search/filter/areas"
+    }
+    var method: Moya.Method {
+        switch self {
+        case .get:
+            return .get
+        case .head:
+            return .head
+        }
+    }
+    var task: Task {
+        return .requestPlain
+    }
+}
+
+extension SearchFilterAreaService {
+    // TODO Store in Storage
+    /*
+            class LocationClient {
             private let decoder = JSONDecoder()
             private let storage: Storage?
 
@@ -117,6 +154,17 @@ class DiscoverClient {
                 }
             }
         }
+
+    */
+}
+
+struct FilterPrice: Codable {
+    var frequency: [String: Int]
+    var percentiles: [Percentile]
+
+    struct Percentile: Codable {
+        var percent: Double
+        var price: Double
     }
 }
 
@@ -125,24 +173,49 @@ struct FilterCount: Codable {
     var tags: [String: Int]
 }
 
-struct FilterPriceRange: Codable {
-    var frequency: [String: Int]
+extension SearchQuery {
+    init() {
+        self.init(filter: SearchQuery.Filter(), sort: SearchQuery.Sort())
 
-    var all: Segment
-    var cheap: Segment
-    var average: Segment
-    var expensive: Segment
+        if let tags = UserSetting.instance?.search.tags {
+            for tag in tags {
+                filter.tag.positives.insert(tag.capitalized)
+            }
+        }
+    }
+}
 
-    struct Segment: Codable {
-        var min: Double
-        var max: Double
+struct SearchQuery: Codable, Equatable {
+    var filter: Filter
+    var sort: Sort
 
-        var minRounded: Double {
-            return (min / 5).rounded(.down) * 5
+    struct Filter: Codable {
+        var price = Price()
+        var tag = Tag()
+        var hour = Hour()
+        var area: Area?
+
+        struct Price: Codable {
+            var name: String?
+            var min: Double?
+            var max: Double?
         }
 
-        var maxRounded: Double {
-            return (max / 5).rounded(.up) * 5
+        struct Tag: Codable {
+            var positives = Set<String>()
         }
+
+        struct Hour: Codable {
+            var name: String?
+
+            var day: String?
+            var open: String?
+            var close: String?
+        }
+    }
+
+    // See MunchCore for the available sort methods
+    struct Sort: Codable {
+        var type: String?
     }
 }

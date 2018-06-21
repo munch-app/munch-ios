@@ -16,10 +16,8 @@ public class MunchClient {
     public static let url = "https://api.munch.app/v0.11.0"
 
     let restful = RestfulClient()
-    let discover = DiscoverClient()
     let search = SearchClient()
     let places = PlaceClient()
-    let locations = LocationClient()
     let collections = CollectionClient()
 }
 
@@ -83,7 +81,7 @@ public class RestfulClient {
 
         // Always set latLng if available, only to get from header for logging, debugging purpose only
         // Otherwise, use the explicit value declared
-        if let latLng = MunchLocation.getLatLng() {
+        if let latLng = MunchLocation.lastLatLng {
             headers["Location-LatLng"] = latLng
         }
 

@@ -307,13 +307,13 @@ class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
 
     func textTagCollectionView(_ textTagCollectionView: TTGTextTagCollectionView!, didTapTag tagText: String!, at index: UInt, selected: Bool) {
         if let navigationController = self.controller.navigationController {
-            if let searchController = navigationController.viewControllers[navigationController.viewControllers.count - 2] as? DiscoverController {
+            if let searchController = navigationController.viewControllers[navigationController.viewControllers.count - 2] as? SearchController {
                 navigationController.popViewController(animated: true)
 
                 // Add Selected as filter
-                var searchQuery = searchController.searchQuery
-                searchQuery.filter.tag.positives.insert(tagText)
-                searchController.render(searchQuery: searchQuery)
+                searchController.search { query in
+                    searchQuery.filter.tag.positives.insert(tagText)
+                }
 
                 Analytics.logEvent("rip_action", parameters: [
                     AnalyticsParameterItemCategory: "click_tag" as NSObject
