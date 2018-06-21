@@ -1,6 +1,11 @@
 //// MARK: Commons
 "CANCEL" = "CANCEL";
 "SKIP" = "SKIP";
+"timing.opening"="Opening Soon";
+"timing.open"="Open Now";
+"timing.closing"="Closing Soon";
+"timing.closed"="Closed Now";
+"Address"="Address";
 
 //// MARK: Core Module
 
@@ -48,5 +53,18 @@
 "search.card.error.unknown.header"="Unknown Error";
 "search.card.error.unknown.message"="Unknown Error has occurred.";
 
+"search.SearchAreaClusterListCard.title"="Discover Locations";
+"search.SearchAreaClusterHeaderCard.count.title"= "food spots";
+
+"search.SearchCardSuggestionTag.title"="Can’t decide?";
+"search.SearchCardSuggestionTag.description.location"="Here are some suggestions of what’s good in";
+"search.SearchCardSuggestionTag.description.nearby"="Here are some suggestions of what’s good nearby.";
+"search.SearchCardSuggestionTag.count"="places";
+
+"search.card.static.no_results"="No Result";
+
+"search.card.unsupported.title"="Welcome back to Munch!";
+"search.card.unsupported.message"="While you were away, we have been working very hard to add more sugar and spice to the app to enhance your food discovery journey! Update Munch now to discover what's delicious!";
+"search.card.unsupported.button"="Update Munch";
 //// MARK: Places Module
 

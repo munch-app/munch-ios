@@ -6,6 +6,7 @@
 import Foundation
 import UIKit
 import MapKit
+import Localize_Swift
 
 import FirebaseAnalytics
 import SnapKit
@@ -17,7 +18,7 @@ class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
     private static let descriptionFont = UIFont.systemFont(ofSize: 17.0, weight: .regular)
     private let titleLabel: SearchHeaderCardLabel = {
         let label = SearchHeaderCardLabel()
-        label.text = "Can’t decide?"
+        label.text = "search.SearchCardSuggestionTag.title".localized()
         label.textColor = .white
         label.numberOfLines = 1
         return label
@@ -81,18 +82,18 @@ class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
 
     func render(card: SearchCard, controller: SearchController) {
         if let locationName = card.string(name: "locationName") {
-            self.descriptionLabel.text = "Here are some suggestions of what’s good in \(locationName)."
+            self.descriptionLabel.text = "search.SearchCardSuggestionTag.description.location".localized() + " \(locationName)."
         } else {
-            self.descriptionLabel.text = "Here are some suggestions of what’s good nearby."
+            self.descriptionLabel.text = "search.SearchCardSuggestionTag.description.nearby".localized()
         }
 
         self.controller = controller
-        self.tags = card["tags"].compactMap({
-            if let name = $0.1["name"].string, let count = $0.1["count"].int {
+        self.tags = (card["tags"] as? [[String: Any]])?.compactMap { dictionary in
+            if let name = dictionary["name"] as? String, let count = dictionary["count"] as? Int {
                 return (name, count)
             }
             return nil
-        })
+        } ?? []
 
         self.collectionView.setContentOffset(.zero, animated: false)
         self.collectionView.reloadData()
@@ -101,14 +102,14 @@ class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
     class func height(card: SearchCard) -> CGFloat {
         let height = tagSize.height + (topBottom * 4)
                 // For first label height
-            + 24.0
+                + 24.0
 
         let titleWidth = width - (leftRight + leftRight)
         if let locationName = card.string(name: "locationName") {
-            let text = "Here are some suggestions of what’s good in \(locationName)."
+            let text = "search.SearchCardSuggestionTag.description.location".localized() + " \(locationName)."
             return UILabel.textHeight(withWidth: titleWidth, font: descriptionFont, text: text) + height
         } else {
-            let text = "Here are some suggestions of what’s good nearby."
+            let text = "search.SearchCardSuggestionTag.description.nearby".localized()
             return UILabel.textHeight(withWidth: titleWidth, font: descriptionFont, text: text) + height
         }
     }
@@ -141,13 +142,13 @@ extension SearchCardSuggestionTag: UICollectionViewDataSource, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let tag = tags[indexPath.row]
 
-        var searchQuery = controller.searchQuery
-        searchQuery.filter.tag.positives.insert(tag.0.capitalized)
-        controller.render(searchQuery: searchQuery)
+        controller.search { query in
+            query.filter.tag.positives.insert(tag.0)
+        }
 
         Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
             AnalyticsParameterItemID: "suggestion-tag-\(tag.0)" as NSObject,
-            AnalyticsParameterContentType: "discover_suggestion_tag" as NSObject
+            AnalyticsParameterContentType: "search_suggestion_tag" as NSObject
         ])
     }
 
@@ -195,7 +196,7 @@ extension SearchCardSuggestionTag: UICollectionViewDataSource, UICollectionViewD
 
         func render(name: String, count: Int) {
             self.nameLabel.text = name.capitalized
-            self.countLabel.text = "\(count) places"
+            self.countLabel.text = "\(count) " + "search.SearchCardSuggestionTag.count".localized()
         }
 
         required init?(coder aDecoder: NSCoder) {

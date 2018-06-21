@@ -99,6 +99,7 @@ struct Area: ElasticObject, Codable {
 
     var images: [Image]?
     var hour: [Hour]?
+    var counts: Counts?
 
     var location: Location
 
@@ -120,6 +121,10 @@ struct Area: ElasticObject, Codable {
             default: self = .Other
             }
         }
+    }
+
+    struct Counts: Codable {
+        var total: Int?
     }
 }
 
@@ -228,108 +233,194 @@ struct Hour: Codable {
         }
     }
 
-    class Formatter {
-        private let inFormatter = DateFormatter()
-        private let outFormatter = DateFormatter()
-        private let dayFormatter = DateFormatter()
+    enum IsOpen {
+        case open
+        case opening
+        case closed
+        case closing
+        case none
+    }
+}
 
-        public enum Open {
-            case open
-            case opening
-            case closed
-            case closing
-            case none
-        }
+extension Hour {
+    private static let machineFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "HH:mm"
+        return formatter
+    }()
+    private static let humanFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "h:mma"
+        formatter.amSymbol = "am"
+        formatter.pmSymbol = "pm"
+        return formatter
+    }()
 
-        init() {
-            inFormatter.locale = Locale(identifier: "en_US_POSIX")
-            inFormatter.dateFormat = "HH:mm"
+    var timeRange: String {
+        return "\(Hour.parse(time: open)) - \(Hour.parse(time: close))"
+    }
 
-            outFormatter.locale = Locale(identifier: "en_US_POSIX")
-            outFormatter.dateFormat = "h:mma"
-            outFormatter.amSymbol = "am"
-            outFormatter.pmSymbol = "pm"
-
-            dayFormatter.locale = Locale(identifier: "en_US_POSIX")
-            dayFormatter.dateFormat = "EEE"
-        }
-
-        private static let instance = Formatter()
-
-        class func parse(open: String, close: String) -> String {
-            return "\(parse(time: open)) - \(parse(time: close))"
-        }
-
-        class func parse(time: String) -> String {
-            // 24:00 problem
-            if (time == "24:00" || time == "23:59") {
-                return "Midnight"
-            }
-            let date = instance.inFormatter.date(from: time)
-            return instance.outFormatter.string(from: date!)
-        }
-
-        class func timeNow() -> String {
-            return instance.inFormatter.string(from: Date())
-        }
-
-        class func dayNow() -> String {
-            return instance.dayFormatter.string(from: Date())
-        }
-
-        class func day(addingDay day: Int = 0) -> String {
-            let dateTmr = Calendar.current.date(byAdding: .day, value: day, to: Date())
-            return instance.dayFormatter.string(from: dateTmr!)
-        }
-
-        class func timeAs(int time: String?) -> Int? {
-            if let time = time {
-                let split = time.split(separator: ":")
-                if let hour = split.get(0), let min = split.get(1) {
-                    if let h = Int(hour), let m = Int(min) {
-                        return h * 60 + m
-                    }
+    static func timeAs(int time: String?) -> Int? {
+        if let time = time {
+            let split = time.split(separator: ":")
+            if let hour = split.get(0), let min = split.get(1) {
+                if let h = Int(hour), let m = Int(min) {
+                    return h * 60 + m
                 }
             }
-            return nil
         }
+        return nil
+    }
 
-        class func isBetween(hour: Hour, date: Date, opening: Int = 0, closing: Int = 0) -> Bool {
-            let now = timeAs(int: instance.inFormatter.string(from: date))!
-            let open = timeAs(int: hour.open)
-            let close = timeAs(int: hour.close)
+    func isBetween(date: Date, opening: Int = 0, closing: Int = 0) -> Bool {
+        let now = Hour.timeAs(int: Hour.machineFormatter.string(from: date))!
 
-            if let open = open, let close = close {
-                if (close < open) {
-                    return open - opening <= now && now + closing <= 2400
+        if let open = Hour.timeAs(int: self.open), let close = Hour.timeAs(int: self.close) {
+            if (close < open) {
+                return open - opening <= now && now + closing <= 2400
+            }
+            return open - opening <= now && now + closing <= close
+        }
+        return false
+    }
+
+    private static func parse(time: String) -> String {
+        // 24:00 problem
+        if (time == "24:00" || time == "23:59") {
+            return "Midnight"
+        }
+        let date = machineFormatter.date(from: time)
+        return humanFormatter.string(from: date!)
+    }
+}
+
+extension Hour.Day {
+    private static let dayFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "EEE"
+        return formatter
+    }()
+
+    var text: String {
+        switch self {
+        case .mon: return "Mon"
+        case .tue: return "Tue"
+        case .wed: return "Wed"
+        case .thu: return "Thu"
+        case .fri: return "Fri"
+        case .sat: return "Sat"
+        case .sun: return "Sun"
+        case .other: return "Day"
+        }
+    }
+
+    static var today: Hour.Day {
+        switch Calendar.current.component(.weekday, from: Date()) {
+        case 1: return .mon
+        case 2: return .tue
+        case 3: return .wed
+        case 4: return .thu
+        case 5: return .fri
+        case 6: return .sat
+        case 7: return .sun
+        default: return .other
+        }
+    }
+
+    static func add(days: Int = 0) -> Hour.Day {
+        if let date = Calendar.current.date(byAdding: .day, value: days, to: Date()) {
+            switch Calendar.current.component(.weekday, from: date) {
+            case 1: return .mon
+            case 2: return .tue
+            case 3: return .wed
+            case 4: return .thu
+            case 5: return .fri
+            case 6: return .sat
+            case 7: return .sun
+            default: return .other
+            }
+        }
+        return .other
+    }
+
+    func isToday(day: Hour.Day) -> Bool {
+        return day == Hour.Day.today
+    }
+}
+
+extension Hour {
+    class Grouped {
+        private static let dateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "EEEE"
+            formatter.locale = Locale(identifier: "en_US_POSIX")
+
+            return formatter
+        }()
+
+        let hours: [Hour]
+        let dayHours: [Hour.Day: String]
+
+        init(hours: [Hour]) {
+            self.hours = hours
+
+            var dayHours = [Hour.Day: String]()
+            for hour in hours.sorted(by: { $0.open < $1.open }) {
+                if let timeRange = dayHours[hour.day] {
+                    dayHours[hour.day] = timeRange + ", " + hour.timeRange
+                } else {
+                    dayHours[hour.day] = hour.timeRange
                 }
-                return open - opening <= now && now + closing <= close
             }
-            return false
+            self.dayHours = dayHours
         }
 
-        class func isOpen(hours: [Hour], opening: Int = 30) -> Open {
-            if (hours.isEmpty) {
-                return Open.none
+        subscript(day: Hour.Day) -> String {
+            get {
+                return dayHours[day] ?? "Closed"
             }
+        }
 
-            let date = Date()
-            let currentDay = day().lowercased()
-            let currentHours = hours.filter({ $0.day.rawValue == currentDay })
+        func isOpen(opening: Int = 30) -> Hour.IsOpen {
+            return hours.isOpen(opening: opening)
+        }
 
-            for hour in currentHours {
-                if (isBetween(hour: hour, date: date)) {
-                    if (!isBetween(hour: hour, date: date, closing: 30)) {
-                        return Open.closing
-                    }
-                    return Open.open
-                } else if isBetween(hour: hour, date: date, opening: 30) {
-                    return Open.opening
+        var todayDayTimeRange: String {
+            let dayInWeek = Grouped.dateFormatter.string(from: Date())
+            return dayInWeek.capitalized + ": " + self[Hour.Day.today]
+        }
+    }
+}
+
+extension Array where Element == Hour {
+    func isOpen(opening: Int = 30) -> Hour.IsOpen {
+        if (self.isEmpty) {
+            return .none
+        }
+
+        let date = Date()
+        let currentDay = Hour.Day.today
+        let currentHours = self.filter({ $0.day == currentDay })
+
+        for hour in currentHours {
+            if hour.isBetween(date: date) {
+                if hour.isBetween(date: date, closing: 30) {
+                    return .closing
                 }
+                return .open
+            } else if hour.isBetween(date: date, opening: 30) {
+                return .opening
             }
-
-            return Open.closed
         }
+
+        return .closed
+    }
+
+    var grouped: Hour.Grouped {
+        return Hour.Grouped(hours: self)
     }
 }
 

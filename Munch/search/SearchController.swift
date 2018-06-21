@@ -312,7 +312,7 @@ extension SearchController: UITableViewDelegate, UITableViewDataSource {
         register(SearchPlaceCard.self)
         register(SearchSmallPlaceCard.self)
 
-        register(SearchContainersCard.self)
+        register(SearchAreaClusterListCard.self)
 
         register(SearchNoLocationCard.self)
         register(SearchNoResultCard.self)
@@ -320,7 +320,7 @@ extension SearchController: UITableViewDelegate, UITableViewDataSource {
         register(SearchQueryReplaceCard.self)
 
         // Register Top Cards
-        register(SearchContainerHeaderCard.self)
+        register(SearchAreaClusterHeaderCard.self)
 
         // Register Middle Cards
         register(SearchCardSuggestionTag.self)
@@ -449,11 +449,15 @@ extension SearchController {
 
     private func appendLoad() {
         self.cardManager.append {
-            self.cardTableView.reloadData()
+            self.reloadData()
+        }
+    }
 
-            if !self.cardManager.more, let loadingCell = self.loadingCell {
-                loadingCell.stopAnimating()
-            }
+    func reloadData() {
+        self.cardTableView.reloadData()
+
+        if !self.cardManager.more, let loadingCell = self.loadingCell {
+            loadingCell.stopAnimating()
         }
     }
 }

@@ -27,6 +27,14 @@ class SizeImageView: UIImageView {
         super.init(frame: CGRect(x: 0, y: 0, width: width, height: height))
     }
 
+    convenience init(points: CGSize) {
+        self.init(points: points.width, height: points.height)
+    }
+
+    convenience init(pixels: CGSize) {
+        self.init(pixels: Int(pixels.width), height: Int(pixels.height))
+    }
+
     func render(named: String) {
         self.image = UIImage(named: named)
     }

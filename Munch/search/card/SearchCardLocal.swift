@@ -103,13 +103,12 @@ class SearchShimmerPlaceCard: UITableViewCell, SearchCardView {
 }
 
 class SearchStaticNoResultCard: UITableViewCell, SearchCardView {
-
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
 
         let label = UILabel()
-        label.text = "No Result"
+        label.text = "search.card.static.no_results".localized()
         label.textAlignment = .center
         label.font = UIFont.systemFont(ofSize: 18.0, weight: UIFont.Weight.regular)
         self.addSubview(label)
@@ -149,7 +148,6 @@ class SearchStaticErrorCard: UITableViewCell, SearchCardView {
         self.addSubview(titleLabel)
         self.addSubview(descriptionLabel)
 
-        titleLabel.text = "Error"
         titleLabel.font = UIFont.systemFont(ofSize: 26.0, weight: .semibold)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
         titleLabel.numberOfLines = 0
@@ -159,7 +157,6 @@ class SearchStaticErrorCard: UITableViewCell, SearchCardView {
             make.height.equalTo(40)
         }
 
-        descriptionLabel.text = "Unknown Error"
         descriptionLabel.font = UIFont.systemFont(ofSize: 17.0, weight: .regular)
         descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         descriptionLabel.numberOfLines = 0
@@ -225,7 +222,7 @@ class SearchStaticUnsupportedCard: UITableViewCell, SearchCardView {
         self.addSubview(descriptionLabel)
         self.addSubview(actionButton)
 
-        titleLabel.text = "Welcome back to Munch!"
+        titleLabel.text = "search.card.unsupported.title".localized()
         titleLabel.font = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
         titleLabel.backgroundColor = .white
@@ -234,7 +231,7 @@ class SearchStaticUnsupportedCard: UITableViewCell, SearchCardView {
             make.top.equalTo(self).inset(topBottom)
         }
 
-        descriptionLabel.text = "While you were away, we have been working very hard to add more sugar and spice to the app to enhance your food discovery journey! Update Munch now to discover what's delicious!"
+        descriptionLabel.text = "search.card.unsupported.message".localized()
         descriptionLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
         descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         descriptionLabel.numberOfLines = 0
@@ -246,7 +243,7 @@ class SearchStaticUnsupportedCard: UITableViewCell, SearchCardView {
 
         actionButton.layer.cornerRadius = 3
         actionButton.backgroundColor = .primary
-        actionButton.setTitle("Update Munch", for: .normal)
+        actionButton.setTitle("search.card.unsupported.button".localized(), for: .normal)
         actionButton.contentEdgeInsets.left = 32
         actionButton.contentEdgeInsets.right = 32
         actionButton.setTitleColor(.white, for: .normal)
@@ -319,7 +316,6 @@ class SearchStaticLoadingCard: UITableViewCell, SearchCardView {
 }
 
 class SearchStaticEmptyCard: UITableViewCell, SearchCardView {
-
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
@@ -346,7 +342,6 @@ class SearchStaticEmptyCard: UITableViewCell, SearchCardView {
 }
 
 class SearchStaticTopCard: UITableViewCell, SearchCardView {
-
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none

@@ -10,6 +10,7 @@ import os.log
 
 import Foundation
 import UIKit
+import Localize_Swift
 
 import SnapKit
 import SwiftRichString
@@ -59,7 +60,7 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
     fileprivate let bottomView = SearchPlaceCardBottomView()
 
     var controller: SearchController!
-    var place: Place!
+    var place: Place?
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -106,14 +107,16 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
 
     func render(card: SearchCard, controller: SearchController) {
         self.controller = controller
-        self.place = card.decode(name: "place", Place.self)
+        self.addButton.controller = controller
 
-        addButton.controller = controller
-        addButton.place = self.place
+        if let place = card.decode(name: "place", Place.self) {
+            self.place = place
 
-        topImageView.render(image: self.place.images.get(0))
-        render(areas: place.areas)
-        bottomView.render(card: card)
+            addButton.place = place
+            topImageView.render(image: place.images.get(0))
+            render(areas: place.areas)
+            bottomView.render(place: place)
+        }
     }
 
     private func render(areas: [Area]) {
@@ -133,7 +136,7 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
     }
 
     @objc func onAreaApply(_ sender: Any) {
-        if let area = self.place.areas.get(0) {
+        if let area = self.place?.areas.get(0) {
             self.controller.search { query in
                 query.filter.area = area
             }
@@ -165,7 +168,9 @@ class SearchSmallPlaceCard: UITableViewCell, SearchCardView {
     }
 
     func render(card: SearchCard, controller: SearchController) {
-        bottomView.render(place: card.decode(name: "place", Place.self))
+        if let place = card.decode(name: "place", Place.self) {
+            bottomView.render(place: place)
+        }
     }
 
     static var cardId: String {
@@ -183,19 +188,19 @@ fileprivate class SearchPlaceCardBottomView: UIView {
     static let periodText = " • ".set(style: Style("open", {
         $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: .ultraLight))
     }))
-    static let closingSoonText = "Closing Soon".set(style: Style("open", {
+    static let closingSoonText = "timing.closing".localized().set(style: Style("open", {
         $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 13, weight: .semibold))
         $0.color = UIColor.primary
     }))
-    static let closedNowText = "Closed Now".set(style: Style("open", {
+    static let closedNowText = "timing.closed".localized().set(style: Style("open", {
         $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 13, weight: .semibold))
         $0.color = UIColor.primary
     }))
-    static let openingSoonText = "Opening Soon".set(style: Style("open", {
+    static let openingSoonText = "timing.opening".localized().set(style: Style("open", {
         $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 13, weight: .semibold))
         $0.color = UIColor.secondary
     }))
-    static let openNowText = "Open Now".set(style: Style("open", {
+    static let openNowText = "timing.open".localized().set(style: Style("open", {
         $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 13, weight: .semibold))
         $0.color = UIColor.secondary
     }))
@@ -265,7 +270,7 @@ fileprivate class SearchPlaceCardBottomView: UIView {
         }
 
         // Open Now
-        switch Hour.Formatter.isOpen(hours: place.hours) {
+        switch place.hours.isOpen() {
         case .opening:
             line.append(SearchPlaceCardBottomView.periodText)
             line.append(SearchPlaceCardBottomView.openingSoonText)

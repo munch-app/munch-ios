@@ -9,6 +9,7 @@ import Moya
 import RxSwift
 
 import Firebase
+import Crashlytics
 
 private let shimmerCards: [SearchCard] = {
     let shimmerCard = SearchShimmerPlaceCard.card
@@ -200,8 +201,13 @@ extension SearchCard {
     }
 
     func decode<T>(name: String, _ type: T.Type) -> T? where T: Decodable {
-        if let dict = self[name], let data = try? JSONSerialization.data(withJSONObject: dict) {
-            return try? SearchCard.decoder.decode(type, from: data)
+        do {
+            if let dict = self[name] {
+                let data = try JSONSerialization.data(withJSONObject: dict)
+                return try SearchCard.decoder.decode(type, from: data)
+            }
+        } catch {
+            Crashlytics.sharedInstance().recordError(error: error)
         }
         return nil
     }

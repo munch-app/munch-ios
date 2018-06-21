@@ -6,6 +6,7 @@
 import Foundation
 import UIKit
 import MapKit
+import Localize_Swift
 
 import FirebaseAnalytics
 import SnapKit
@@ -13,16 +14,16 @@ import SwiftRichString
 
 import SwiftyJSON
 
-class SearchContainersCard: UITableViewCell, SearchCardView {
+class SearchAreaClusterListCard: UITableViewCell, SearchCardView {
     private let titleLabel: SearchHeaderCardLabel = {
         let label = SearchHeaderCardLabel()
-        label.text = "Discover Locations"
+        label.text = "search.SearchAreaClusterListCard.title".localized()
         return label
     }()
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
-        layout.itemSize = CGSize(width: 120, height: 110)
+        layout.itemSize = SearchAreaClusterListCardCell.size
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 18
 
@@ -30,18 +31,18 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.backgroundColor = UIColor.clear
-        collectionView.register(SearchContainersCardContainerCell.self, forCellWithReuseIdentifier: "SearchContainersCardContainerCell")
+        collectionView.register(SearchAreaClusterListCardCell.self, forCellWithReuseIdentifier: "SearchAreaClusterListCardCell")
         return collectionView
     }()
 
     private var controller: SearchController!
-    private var containers = [Container]()
-    private var card: SearchCard?
+    private var areas = [Area]()
+
+    private var instanceId: String?
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
-//        self.backgroundColor = .bgTag
         self.addSubview(titleLabel)
         self.addSubview(collectionView)
 
@@ -62,14 +63,18 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
     }
 
     func render(card: SearchCard, controller: SearchController) {
-        if self.card?.instanceId == card.instanceId {
+        if self.instanceId == card.instanceId {
             return
         }
 
         self.controller = controller
-        self.card = card
+        self.instanceId = card.instanceId
 
-        self.containers = card["containers"].map({ Container.create(json: $0.1)! })
+        if let areas = card.decode(name: "areas", [Area].self) {
+            self.areas = areas
+        } else {
+            self.areas = []
+        }
         self.collectionView.setContentOffset(.zero, animated: false)
         self.collectionView.reloadData()
     }
@@ -78,44 +83,44 @@ class SearchContainersCard: UITableViewCell, SearchCardView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    static var cardId: String {
-        return "injected_Containers_20171211"
-    }
+    private(set) static var cardId: String = "injected_AreaClusterList_20180621"
 }
 
-extension SearchContainersCard: UICollectionViewDataSource, UICollectionViewDelegate {
+extension SearchAreaClusterListCard: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return containers.count
+        return areas.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let container = containers[indexPath.row]
+        let area = areas[indexPath.row]
 
         Analytics.logEvent(AnalyticsEventViewItem, parameters: [
-            AnalyticsParameterItemID: "container-\(container.id ?? "")" as NSObject,
-            AnalyticsParameterItemCategory: "discover_containers" as NSObject
+            AnalyticsParameterItemID: "area-\(area.areaId)" as NSObject,
+            AnalyticsParameterItemCategory: "search_areas" as NSObject
         ])
 
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchContainersCardContainerCell", for: indexPath) as! SearchContainersCardContainerCell
-        cell.render(container: container)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchAreaClusterListCardCell", for: indexPath) as! SearchAreaClusterListCardCell
+        cell.render(area: area)
         return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let container = containers[indexPath.row]
-        var searchQuery = controller.searchQuery
-        searchQuery.filter.containers = [container]
-        controller.render(searchQuery: searchQuery)
+        let area = areas[indexPath.row]
+
+        self.controller.search { query in
+            query.filter.area = area
+        }
 
         Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
-            AnalyticsParameterItemID: "container-\(container.id ?? "")" as NSObject,
-            AnalyticsParameterContentType: "discover_containers" as NSObject
+            AnalyticsParameterItemID: "area-\(area.areaId)" as NSObject,
+            AnalyticsParameterContentType: "search_areas" as NSObject
         ])
     }
 
-    fileprivate class SearchContainersCardContainerCell: UICollectionViewCell {
-        let imageView: MunchImageView = {
-            let imageView = MunchImageView()
+    fileprivate class SearchAreaClusterListCardCell: UICollectionViewCell {
+        static let size = CGSize(width: 120, height: 110)
+        let imageView: SizeImageView = {
+            let imageView = SizeImageView(points: size)
             imageView.contentMode = .scaleAspectFill
             imageView.backgroundColor = UIColor(hex: "dedede")
             return imageView
@@ -132,8 +137,6 @@ extension SearchContainersCard: UICollectionViewDataSource, UICollectionViewDele
             nameLabel.textContainer.lineFragmentPadding = 2
             nameLabel.textContainerInset = UIEdgeInsets(topBottom: 4, leftRight: 4)
             nameLabel.isUserInteractionEnabled = false
-
-//            nameLabel.roundCorners([.bottomLeft, .bottomRight], radius: 3)
             return nameLabel
         }()
 
@@ -168,9 +171,9 @@ extension SearchContainersCard: UICollectionViewDataSource, UICollectionViewDele
             self.layoutIfNeeded()
         }
 
-        func render(container: Container) {
-            nameLabel.text = container.name
-            imageView.render(sourcedImage: container.images?.get(0))
+        func render(area: Area) {
+            nameLabel.text = area.name
+            imageView.render(image: area.images?.get(0))
         }
 
         required init?(coder aDecoder: NSCoder) {
@@ -185,7 +188,7 @@ extension SearchContainersCard: UICollectionViewDataSource, UICollectionViewDele
 
 }
 
-class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
+class SearchAreaClusterHeaderCard: UITableViewCell, SearchCardView {
     static let contentWidth = width - (leftRight + leftRight)
     static let nameFont = UIFont.systemFont(ofSize: 21.0, weight: .medium)
     static let descriptionFont = UIFont.systemFont(ofSize: 15.0, weight: .regular)
@@ -194,11 +197,16 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
         return CGSize(width: imageWidth, height: imageWidth / 3.3)
     }()
 
-    private let topImageView: ShimmerImageView = {
-        let imageView = ShimmerImageView()
+    private let topImageView: SizeImageView = {
+        let imageView = SizeImageView.init(points: imageSize.width, height: imageSize.height)
         imageView.tintColor = .white
-        imageView.size = imageSize
-        imageView.overlay.backgroundColor = UIColor.black.withAlphaComponent(0.33)
+
+        let overlay = UIView()
+        imageView.addSubview(overlay)
+        overlay.backgroundColor = UIColor.black.withAlphaComponent(0.33)
+        overlay.snp.makeConstraints { make in
+            make.edges.equalTo(imageView)
+        }
         return imageView
     }()
     private let nameLabel: UILabel = {
@@ -225,7 +233,6 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
-//        self.backgroundColor = .bgTag
 
         grid.addSubview(topImageView)
         grid.addSubview(nameLabel)
@@ -241,7 +248,7 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
 
         topImageView.snp.makeConstraints { make in
             make.top.left.right.equalTo(grid)
-            make.height.equalTo(SearchContainerHeaderCard.imageSize.height)
+            make.height.equalTo(SearchAreaClusterHeaderCard.imageSize.height)
         }
 
         nameLabel.snp.makeConstraints { make in
@@ -269,13 +276,16 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
     }
 
     func render(card: SearchCard, controller: SearchController) {
-        let images = card["images"].compactMap({ SourcedImage(json: $0.1) })
-        topImageView.render(sourcedImage: images.get(0))
+        guard let area: Area = card.decode(name: "area", Area.self) else {
+            return
+        }
 
-        nameLabel.text = card.string(name: "name")
-        if let description = card.string(name: "description") {
+        topImageView.render(image: area.images?.get(0))
+        nameLabel.text = area.name
+
+        if let description = area.description {
             descriptionLabel.text = description
-            let lines = descriptionLabel.countLines(width: SearchContainerHeaderCard.contentWidth)
+            let lines = descriptionLabel.countLines(width: SearchAreaClusterHeaderCard.contentWidth)
             descriptionLabel.numberOfLines = lines
 
             descriptionAddressConstraint.activate()
@@ -285,18 +295,17 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
         }
 
         // Address Line
-        if let address = card.string(name: "address"), let latLng = card.string(name: "latLng"), let count = card.int(name: "count") {
+        if let address = area.location.address, let latLng = area.location.latLng, let total = area.counts?.total {
             self.addressLineView.address = address
             self.addressLineView.latLng = latLng
-            self.addressLineView.count = count
+            self.addressLineView.count = total
             self.addressLineView.isHidden = false
         } else {
             self.addressLineView.isHidden = true
         }
 
         // Hour Line
-        let hours = card["hours"].compactMap({ DeprecatedPlace.Hour(json: $0.1) })
-        if !hours.isEmpty {
+        if let hours = area.hour, !hours.isEmpty {
             self.hourLineView.hours = hours
             self.hourLineView.isHidden = false
         } else {
@@ -311,8 +320,12 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
         // Image
         height += imageSize.height
 
+        guard let area: Area = card.decode(name: "area", Area.self) else {
+            return height
+        }
+
         // Description
-        if let description = card.string(name: "description") {
+        if let description = area.description {
             let lines = UILabel.countLines(font: descriptionFont, text: description, width: titleWidth)
             height += CGFloat(lines) * ceil(descriptionFont.lineHeight)
             height += 8
@@ -320,12 +333,12 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
         }
 
         // Address Line
-        if card.string(name: "address") != nil, card.string(name: "latLng") != nil {
+        if area.location.address != nil, area.location.latLng != nil {
             height += AddressLineView.height
         }
 
         // Hour Line
-        if let hours = card["hours"].array, !hours.isEmpty, card["count"].exists() {
+        if let hours = area.hour, !hours.isEmpty, area.counts?.total != nil {
             height += AddressLineView.height
         }
 
@@ -341,7 +354,7 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
         self.topImageView.layer.cornerRadius = 3
     }
 
-    private(set) static var cardId: String = "injected_ContainerHeader_20180511"
+    private(set) static var cardId: String = "injected_AreaClusterHeader_20180621"
 
     fileprivate class AddressLineView: SRCopyableView {
         static let headerStyle = Style("open", {
@@ -382,7 +395,7 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
         var address: String! {
             didSet {
                 let attributedText = NSMutableAttributedString()
-                attributedText.append("Address\n".set(style: AddressLineView.headerStyle))
+                attributedText.append("\("Address".localized())\n".set(style: AddressLineView.headerStyle))
                 attributedText.append(address.set(style: AddressLineView.addressStyle))
                 self.leftLabel.attributedText = attributedText
             }
@@ -392,7 +405,7 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
                 if let count = self.count {
                     let attributedText = NSMutableAttributedString()
                     attributedText.append("\(count)\n".set(style: AddressLineView.countStyle))
-                    attributedText.append("food spots".set(style: AddressLineView.placeStyle))
+                    attributedText.append("search.SearchAreaClusterHeaderCard.count.title".localized().set(style: AddressLineView.placeStyle))
                     self.rightLabel.attributedText = attributedText
                 } else {
                     self.rightLabel.text = nil
@@ -452,28 +465,29 @@ class SearchContainerHeaderCard: UITableViewCell, SearchCardView {
             return label
         }()
 
-        var hours: [DeprecatedPlace.Hour]? {
+        var hours: [Hour]? {
             didSet {
-                if let hours = self.hours {
-                    let hours = BusinessHour(hours: hours)
-                    let attributedText = NSMutableAttributedString()
-                    switch hours.isOpen() {
-                    case .opening:
-                        attributedText.append("Opening Soon\n".set(style: PlaceBasicBusinessHourCard.openStyle))
-                    case .open:
-                        attributedText.append("Open Now\n".set(style: PlaceBasicBusinessHourCard.openStyle))
-                    case .closing:
-                        attributedText.append("Closing Soon\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
-                    case .closed: fallthrough
-                    case .none:
-                        attributedText.append("Closed Now\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
-
-                    }
-                    attributedText.append(hours.today.set(style: PlaceBasicBusinessHourCard.hourStyle))
-                    self.leftLabel.attributedText = attributedText
-                } else {
+                guard let hours = self.hours else {
                     self.leftLabel.text = nil
+                    return
                 }
+
+                let attributedText = NSMutableAttributedString()
+                switch hours.isOpen() {
+                case .opening:
+                    attributedText.append("\("timing.opening".localized())\n".set(style: PlaceBasicBusinessHourCard.openStyle))
+                case .open:
+                    attributedText.append("\("timing.open".localized())\n".set(style: PlaceBasicBusinessHourCard.openStyle))
+                case .closing:
+                    attributedText.append("\("timing.closing".localized())\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
+                case .closed: fallthrough
+                case .none:
+                    attributedText.append("\("timing.closed".localized())\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
+
+                }
+
+                attributedText.append(hours.grouped.todayDayTimeRange.set(style: PlaceBasicBusinessHourCard.hourStyle))
+                self.leftLabel.attributedText = attributedText
             }
         }
 

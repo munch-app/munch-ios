@@ -8,10 +8,13 @@
 
 import Foundation
 import UIKit
+import RxSwift
 
 import SnapKit
 import SwiftyJSON
 import FirebaseAnalytics
+
+// TODO: Localize
 
 class SearchNoLocationCard: UITableViewCell, SearchCardView {
     private let titleImage = UIImageView()
@@ -66,10 +69,10 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
 
     @objc func enableLocation(button: UIButton) {
         if MunchLocation.isEnabled {
-            controller.render(searchQuery: controller.searchQuery)
+            controller.reset(force: true)
         } else {
             Analytics.logEvent("enable_location", parameters: [:])
-            MunchLocation.requestLocation()
+            MunchLocation.requestLocation().subscribe()
             actionButton.setTitle("Refresh Search", for: .normal)
         }
     }
@@ -176,7 +179,8 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
     func render(card: SearchCard, controller: SearchController) {
         self.controller = controller
 
-        if let locationName = card["locationName"].string {
+
+        if let locationName = card.string(name: "locationName") {
             titleLabel.text = "No Results in '\(locationName)'"
             // We couldn't find results in "Nearby". Here are the results for "Anywhere".
             descriptionLabel.text = "We could not find results in '\(locationName)'. Here are the results for 'Anywhere'"
@@ -211,7 +215,7 @@ class SearchHeaderCard: UITableViewCell, SearchCardView {
     }
 
     func render(card: SearchCard, controller: SearchController) {
-        self.titleLabel.text = card["title"].string
+        self.titleLabel.text = card.string(name: "title")
         self.layoutIfNeeded()
     }
 
@@ -253,9 +257,11 @@ class SearchQueryReplaceCard: UITableViewCell, SearchCardView {
     }
 
     func render(card: SearchCard, controller: SearchController) {
-        let query = SearchQuery(json: card["searchQuery"])
-        controller.cardManager?.replace(query: query)
-
+        if let query = card.decode(name: "searchQuery", SearchQuery.self) {
+            controller.cardManager.replace(query: query) {
+                controller.reloadData()
+            }
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
