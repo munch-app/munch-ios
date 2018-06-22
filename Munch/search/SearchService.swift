@@ -4,8 +4,11 @@
 //
 
 import Foundation
+
 import Moya
 import RxSwift
+import RealmSwift
+
 import Crashlytics
 
 enum SearchService {
@@ -89,73 +92,104 @@ extension SearchFilterAreaService: TargetType {
     }
 }
 
-extension SearchFilterAreaService {
-    // TODO Store in Storage
-    /*
-            class LocationClient {
-            private let decoder = JSONDecoder()
-            private let storage: Storage?
+fileprivate class LocalAreaData: Object {
+    @objc dynamic var id: String = ""
+    @objc dynamic var name: String = ""
+    @objc dynamic var updatedMillis: Int = 0
+    @objc dynamic var data: Data?
+}
 
-            init() {
-                do {
-                    let diskConfig = DiskConfig(name: "api.discover.filter.locations")
-                    let memoryConfig = MemoryConfig(expiry: .never, countLimit: 10, totalCostLimit: 10)
-                    self.storage = try Storage(diskConfig: diskConfig, memoryConfig: memoryConfig)
-                } catch {
-                    self.storage = nil
-                    print(error)
-                    Crashlytics.sharedInstance().recordError(error)
+fileprivate class AreaDatabase {
+    private let decoder = JSONDecoder()
+    private let encoder = JSONEncoder()
+
+    private let provider = MoyaProvider<SearchFilterAreaService>()
+
+    var lastModifiedMillis: Int {
+        let realm = try! Realm()
+        return realm.objects(LocalAreaData.self)
+                .sorted(byKeyPath: "updatedMillis", ascending: false)
+                .first?.updatedMillis ?? 0
+    }
+
+    var lastRefresh: Date? {
+        get {
+            return UserDefaults.standard.object(forKey: "search.filter.AreaDatabase.lastRefresh") as? Date
+        }
+        set(value) {
+            UserDefaults.standard.set(value, forKey: "search.filter.AreaDatabase.lastRefresh")
+        }
+    }
+
+    func list() -> Single<[Area]> {
+        return Single<[Area]>.create { single in
+            let areas = self.get()
+
+            if !areas.isEmpty {
+                single(.success(areas))
+            }
+
+            // Allow skip if loaded and last refresh is within 3 days
+            if !areas.isEmpty, let lastRefresh = self.lastRefresh {
+                if let diff = Calendar.current.dateComponents([.hour], from: lastRefresh, to: Date()).hour, diff < 24 * 5 {
+                    // Only refresh if 5 days has passed
+                    return Disposables.create()
                 }
             }
 
-            func list(callback: @escaping (_ meta: MetaJSON, _ locations: [DeprecatedLocation], _ containers: [Container]) -> Void) {
-                if let storage = storage {
-                    try? storage.removeExpiredObjects()
-                    let locations = try? storage.object(ofType: [DeprecatedLocation].self, forKey: "locations")
-                    let containers = try? storage.object(ofType: [Container].self, forKey: "containers")
-                    if let locations = locations, let containers = containers {
-                        callback(.ok, locations, containers)
-                        return
+            let request = self.provider.rx.request(.get)
+                    .map { response throws -> [Area] in
+                        try response.map(data: [Area].self)
                     }
-                }
-
-
-                MunchApi.restful.get("/search/filter/locations/list") { meta, json in
-                    guard meta.isOk() else {
-                        callback(meta, [], [])
-                        return
-                    }
-
-                    var locations = [DeprecatedLocation]()
-                    var containers = [Container]()
-
-                    if let array = json["data"].array {
-                        for data in array {
-                            let result = SearchClient.parseResult(result: data)
-                            if let location = result as? DeprecatedLocation {
-                                locations.append(location)
-                            } else if let container = result as? Container {
-                                containers.append(container)
+                    .subscribe { event in
+                        switch event {
+                        case .success(let loadedAreas):
+                            if areas.isEmpty {
+                                single(.success(loadedAreas))
                             }
+                            self.update(areas: loadedAreas)
+                        case .error(let error):
+                            single(.error(error))
                         }
                     }
 
-                    if let storage = self.storage {
-                        try? storage.setObject(locations, forKey: "locations", expiry: .seconds(60 * 60 * 25))
-                        try? storage.setObject(containers, forKey: "containers", expiry: .seconds(60 * 60 * 25))
-                    }
-                    callback(meta, locations, containers)
-                }
-            }
-
-            func search(text: String, callback: @escaping (_ meta: MetaJSON, _ results: [SearchResult]) -> Void) {
-                MunchApi.restful.get("/search/filter/locations/search", parameters: ["text": text]) { meta, json in
-                    callback(meta, json["data"].compactMap({ SearchClient.parseResult(result: $0.1) }))
-                }
+            return Disposables.create {
+                request.dispose()
             }
         }
+    }
 
-    */
+    private func get() -> [Area] {
+        self.lastRefresh = Date()
+        let realm = try! Realm()
+
+        var areas = [Area]()
+        realm.objects(LocalAreaData.self)
+                .sorted(byKeyPath: "name", ascending: true)
+                .forEach { data in
+                    if let data = data.data, let area = try? self.decoder.decode(Area.self, from: data) {
+                        areas.append(area)
+                    }
+                }
+        return areas
+    }
+
+    func update(areas: [Area]) {
+        let realm = try! Realm()
+
+        try! realm.write {
+            realm.delete(realm.objects(LocalAreaData.self))
+
+            for area in areas {
+                let data = LocalAreaData()
+                data.id = area.areaId
+                data.name = area.name
+                data.updatedMillis = area.updatedMillis ?? 0
+                data.data = encoder.encode(area)
+                realm.add(data)
+            }
+        }
+    }
 }
 
 struct FilterPrice: Codable {
