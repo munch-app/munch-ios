@@ -121,6 +121,7 @@ protocol SearchCardView {
     static var leftRight: CGFloat { get }
     static var topBottom: CGFloat { get }
     static var width: CGFloat { get }
+    static var middleWidth: CGFloat { get }
 
     // Height for card view
     static func height(card: SearchCard) -> CGFloat
@@ -147,6 +148,10 @@ extension SearchCardView {
 
     static var width: CGFloat {
         return UIScreen.main.bounds.width
+    }
+
+    static var middleWidth: CGFloat {
+        return width - (leftRight * 2)
     }
 
     // Default: Autosizing
@@ -207,6 +212,7 @@ extension SearchCard {
                 return try SearchCard.decoder.decode(type, from: data)
             }
         } catch {
+            print(error)
             Crashlytics.sharedInstance().recordError(error)
         }
         return nil

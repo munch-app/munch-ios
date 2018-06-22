@@ -161,8 +161,9 @@ extension SearchController {
         case .suggest:
             let controller = SearchSuggestRootController(searchQuery: self.searchQuery, extensionDismiss: completable)
             self.present(controller, animated: true)
-        case .place:
-            return
+        case .place(let place):
+            let controller = PlaceViewController(placeId: place.placeId)
+            self.navigationController!.pushViewController(controller, animated: true)
         }
     }
 }
@@ -373,8 +374,7 @@ extension SearchController: UITableViewDelegate, UITableViewDataSource {
 
                 os_log("Required Card: %@ Not Found, SearchStaticEmptyCard is used instead", type: .info, card.cardId)
             }
-        case 2: // Loading card
-            return cardTableView.dequeueReusableCell(withIdentifier: SearchStaticLoadingCard.cardId)!
+        case 2: return loadingCell
         default: break
         }
 
@@ -406,8 +406,7 @@ extension SearchController: UITableViewDelegate, UITableViewDataSource {
                     AnalyticsParameterItemCategory: card.cardId as NSObject
                 ])
             }
-        case 2:
-            self.appendLoad()
+        case 2: self.appendLoad()
         default: break
         }
     }
@@ -418,23 +417,15 @@ extension SearchController: UITableViewDelegate, UITableViewDataSource {
         case (1, SearchPlaceCard.cardId):
             fallthrough
         case (1, SearchSmallPlaceCard.cardId):
-            if let placeId = card.string(name: "placeId") {
+            if let place = card.decode(name: "place", Place.self) {
                 Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
-                    AnalyticsParameterItemID: "place-\(placeId)" as NSObject,
+                    AnalyticsParameterItemID: "place-\(place.placeId)" as NSObject,
                     AnalyticsParameterContentType: "search_place" as NSObject
                 ])
-                self.select(placeId: card.string(name: placeId))
+
+                self.goTo(where: .place(place))
             }
         default: break
-        }
-    }
-
-    func select(placeId: String?) {
-        if let placeId = placeId {
-            DispatchQueue.main.async {
-                let controller = PlaceViewController(placeId: placeId)
-                self.navigationController!.pushViewController(controller, animated: true)
-            }
         }
     }
 }
@@ -461,22 +452,29 @@ extension SearchController: UITableViewDataSourcePrefetching {
 
 // MARK: Lazy Append Loading
 extension SearchController {
-    private var loadingCell: SearchStaticLoadingCard? {
-        return self.cardTableView.cellForRow(at: .init(row: 0, section: 2)) as? SearchStaticLoadingCard
+    private static let loadingCell: SearchStaticLoadingCard = SearchStaticLoadingCard()
+    private var loadingCell: SearchStaticLoadingCard {
+        return SearchController.loadingCell
     }
 
+    /// loadingCell need to be passed in because it might but be ready yet
     private func appendLoad() {
-        self.cardManager.append {
-            self.reloadData()
+        if self.cardManager.more {
+            self.cardManager.append {
+                self.reloadData()
+            }
+        } else {
+            loadingCell.stopAnimating()
         }
     }
 
     func reloadData() {
         self.cardTableView.reloadData()
 
-        if !self.cardManager.more, let loadingCell = self.loadingCell {
-            loadingCell.stopAnimating()
+        guard self.cardManager.more else {
+            return
         }
+        self.loadingCell.stopAnimating()
     }
 }
 

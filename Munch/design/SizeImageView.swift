@@ -16,6 +16,7 @@ class SizeImageView: UIImageView {
     init(pixels width: Int, height: Int, frame: CGRect = .zero) {
         self.minWidth = width
         self.minHeight = height
+
         super.init(frame: frame)
     }
 
@@ -60,7 +61,7 @@ class SizeImageView: UIImageView {
     }
 
     class func find(sizes: [Image.Size], minWidth: Int, minHeight: Int) -> Image.Size? {
-        let sizes = sizes.sorted(by: { s1, s2 in s1.width > s2.width })
+        let sizes = sizes.sorted(by: { s1, s2 in s1.width < s2.width })
         for size in sizes {
             if size.width >= minWidth, size.height >= minHeight {
                 return size
@@ -85,6 +86,33 @@ class SizeImageView: UIImageView {
     }
 
     public required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class SizeShimmerImageView: SizeImageView {
+    private let indicator = ShimmerIndicator()
+
+    override init(pixels width: Int, height: Int, frame: CGRect = .zero) {
+        super.init(pixels: width, height: height, frame: frame)
+
+        self.kf.indicatorType = .custom(indicator: indicator)
+
+        self.contentMode = .scaleAspectFill
+        self.clipsToBounds = true
+        self.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+    }
+
+    override init(points width: CGFloat, height: CGFloat) {
+        super.init(points: width, height: height)
+
+        self.kf.indicatorType = .custom(indicator: indicator)
+        self.contentMode = .scaleAspectFill
+        self.clipsToBounds = true
+        self.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }

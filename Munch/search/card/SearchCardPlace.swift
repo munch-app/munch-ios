@@ -19,9 +19,9 @@ import Firebase
 
 class SearchPlaceCard: UITableViewCell, SearchCardView {
     let addButton = PlaceAddButton()
-    let topImageView: SizeImageView = {
+    let topImageView: SizeShimmerImageView = {
         let width = UIScreen.main.bounds.width
-        let imageView = SizeImageView(points: width, height: width)
+        let imageView = SizeShimmerImageView(points: width, height: width)
         imageView.layer.cornerRadius = 3
         return imageView
     }()

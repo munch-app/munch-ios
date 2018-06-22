@@ -16,6 +16,8 @@ private let ISO_DATE_FORMATTER: DateFormatter = {
     return formatter
 }()
 
+private let encoder = JSONEncoder()
+
 public extension TargetType {
     var baseURL: URL {
         return URL(string: "https://api.munch.app/v0.12.0")!
@@ -38,6 +40,11 @@ public extension TargetType {
                 "User-Local-Time": ISO_DATE_FORMATTER.string(from: Date())
             ]
         }
+    }
+
+    func requestJSONQueryString<T>(_ encodable: T, parameters: [String: Any]) -> Task where T: Encodable {
+        let data: Data = try! encoder.encode(encodable)
+        return Task.requestCompositeData(bodyData: data, urlParameters: parameters)
     }
 }
 

@@ -26,8 +26,8 @@ enum SearchFilterAreaService {
 extension SearchService: TargetType {
     var path: String {
         switch self {
-        case let .search(_, from, size):
-            return "/search?from=\(from)&size=\(size)"
+        case let .search:
+            return "/search"
         case .suggest:
             return "/search/suggest"
         }
@@ -37,8 +37,8 @@ extension SearchService: TargetType {
     }
     var task: Task {
         switch self {
-        case let .search(searchQuery, _, _):
-            return .requestJSONEncodable(searchQuery)
+        case let .search(searchQuery, from, size):
+            return requestJSONQueryString(searchQuery, parameters: ["from": from, "size": size])
         case let .suggest(text, searchQuery):
             return .requestJSONEncodable(SearchSearchRequest(text: text, searchQuery: searchQuery))
         }

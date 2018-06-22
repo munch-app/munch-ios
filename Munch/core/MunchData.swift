@@ -196,10 +196,10 @@ struct Location: Codable {
     var latLng: String?
     var polygon: Polygon?
 
-    var landmarks: [Landmark]
+    var landmarks: [Landmark]?
 
     struct Polygon: Codable {
-        var points: [String]
+        var points: [String]?
     }
 }
 

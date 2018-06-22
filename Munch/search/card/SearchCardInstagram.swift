@@ -193,8 +193,8 @@ extension SearchInstagramPartnerCard: UICollectionViewDataSource, UICollectionVi
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let placeId = contents[indexPath.row].place?.placeId {
-            controller.select(placeId: placeId)
+        if let place = contents[indexPath.row].place {
+            controller.goTo(where: .place(place))
         }
     }
 

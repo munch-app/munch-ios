@@ -736,8 +736,7 @@ class PlaceAddButton: UIButton {
 
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
-        // TODO Change Button Icon
-        self.setImage(UIImage(named: "RIP-Heart"), for: .normal)
+        self.setImage(UIImage(named: "RIP-Add"), for: .normal)
         self.tintColor = .white
 
         self.addTarget(self, action: #selector(onButton(_:)), for: .touchUpInside)

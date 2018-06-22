@@ -134,6 +134,9 @@ class SearchStaticNoResultCard: UITableViewCell, SearchCardView {
 }
 
 class SearchStaticErrorCard: UITableViewCell, SearchCardView {
+    private static let titleFont = UIFont.systemFont(ofSize: 26.0, weight: .semibold)
+    private static let messageFont = UIFont.systemFont(ofSize: 17.0, weight: .regular)
+
     private let titleImage = UIImageView()
     private let titleLabel = UILabel()
     private let descriptionLabel = UILabel()
@@ -148,16 +151,15 @@ class SearchStaticErrorCard: UITableViewCell, SearchCardView {
         self.addSubview(titleLabel)
         self.addSubview(descriptionLabel)
 
-        titleLabel.font = UIFont.systemFont(ofSize: 26.0, weight: .semibold)
+        titleLabel.font = SearchStaticErrorCard.titleFont
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
         titleLabel.numberOfLines = 0
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(self).inset(topBottom)
-            make.height.equalTo(40)
         }
 
-        descriptionLabel.font = UIFont.systemFont(ofSize: 17.0, weight: .regular)
+        descriptionLabel.font = SearchStaticErrorCard.messageFont
         descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         descriptionLabel.numberOfLines = 0
         descriptionLabel.snp.makeConstraints { make in
@@ -173,24 +175,38 @@ class SearchStaticErrorCard: UITableViewCell, SearchCardView {
 
     func render(card: SearchCard, controller: SearchController) {
         self.controller = controller
-        self.titleLabel.text = card.string(name: "type")
+        self.titleLabel.text = card.string(name: "title")
         self.descriptionLabel.text = card.string(name: "message")
     }
 
-    class func create(type: String, message: String?) -> SearchCard {
-        return SearchCard(cardId: self.cardId, dictionary: ["type": type, "message": message])
+    static func height(card: SearchCard) -> CGFloat {
+        var height: CGFloat = topBottom + 20 + 24
+
+        if let title = card.string(name: "title") {
+            height += UILabel.textHeight(withWidth: middleWidth, font: titleFont, text: title)
+        }
+
+        if let message = card.string(name: "message") {
+            height += UILabel.textHeight(withWidth: middleWidth, font: messageFont, text: message)
+        }
+
+        return height
+    }
+
+    class func create(title: String, message: String?) -> SearchCard {
+        return SearchCard(cardId: self.cardId, dictionary: ["title": title, "message": message])
     }
 
     class func create(type: ErrorType) -> SearchCard {
         switch type {
         case let .error(error):
-            return create(type: "search.card.error.unknown.header".localized(), message: error.localizedDescription)
+            return create(title: "search.card.error.unknown.header".localized(), message: error.localizedDescription)
         case let .message(header, message):
-            return create(type: header, message: message)
+            return create(title: header, message: message)
         case .unknown:
-            return create(type: "search.card.error.unknown.header".localized(), message: "search.card.error.unknown.message".localized())
+            return create(title: "search.card.error.unknown.header".localized(), message: "search.card.error.unknown.message".localized())
         case .location:
-            return create(type: "search.card.error.location.header".localized(), message: "search.card.error.location.message".localized())
+            return create(title: "search.card.error.location.header".localized(), message: "search.card.error.location.message".localized())
         }
     }
 
