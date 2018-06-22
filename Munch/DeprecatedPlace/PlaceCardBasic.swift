@@ -312,7 +312,7 @@ class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
 
                 // Add Selected as filter
                 searchController.search { query in
-                    searchQuery.filter.tag.positives.insert(tagText)
+                    query.filter.tag.positives.insert(tagText)
                 }
 
                 Analytics.logEvent("rip_action", parameters: [

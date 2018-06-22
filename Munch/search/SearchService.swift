@@ -26,8 +26,8 @@ enum SearchFilterAreaService {
 extension SearchService: TargetType {
     var path: String {
         switch self {
-        case .search:
-            return "/search"
+        case let .search(_, from, size):
+            return "/search?from=\(from)&size=\(size)"
         case .suggest:
             return "/search/suggest"
         }
@@ -37,9 +37,9 @@ extension SearchService: TargetType {
     }
     var task: Task {
         switch self {
-        case .search(let searchQuery):
+        case let .search(searchQuery, _, _):
             return .requestJSONEncodable(searchQuery)
-        case .suggest(let text, let searchQuery):
+        case let .suggest(text, searchQuery):
             return .requestJSONEncodable(SearchSearchRequest(text: text, searchQuery: searchQuery))
         }
     }
@@ -185,7 +185,7 @@ extension SearchQuery {
     }
 }
 
-struct SearchQuery: Codable, Equatable {
+struct SearchQuery: Codable {
     var filter: Filter
     var sort: Sort
 
@@ -215,7 +215,26 @@ struct SearchQuery: Codable, Equatable {
     }
 
     // See MunchCore for the available sort methods
-    struct Sort: Codable {
+    struct Sort: Codable, Equatable {
         var type: String?
+    }
+}
+
+extension SearchQuery: Equatable {
+    static func ==(lhs: SearchQuery, rhs: SearchQuery) -> Bool {
+        return lhs.filter.price.name == rhs.filter.price.name &&
+                lhs.filter.price.min == rhs.filter.price.min &&
+                lhs.filter.price.max == rhs.filter.price.max &&
+
+                lhs.filter.tag.positives == rhs.filter.tag.positives &&
+
+                lhs.filter.hour.name == rhs.filter.hour.name &&
+                lhs.filter.hour.day == rhs.filter.hour.day &&
+                lhs.filter.hour.open == rhs.filter.hour.open &&
+                lhs.filter.hour.close == rhs.filter.hour.close &&
+
+                lhs.filter.area?.areaId == rhs.filter.area?.areaId &&
+
+                lhs.sort.type == rhs.sort.type
     }
 }

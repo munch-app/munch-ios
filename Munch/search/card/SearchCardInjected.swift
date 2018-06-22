@@ -9,12 +9,11 @@
 import Foundation
 import UIKit
 import RxSwift
+import Localize_Swift
 
 import SnapKit
 import SwiftyJSON
 import FirebaseAnalytics
-
-// TODO: Localize
 
 class SearchNoLocationCard: UITableViewCell, SearchCardView {
     private let titleImage = UIImageView()
@@ -32,7 +31,7 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
         self.addSubview(descriptionLabel)
         self.addSubview(actionButton)
 
-        titleLabel.text = "No Location"
+        titleLabel.text = "search.SearchNoLocationCard.title".localized()
         titleLabel.font = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
         titleLabel.backgroundColor = .white
@@ -41,7 +40,7 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
             make.top.equalTo(self).inset(topBottom)
         }
 
-        descriptionLabel.text = "You have turned off your location service. Turn it on for better suggestion?"
+        descriptionLabel.text = "search.SearchNoLocationCard.message".localized()
         descriptionLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
         descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         descriptionLabel.numberOfLines = 0
@@ -53,7 +52,7 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
 
         actionButton.layer.cornerRadius = 3
         actionButton.backgroundColor = .primary
-        actionButton.setTitle("Enable Location", for: .normal)
+        actionButton.setTitle("search.SearchNoLocationCard.button".localized(), for: .normal)
         actionButton.contentEdgeInsets.left = 32
         actionButton.contentEdgeInsets.right = 32
         actionButton.setTitleColor(.white, for: .normal)
@@ -105,7 +104,7 @@ class SearchNoResultCard: UITableViewCell, SearchCardView {
         self.addSubview(titleLabel)
         self.addSubview(descriptionLabel)
 
-        titleLabel.text = "No Results"
+        titleLabel.text = "search.SearchNoResultCard.title".localized()
         titleLabel.font = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
         titleLabel.numberOfLines = 0
@@ -114,7 +113,7 @@ class SearchNoResultCard: UITableViewCell, SearchCardView {
             make.top.equalTo(self).inset(topBottom)
         }
 
-        descriptionLabel.text = "We could not find anything. Try broadening your search?"
+        descriptionLabel.text = "search.SearchNoResultCard.message".localized()
         descriptionLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
         descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         descriptionLabel.numberOfLines = 0
@@ -152,7 +151,7 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
         self.addSubview(titleLabel)
         self.addSubview(descriptionLabel)
 
-        titleLabel.text = "No Results"
+        titleLabel.text = "search.SearchNoResultLocationCard.nearby.title".localized()
         titleLabel.font = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
         titleLabel.numberOfLines = 0
@@ -161,7 +160,7 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
             make.top.equalTo(self).inset(topBottom)
         }
 
-        descriptionLabel.text = "We could not find anything in that location. Try searching 'Anywhere' instead?"
+        descriptionLabel.text = "search.SearchNoResultLocationCard.nearby.message".localized()
         descriptionLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
         descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         descriptionLabel.numberOfLines = 0
@@ -181,12 +180,15 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
 
 
         if let locationName = card.string(name: "locationName") {
-            titleLabel.text = "No Results in '\(locationName)'"
+            let title = "search.SearchNoResultLocationCard.location.title".localized()
+            titleLabel.text = "\(title) '\(locationName)'"
             // We couldn't find results in "Nearby". Here are the results for "Anywhere".
-            descriptionLabel.text = "We could not find results in '\(locationName)'. Here are the results for 'Anywhere'"
+            let prefix = "search.SearchNoResultLocationCard.location.prefix".localized()
+            let postfix = "search.SearchNoResultLocationCard.location.postfix".localized()
+            descriptionLabel.text = "\(prefix)\(locationName)'\(postfix)"
         } else {
-            titleLabel.text = "No Results found 'Nearby'"
-            descriptionLabel.text = "We could not find results in 'Nearby' here are results for 'Anywhere'"
+            titleLabel.text = "search.SearchNoResultLocationCard.nearby.title".localized()
+            descriptionLabel.text = "search.SearchNoResultLocationCard.nearby.message".localized()
         }
     }
 

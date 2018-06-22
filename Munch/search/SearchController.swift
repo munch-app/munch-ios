@@ -8,6 +8,7 @@ import os.log
 import Foundation
 import UIKit
 import Moya
+import Localize_Swift
 import RxSwift
 import RxCocoa
 
@@ -124,7 +125,7 @@ class SearchController: UIViewController {
         self.cardTableView.delegate = self
         self.cardTableView.dataSource = self
 
-        self.headerView.render(query: searchQuery)
+        self.search(searchQuery: self.searchQuery, animated: false)
     }
 
     private func registerControls() {
@@ -137,20 +138,31 @@ class SearchController: UIViewController {
     func scrollsToTop(animated: Bool = true) {
         cardTableView.scrollToRow(at: .init(row: 0, section: 0), at: .top, animated: animated)
     }
+}
 
-    func goTo(extension type: UIViewController.Type) {
+extension SearchController {
+    enum GoTo {
+        case filter
+        case suggest
+        case place(Place)
+    }
+
+    func goTo(where goTo: GoTo) {
         func completable(searchQuery: SearchQuery?) {
             if let searchQuery = searchQuery {
                 self.search(searchQuery: searchQuery)
             }
         }
 
-        if type == SearchFilterController.self || type == SearchFilterRootController.self {
+        switch goTo {
+        case .filter:
             let controller = SearchFilterRootController(searchQuery: self.searchQuery, extensionDismiss: completable)
             self.present(controller, animated: true)
-        } else if type == SearchSuggestController.self || type == SearchSuggestRootController.self {
+        case .suggest:
             let controller = SearchSuggestRootController(searchQuery: self.searchQuery, extensionDismiss: completable)
             self.present(controller, animated: true)
+        case .place:
+            return
         }
     }
 }
@@ -180,10 +192,14 @@ extension SearchController {
     private func runChecks() {
         DispatchQueue.main.async {
             if let tag = UserSetting.request(toPerm: self.searchQuery) {
-                let message = "Hi \(UserProfile.instance?.name ?? ""), we noticed you require ‘\(tag.capitalized)’ food often. Would you like ‘\(tag.capitalized)’ to be included in all future searches?\n\nDon’t worry, you may edit this from your profile if required."
-                let alert = UIAlertController(title: "Search Preference", message: message, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-                alert.addAction(UIAlertAction(title: "Add", style: .default) { action in
+                let m1 = "search.SearchPreference.message.1".localized()
+                let m2 = "search.SearchPreference.message.2".localized()
+                let m3 = "search.SearchPreference.message.3".localized()
+                let m4 = "search.SearchPreference.message.4".localized()
+                let message = "\(m1)\(UserProfile.instance?.name ?? "")\(m2)\(tag.capitalized)\(m3)\(tag.capitalized)\(m4)"
+                let alert = UIAlertController(title: "search.SearchPreference.title".localized(), message: message, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "search.SearchPreference.button.cancel".localized(), style: .cancel, handler: nil))
+                alert.addAction(UIAlertAction(title: "search.SearchPreference.button.add".localized(), style: .default) { action in
                     Authentication.requireAuthentication(controller: self) { state in
                         switch state {
                         case .loggedIn:
@@ -194,7 +210,9 @@ extension SearchController {
                             }) { result in
                                 switch result {
                                 case .success:
-                                    self.view.makeToast("Added '\(tag.capitalized)' to Search Preference.", image: UIImage(named: "RIP-Toast-Checkmark"), style: DefaultToastStyle)
+                                    let t1 = "search.SearchPreference.toast.1".localized()
+                                    let t2 = "search.SearchPreference.toast.2".localized()
+                                    self.view.makeToast("\(t1)\(tag.capitalized)\(t2)", image: UIImage(named: "RIP-Toast-Checkmark"), style: DefaultToastStyle)
                                 case .error(let error):
                                     self.alert(error: error)
                                 }

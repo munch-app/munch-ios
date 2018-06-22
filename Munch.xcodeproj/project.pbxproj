@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		031478661F6A16F900246BCD /* SearchClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 031478651F6A16F900246BCD /* SearchClient.swift */; };
 		032548622014831500F51D85 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 032548612014831500F51D85 /* GoogleService-Info.plist */; };
 		032548632014831500F51D85 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 032548612014831500F51D85 /* GoogleService-Info.plist */; };
 		032548642014831500F51D85 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 032548612014831500F51D85 /* GoogleService-Info.plist */; };
@@ -104,7 +103,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		031478651F6A16F900246BCD /* SearchClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchClient.swift; sourceTree = "<group>"; };
 		031C2F3F1E9AADD60022F0AF /* NYTPhotoViewer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NYTPhotoViewer.framework; path = Carthage/Build/iOS/NYTPhotoViewer.framework; sourceTree = "<group>"; };
 		031C2F411E9AADDB0022F0AF /* NYTPhotoViewerCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NYTPhotoViewerCore.framework; path = Carthage/Build/iOS/NYTPhotoViewerCore.framework; sourceTree = "<group>"; };
 		031C2F431E9AEFC10022F0AF /* FLAnimatedImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLAnimatedImage.framework; path = Carthage/Build/iOS/FLAnimatedImage.framework; sourceTree = "<group>"; };
@@ -386,7 +384,6 @@
 		0348472D1F9D21780049BDF7 /* DeprecatedApi */ = {
 			isa = PBXGroup;
 			children = (
-				031478651F6A16F900246BCD /* SearchClient.swift */,
 				B4B734E4FE23849A56626CC5 /* DeprecatedMunchApi.swift */,
 			);
 			path = DeprecatedApi;
@@ -948,7 +945,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				031478661F6A16F900246BCD /* SearchClient.swift in Sources */,
 				03CD276E1F6286FC003562A1 /* PlaceController.swift in Sources */,
 				032F88FC1E82DFA300AD3818 /* AppDelegate.swift in Sources */,
 				03E1A5A81F6D4FA4005A6E58 /* TabBarController.swift in Sources */,

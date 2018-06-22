@@ -275,7 +275,7 @@ class PlaceHeaderView: UIView {
 
         if let placeId = place.id, let name = place.name {
             self.heartButton.controller = controller
-            self.heartButton.set(placeId: placeId, placeName: name, liked: liked ?? false)
+            self.heartButton.place = nil // TODO Place Set
         }
     }
 

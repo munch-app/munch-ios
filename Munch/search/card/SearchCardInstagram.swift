@@ -118,10 +118,12 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
         self.controller = controller
         self.card = card
 
-        self.titleLabel.text = card.dict(name: "title") as? String
-        if let username = card.dict(name: "username") as? String {
+
+        self.titleLabel.text = card.string(name: "title")
+        if let username = card.string(name: "username") {
             self.username = username
-            self.actionButton.setTitle("More from @\(username)", for: .normal)
+            let moreFrom = "search.SearchInstagramPartnerCard.more_from".localized()
+            self.actionButton.setTitle("\(moreFrom) @\(username)", for: .normal)
         }
 
 
@@ -134,9 +136,12 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
     }
 
     @objc func onInfoClick() {
-        let alert = UIAlertController(title: "Munch Content Partner", message: "Open partner.munch.app?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "Open", style: .default, handler: { action in
+        let title = "search.SearchInstagramPartnerCard.title".localized()
+        let message = "search.SearchInstagramPartnerCard.message".localized()
+
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel".localized(), style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Open".localized(), style: .default, handler: { action in
             let safari = SFSafariViewController(url: URL(string: "https://partner.munch.app")!)
             safari.delegate = self
             self.controller.present(safari, animated: true, completion: nil)
@@ -157,7 +162,7 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
 
             Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
                 AnalyticsParameterItemID: "partner-ig-\(self.username ?? "")" as NSObject,
-                AnalyticsParameterContentType: "discover_partner_more_from" as NSObject
+                AnalyticsParameterContentType: "search_partner_more_from" as NSObject
             ])
         }
     }
@@ -174,13 +179,6 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
 struct InstagramPartnerCardContent: Codable {
     var place: Place?
     var images: [String: String]?
-
-    struct Place: Codable {
-        var id: String?
-        var name: String?
-
-        // This is same as PlaceClient.Place but because place client is not codable
-    }
 }
 
 extension SearchInstagramPartnerCard: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -195,7 +193,7 @@ extension SearchInstagramPartnerCard: UICollectionViewDataSource, UICollectionVi
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let placeId = contents[indexPath.row].place?.id {
+        if let placeId = contents[indexPath.row].place?.placeId {
             controller.select(placeId: placeId)
         }
     }
@@ -244,7 +242,8 @@ extension SearchInstagramPartnerCard: UICollectionViewDataSource, UICollectionVi
             imageView.render(images: content.images)
 
             if let name = content.place?.name {
-                titleLabel.text = name + " by @\(username)"
+                let by = "search.SearchInstagramPartnerCard.by".localized()
+                titleLabel.text = name + " \(by) @\(username)"
             }
         }
 

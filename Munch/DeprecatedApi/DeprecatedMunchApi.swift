@@ -16,7 +16,6 @@ public class MunchClient {
     public static let url = "https://api.munch.app/v0.11.0"
 
     let restful = RestfulClient()
-    let search = SearchClient()
     let places = PlaceClient()
     let collections = CollectionClient()
 }

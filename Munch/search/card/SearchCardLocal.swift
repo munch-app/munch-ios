@@ -108,7 +108,7 @@ class SearchStaticNoResultCard: UITableViewCell, SearchCardView {
         self.selectionStyle = .none
 
         let label = UILabel()
-        label.text = "search.card.static.no_results".localized()
+        label.text = "search.card.static.no_results.title".localized()
         label.textAlignment = .center
         label.font = UIFont.systemFont(ofSize: 18.0, weight: UIFont.Weight.regular)
         self.addSubview(label)

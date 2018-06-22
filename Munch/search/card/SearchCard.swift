@@ -207,7 +207,7 @@ extension SearchCard {
                 return try SearchCard.decoder.decode(type, from: data)
             }
         } catch {
-            Crashlytics.sharedInstance().recordError(error: error)
+            Crashlytics.sharedInstance().recordError(error)
         }
         return nil
     }

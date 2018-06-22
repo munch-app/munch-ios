@@ -98,7 +98,7 @@ struct PlaceCard {
 /**
  Place data type from munch-core/service-places
  */
-struct DeprecatedPlace: SearchResult, Equatable {
+struct DeprecatedPlace: Equatable {
     var id: String?
     var open: Bool?
 

@@ -90,19 +90,19 @@ class SearchHeaderView: UIView, FilterTagViewDelegate {
 
     @objc func onHeaderAction(for view: UIView) {
         if view is SearchTextButton {
-            controller.goTo(extension: SearchSuggestController.self)
+            controller.goTo(where: .suggest)
         } else if view is SearchBackButton {
             // When back button is clicked
             renderPrevious()
         } else if view is SearchFilterButton {
-            controller.goTo(extension: SearchFilterController.self)
+            controller.goTo(where: .filter)
         } else if view == tagButton {
-            controller.goTo(extension: SearchFilterController.self)
+            controller.goTo(where: .filter)
         }
     }
 
     func tagCollection(selectedLocation name: String, for tagCollection: FilterTagView) {
-        controller.goTo(extension: SearchFilterController.self)
+        controller.goTo(where: .filter)
     }
 
     func tagCollection(selectedHour name: String, for tagCollection: FilterTagView) {
