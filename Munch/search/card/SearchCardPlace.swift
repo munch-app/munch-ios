@@ -120,7 +120,7 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
     }
 
     private func render(areas: [Area]) {
-        guard controller.searchQuery.filter.area?.type == .Cluster else {
+        if controller.searchQuery.filter.area?.type == .Cluster {
             areaLabel.isHidden = true
             return
         }
