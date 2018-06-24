@@ -62,6 +62,10 @@
 "search.SearchPreference.toast.1"="Added '";
 "search.SearchPreference.toast.2"="' to Search Preference.";
 
+// MARK: Filter Location
+"search.filter.location.title"="Location";
+"search.filter.location.text_field.placeholder"="Search Locations";
+
 // MARK: Card
 "search.card.error.location.header"="No Location Detected";
 "search.card.error.location.message"="Try refreshing or moving to another spot.";

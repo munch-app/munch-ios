@@ -92,14 +92,14 @@ extension SearchFilterAreaService: TargetType {
     }
 }
 
-fileprivate class LocalAreaData: Object {
+class LocalAreaData: Object {
     @objc dynamic var id: String = ""
     @objc dynamic var name: String = ""
     @objc dynamic var updatedMillis: Int = 0
     @objc dynamic var data: Data?
 }
 
-fileprivate class AreaDatabase {
+class AreaDatabase {
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
 
@@ -181,12 +181,17 @@ fileprivate class AreaDatabase {
             realm.delete(realm.objects(LocalAreaData.self))
 
             for area in areas {
-                let data = LocalAreaData()
-                data.id = area.areaId
-                data.name = area.name
-                data.updatedMillis = area.updatedMillis ?? 0
-                data.data = encoder.encode(area)
-                realm.add(data)
+                do {
+                    let data = LocalAreaData()
+                    data.id = area.areaId
+                    data.name = area.name
+                    data.updatedMillis = area.updatedMillis ?? 0
+                    data.data = try encoder.encode(area)
+                    realm.add(data)
+                } catch {
+                    print(error)
+                    Crashlytics.sharedInstance().recordError(error)
+                }
             }
         }
     }
@@ -194,12 +199,6 @@ fileprivate class AreaDatabase {
 
 struct FilterPrice: Codable {
     var frequency: [String: Int]
-    var percentiles: [Percentile]
-
-    struct Percentile: Codable {
-        var percent: Double
-        var price: Double
-    }
 }
 
 struct FilterCount: Codable {
