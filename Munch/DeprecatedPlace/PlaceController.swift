@@ -34,6 +34,10 @@ class PlaceViewController: UIViewController, UITableViewDelegate, UITableViewDat
 
     fileprivate let contentView = UIView()
 
+    convenience init(place: Place) {
+        self.init(placeId: place.placeId)
+    }
+
     init(placeId: String) {
         self.placeId = placeId
         Crashlytics.sharedInstance().setObjectValue(placeId, forKey: "PlaceViewController.placeId")

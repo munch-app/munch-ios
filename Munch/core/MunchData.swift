@@ -54,6 +54,16 @@ struct Place: ElasticObject, Codable {
                 default: self = .other
                 }
             }
+
+            var name: String {
+                switch self {
+                case .open: return "Open"
+                case .closed: return "Perm Closed"
+                case .renovation: return "On Renovation"
+                case .moved: return "Perm Moved"
+                case .other: return ""
+                }
+            }
         }
 
         struct Moved: Codable {

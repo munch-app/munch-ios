@@ -8,6 +8,12 @@ import Foundation
 import RealmSwift
 import SwiftyJSON
 
+class RecentPlaceDatabase: RecentDataDatabase<Place> {
+    init() {
+        super.init(type: Place.self, name: "RecentPlaceDatabase", maxSize: 20)
+    }
+}
+
 class RecentHistory: Object {
     @objc dynamic var _name: String = ""
     @objc dynamic var _date = Int(Date().timeIntervalSince1970)
