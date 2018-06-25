@@ -107,7 +107,7 @@ class SearchHeaderView: UIView, FilterTagViewDelegate {
 
     func tagCollection(selectedHour name: String, for tagCollection: FilterTagView) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
+        alert.addAction(UIAlertAction(title: "Remove".localized(), style: .destructive) { action in
             var searchQuery = self.controller.searchQuery
             searchQuery.filter.hour.name = nil
             searchQuery.filter.hour.open = nil
@@ -116,13 +116,13 @@ class SearchHeaderView: UIView, FilterTagViewDelegate {
             self.controller.search(searchQuery: searchQuery)
         })
         addAlert(removeAll: alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Cancel".localized(), style: .cancel))
         self.controller.present(alert, animated: true)
     }
 
     func tagCollection(selectedPrice name: String, for tagCollection: FilterTagView) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
+        alert.addAction(UIAlertAction(title: "Remove".localized(), style: .destructive) { action in
             var searchQuery = self.controller.searchQuery
             searchQuery.filter.price.name = nil
             searchQuery.filter.price.min = nil
@@ -130,28 +130,28 @@ class SearchHeaderView: UIView, FilterTagViewDelegate {
             self.controller.search(searchQuery: searchQuery)
         })
         addAlert(removeAll: alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Cancel".localized(), style: .cancel))
         self.controller.present(alert, animated: true)
     }
 
     func tagCollection(selectedTag name: String, for tagCollection: FilterTagView) {
-        if !UserSetting.allow(remove: name.lowercased(), controller: self.controller) {
+        guard UserSetting.allow(remove: name, controller: self.controller) else {
             return
         }
 
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "Remove", style: .destructive) { action in
+        alert.addAction(UIAlertAction(title: "Remove".localized(), style: .destructive) { action in
             var searchQuery = self.controller.searchQuery
             searchQuery.filter.tag.positives.remove(name)
             self.controller.search(searchQuery: searchQuery)
         })
         addAlert(removeAll: alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Cancel".localized(), style: .cancel))
         self.controller.present(alert, animated: true)
     }
 
     func addAlert(removeAll alert: UIAlertController) {
-        alert.addAction(UIAlertAction(title: "Remove All", style: .destructive) { action in
+        alert.addAction(UIAlertAction(title: "Remove All".localized(), style: .destructive) { action in
             self.controller.reset(force: true)
         })
     }
@@ -501,7 +501,7 @@ class SearchTextButton: UIButton {
         field.leftImageWidth = 32
         field.leftImageSize = 18
 
-        field.placeholder = "Search e.g. Italian in Marina Bay"
+        field.placeholder = "Search e.g. Italian in Marina Bay".localized()
         field.font = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
 
         field.isEnabled = false

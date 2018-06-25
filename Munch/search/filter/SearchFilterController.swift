@@ -447,7 +447,7 @@ fileprivate class SearchFilterBottomView: UIView {
             self.indicator.stopAnimating()
 
             if count == 0 {
-                self.applyBtn.setTitle("No Results", for: .normal)
+                self.applyBtn.setTitle("No Results".localized(), for: .normal)
                 self.applyBtn.backgroundColor = .white
                 self.applyBtn.setTitleColor(.primary, for: .normal)
             } else {
@@ -473,7 +473,10 @@ fileprivate class SearchFilterBottomView: UIView {
 }
 
 extension FilterCount {
-    static func countTitle(count: Int, empty: String = "No Results", prefix: String = "See", postfix: String = "Restaurants") -> String {
+    static func countTitle(count: Int,
+                           empty: String = "No Results".localized(),
+                           prefix: String = "See".localized(),
+                           postfix: String = "Restaurants".localized()) -> String {
         if count == 0 {
             return empty
         } else if count > 100 {

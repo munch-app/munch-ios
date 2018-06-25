@@ -290,7 +290,7 @@ fileprivate class SearchSuggestHeaderView: UIView {
         textField.leftImageWidth = 32
         textField.leftImageSize = 18
 
-        textField.placeholder = "Search e.g. Italian in Marina Bay"
+        textField.placeholder = "Search e.g. Italian in Marina Bay".localized()
         textField.font = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
         return textField
     }()

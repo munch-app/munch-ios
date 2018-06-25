@@ -237,7 +237,7 @@ fileprivate class SearchFilterLocationHeaderView: UIView {
     fileprivate var controller: SearchFilterLocationController!
     fileprivate let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "search.filter.location.title".localized()
+        label.text = "Location".localized()
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = UIColor.black.withAlphaComponent(0.75)
         return label
@@ -267,7 +267,7 @@ fileprivate class SearchFilterLocationHeaderView: UIView {
         textField.leftImageWidth = 32
         textField.leftImageSize = 18
 
-        textField.placeholder = "search.filter.location.text_field.placeholder".localized()
+        textField.placeholder = "Search Locations".localized()
         textField.font = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
         return textField
     }()

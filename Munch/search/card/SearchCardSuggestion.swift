@@ -18,7 +18,7 @@ class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
     private static let descriptionFont = UIFont.systemFont(ofSize: 17.0, weight: .regular)
     private let titleLabel: SearchHeaderCardLabel = {
         let label = SearchHeaderCardLabel()
-        label.text = "search.SearchCardSuggestionTag.title".localized()
+        label.text = "Can’t decide?".localized()
         label.textColor = .white
         label.numberOfLines = 1
         return label
@@ -82,9 +82,9 @@ class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
 
     func render(card: SearchCard, controller: SearchController) {
         if let locationName = card.string(name: "locationName") {
-            self.descriptionLabel.text = "search.SearchCardSuggestionTag.description.location".localized() + " \(locationName)."
+            self.descriptionLabel.text = "Here are some suggestions of what’s good in".localized() + " \(locationName)."
         } else {
-            self.descriptionLabel.text = "search.SearchCardSuggestionTag.description.nearby".localized()
+            self.descriptionLabel.text = "Here are some suggestions of what’s good nearby.".localized()
         }
 
         self.controller = controller
@@ -106,10 +106,10 @@ class SearchCardSuggestionTag: UITableViewCell, SearchCardView {
 
         let titleWidth = width - (leftRight + leftRight)
         if let locationName = card.string(name: "locationName") {
-            let text = "search.SearchCardSuggestionTag.description.location".localized() + " \(locationName)."
+            let text = "Here are some suggestions of what’s good in".localized() + " \(locationName)."
             return UILabel.textHeight(withWidth: titleWidth, font: descriptionFont, text: text) + height
         } else {
-            let text = "search.SearchCardSuggestionTag.description.nearby".localized()
+            let text = "Here are some suggestions of what’s good nearby.".localized()
             return UILabel.textHeight(withWidth: titleWidth, font: descriptionFont, text: text) + height
         }
     }
@@ -196,7 +196,7 @@ extension SearchCardSuggestionTag: UICollectionViewDataSource, UICollectionViewD
 
         func render(name: String, count: Int) {
             self.nameLabel.text = name.capitalized
-            self.countLabel.text = "\(count) " + "search.SearchCardSuggestionTag.count".localized()
+            self.countLabel.text = "\(count) " + "places".localized()
         }
 
         required init?(coder aDecoder: NSCoder) {

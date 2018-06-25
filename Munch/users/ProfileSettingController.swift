@@ -91,7 +91,7 @@ class ProfileSettingController: UIViewController, UIGestureRecognizerDelegate, S
             self.addSubview(titleView)
             self.addSubview(backButton)
 
-            titleView.text = "users.profile.settings.header".localized()
+            titleView.text = "Setting".localized()
             titleView.font = .systemFont(ofSize: 17, weight: .regular)
             titleView.textAlignment = .center
             titleView.snp.makeConstraints { make in
@@ -148,14 +148,14 @@ extension ProfileSettingController: UITableViewDataSource, UITableViewDelegate {
 
     private var items: [(String?, [SettingCellType])] {
         return [
-            ("users.profile.settings.header.partner".localized(), [
+            ("CONTENT PARTNER".localized(), [
                 SettingCellType.instagramConnect
             ]),
-            ("users.profile.settings.header.preference".localized(), [
+            ("SEARCH PREFERENCE".localized(), [
                 SettingCellType.preferenceTag("Halal"),
                 SettingCellType.preferenceTag("Vegetarian Options"),
             ]),
-            ("users.profile.settings.header.account".localized(), [
+            ("ACCOUNT".localized(), [
                 SettingCellType.feedback,
                 SettingCellType.logout,
             ]),
@@ -240,8 +240,7 @@ extension ProfileSettingController: UITableViewDataSource, UITableViewDelegate {
                         case .success(let setting):
                             self.setting = setting
                             self.view.makeToast("Removed '\(tag.capitalized)' from Search Preference.", image: UIImage(named: "RIP-Toast-Close"), style: DefaultToastStyle)
-                                // TODO After User Module
-//                            (self.tabBarController as? TabBarController)?.discoverController?.reset(force: true)
+                            (self.tabBarController as? TabBarController)?.searchController.reset(force: true)
                         case .error(let error):
                             self.alert(error: error)
                         }
@@ -259,8 +258,7 @@ extension ProfileSettingController: UITableViewDataSource, UITableViewDelegate {
                         case .success(let setting):
                             self.setting = setting
                             self.view.makeToast("Added '\(tag.capitalized)' to Search Preference.", image: UIImage(named: "RIP-Toast-Checkmark"), style: DefaultToastStyle)
-                                // TODO After User Module
-//                            (self.tabBarController as? TabBarController)?.discoverController?.reset(force: true)
+                            (self.tabBarController as? TabBarController)?.searchController.reset(force: true)
                         case .error(let error):
                             self.alert(error: error)
                         }
@@ -280,7 +278,7 @@ fileprivate class SettingInstagramCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.addSubview(titleView)
 
-        titleView.text = "users.profile.settings.instagram".localized()
+        titleView.text = "Manage Instagram Partner".localized()
         titleView.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         titleView.textColor = .black
         titleView.snp.makeConstraints { make in
@@ -351,7 +349,7 @@ fileprivate class SettingFeedbackCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.addSubview(titleView)
 
-        titleView.text = "users.profile.settings.send_feedback".localized()
+        titleView.text = "Send Feedback".localized()
         titleView.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         titleView.textColor = .black
         titleView.snp.makeConstraints { make in
@@ -372,7 +370,7 @@ fileprivate class SettingLogoutCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.addSubview(titleView)
 
-        titleView.text = "users.profile.settings.logout".localized()
+        titleView.text = "Logout".localized()
         titleView.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         titleView.textColor = .black
         titleView.snp.makeConstraints { make in

@@ -193,14 +193,14 @@ extension SearchController {
     private func runChecks() {
         DispatchQueue.main.async {
             if let tag = UserSetting.request(toPerm: self.searchQuery) {
-                let m1 = "search.SearchPreference.message.1".localized()
-                let m2 = "search.SearchPreference.message.2".localized()
-                let m3 = "search.SearchPreference.message.3".localized()
-                let m4 = "search.SearchPreference.message.4".localized()
+                let m1 = "Hi ".localized()
+                let m2 = ", we noticed you require ‘".localized()
+                let m3 = "’ food often. Would you like ‘".localized()
+                let m4 = "’ to be included in all future searches?\\n\\nDon’t worry, you may edit this from your profile if required.".localized()
                 let message = "\(m1)\(UserProfile.instance?.name ?? "")\(m2)\(tag.capitalized)\(m3)\(tag.capitalized)\(m4)"
-                let alert = UIAlertController(title: "search.SearchPreference.title".localized(), message: message, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "search.SearchPreference.button.cancel".localized(), style: .cancel, handler: nil))
-                alert.addAction(UIAlertAction(title: "search.SearchPreference.button.add".localized(), style: .default) { action in
+                let alert = UIAlertController(title: "Search Preference".localized(), message: message, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Cancel".localized(), style: .cancel, handler: nil))
+                alert.addAction(UIAlertAction(title: "Add".localized(), style: .default) { action in
                     Authentication.requireAuthentication(controller: self) { state in
                         switch state {
                         case .loggedIn:
@@ -211,8 +211,8 @@ extension SearchController {
                             }) { result in
                                 switch result {
                                 case .success:
-                                    let t1 = "search.SearchPreference.toast.1".localized()
-                                    let t2 = "search.SearchPreference.toast.2".localized()
+                                    let t1 = "Added '".localized()
+                                    let t2 = "' to Search Preference.".localized()
                                     self.view.makeToast("\(t1)\(tag.capitalized)\(t2)", image: UIImage(named: "RIP-Toast-Checkmark"), style: DefaultToastStyle)
                                 case .error(let error):
                                     self.alert(error: error)

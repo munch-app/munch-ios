@@ -17,7 +17,7 @@ import SwiftyJSON
 class SearchAreaClusterListCard: UITableViewCell, SearchCardView {
     private let titleLabel: SearchHeaderCardLabel = {
         let label = SearchHeaderCardLabel()
-        label.text = "search.SearchAreaClusterListCard.title".localized()
+        label.text = "Discover Locations".localized()
         return label
     }()
     private let collectionView: UICollectionView = {
@@ -405,7 +405,7 @@ class SearchAreaClusterHeaderCard: UITableViewCell, SearchCardView {
                 if let count = self.count {
                     let attributedText = NSMutableAttributedString()
                     attributedText.append("\(count)\n".set(style: AddressLineView.countStyle))
-                    attributedText.append("search.SearchAreaClusterHeaderCard.count.title".localized().set(style: AddressLineView.placeStyle))
+                    attributedText.append("food spots".localized().set(style: AddressLineView.placeStyle))
                     self.rightLabel.attributedText = attributedText
                 } else {
                     self.rightLabel.text = nil
@@ -475,14 +475,14 @@ class SearchAreaClusterHeaderCard: UITableViewCell, SearchCardView {
                 let attributedText = NSMutableAttributedString()
                 switch hours.isOpen() {
                 case .opening:
-                    attributedText.append("\("timing.opening".localized())\n".set(style: PlaceBasicBusinessHourCard.openStyle))
+                    attributedText.append("\("Opening Soon".localized())\n".set(style: PlaceBasicBusinessHourCard.openStyle))
                 case .open:
-                    attributedText.append("\("timing.open".localized())\n".set(style: PlaceBasicBusinessHourCard.openStyle))
+                    attributedText.append("\("Open Now".localized())\n".set(style: PlaceBasicBusinessHourCard.openStyle))
                 case .closing:
-                    attributedText.append("\("timing.closing".localized())\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
+                    attributedText.append("\("Closing Soon".localized())\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
                 case .closed: fallthrough
                 case .none:
-                    attributedText.append("\("timing.closed".localized())\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
+                    attributedText.append("\("Closed Now".localized())\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
 
                 }
 

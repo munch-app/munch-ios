@@ -122,7 +122,7 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
         self.titleLabel.text = card.string(name: "title")
         if let username = card.string(name: "username") {
             self.username = username
-            let moreFrom = "search.SearchInstagramPartnerCard.more_from".localized()
+            let moreFrom = "More from".localized()
             self.actionButton.setTitle("\(moreFrom) @\(username)", for: .normal)
         }
 
@@ -136,8 +136,8 @@ class SearchInstagramPartnerCard: UITableViewCell, SearchCardView, SFSafariViewC
     }
 
     @objc func onInfoClick() {
-        let title = "search.SearchInstagramPartnerCard.title".localized()
-        let message = "search.SearchInstagramPartnerCard.message".localized()
+        let title = "Munch Content Partner".localized()
+        let message = "Open partner.munch.app?".localized()
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel".localized(), style: .cancel, handler: nil))
@@ -242,7 +242,7 @@ extension SearchInstagramPartnerCard: UICollectionViewDataSource, UICollectionVi
             imageView.render(images: content.images)
 
             if let name = content.place?.name {
-                let by = "search.SearchInstagramPartnerCard.by".localized()
+                let by = "by".localized()
                 titleLabel.text = name + " \(by) @\(username)"
             }
         }

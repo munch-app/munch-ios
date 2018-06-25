@@ -108,7 +108,7 @@ class SearchStaticNoResultCard: UITableViewCell, SearchCardView {
         self.selectionStyle = .none
 
         let label = UILabel()
-        label.text = "search.card.static.no_results.title".localized()
+        label.text = "No Result".localized()
         label.textAlignment = .center
         label.font = UIFont.systemFont(ofSize: 18.0, weight: UIFont.Weight.regular)
         self.addSubview(label)
@@ -194,19 +194,19 @@ class SearchStaticErrorCard: UITableViewCell, SearchCardView {
     }
 
     class func create(title: String, message: String?) -> SearchCard {
-        return SearchCard(cardId: self.cardId, dictionary: ["title": title, "message": message])
+        return SearchCard(cardId: self.cardId, dictionary: ["title": title, "message": message as Any])
     }
 
     class func create(type: ErrorType) -> SearchCard {
         switch type {
         case let .error(error):
-            return create(title: "search.card.error.unknown.header".localized(), message: error.localizedDescription)
+            return create(title: "Unknown Error".localized(), message: error.localizedDescription)
         case let .message(header, message):
             return create(title: header, message: message)
         case .unknown:
-            return create(title: "search.card.error.unknown.header".localized(), message: "search.card.error.unknown.message".localized())
+            return create(title: "Unknown Error".localized(), message: "Unknown Error has occurred.".localized())
         case .location:
-            return create(title: "search.card.error.location.header".localized(), message: "search.card.error.location.message".localized())
+            return create(title: "No Location Detected".localized(), message: "Try refreshing or moving to another spot.".localized())
         }
     }
 
@@ -238,7 +238,7 @@ class SearchStaticUnsupportedCard: UITableViewCell, SearchCardView {
         self.addSubview(descriptionLabel)
         self.addSubview(actionButton)
 
-        titleLabel.text = "search.card.unsupported.title".localized()
+        titleLabel.text = "Welcome back to Munch!".localized()
         titleLabel.font = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
         titleLabel.backgroundColor = .white
@@ -247,7 +247,7 @@ class SearchStaticUnsupportedCard: UITableViewCell, SearchCardView {
             make.top.equalTo(self).inset(topBottom)
         }
 
-        descriptionLabel.text = "search.card.unsupported.message".localized()
+        descriptionLabel.text = "While you were away, we have been working very hard to add more sugar and spice to the app to enhance your food discovery journey! Update Munch now to discover what's delicious!".localized()
         descriptionLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
         descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         descriptionLabel.numberOfLines = 0
@@ -259,7 +259,7 @@ class SearchStaticUnsupportedCard: UITableViewCell, SearchCardView {
 
         actionButton.layer.cornerRadius = 3
         actionButton.backgroundColor = .primary
-        actionButton.setTitle("search.card.unsupported.button".localized(), for: .normal)
+        actionButton.setTitle("Update Munch".localized(), for: .normal)
         actionButton.contentEdgeInsets.left = 32
         actionButton.contentEdgeInsets.right = 32
         actionButton.setTitleColor(.white, for: .normal)

@@ -327,11 +327,11 @@ fileprivate enum ProfileTabType: String {
     var title: String {
         switch self {
         case .collections:
-            return "users.profile.tabs.collections".localized()
+            return "COLLECTIONS".localized()
         case .reviews:
-            return "users.profile.tabs.reviews".localized()
+            return "REVIEWS".localized()
         case .munches:
-            return "users.profile.tabs.munches".localized()
+            return "MUNCHES".localized()
         }
     }
 }

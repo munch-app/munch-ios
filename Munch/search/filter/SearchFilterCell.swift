@@ -5,6 +5,7 @@
 
 import Foundation
 import UIKit
+import Localize_Swift
 
 import SnapKit
 import SwiftRichString
@@ -51,12 +52,12 @@ fileprivate class SearchFilterHeader: UIView {
 class SearchFilterCellLocation: UITableViewCell {
     private let titleLabel: SearchFilterHeader = {
         let header = SearchFilterHeader()
-        header.text = "Location"
+        header.text = "Location".localized()
         return header
     }()
     private let moreButton: UIButton = {
         let button = UIButton()
-        button.setTitle("See All", for: .normal)
+        button.setTitle("See All".localized(), for: .normal)
         button.setTitleColor(UIColor.primary, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
 
@@ -140,10 +141,10 @@ extension SearchFilterCellLocation: UICollectionViewDataSource, UICollectionView
 
         switch locations[indexPath.row] {
         case .nearby(let selected):
-            cell.render(text: "Nearby", image: UIImage(named: "Search-Location-Nearby"), selected: selected)
+            cell.render(text: "Nearby".localized(), image: UIImage(named: "Search-Location-Nearby"), selected: selected)
 
         case .anywhere(_, let selected):
-            cell.render(text: "Anywhere", image: UIImage(named: "Search-Location-Anywhere"), selected: selected)
+            cell.render(text: "Anywhere".localized(), image: UIImage(named: "Search-Location-Anywhere"), selected: selected)
 
         case .area(let area, let selected):
             cell.render(text: area.name, image: UIImage(named: "Search-Location-Pin"), selected: selected)
@@ -246,7 +247,7 @@ extension SearchFilterCellLocation: UICollectionViewDataSource, UICollectionView
 class SearchFilterCellTiming: UITableViewCell {
     private let titleLabel: SearchFilterHeader = {
         let header = SearchFilterHeader()
-        header.text = "Timing"
+        header.text = "Timing".localized()
         return header
     }()
     fileprivate let collectionView: UICollectionView = {
@@ -385,7 +386,7 @@ extension SearchFilterCellTiming: UICollectionViewDataSource, UICollectionViewDe
             nameLabel.isUserInteractionEnabled = false
 
             nameLabel.textAlignment = .right
-            nameLabel.text = "Open Now"
+            nameLabel.text = "Open Now".localized()
             return nameLabel
         }()
 
@@ -502,7 +503,7 @@ extension SearchFilterCellTiming: UICollectionViewDataSource, UICollectionViewDe
 class SearchFilterCellPriceRange: UITableViewCell, RangeSeekSliderDelegate {
     private let titleLabel: SearchFilterHeader = {
         let header = SearchFilterHeader()
-        header.text = "Price Range"
+        header.text = "Price Range".localized()
         return header
     }()
     private let loadingIndicator: UIView = {

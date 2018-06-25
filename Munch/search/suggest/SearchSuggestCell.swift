@@ -41,7 +41,7 @@ class SearchSuggestCellAssumptionResult: UITableViewCell {
         let button = UIButton()
         button.backgroundColor = .white
 
-        button.setTitle("SHOW ALL", for: .normal)
+        button.setTitle("SHOW ALL".localized(), for: .normal)
         button.setTitleColor(UIColor(hex: "383838"), for: .normal)
         button.titleLabel!.font = UIFont.systemFont(ofSize: 13, weight: .medium)
 
@@ -116,7 +116,7 @@ class SearchSuggestCellAssumptionResult: UITableViewCell {
         self.collectionView.reloadData()
         self.collectionView.setContentOffset(.zero, animated: false)
 
-        applyButton.setTitle(FilterCount.countTitle(count: result.count, prefix: "Show all"), for: .normal)
+        applyButton.setTitle(FilterCount.countTitle(count: result.count, prefix: "Show all".localized()), for: .normal)
     }
 
     @objc func actionApply(_ sender: Any) {
@@ -184,7 +184,7 @@ class SearchSuggestCellRecentPlace: UITableViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 15.0, weight: .medium)
         label.textColor = UIColor(hex: "555555")
-        label.text = "RECENTLY VIEWED"
+        label.text = "RECENTLY VIEWED".localized()
         return label
     }()
     private let collectionView: UICollectionView = {
@@ -470,7 +470,7 @@ class SearchSuggestCellHeaderRestaurant: UITableViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 15.0, weight: .medium)
         label.textColor = UIColor(hex: "555555")
-        label.text = "RESTAURANTS"
+        label.text = "RESTAURANTS".localized()
         return label
     }()
 
@@ -670,7 +670,7 @@ class SearchSuggestCellNoResult: UITableViewCell {
     private let label: UILabel = {
         let label = UILabel()
         label.backgroundColor = .white
-        label.text = "No Results"
+        label.text = "No Results".localized()
         label.font = UIFont.systemFont(ofSize: 15.0, weight: .medium)
         label.textColor = UIColor(hex: "333333")
         label.textAlignment = .center

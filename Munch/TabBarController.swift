@@ -27,13 +27,13 @@ enum InitialViewProvider {
 
     fileprivate static func search() -> SearchRootController {
         let controller = SearchRootController()
-        controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "tab.search".localized(), image: UIImage(named: "TabBar-Search"))
+        controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "Search".localized(), image: UIImage(named: "TabBar-Search"))
         return controller
     }
 
     fileprivate static func profile() -> ProfileRootController {
         let controller = ProfileRootController()
-        controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "tab.profile".localized(), image: UIImage(named: "TabBar-Profile"))
+        controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "Profile".localized(), image: UIImage(named: "TabBar-Profile"))
         return controller
     }
 }

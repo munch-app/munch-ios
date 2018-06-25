@@ -188,19 +188,19 @@ fileprivate class SearchPlaceCardBottomView: UIView {
     static let periodText = " • ".set(style: Style("open", {
         $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: .ultraLight))
     }))
-    static let closingSoonText = "timing.closing".localized().set(style: Style("open", {
+    static let closingSoonText = "Closing Soon".localized().set(style: Style("open", {
         $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 13, weight: .semibold))
         $0.color = UIColor.primary
     }))
-    static let closedNowText = "timing.closed".localized().set(style: Style("open", {
+    static let closedNowText = "Closed Now".localized().set(style: Style("open", {
         $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 13, weight: .semibold))
         $0.color = UIColor.primary
     }))
-    static let openingSoonText = "timing.opening".localized().set(style: Style("open", {
+    static let openingSoonText = "Opening Soon".localized().set(style: Style("open", {
         $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 13, weight: .semibold))
         $0.color = UIColor.secondary
     }))
-    static let openNowText = "timing.open".localized().set(style: Style("open", {
+    static let openNowText = "Open Now".localized().set(style: Style("open", {
         $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 13, weight: .semibold))
         $0.color = UIColor.secondary
     }))
