@@ -174,13 +174,13 @@ extension SearchController {
         // Reset Views
         self.searchQuery = searchQuery
         self.cardTableView.reloadData()
-        self.cardTableView.isScrollEnabled = false
         self.scrollsToTop(animated: animated)
 
         self.cardManager.start {
-            self.cardTableView.isScrollEnabled = true
-            self.cardTableView.reloadData()
-            self.runChecks()
+            DispatchQueue.main.async {
+                self.cardTableView.reloadData()
+                self.runChecks()
+            }
         }
     }
 
