@@ -7,18 +7,24 @@ import Foundation
 import UIKit
 import SafariServices
 
+import Moya
+import RxSwift
+
 import SnapKit
+import SwiftyJSON
 import SwiftRichString
 import NVActivityIndicatorView
 import FirebaseAnalytics
 
-class PlacePartnerArticleController: UIViewController, UIGestureRecognizerDelegate {
-    let place: DeprecatedPlace
+class PlacePartnerInstagramController: UIViewController, UIGestureRecognizerDelegate {
+    let place: Place
+    let provider = MoyaProvider<PlacePartnerService>()
+    let disposeBag = DisposeBag()
 
     fileprivate var cachedHeight = [Int: CGFloat]()
 
-    fileprivate var articles: [Article] = []
-    fileprivate var nextPlaceSort: String?
+    fileprivate var medias: [InstagramMedia] = []
+    fileprivate var nextPlaceSort: String? = nil
 
     fileprivate let tableView: UITableView = {
         let tableView = UITableView()
@@ -30,20 +36,20 @@ class PlacePartnerArticleController: UIViewController, UIGestureRecognizerDelega
         tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
 
-        tableView.register(PlacePartnerArticleControllerCell.self, forCellReuseIdentifier: "PlacePartnerArticleControllerCell")
-        tableView.register(PlacePartnerArticleControllerCellLoading.self, forCellReuseIdentifier: "PlacePartnerArticleControllerCellLoading")
+        tableView.register(PlacePartnerInstagramControllerCell.self, forCellReuseIdentifier: "PlacePartnerInstagramControllerCell")
+        tableView.register(PlacePartnerInstagramControllerCellLoading.self, forCellReuseIdentifier: "PlacePartnerInstagramControllerCellLoading")
         return tableView
     }()
 
     private var headerView: PlaceHeaderView!
 
-    init(controller: PlaceViewController, articles: [Article], nextPlaceSort: String?) {
+    init(controller: PlaceController, medias: [InstagramMedia], nextPlaceSort: String?) {
         self.place = controller.place!
-        self.articles = articles
+        self.medias = medias
         self.nextPlaceSort = nextPlaceSort
         super.init(nibName: nil, bundle: nil)
 
-        self.headerView = PlaceHeaderView(controller: self, place: controller.place, liked: controller.liked)
+        self.headerView = PlaceHeaderView(controller: self, place: controller.place)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -90,14 +96,14 @@ class PlacePartnerArticleController: UIViewController, UIGestureRecognizerDelega
     }
 }
 
-extension PlacePartnerArticleController: UITableViewDataSource, UITableViewDelegate, SFSafariViewControllerDelegate {
+extension PlacePartnerInstagramController: UITableViewDataSource, UITableViewDelegate, SFSafariViewControllerDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return articles.count
+        case 0: return medias.count
         case 1: return 1
         default: return 0
         }
@@ -112,11 +118,11 @@ extension PlacePartnerArticleController: UITableViewDataSource, UITableViewDeleg
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 1 {
-            return tableView.dequeueReusableCell(withIdentifier: "PlacePartnerArticleControllerCellLoading")!
+            return tableView.dequeueReusableCell(withIdentifier: "PlacePartnerInstagramControllerCellLoading")!
         }
 
-        let cell = tableView.dequeueReusableCell(withIdentifier: "PlacePartnerArticleControllerCell") as! PlacePartnerArticleControllerCell
-        cell.render(article: articles[indexPath.row], controller: self, indexPath: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "PlacePartnerInstagramControllerCell") as! PlacePartnerInstagramControllerCell
+        cell.render(media: medias[indexPath.row], controller: self, indexPath: indexPath)
         return cell
     }
 
@@ -125,21 +131,21 @@ extension PlacePartnerArticleController: UITableViewDataSource, UITableViewDeleg
             return
         }
 
-        let article = articles[indexPath.row]
-        if let articleUrl = article.url, let url = URL(string: articleUrl) {
+        let media = medias[indexPath.row]
+        if let username = media.username, let url = URL(string: "https://instagram.com/" + username) {
             let safari = SFSafariViewController(url: url)
             safari.delegate = self
             self.present(safari, animated: true, completion: nil)
         }
 
         Analytics.logEvent("rip_action", parameters: [
-            AnalyticsParameterItemCategory: "click_extended_partner_content_article" as NSObject
+            AnalyticsParameterItemCategory: "click_extended_partner_content_instagram" as NSObject
         ])
     }
 }
 
 // Lazy Append Loading
-extension PlacePartnerArticleController {
+extension PlacePartnerInstagramController {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         switch indexPath {
         case [1, 0]:
@@ -148,36 +154,40 @@ extension PlacePartnerArticleController {
         }
     }
 
-
     private func appendLoad() {
         if nextPlaceSort != nil {
-            let cell = self.tableView.cellForRow(at: .init(row: 0, section: 1)) as? PlacePartnerArticleControllerCellLoading
+            let cell = self.tableView.cellForRow(at: .init(row: 0, section: 1)) as? PlacePartnerInstagramControllerCellLoading
             cell?.indicator.startAnimating()
 
-            MunchApi.places.getArticle(id: self.place.id!, nextPlaceSort: self.nextPlaceSort) { meta, articles, nextPlaceSort in
-                if (meta.isOk()) {
-                    self.articles.append(contentsOf: articles)
-                    self.nextPlaceSort = nextPlaceSort
+            provider.rx.request(.articles(self.place.placeId, self.nextPlaceSort, 20))
+                    .map { response throws -> ([InstagramMedia], String?) in
+                        let placeSort = try response.map([String: String].self, atKeyPath: "next", failsOnEmptyData: false)["placeSort"]
+                        return try (response.map(data: [InstagramMedia].self), placeSort)
+                    }.subscribe { event in
+                        switch event {
+                        case .success(let medias, let nextPlaceSort):
+                            self.medias.append(contentsOf: medias)
+                            self.nextPlaceSort = nextPlaceSort
 
-                    if nextPlaceSort == nil {
-                        cell?.indicator.stopAnimating()
-                    }
-                    self.tableView.reloadData()
-                } else {
-                    self.present(meta.createAlert(), animated: true)
-                }
-            }
+                            if nextPlaceSort == nil {
+                                cell?.indicator.stopAnimating()
+                            }
+                            self.tableView.reloadData()
+                        case .error(let error):
+                            self.alert(error: error)
+                        }
+                    }.disposed(by: disposeBag)
         }
     }
 }
 
-fileprivate class PlacePartnerArticleControllerCell: UITableViewCell {
-    static let imageHeight = UIScreen.main.bounds.width / 3
+fileprivate class PlacePartnerInstagramControllerCell: UITableViewCell {
     let bannerImageView: ShimmerImageView = {
         let imageView = ShimmerImageView()
         imageView.tintColor = .white
 
-        imageView.size = CGSize(width: UIScreen.main.bounds.width - 48, height: imageHeight)
+        let width = UIScreen.main.bounds.width - 48
+        imageView.size = CGSize(width: width, height: width)
         return imageView
     }()
     private let authorLabel: UIButton = {
@@ -191,23 +201,6 @@ fileprivate class PlacePartnerArticleControllerCell: UITableViewCell {
         label.isUserInteractionEnabled = false
         return label
     }()
-    private let titleLabel: UITextView = {
-        let nameLabel = UITextView()
-        nameLabel.font = UIFont.systemFont(ofSize: 20.0, weight: .medium)
-
-        nameLabel.textColor = UIColor.black.withAlphaComponent(0.9)
-        nameLabel.backgroundColor = .white
-
-        nameLabel.textContainer.maximumNumberOfLines = 2
-        nameLabel.textContainer.lineBreakMode = .byTruncatingTail
-        nameLabel.textContainer.lineFragmentPadding = 0
-        nameLabel.textContainerInset = UIEdgeInsets(topBottom: 0, leftRight: 0)
-        nameLabel.isUserInteractionEnabled = false
-
-        nameLabel.translatesAutoresizingMaskIntoConstraints = true
-        nameLabel.isScrollEnabled = false
-        return nameLabel
-    }()
     private let descriptionLabel: UITextView = {
         let nameLabel = UITextView()
         nameLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
@@ -215,7 +208,7 @@ fileprivate class PlacePartnerArticleControllerCell: UITableViewCell {
         nameLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         nameLabel.backgroundColor = .white
 
-        nameLabel.textContainer.maximumNumberOfLines = 4
+        nameLabel.textContainer.maximumNumberOfLines = 3
         nameLabel.textContainer.lineBreakMode = .byTruncatingTail
         nameLabel.textContainer.lineFragmentPadding = 0
         nameLabel.textContainerInset = UIEdgeInsets(topBottom: 0, leftRight: 0)
@@ -227,8 +220,8 @@ fileprivate class PlacePartnerArticleControllerCell: UITableViewCell {
     }()
     private let readMoreButton: UILabel = {
         let label = UILabel()
-        label.text = "Read More"
-        label.textColor = UIColor.primary600
+        label.text = "More from"
+        label.textColor = UIColor.black.withAlphaComponent(0.75)
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.backgroundColor = .white
         return label
@@ -243,7 +236,6 @@ fileprivate class PlacePartnerArticleControllerCell: UITableViewCell {
 
         containerView.addSubview(bannerImageView)
         containerView.addSubview(authorLabel)
-        containerView.addSubview(titleLabel)
         containerView.addSubview(descriptionLabel)
         containerView.addSubview(readMoreButton)
 
@@ -252,26 +244,20 @@ fileprivate class PlacePartnerArticleControllerCell: UITableViewCell {
             make.top.bottom.equalTo(self).inset(24)
         }
 
-        bannerImageView.snp.makeConstraints { (make) in
-            make.left.right.equalTo(containerView)
-            make.top.equalTo(containerView).priority(999)
-
-            make.height.equalTo(PlacePartnerArticleControllerCell.imageHeight)
-        }
-
         authorLabel.snp.makeConstraints { make in
             make.left.equalTo(bannerImageView).inset(5)
             make.bottom.equalTo(bannerImageView).inset(5)
         }
 
-        titleLabel.snp.makeConstraints { (make) in
+        bannerImageView.snp.makeConstraints { (make) in
             make.left.right.equalTo(containerView)
-            make.top.equalTo(bannerImageView.snp.bottom).inset(-8)
+            make.top.equalTo(containerView)
+            make.height.equalTo(UIScreen.main.bounds.width - 48)
         }
 
         descriptionLabel.snp.makeConstraints { make in
             make.left.right.equalTo(containerView)
-            make.top.equalTo(titleLabel.snp.bottom).inset(-6)
+            make.top.equalTo(bannerImageView.snp.bottom).inset(-6)
             make.bottom.equalTo(readMoreButton.snp.top).inset(-6)
         }
 
@@ -281,25 +267,22 @@ fileprivate class PlacePartnerArticleControllerCell: UITableViewCell {
         }
     }
 
-    func render(article: Article, controller: PlacePartnerArticleController, indexPath: IndexPath) {
-        bannerImageView.render(images: article.thumbnail) { (image, error, type, url) -> Void in
+    func render(media: InstagramMedia, controller: PlacePartnerInstagramController, indexPath: IndexPath) {
+        bannerImageView.render(images: media.images) { (image, error, type, url) -> Void in
             if image == nil {
                 self.bannerImageView.render(named: "RIP-No-Image")
             }
-            // Image Size Caching
-//            controller.tableView.reloadRows(at: [indexPath], with: .none)
-//            controller.cachedHeight[indexPath.row] = self.bounds.height
         }
 
-        authorLabel.setTitle(article.brand, for: .normal)
+        authorLabel.setTitle("@\(media.username ?? "")", for: .normal)
 
-        titleLabel.text = article.title
-
-        descriptionLabel.text = article.description
+        descriptionLabel.text = media.caption
         descriptionLabel.sizeToFit()
 
+        readMoreButton.text = "More from @\(media.username ?? "")"
+
         Analytics.logEvent("rip_view", parameters: [
-            AnalyticsParameterItemCategory: "extended_partner_content_article" as NSObject
+            AnalyticsParameterItemCategory: "extended_partner_content_instagram" as NSObject
         ])
     }
 
@@ -313,7 +296,7 @@ fileprivate class PlacePartnerArticleControllerCell: UITableViewCell {
     }
 }
 
-fileprivate class PlacePartnerArticleControllerCellLoading: UITableViewCell {
+fileprivate class PlacePartnerInstagramControllerCellLoading: UITableViewCell {
     fileprivate var indicator: NVActivityIndicatorView!
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {

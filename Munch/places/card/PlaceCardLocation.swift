@@ -16,13 +16,12 @@ import FirebaseAnalytics
 
 class PlaceHeaderLocationCard: PlaceTitleCardView {
     override func didLoad(card: PlaceCard) {
-        self.title = "Location"
+        self.title = "Location".localized()
         self.moreButton.isHidden = true
     }
 
     override func didTap() {
-        let controller = PlaceMapViewController(controller: self.controller)
-        self.controller.navigationController?.pushViewController(controller, animated: true)
+        self.controller.apply(action: .map)
 
         Analytics.logEvent("rip_action", parameters: [
             AnalyticsParameterItemCategory: "click_map" as NSObject
@@ -62,16 +61,18 @@ class PlaceBasicLocationCard: PlaceCardView {
 
         mapView.clipsToBounds = true
         mapView.layer.cornerRadius = 4
-        render(location: card)
+
+        if let location = card.decode(name: "location", Location.self) {
+            render(location: location)
+        }
     }
 
     override func didTap() {
-        let controller = PlaceMapViewController(controller: self.controller)
-        self.controller.navigationController?.pushViewController(controller, animated: true)
+        self.controller.apply(action: .map)
     }
 
-    private func render(location card: PlaceCard) {
-        if let coordinate = CLLocation(latLng: card["latLng"].stringValue)?.coordinate {
+    private func render(location: Location) {
+        if let latLng = location.latLng, let coordinate = CLLocation(latLng: latLng)?.coordinate {
             var region = MKCoordinateRegion()
             region.center.latitude = coordinate.latitude
             region.center.longitude = coordinate.longitude
@@ -89,24 +90,25 @@ class PlaceBasicLocationCard: PlaceCardView {
             }
         }
 
-        self.addressLabel.render(card: card)
+        self.addressLabel.render(location: location)
     }
 
     override class var cardId: String? {
-        return "basic_Location_20171112"
+        return "basic_Location_20180613"
     }
 }
 
 class PlaceBasicAddressCard: PlaceCardView {
     private let addressLabel = AddressLabel()
-    private var address: String?
 
     override func didLoad(card: PlaceCard) {
         self.selectionStyle = .default
         self.addSubview(addressLabel)
-        self.address = card["address"].string
 
-        addressLabel.render(card: card)
+        if let location = card.decode(name: "location", Location.self) {
+            addressLabel.render(location: location)
+        }
+
         addressLabel.snp.makeConstraints { make in
             make.top.bottom.equalTo(self).inset(topBottom)
             make.left.right.equalTo(self).inset(leftRight)
@@ -114,8 +116,7 @@ class PlaceBasicAddressCard: PlaceCardView {
     }
 
     override func didTap() {
-        let controller = PlaceMapViewController(controller: self.controller)
-        self.controller.navigationController?.pushViewController(controller, animated: true)
+        self.controller.apply(action: .map)
 
         Analytics.logEvent("rip_action", parameters: [
             AnalyticsParameterItemCategory: "click_address" as NSObject
@@ -123,7 +124,7 @@ class PlaceBasicAddressCard: PlaceCardView {
     }
 
     override class var cardId: String? {
-        return "basic_Address_20170924"
+        return "basic_Address_20180613"
     }
 }
 
@@ -157,13 +158,12 @@ class AddressLabel: SRCopyableView {
         return self.lineOneLabel.text
     }
 
-    func render(card: PlaceCard) {
-        render(lineOne: card["address"].string)
-        let landmarks = card["landmarks"].compactMap({ DeprecatedPlace.Location.Landmark(json: $0.1) })
-        render(lineTwo: card["latLng"].string, landmarks: landmarks)
+    func render(location: Location) {
+        render(lineOne: location.address)
+        render(lineTwo: location.latLng, landmarks: location.landmarks)
     }
 
-    func render(place: DeprecatedPlace) {
+    func render(place: Place) {
         render(lineOne: place.location.address)
         render(lineTwo: place.location.latLng, landmarks: place.location.landmarks)
     }
@@ -172,7 +172,7 @@ class AddressLabel: SRCopyableView {
         lineOneLabel.text = address
     }
 
-    private func render(lineTwo latLng: String?, landmarks: [DeprecatedPlace.Location.Landmark]?) {
+    private func render(lineTwo latLng: String?, landmarks: [Landmark]?) {
         let attributedText = NSMutableAttributedString()
 
         if let latLng = latLng, MunchLocation.isEnabled {
@@ -182,9 +182,9 @@ class AddressLabel: SRCopyableView {
 
             if let landmarks = landmarks {
                 for landmark in landmarks {
-                    if let name = landmark.name, let min = MunchLocation.distance(asDuration: landmark.latLng, toLatLng: latLng) {
+                    if let min = MunchLocation.distance(asDuration: landmark.location.latLng, toLatLng: latLng) {
                         attributedText.append(NSAttributedString(string: " • \(min) from "))
-                        attributedText.append(NSAttributedString(string: name))
+                        attributedText.append(NSAttributedString(string: landmark.name))
                         break
                     }
                 }

@@ -16,7 +16,7 @@ class PlaceSuggestEditCard: PlaceCardView, SFSafariViewControllerDelegate {
     let separatorLine = UIView()
     let button: UIButton = {
         let button = UIButton()
-        button.setTitle("Suggest Edits", for: .normal)
+        button.setTitle("Suggest Edits".localized(), for: .normal)
         button.setTitleColor(UIColor.black.withAlphaComponent(0.85), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
         button.isUserInteractionEnabled = false
@@ -27,7 +27,7 @@ class PlaceSuggestEditCard: PlaceCardView, SFSafariViewControllerDelegate {
         return button
     }()
 
-    required init(card: PlaceCard, controller: PlaceViewController) {
+    required init(card: PlaceCard, controller: PlaceController) {
         super.init(card: card, controller: controller)
         self.addSubview(separatorLine)
         self.addSubview(button)
@@ -55,9 +55,9 @@ class PlaceSuggestEditCard: PlaceCardView, SFSafariViewControllerDelegate {
     private var address: String?
 
     override func didLoad(card: PlaceCard) {
-        self.placeId = card["placeId"].string
-        self.name = card["name"].string
-        self.address = card["address"].string
+        self.placeId = card.string(name: "placeId")
+        self.name = card.string(name: "name")
+        self.address = card.string(name: "address")
     }
 
     override func didTap() {

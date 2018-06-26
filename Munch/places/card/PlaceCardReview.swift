@@ -13,7 +13,7 @@ import FirebaseAnalytics
 
 class PlaceHeaderReviewCard: PlaceTitleCardView {
     override func didLoad(card: PlaceCard) {
-        self.title = "Review"
+        self.title = "Review".localized()
     }
 
     override class var cardId: String? {
@@ -21,7 +21,7 @@ class PlaceHeaderReviewCard: PlaceTitleCardView {
     }
 }
 
-class PlaceVendorFacebookReviewCard: PlaceCardView, SFSafariViewControllerDelegate {
+/*class PlaceVendorFacebookReviewCard: PlaceCardView, SFSafariViewControllerDelegate {
     let titleLabel = UILabel()
     let ratingView = CosmosView()
     let countLabel = UILabel()
@@ -84,4 +84,4 @@ class PlaceVendorFacebookReviewCard: PlaceCardView, SFSafariViewControllerDelega
     override class var cardId: String? {
         return "vendor_FacebookReview_20171017"
     }
-}
+}*/

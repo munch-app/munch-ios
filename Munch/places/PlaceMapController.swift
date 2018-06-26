@@ -12,9 +12,9 @@ import SnapKit
 
 import FirebaseAnalytics
 
-class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKMapViewDelegate, CLLocationManagerDelegate {
+class PlaceMapController: UIViewController, UIGestureRecognizerDelegate, MKMapViewDelegate, CLLocationManagerDelegate {
     let placeId: String
-    let place: DeprecatedPlace
+    let place: Place
 
     private var headerView: PlaceHeaderView!
     private let bottomView = PlaceMapViewBottom()
@@ -86,12 +86,12 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
     private var lastCoordinate: CLLocationCoordinate2D?
     private var placeCoordinate: CLLocationCoordinate2D?
 
-    init(controller: PlaceViewController) {
+    init(controller: PlaceController) {
         self.placeId = controller.placeId
         self.place = controller.place!
         super.init(nibName: nil, bundle: nil)
 
-        self.headerView = PlaceHeaderView(controller: self, place: controller.place, liked: controller.liked)
+        self.headerView = PlaceHeaderView(controller: self, place: controller.place)
         self.headerView.backgroundView.isHidden = true
         self.headerView.shadowView.isHidden = true
     }
@@ -270,14 +270,14 @@ class PlaceMapViewController: UIViewController, UIGestureRecognizerDelegate, MKM
 }
 
 fileprivate class LandmarkAnnotation: NSObject, MKAnnotation {
-    let landmark: DeprecatedPlace.Location.Landmark
+    let landmark: Landmark
 
-    init(landmark: DeprecatedPlace.Location.Landmark) {
+    init(landmark: Landmark) {
         self.landmark = landmark
     }
 
     public var coordinate: CLLocationCoordinate2D {
-        if let latLng = landmark.latLng, let location = CLLocation(latLng: latLng) {
+        if let latLng = landmark.location.latLng, let location = CLLocation(latLng: latLng) {
             return location.coordinate
         }
         return CLLocation().coordinate
@@ -288,7 +288,7 @@ fileprivate class LandmarkAnnotation: NSObject, MKAnnotation {
     }
 
     public var subtitle: String? {
-        return landmark.type
+        return landmark.type.rawValue
     }
 }
 
@@ -314,7 +314,7 @@ fileprivate class LandmarkAnnotationView: MKAnnotationView {
     func render(annotation: LandmarkAnnotation) {
         self.label.text = annotation.landmark.name
 
-        if annotation.landmark.type == "train" {
+        if annotation.landmark.type == .train {
             self.image = UIImage(named: "RIP-Map-Train")
         } else {
             self.image = UIImage(named: "RIP-Map-Landmark")
@@ -350,7 +350,7 @@ fileprivate class PlaceMapViewBottom: UIView {
         }
     }
 
-    func render(place: DeprecatedPlace) {
+    func render(place: Place) {
         self.addressLabel.text = place.location.address
     }
 

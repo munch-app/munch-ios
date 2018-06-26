@@ -16,7 +16,7 @@ import FirebaseAnalytics
 class PlaceHeaderMenuCard: PlaceTitleCardView, SFSafariViewControllerDelegate {
     let webButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Web Menu", for: .normal)
+        button.setTitle("Web Menu".localized(), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15.0, weight: .medium)
 
         button.contentEdgeInsets.top = 6
@@ -38,7 +38,7 @@ class PlaceHeaderMenuCard: PlaceTitleCardView, SFSafariViewControllerDelegate {
 
     var menuUrl: URL?
 
-    required init(card: PlaceCard, controller: PlaceViewController) {
+    required init(card: PlaceCard, controller: PlaceController) {
         super.init(card: card, controller: controller)
         self.addSubview(webButton)
 
@@ -47,7 +47,7 @@ class PlaceHeaderMenuCard: PlaceTitleCardView, SFSafariViewControllerDelegate {
             make.top.bottom.equalTo(titleLabel)
         }
 
-        self.title = "Menu"
+        self.title = "Menu".localized()
         self.webButton.addTarget(self, action: #selector(onWebButton(_:)), for: .touchUpInside)
     }
 
@@ -56,7 +56,7 @@ class PlaceHeaderMenuCard: PlaceTitleCardView, SFSafariViewControllerDelegate {
     }
 
     override func didLoad(card: PlaceCard) {
-        if let url = card["menuUrl"].url {
+        if let menuUrl = card.string(name: "menuUrl"), let url = URL(string: menuUrl) {
             self.menuUrl = url
             webButton.isHidden = false
         } else {
@@ -102,8 +102,8 @@ class PlaceVendorMenuImageCard: PlaceCardView, SFSafariViewControllerDelegate {
     private var menus = [MenuType]()
 
     override func didLoad(card: PlaceCard) {
-        if let images = card["images"].array {
-            for image in images {
+        if let anyImages = card["images"] {
+            for image in JSON(anyImages).arrayValue {
                 menus.append(.image(image))
             }
         }

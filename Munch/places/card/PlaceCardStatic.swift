@@ -83,7 +83,7 @@ class PlaceStaticLastCard: PlaceCardView {
         }
     }
 
-    required init(card: PlaceCard = PlaceCard(cardId: PlaceStaticLastCard.cardId!), controller: PlaceViewController) {
+    required init(card: PlaceCard = PlaceCard(cardId: PlaceStaticLastCard.cardId!), controller: PlaceController) {
         super.init(card: card, controller: controller)
     }
 

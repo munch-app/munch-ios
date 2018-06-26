@@ -37,14 +37,6 @@ public class MunchImageView: UIImageView {
         self.image = UIImage(named: named)
     }
 
-    /**
-     Render SourcedImage to UIImageView
-     SourcedImage will contain a ImageMeta to use for rendering
-     Shimmer is set to true by default
-     */
-    func render(sourcedImage: SourcedImage?, completionHandler: CompletionHandler? = nil) {
-        render(images: sourcedImage?.images, completionHandler: completionHandler)
-    }
 
     /**
      Render ImageMeta to UIImageView

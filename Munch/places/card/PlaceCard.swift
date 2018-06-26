@@ -7,10 +7,66 @@ import Foundation
 import UIKit
 import SnapKit
 
-class PlaceCardView: UITableViewCell {
-    var controller: PlaceViewController!
+import Crashlytics
 
-    required init(card: PlaceCard, controller: PlaceViewController) {
+/**
+ Basic and Vendor typed Cards
+ Access json through the subscript
+ */
+struct PlaceCard {
+    private static let decoder = JSONDecoder()
+
+    var cardId: String
+
+    private var dictionary: [String: Any]
+
+    init(cardId: String, dictionary: [String: Any] = [:]) {
+        self.cardId = cardId
+        self.dictionary = dictionary
+    }
+
+    init(dictionary: [String: Any]) {
+        self.dictionary = dictionary["data"] as? [String: Any] ?? [:]
+        self.cardId = dictionary["_cardId"] as! String
+    }
+
+    subscript(name: String) -> Any? {
+        return dictionary[name]
+    }
+}
+
+// Helper Method
+extension PlaceCard {
+    func string(name: String) -> String? {
+        return self[name] as? String
+    }
+
+    func int(name: String) -> Int? {
+        return self[name] as? Int
+    }
+
+    func double(name: String) -> Double? {
+        return self[name] as? Double
+    }
+
+    func decode<T>(name: String, _ type: T.Type) -> T? where T: Decodable {
+        do {
+            if let dict = self[name] {
+                let data = try JSONSerialization.data(withJSONObject: dict)
+                return try PlaceCard.decoder.decode(type, from: data)
+            }
+        } catch {
+            print(error)
+            Crashlytics.sharedInstance().recordError(error)
+        }
+        return nil
+    }
+}
+
+class PlaceCardView: UITableViewCell {
+    var controller: PlaceController!
+
+    required init(card: PlaceCard, controller: PlaceController) {
         super.init(style: .default, reuseIdentifier: nil)
         self.controller = controller
         self.selectionStyle = .none
@@ -39,6 +95,23 @@ class PlaceCardView: UITableViewCell {
     }
 }
 
+extension PlaceCardView {
+
+    /**
+     Conveniently create a PlaceCard
+     */
+    class var card: PlaceCard {
+        return PlaceCard(cardId: self.cardId!)
+    }
+
+    /**
+     Create PlaceCardView from controller
+     */
+    class func create(controller: PlaceController) -> PlaceCardView {
+        return self.init(card: self.card, controller: controller)
+    }
+}
+
 class PlaceTitleCardView: PlaceCardView {
     let separatorLine = UIView()
     let titleLabel = UILabel()
@@ -60,7 +133,7 @@ class PlaceTitleCardView: PlaceCardView {
         }
     }
 
-    required init(card: PlaceCard, controller: PlaceViewController) {
+    required init(card: PlaceCard, controller: PlaceController) {
         super.init(card: card, controller: controller)
         self.addSubview(separatorLine)
         self.addSubview(titleLabel)
@@ -89,22 +162,5 @@ class PlaceTitleCardView: PlaceCardView {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-}
-
-extension PlaceCardView {
-
-    /**
-     Conveniently create a PlaceCard
-     */
-    class var card: PlaceCard {
-        return PlaceCard(cardId: self.cardId!)
-    }
-
-    /**
-     Create PlaceCardView from controller
-     */
-    class func create(controller: PlaceViewController) -> PlaceCardView {
-        return self.init(card: self.card, controller: controller)
     }
 }

@@ -10,7 +10,7 @@ import SnapKit
 import SwiftyJSON
 import FirebaseAnalytics
 
-class PlaceExtendedPlaceAwardCard: PlaceCardView {
+/*class PlaceExtendedPlaceAwardCard: PlaceCardView {
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
@@ -123,4 +123,4 @@ fileprivate class PlaceExtendedPlaceAwardCardCell: UICollectionViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
+}*/

@@ -162,7 +162,7 @@ extension SearchController {
             let controller = SearchSuggestRootController(searchQuery: self.searchQuery, extensionDismiss: completable)
             self.present(controller, animated: true)
         case .place(let place):
-            let controller = PlaceViewController(placeId: place.placeId)
+            let controller = PlaceController(place: place)
             self.navigationController!.pushViewController(controller, animated: true)
         }
     }

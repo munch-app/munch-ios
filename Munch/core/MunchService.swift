@@ -77,6 +77,9 @@ class MunchProvider<Target>: MoyaProvider<Target> where Target: Moya.TargetType 
                 case 200, 204:
                     return result
 
+                case 404:
+                    return Result.failure(MoyaError.statusCode(response))
+
                 case 502, 503:
                     let response = Response(statusCode: response.statusCode, data: data502)
                     return Result.failure(MoyaError.statusCode(response))
@@ -146,6 +149,21 @@ struct Meta: Codable {
 }
 
 extension Moya.Response {
+    func map<D: Decodable>(data type: D.Type, atKeyPath keyPath: String, failsOnEmptyData: Bool = true) throws -> D? {
+        if let json = try mapJSON(failsOnEmptyData: failsOnEmptyData) as? [String: Any], let data = json["data"] as? [String: Any], let path = data[keyPath]{
+            let data = try JSONSerialization.data(withJSONObject: path)
+            return try JSONDecoder().decode(type, from: data)
+        }
+        return nil
+    }
+
+    func mapJSON(atDataKeyPath keyPath: String, failsOnEmptyData: Bool = true) throws -> Any? {
+        if let json = try mapJSON(failsOnEmptyData: failsOnEmptyData) as? [String: Any], let data = json["data"] as? [String: Any], let path = data[keyPath] {
+            return path
+        }
+        return nil
+    }
+
     func map<D: Decodable>(data type: D.Type, failsOnEmptyData: Bool = true) throws -> D {
         return try map(type, atKeyPath: "data", failsOnEmptyData: failsOnEmptyData)
     }
@@ -163,6 +181,33 @@ extension Moya.Response {
     }
 }
 
+
+public enum RestfulError: Error {
+    case type(Int, String, String?)
+}
+
+extension RestfulError: CustomNSError, LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .type(_, _, let description):
+            return NSLocalizedString(description ?? "Unknown Error", comment: "")
+        }
+    }
+
+    public var failureReason: String? {
+        switch self {
+        case .type(_, let type, _):
+            return NSLocalizedString(type, comment: "")
+        }
+    }
+
+    public var errorCode: Int {
+        switch self {
+        case .type(let code, _, _):
+            return code
+        }
+    }
+}
 
 // MARK: UIViewController Helper Method
 extension UIViewController {

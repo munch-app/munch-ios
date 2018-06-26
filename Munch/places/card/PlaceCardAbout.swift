@@ -6,6 +6,7 @@
 import Foundation
 import UIKit
 import MapKit
+import Localize_Swift
 
 import SwiftyJSON
 import SnapKit
@@ -16,7 +17,7 @@ import FirebaseAnalytics
 
 class PlaceHeaderAboutCard: PlaceTitleCardView {
     override func didLoad(card: PlaceCard) {
-        self.title = "About"
+        self.title = "About".localized()
     }
 
     override class var cardId: String? {
@@ -34,7 +35,7 @@ class PlaceBasicDescriptionCard: PlaceCardView {
             make.top.bottom.equalTo(self).inset(topBottom).priority(999)
         }
 
-        descriptionLabel.text = card["description"].string
+        descriptionLabel.text = card.string(name: "description")
         descriptionLabel.font = UIFont.systemFont(ofSize: 14.0, weight: .regular)
         descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
         descriptionLabel.numberOfLines = 4
@@ -75,11 +76,11 @@ class PlaceBasicPhoneCard: PlaceCardView, SFSafariViewControllerDelegate {
 
     override func didLoad(card: PlaceCard) {
         self.selectionStyle = .default
-        self.phone = card["phone"].string
+        self.phone = card.string(name: "phone")
         self.addSubview(phoneTitleLabel)
         self.addSubview(phoneLabel)
 
-        phoneTitleLabel.text = "Phone"
+        phoneTitleLabel.text = "Phone".localized()
         phoneTitleLabel.font = UIFont.systemFont(ofSize: 15.0, weight: .medium)
         phoneTitleLabel.textColor = .black
         phoneTitleLabel.textAlignment = .left
@@ -124,7 +125,7 @@ class PlaceBasicPriceCard: PlaceCardView {
         self.addSubview(priceTitleLabel)
         self.addSubview(priceLabel)
 
-        priceTitleLabel.text = "Price"
+        priceTitleLabel.text = "Price".localized()
         priceTitleLabel.font = UIFont.systemFont(ofSize: 15.0, weight: .medium)
         priceTitleLabel.textColor = .black
         priceTitleLabel.textAlignment = .left
@@ -135,7 +136,7 @@ class PlaceBasicPriceCard: PlaceCardView {
             make.width.equalTo(70)
         }
 
-        if let price = card["price"].double {
+        if let price = card.double(name: "price") {
             priceLabel.text = "~$\(price)/pax"
             priceLabel.font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
             priceLabel.textColor = UIColor.black.withAlphaComponent(0.8)
@@ -161,12 +162,12 @@ class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
 
     override func didLoad(card: PlaceCard) {
         self.selectionStyle = .default
-        self.websiteUrl = card["website"].string
+        self.websiteUrl = card.string(name: "website")
 
         self.addSubview(websiteTitleLabel)
         self.addSubview(websiteLabel)
 
-        websiteTitleLabel.text = "Website"
+        websiteTitleLabel.text = "Website".localized()
         websiteTitleLabel.font = UIFont.systemFont(ofSize: 15.0, weight: .medium)
         websiteTitleLabel.textColor = .black
         websiteTitleLabel.textAlignment = .left
@@ -177,7 +178,7 @@ class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
             make.width.equalTo(70)
         }
 
-        let domain = card["domain"].string ?? websiteUrl
+        let domain = card.string(name: "domain") ?? websiteUrl
         websiteLabel.attributedText = domain?.set(style: .default { make in
             make.font = FontAttribute(font: UIFont.systemFont(ofSize: 15.0, weight: .regular))
             make.color = UIColor.black.withAlphaComponent(0.8)
@@ -193,9 +194,9 @@ class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
 
     override func didTap() {
         if let websiteUrl = websiteUrl, let url = URL.init(string: websiteUrl) {
-            let alert = UIAlertController(title: nil, message: "Open in Safari?", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-            alert.addAction(UIAlertAction(title: "Open", style: .default, handler: { action in
+            let alert = UIAlertController(title: nil, message: "Open in Safari?".localized(), preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Cancel".localized(), style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: "Open".localized(), style: .default, handler: { action in
                 let safari = SFSafariViewController(url: url)
                 safari.delegate = self
                 self.controller.present(safari, animated: true, completion: nil)

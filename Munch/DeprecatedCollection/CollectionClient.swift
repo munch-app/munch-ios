@@ -207,7 +207,7 @@ struct PlaceCollection {
     }
 
     struct AddedPlace {
-        var place: DeprecatedPlace
+        var place: Place
         var sortKey: Int
         var createdDate: Date
 

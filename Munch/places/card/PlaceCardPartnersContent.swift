@@ -14,7 +14,7 @@ import SwiftyJSON
 
 class PlaceHeaderPartnerContentCard: PlaceTitleCardView {
     override func didLoad(card: PlaceCard) {
-        self.title = "Partners Content"
+        self.title = "Partners Content".localized()
     }
 
     override class var cardId: String? {
@@ -45,7 +45,7 @@ class PlacePartnerArticleCard: PlaceCardView {
     }()
     private let showButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Show all Articles", for: .normal)
+        button.setTitle("Show all Articles".localized(), for: .normal)
         button.setTitleColor(UIColor.primary600, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         button.contentHorizontalAlignment = .left
@@ -56,7 +56,7 @@ class PlacePartnerArticleCard: PlaceCardView {
 
     override func didLoad(card: PlaceCard) {
         self.articles = card.decode(name: "contents", [Article].self) ?? []
-        self.nextPlaceSort = card["next"]["placeSort"].string
+        self.nextPlaceSort = (card["next"] as? [String: Any])?["placeSort"] as? String
 
         self.addSubview(collectionView)
         self.addSubview(showButton)
@@ -294,7 +294,7 @@ class PlacePartnerInstagramCard: PlaceCardView {
     }()
     private let showButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Show all Instagram", for: .normal)
+        button.setTitle("Show all Instagram".localized(), for: .normal)
         button.setTitleColor(UIColor.primary600, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         button.contentHorizontalAlignment = .left
@@ -305,7 +305,7 @@ class PlacePartnerInstagramCard: PlaceCardView {
 
     override func didLoad(card: PlaceCard) {
         self.medias = card.decode(name: "contents", [InstagramMedia].self) ?? []
-        self.nextPlaceSort = card["next"]["placeSort"].string
+        self.nextPlaceSort = (card["next"] as? [String: Any])?["placeSort"] as? String
 
         self.addSubview(collectionView)
         self.addSubview(showButton)

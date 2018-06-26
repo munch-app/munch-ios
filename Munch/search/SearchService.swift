@@ -29,7 +29,7 @@ enum SearchFilterAreaService {
 extension SearchService: TargetType {
     var path: String {
         switch self {
-        case let .search:
+        case .search:
             return "/search"
         case .suggest:
             return "/search/suggest"

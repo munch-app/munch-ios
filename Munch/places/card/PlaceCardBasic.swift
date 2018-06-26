@@ -69,7 +69,7 @@ class PlaceBasicImageBannerCard: PlaceCardView {
         return collectionView
     }()
 
-    var images = [SourcedImage]()
+    var images = [Image]()
 
     override func didLoad(card: PlaceCard) {
         self.addSubview(collectionView)
@@ -103,9 +103,9 @@ class PlaceBasicImageBannerCard: PlaceCardView {
             make.bottom.equalTo(self.collectionView).inset(topBottom)
         }
 
-        self.images = card["images"].map({ SourcedImage(json: $0.1) })
+        self.images = card.decode(name: "images", [Image].self) ?? []
         self.pageTitleView.setTitle("\(self.images.isEmpty ? 0 : 1)/\(self.images.count)", for: .normal)
-        self.setSourceId(sourcedImage: self.images.get(0))
+        self.set(profile: self.images.get(0)?.profile)
     }
 
     override class var cardId: String? {
@@ -128,7 +128,7 @@ extension PlaceBasicImageBannerCard: UICollectionViewDataSource, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if let indexPath = self.collectionView.indexPathsForVisibleItems.get(0) {
             self.pageTitleView.setTitle("\(indexPath.row + 1)/\(self.images.count)", for: .normal)
-            self.setSourceId(sourcedImage: self.images.get(indexPath.row))
+            self.set(profile: self.images.get(indexPath.row)?.profile)
         }
 
         Analytics.logEvent("rip_view", parameters: [
@@ -136,8 +136,8 @@ extension PlaceBasicImageBannerCard: UICollectionViewDataSource, UICollectionVie
         ])
     }
 
-    private func setSourceId(sourcedImage: SourcedImage?) {
-        if let sourceName = sourcedImage?.sourceName {
+    private func set(profile: Image.Profile?) {
+        if let sourceName = profile?.name {
             self.sourceTitleView.setTitle(sourceName, for: .normal)
             self.sourceTitleView.isHidden = false
         } else {
@@ -147,8 +147,8 @@ extension PlaceBasicImageBannerCard: UICollectionViewDataSource, UICollectionVie
 }
 
 fileprivate class PlaceBasicImageBannerCardImageCell: UICollectionViewCell {
-    let imageView: ShimmerImageView = {
-        return ShimmerImageView()
+    let imageView: SizeShimmerImageView = {
+        return SizeShimmerImageView(points: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width)
     }()
 
     override init(frame: CGRect = .zero) {
@@ -160,8 +160,8 @@ fileprivate class PlaceBasicImageBannerCardImageCell: UICollectionViewCell {
         }
     }
 
-    func render(image: SourcedImage) {
-        imageView.render(sourcedImage: image)
+    func render(image: Image) {
+        imageView.render(image: image)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -224,9 +224,10 @@ class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
         collectionHolderView.addSubview(tagCollection)
         self.addSubview(collectionHolderView)
 
-        self.nameLabel.text = card["name"].string
-        let tags = card["tags"].arrayValue.map({ $0.stringValue.capitalized })
-        self.tagCollection.addTags(Array(tags))
+        self.nameLabel.text = card.string(name: "name")
+        let tags = card.decode(name: "tags", [Tag].self) ?? []
+        let tagNames = Array(tags.prefix(6).map({$0.name}))
+        self.tagCollection.addTags(tagNames)
         self.tagCollection.reload()
 
         nameLabel.snp.makeConstraints { make in
@@ -245,7 +246,7 @@ class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
             make.left.right.equalTo(self)
             make.top.equalTo(nameLabel.snp.bottom)
             make.bottom.equalTo(self).inset(topBottom)
-            make.height.equalTo(self.numberOfLines(tags: tags) * 34).priority(999)
+            make.height.equalTo(self.numberOfLines(tags: tagNames) * 34).priority(999)
         }
 
         tagCollection.needsUpdateConstraints()
@@ -379,25 +380,30 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
             make.right.equalTo(indicator.snp.left)
         }
 
-        let hours = BusinessHour(hours: card["hours"].compactMap({ DeprecatedPlace.Hour(json: $0.1) }))
-        dayView.render(hours: hours)
-        dayView.isHidden = true
 
-        let attributedText = NSMutableAttributedString()
-        switch hours.isOpen() {
-        case .opening:
-            attributedText.append("Opening Soon\n".set(style: PlaceBasicBusinessHourCard.openStyle))
-        case .open:
-            attributedText.append("Open Now\n".set(style: PlaceBasicBusinessHourCard.openStyle))
-        case .closing:
-            attributedText.append("Closing Soon\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
-        case .closed: fallthrough
-        case .none:
-            attributedText.append("Closed Now\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
+        if let hours: [Hour] = card.decode(name: "hours", [Hour].self) {
+            let grouped = hours.grouped
+            dayView.render(hourGrouped: grouped)
+            dayView.isHidden = true
 
+            let attributedText = NSMutableAttributedString()
+            switch grouped.isOpen() {
+            case .opening:
+                attributedText.append("Opening Soon\n".set(style: PlaceBasicBusinessHourCard.openStyle))
+            case .open:
+                attributedText.append("Open Now\n".set(style: PlaceBasicBusinessHourCard.openStyle))
+            case .closing:
+                attributedText.append("Closing Soon\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
+            case .closed: fallthrough
+            case .none:
+                attributedText.append("Closed Now\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
+
+            }
+
+
+            attributedText.append(grouped.todayDayTimeRange.set(style: PlaceBasicBusinessHourCard.hourStyle))
+            openLabel.attributedText = attributedText
         }
-        attributedText.append(hours.today.set(style: PlaceBasicBusinessHourCard.hourStyle))
-        openLabel.attributedText = attributedText
     }
 
     override func didTap() {
@@ -461,32 +467,32 @@ class PlaceBasicBusinessHourCard: PlaceCardView {
             fatalError("init(coder:) has not been implemented")
         }
 
-        func render(hours: BusinessHour) {
-            func createLine(day: String, dayText: String) -> NSAttributedString {
-                if hours.isToday(day: day) {
-                    switch hours.isOpen() {
+        func render(hourGrouped: Hour.Grouped) {
+            func createLine(day: Hour.Day, dayText: String) -> NSAttributedString {
+                if day.isToday {
+                    switch hourGrouped.isOpen() {
                     case .opening: fallthrough
                     case .closing: fallthrough
                     case .open:
                         return dayText.set(style: PlaceBasicBusinessHourCard.boldStyle) + "\n"
-                                + hours[day].set(style: PlaceBasicBusinessHourCard.openStyle)
+                                + hourGrouped[day].set(style: PlaceBasicBusinessHourCard.openStyle)
                     case .closed: fallthrough
                     case .none:
                         return dayText.set(style: PlaceBasicBusinessHourCard.boldStyle) + "\n"
-                                + hours[day].set(style: PlaceBasicBusinessHourCard.closeStyle)
+                                + hourGrouped[day].set(style: PlaceBasicBusinessHourCard.closeStyle)
                     }
                 } else {
-                    return NSAttributedString(string: "\(dayText)\n\(hours[day])")
+                    return NSAttributedString(string: "\(dayText)\n\(hourGrouped[day])")
                 }
             }
 
-            dayLabels[0].attributedText = createLine(day: "mon", dayText: "Monday")
-            dayLabels[1].attributedText = createLine(day: "tue", dayText: "Tuesday")
-            dayLabels[2].attributedText = createLine(day: "wed", dayText: "Wednesday")
-            dayLabels[3].attributedText = createLine(day: "thu", dayText: "Thursday")
-            dayLabels[4].attributedText = createLine(day: "fri", dayText: "Friday")
-            dayLabels[5].attributedText = createLine(day: "sat", dayText: "Saturday")
-            dayLabels[6].attributedText = createLine(day: "sun", dayText: "Sunday")
+            dayLabels[0].attributedText = createLine(day: Hour.Day.mon, dayText: "Monday")
+            dayLabels[1].attributedText = createLine(day: Hour.Day.tue, dayText: "Tuesday")
+            dayLabels[2].attributedText = createLine(day: Hour.Day.wed, dayText: "Wednesday")
+            dayLabels[3].attributedText = createLine(day: Hour.Day.thu, dayText: "Thursday")
+            dayLabels[4].attributedText = createLine(day: Hour.Day.fri, dayText: "Friday")
+            dayLabels[5].attributedText = createLine(day: Hour.Day.sat, dayText: "Saturday")
+            dayLabels[6].attributedText = createLine(day: Hour.Day.sun, dayText: "Sunday")
         }
     }
 }

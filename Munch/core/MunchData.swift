@@ -380,7 +380,11 @@ extension Hour.Day {
         return .other
     }
 
-    func isToday(day: Hour.Day) -> Bool {
+    var isToday: Bool {
+        return Hour.Day.isToday(day: self)
+    }
+
+    static func isToday(day: Hour.Day) -> Bool {
         return day == Hour.Day.today
     }
 }

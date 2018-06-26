@@ -256,7 +256,7 @@ extension SearchSuggestController {
     func apply(_ goTo: Actionable) {
         switch goTo {
         case .place(let place):
-            let controller = PlaceViewController(place: place)
+            let controller = PlaceController(place: place)
             self.navigationController?.pushViewController(controller, animated: true)
 
         case .text(let text):

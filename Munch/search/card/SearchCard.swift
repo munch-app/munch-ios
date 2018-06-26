@@ -81,7 +81,7 @@ class SearchCardManager {
                     }
 
                     if let res = try response.mapJSON() as? [String: Any], let cards = res["data"] as? [[String: Any]], !cards.isEmpty {
-                        return cards.map({ SearchCard.init(dictionary: $0) })
+                        return cards.map({ SearchCard(dictionary: $0) })
                     }
                     return [SearchStaticNoResultCard.card]
                 }
