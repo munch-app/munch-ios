@@ -12,8 +12,6 @@ import SnapKit
 import SwiftRichString
 import SafariServices
 
-import FirebaseAnalytics
-
 class PlaceHeaderLocationCard: PlaceTitleCardView {
     override func didLoad(card: PlaceCard) {
         self.title = "Location".localized()
@@ -21,11 +19,7 @@ class PlaceHeaderLocationCard: PlaceTitleCardView {
     }
 
     override func didTap() {
-        self.controller.apply(action: .map)
-
-        Analytics.logEvent("rip_action", parameters: [
-            AnalyticsParameterItemCategory: "click_map" as NSObject
-        ])
+        self.controller.apply(click: .map)
     }
 
     override class var cardId: String? {
@@ -68,7 +62,7 @@ class PlaceBasicLocationCard: PlaceCardView {
     }
 
     override func didTap() {
-        self.controller.apply(action: .map)
+        self.controller.apply(click: .map)
     }
 
     private func render(location: Location) {
@@ -116,11 +110,7 @@ class PlaceBasicAddressCard: PlaceCardView {
     }
 
     override func didTap() {
-        self.controller.apply(action: .map)
-
-        Analytics.logEvent("rip_action", parameters: [
-            AnalyticsParameterItemCategory: "click_address" as NSObject
-        ])
+        self.controller.apply(click: .map)
     }
 
     override class var cardId: String? {

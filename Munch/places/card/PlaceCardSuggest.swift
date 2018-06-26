@@ -10,8 +10,6 @@ import SafariServices
 import SwiftyJSON
 import SnapKit
 
-import FirebaseAnalytics
-
 class PlaceSuggestEditCard: PlaceCardView, SFSafariViewControllerDelegate {
     let separatorLine = UIView()
     let button: UIButton = {
@@ -61,27 +59,7 @@ class PlaceSuggestEditCard: PlaceCardView, SFSafariViewControllerDelegate {
     }
 
     override func didTap() {
-        Authentication.requireAuthentication(controller: self.controller) { state in
-            switch state {
-            case .loggedIn:
-                let urlComps = NSURLComponents(string: "https://airtable.com/shrfxcHiCwlSl1rjk")!
-                urlComps.queryItems = [
-                    URLQueryItem(name: "prefill_Place.id", value: self.placeId),
-                    URLQueryItem(name: "prefill_Place.status", value: "Open"),
-                    URLQueryItem(name: "prefill_Place.name", value: self.name),
-                    URLQueryItem(name: "prefill_Place.Location.address", value: self.address)
-                ]
-                let safari = SFSafariViewController(url: urlComps.url!)
-                safari.delegate = self
-                self.controller.present(safari, animated: true, completion: nil)
-
-                Analytics.logEvent("rip_action", parameters: [
-                    AnalyticsParameterItemCategory: "click_suggest_edit" as NSObject
-                ])
-            default:
-                return
-            }
-        }
+        self.controller.apply(click: .suggestEdit)
     }
 
     override class var cardId: String? {

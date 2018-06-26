@@ -33,7 +33,7 @@ class SearchSuggestController: UIViewController {
     private let onExtensionDismiss: ((SearchQuery?) -> Void)
     private var searchQuery: SearchQuery
 
-    private let provider = MoyaProvider<SearchService>()
+    private let provider = MunchProvider<SearchService>()
     private let disposeBag = DisposeBag()
 
     fileprivate let headerView = SearchSuggestHeaderView()

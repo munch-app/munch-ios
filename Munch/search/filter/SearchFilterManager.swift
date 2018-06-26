@@ -207,7 +207,7 @@ extension SearchFilterType.Category {
 
 class SearchFilterManager {
     private let recentAreaDatabase = RecentDataDatabase<Area>(type: Area.self, name: "RecentArea", maxSize: 8)
-    private let provider = MoyaProvider<SearchFilterService>()
+    private let provider = MunchProvider<SearchFilterService>()
 
     private(set) var searchQuery: SearchQuery
 

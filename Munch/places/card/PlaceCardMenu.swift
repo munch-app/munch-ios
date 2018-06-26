@@ -11,8 +11,6 @@ import Cosmos
 import SnapKit
 import SwiftyJSON
 
-import FirebaseAnalytics
-
 class PlaceHeaderMenuCard: PlaceTitleCardView, SFSafariViewControllerDelegate {
     let webButton: UIButton = {
         let button = UIButton()
@@ -65,15 +63,7 @@ class PlaceHeaderMenuCard: PlaceTitleCardView, SFSafariViewControllerDelegate {
     }
 
     @objc func onWebButton(_ sender: Any) {
-        if let url = self.menuUrl {
-            let safari = SFSafariViewController(url: url)
-            safari.delegate = self
-            controller.present(safari, animated: true, completion: nil)
-        }
-
-        Analytics.logEvent("rip_action", parameters: [
-            AnalyticsParameterItemCategory: "click_menu" as NSObject
-        ])
+        self.controller.apply(click: .menuWeb)
     }
 
     override class var cardId: String? {
@@ -154,6 +144,7 @@ extension PlaceVendorMenuImageCard: UICollectionViewDataSource, UICollectionView
                 controller.present(safari, animated: true, completion: nil)
             }
         case .image(let json):
+            self.controller.apply(click: .menuImageItem(indexPath.row))
             if let imageUrl = json["url"].string, let url = URL(string: imageUrl) {
                 let safari = SFSafariViewController(url: url)
                 safari.delegate = self

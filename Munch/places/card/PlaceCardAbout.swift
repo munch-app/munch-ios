@@ -13,8 +13,6 @@ import SnapKit
 import SwiftRichString
 import SafariServices
 
-import FirebaseAnalytics
-
 class PlaceHeaderAboutCard: PlaceTitleCardView {
     override func didLoad(card: PlaceCard) {
         self.title = "About".localized()
@@ -59,9 +57,7 @@ class PlaceBasicDescriptionCard: PlaceCardView {
             descriptionLabel.numberOfLines = 0
         }
 
-        Analytics.logEvent("rip_action", parameters: [
-            AnalyticsParameterItemCategory: "click_about" as NSObject
-        ])
+        self.controller.apply(click: .about)
     }
 
     override class var cardId: String? {

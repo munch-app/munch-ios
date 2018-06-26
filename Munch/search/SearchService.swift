@@ -103,7 +103,7 @@ class AreaDatabase {
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
 
-    private let provider = MoyaProvider<SearchFilterAreaService>()
+    private let provider = MunchProvider<SearchFilterAreaService>()
 
     var lastModifiedMillis: Int {
         let realm = try! Realm()

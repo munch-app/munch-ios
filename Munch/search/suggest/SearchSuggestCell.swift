@@ -445,6 +445,7 @@ fileprivate class SearchSuggestCellPlaceBox: UICollectionViewCell {
     }
 
     func render(place: Place) {
+        nameLabel.text = place.name
         imageView.render(image: place.images.get(0))
         typeLabel.text = "\(place.location.neighbourhood ?? "") ⋅ \(place.tags.get(0)?.name ?? "")"
     }

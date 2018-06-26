@@ -7,7 +7,6 @@ import Foundation
 import UIKit
 import SafariServices
 
-import FirebaseAnalytics
 import SnapKit
 
 import SwiftyJSON
@@ -80,8 +79,7 @@ class PlacePartnerArticleCard: PlaceCardView {
     }
 
     @objc func onShowButton(_ sender: Any) {
-        let controller = PlacePartnerArticleController(controller: self.controller, articles: self.articles, nextPlaceSort: nextPlaceSort)
-        self.controller.navigationController!.pushViewController(controller, animated: true)
+        self.controller.apply(click: .partnerArticle)
     }
 
     override class var cardId: String? {
@@ -95,10 +93,7 @@ extension PlacePartnerArticleCard: UICollectionViewDataSource, UICollectionViewD
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        Analytics.logEvent("rip_view", parameters: [
-            AnalyticsParameterItemCategory: "partner_content_article" as NSObject
-        ])
-
+        self.controller.apply(navigation: .partnerArticleItem(indexPath.row))
         let article = articles[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PlacePartnerArticleCardCell", for: indexPath) as! PlacePartnerArticleCardCell
         cell.render(article: article)
@@ -106,6 +101,7 @@ extension PlacePartnerArticleCard: UICollectionViewDataSource, UICollectionViewD
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        self.controller.apply(click: .partnerArticleItem(indexPath.row))
         let article = articles[indexPath.row]
 
         if let articleUrl = article.url, let url = URL(string: articleUrl) {
@@ -113,10 +109,6 @@ extension PlacePartnerArticleCard: UICollectionViewDataSource, UICollectionViewD
             safari.delegate = self
             self.controller.present(safari, animated: true, completion: nil)
         }
-
-        Analytics.logEvent("rip_action", parameters: [
-            AnalyticsParameterItemCategory: "click_partner_content_article" as NSObject
-        ])
     }
 
     private var collectionViewFlowLayout: UICollectionViewFlowLayout {
@@ -164,10 +156,6 @@ extension PlacePartnerArticleCard: UICollectionViewDataSource, UICollectionViewD
             let indexPath = IndexPath(row: indexOfMajorCell, section: 0)
             self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         }
-
-        Analytics.logEvent("rip_action", parameters: [
-            AnalyticsParameterItemCategory: "swiped_partner_content" as NSObject
-        ])
     }
 }
 
@@ -329,8 +317,7 @@ class PlacePartnerInstagramCard: PlaceCardView {
     }
 
     @objc func onShowButton(_ sender: Any) {
-        let controller = PlacePartnerInstagramController(controller: self.controller, medias: self.medias, nextPlaceSort: nextPlaceSort)
-        self.controller.navigationController!.pushViewController(controller, animated: true)
+        self.controller.apply(click: .partnerInstagram)
     }
 
     override class var cardId: String? {
@@ -344,9 +331,7 @@ extension PlacePartnerInstagramCard: UICollectionViewDataSource, UICollectionVie
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        Analytics.logEvent("rip_view", parameters: [
-            AnalyticsParameterItemCategory: "partner_content_instagram" as NSObject
-        ])
+        self.controller.apply(navigation: .partnerInstagramItem(indexPath.row))
 
         let media = medias[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PlacePartnerInstagramCardCell", for: indexPath) as! PlacePartnerInstagramCardCell
@@ -355,12 +340,8 @@ extension PlacePartnerInstagramCard: UICollectionViewDataSource, UICollectionVie
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let controller = PlacePartnerInstagramController(controller: self.controller, medias: self.medias, nextPlaceSort: nextPlaceSort)
-        self.controller.navigationController!.pushViewController(controller, animated: true)
-
-        Analytics.logEvent("rip_action", parameters: [
-            AnalyticsParameterItemCategory: "click_partner_content_instagram" as NSObject
-        ])
+        self.controller.apply(click: .partnerInstagramItem(indexPath.row))
+        self.controller.apply(click: .partnerInstagram)
     }
 }
 

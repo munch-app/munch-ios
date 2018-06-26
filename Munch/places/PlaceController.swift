@@ -22,8 +22,9 @@ import Toast_Swift
 class PlaceController: UIViewController {
     let placeId: String
     var place: Place?
+    var tracker: UserPlaceActivityTracker?
 
-    let provider = MoyaProvider<PlaceService>()
+    let provider = MunchProvider<PlaceService>()
     let disposeBag = DisposeBag()
 
     private var cards = [PlaceShimmerImageBannerCard.card, PlaceShimmerNameTagCard.card]
@@ -80,15 +81,12 @@ class PlaceController: UIViewController {
         self.cardTableView.dataSource = self
 
         provider.rx.request(.cards(self.placeId))
-                .map { response throws -> Response in
-                    return try response.filter(statusCode: 200)
-                }
                 .map { response throws -> ([PlaceCard], Place) in
                     let cards = try response.mapJSON(atDataKeyPath: "cards") as? [[String: Any]]
                     let place = try response.map(data: Place.self, atKeyPath: "place")
 
                     if let cards = cards, let place = place {
-                        return (cards.map({PlaceCard(dictionary: $0)}), place)
+                        return (cards.map({ PlaceCard(dictionary: $0) }), place)
                     }
 
                     throw MoyaError.jsonMapping(response)
@@ -99,6 +97,7 @@ class PlaceController: UIViewController {
 
                         self.cards = cards
                         self.place = place
+                        self.tracker = UserPlaceActivityTracker(place: place)
 
                         self.headerView.place = place
                         self.bottomView.place = place
@@ -111,6 +110,11 @@ class PlaceController: UIViewController {
                         self.alert(error: error)
                     }
                 }.disposed(by: disposeBag)
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        tracker?.end()
     }
 
     private func initViews() {
@@ -237,40 +241,116 @@ extension PlaceController: UITableViewDelegate, UITableViewDataSource {
 
 // MARK: Actions
 extension PlaceController: UIGestureRecognizerDelegate, SFSafariViewControllerDelegate {
-    enum Action {
+    enum ClickAction {
         case map
         case partnerInstagram
         case partnerArticle
 
         case direction
         case call
+
+        case screenshot
+        case mapHeading
+        case mapExternal
+
+        case about
+        case suggestEdit
+        case menuWeb
+        case hours
+        case tag
+
+        case partnerInstagramItem(Int)
+        case partnerArticleItem(Int)
+        case menuImageItem(Int)
+
+        var name: String {
+            switch self {
+            case .map: return "click_map"
+            case .partnerInstagram: return "click_partner_instagram"
+            case .partnerArticle: return "click_partner_article"
+
+            case .direction: return "click_direction"
+            case .call: return "click_call"
+
+            case .screenshot: return "click_screenshot"
+            case .mapHeading: return "click_map_heading"
+            case .mapExternal: return "click_map_external"
+
+            case .about: return "click_about"
+            case .suggestEdit: return "click_suggest_edit"
+            case .menuWeb: return "click_menu_web"
+            case .hours: return "click_hours"
+            case .tag: return "click_tag"
+
+            case .partnerInstagramItem(let count):
+                return "click_partner_instagram_item(\(count))"
+            case .partnerArticleItem(let count):
+                return "click_partner_article_item(\(count))"
+            case .menuImageItem(let count):
+                return "click_menu_image_item(\(count))"
+            }
+        }
     }
 
-    func apply(action: Action) {
-        switch action {
+    enum NavigationAction {
+        case bannerImageItem(Int)
+        case partnerInstagramItem(Int)
+        case partnerArticleItem(Int)
+
+        var name: String {
+            switch self {
+            case .bannerImageItem(let count):
+                return "navigation_banner_image_item(\(count))"
+            case .partnerInstagramItem(let count):
+                return "navigation_partner_instagram_item(\(count))"
+            case .partnerArticleItem(let count):
+                return "navigation_partner_article_item(\(count))"
+            }
+        }
+    }
+
+    func apply(click: ClickAction) {
+        tracker?.add(name: click.name)
+        Analytics.logEvent("rip_action", parameters: [
+            AnalyticsParameterItemID: "place-\(self.placeId)" as NSObject,
+            AnalyticsParameterItemCategory: click.name as NSObject
+        ])
+
+        // TODO Actions Place Client Loaded Cards Migrations
+        switch click {
         case .map:
             let controller = PlaceMapController(controller: self)
             self.navigationController?.pushViewController(controller, animated: true)
 
-                // TODO Actions Place Client Loaded Cards Migrations
         case .partnerInstagram:
-            return
+            let controller = PlacePartnerInstagramController(controller: self, medias: [], nextPlaceSort: nil)
+            self.navigationController!.pushViewController(controller, animated: true)
+
         case .partnerArticle:
-            return
-        case .direction:
-            self.applyDirection()
-        case .call:
-            self.applyCall()
+            let controller = PlacePartnerArticleController(controller: self, articles: [], nextPlaceSort: nil)
+            self.navigationController!.pushViewController(controller, animated: true)
+
+        case .suggestEdit: self.clickSuggestEdit()
+        case .direction: self.clickDirection()
+        case .call: self.clickCall()
+        case .menuWeb: self.clickWebMenu()
+
+        default:return
         }
     }
 
-    private func applyDirection() {
-        if let address = place?.location.address?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
-            Analytics.logEvent("rip_action", parameters: [
+    func apply(navigation: NavigationAction) {
+        DispatchQueue.main.async {
+            self.tracker?.add(name: navigation.name)
+            Analytics.logEvent("rip_navigation", parameters: [
                 AnalyticsParameterItemID: "place-\(self.placeId)" as NSObject,
-                AnalyticsParameterItemCategory: "click_direction" as NSObject
+                AnalyticsParameterItemCategory: navigation.name as NSObject
             ])
+        }
+    }
 
+    private func clickDirection() {
+        if let address = place?.location.address?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
             // Monster Jobs uses comgooglemap url scheme, those fuckers
             if (UIApplication.shared.canOpenURL(URL(string: "https://www.google.com/maps/")!)) {
                 UIApplication.shared.open(URL(string: "https://www.google.com/maps/?daddr=\(address)")!)
@@ -280,24 +360,44 @@ extension PlaceController: UIGestureRecognizerDelegate, SFSafariViewControllerDe
         }
     }
 
-    private func applyCall() {
+    private func clickCall() {
         if let phone = place?.phone?.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression, range: nil) {
             if let url = URL(string: "tel://\(phone)"), UIApplication.shared.canOpenURL(url) {
-                Analytics.logEvent("rip_action", parameters: [
-                    AnalyticsParameterItemID: "place-\(self.placeId)" as NSObject,
-                    AnalyticsParameterItemCategory: "click_call" as NSObject
-                ])
-
                 UIApplication.shared.open(url)
             }
         }
     }
 
+    private func clickSuggestEdit() {
+        Authentication.requireAuthentication(controller: self) { state in
+            switch state {
+            case .loggedIn:
+                let urlComps = NSURLComponents(string: "https://airtable.com/shrfxcHiCwlSl1rjk")!
+                urlComps.queryItems = [
+                    URLQueryItem(name: "prefill_Place.id", value: self.placeId),
+                    URLQueryItem(name: "prefill_Place.status", value: "Open"),
+                    URLQueryItem(name: "prefill_Place.name", value: self.place?.name),
+                    URLQueryItem(name: "prefill_Place.Location.address", value: self.place?.location.address)
+                ]
+                let safari = SFSafariViewController(url: urlComps.url!)
+                safari.delegate = self
+                self.present(safari, animated: true, completion: nil)
+            default:
+                return
+            }
+        }
+    }
+
+    private func clickWebMenu() {
+        if let menuUrl = self.place?.menu?.url, let url = URL(string: menuUrl) {
+            let safari = SFSafariViewController(url: url)
+            safari.delegate = self
+            self.present(safari, animated: true, completion: nil)
+        }
+    }
+
     @objc func handleScreenshot() {
-        Analytics.logEvent(AnalyticsEventShare, parameters: [
-            AnalyticsParameterItemID: "place-\(self.placeId)" as NSObject,
-            AnalyticsParameterContentType: "screenshot" as NSObject
-        ])
+        self.apply(click: .screenshot)
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -502,11 +602,11 @@ fileprivate class PlaceBottomView: UIView {
     }
 
     @objc func actionCall(_ sender: Any) {
-        self.controller?.apply(action: .call)
+        self.controller?.apply(click: .call)
     }
 
     @objc func actionDirection(_ sender: Any) {
-        self.controller?.apply(action: .direction)
+        self.controller?.apply(click: .direction)
     }
 
     override func layoutSubviews() {
@@ -680,11 +780,7 @@ class PlaceAddButton: UIButton {
             switch state {
             case .loggedIn:
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                // TODO
-
-                Analytics.logEvent("rip_action", parameters: [
-                    AnalyticsParameterItemCategory: "click_add" as NSObject
-                ])
+                    // TODO, with action tracking
             default:
                 return
             }

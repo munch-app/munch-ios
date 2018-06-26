@@ -14,11 +14,12 @@ import SnapKit
 import SwiftyJSON
 import SwiftRichString
 import NVActivityIndicatorView
-import FirebaseAnalytics
 
 class PlacePartnerInstagramController: UIViewController, UIGestureRecognizerDelegate {
     let place: Place
-    let provider = MoyaProvider<PlacePartnerService>()
+    let controller: PlaceController
+
+    let provider = MunchProvider<PlacePartnerService>()
     let disposeBag = DisposeBag()
 
     fileprivate var cachedHeight = [Int: CGFloat]()
@@ -45,6 +46,8 @@ class PlacePartnerInstagramController: UIViewController, UIGestureRecognizerDele
 
     init(controller: PlaceController, medias: [InstagramMedia], nextPlaceSort: String?) {
         self.place = controller.place!
+        self.controller = controller
+
         self.medias = medias
         self.nextPlaceSort = nextPlaceSort
         super.init(nibName: nil, bundle: nil)
@@ -123,6 +126,7 @@ extension PlacePartnerInstagramController: UITableViewDataSource, UITableViewDel
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "PlacePartnerInstagramControllerCell") as! PlacePartnerInstagramControllerCell
         cell.render(media: medias[indexPath.row], controller: self, indexPath: indexPath)
+        self.controller.apply(navigation: .partnerInstagramItem(indexPath.row))
         return cell
     }
 
@@ -138,9 +142,7 @@ extension PlacePartnerInstagramController: UITableViewDataSource, UITableViewDel
             self.present(safari, animated: true, completion: nil)
         }
 
-        Analytics.logEvent("rip_action", parameters: [
-            AnalyticsParameterItemCategory: "click_extended_partner_content_instagram" as NSObject
-        ])
+        self.controller.apply(click: .partnerInstagramItem(indexPath.row))
     }
 }
 
@@ -280,10 +282,6 @@ fileprivate class PlacePartnerInstagramControllerCell: UITableViewCell {
         descriptionLabel.sizeToFit()
 
         readMoreButton.text = "More from @\(media.username ?? "")"
-
-        Analytics.logEvent("rip_view", parameters: [
-            AnalyticsParameterItemCategory: "extended_partner_content_instagram" as NSObject
-        ])
     }
 
     fileprivate override func layoutSubviews() {

@@ -13,11 +13,12 @@ import SafariServices
 import SnapKit
 import SwiftRichString
 import NVActivityIndicatorView
-import FirebaseAnalytics
 
 class PlacePartnerArticleController: UIViewController, UIGestureRecognizerDelegate {
     let place: Place
-    let provider = MoyaProvider<PlacePartnerService>()
+    let controller: PlaceController
+
+    let provider = MunchProvider<PlacePartnerService>()
     let disposeBag = DisposeBag()
 
     fileprivate var cachedHeight = [Int: CGFloat]()
@@ -44,6 +45,8 @@ class PlacePartnerArticleController: UIViewController, UIGestureRecognizerDelega
 
     init(controller: PlaceController, articles: [Article], nextPlaceSort: String?) {
         self.place = controller.place!
+        self.controller = controller
+
         self.articles = articles
         self.nextPlaceSort = nextPlaceSort
         super.init(nibName: nil, bundle: nil)
@@ -122,6 +125,7 @@ extension PlacePartnerArticleController: UITableViewDataSource, UITableViewDeleg
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "PlacePartnerArticleControllerCell") as! PlacePartnerArticleControllerCell
         cell.render(article: articles[indexPath.row], controller: self, indexPath: indexPath)
+        self.controller.apply(navigation: .partnerArticleItem(indexPath.row))
         return cell
     }
 
@@ -137,9 +141,7 @@ extension PlacePartnerArticleController: UITableViewDataSource, UITableViewDeleg
             self.present(safari, animated: true, completion: nil)
         }
 
-        Analytics.logEvent("rip_action", parameters: [
-            AnalyticsParameterItemCategory: "click_extended_partner_content_article" as NSObject
-        ])
+        self.controller.apply(click: .partnerArticleItem(indexPath.row))
     }
 }
 
@@ -296,9 +298,6 @@ fileprivate class PlacePartnerArticleControllerCell: UITableViewCell {
             if image == nil {
                 self.bannerImageView.render(named: "RIP-No-Image")
             }
-            // Image Size Caching
-//            controller.tableView.reloadRows(at: [indexPath], with: .none)
-//            controller.cachedHeight[indexPath.row] = self.bounds.height
         }
 
         authorLabel.setTitle(article.brand, for: .normal)
@@ -307,10 +306,6 @@ fileprivate class PlacePartnerArticleControllerCell: UITableViewCell {
 
         descriptionLabel.text = article.description
         descriptionLabel.sizeToFit()
-
-        Analytics.logEvent("rip_view", parameters: [
-            AnalyticsParameterItemCategory: "extended_partner_content_article" as NSObject
-        ])
     }
 
     fileprivate override func layoutSubviews() {

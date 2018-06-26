@@ -8,13 +8,15 @@ import UIKit
 import MapKit
 import CoreLocation
 
+import RxSwift
 import SnapKit
-
-import FirebaseAnalytics
 
 class PlaceMapController: UIViewController, UIGestureRecognizerDelegate, MKMapViewDelegate, CLLocationManagerDelegate {
     let placeId: String
     let place: Place
+    let controller: PlaceController
+
+    let disposeBag = DisposeBag()
 
     private var headerView: PlaceHeaderView!
     private let bottomView = PlaceMapViewBottom()
@@ -89,6 +91,7 @@ class PlaceMapController: UIViewController, UIGestureRecognizerDelegate, MKMapVi
     init(controller: PlaceController) {
         self.placeId = controller.placeId
         self.place = controller.place!
+        self.controller = controller
         super.init(nibName: nil, bundle: nil)
 
         self.headerView = PlaceHeaderView(controller: self, place: controller.place)
@@ -193,6 +196,8 @@ class PlaceMapController: UIViewController, UIGestureRecognizerDelegate, MKMapVi
         // Check for Location Services
         if CLLocationManager.locationServicesEnabled() {
             MunchLocation.requestLocation()
+                    .subscribe()
+                    .disposed(by: disposeBag)
             locationManager.startUpdatingLocation()
         }
     }
@@ -234,6 +239,8 @@ class PlaceMapController: UIViewController, UIGestureRecognizerDelegate, MKMapVi
     }
 
     @objc func onOpenMap(_ sender: UIButton) {
+        self.controller.apply(click: .mapExternal)
+
         let address = place.location.address?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         if sender == self.appleButton {
             UIApplication.shared.open(URL(string: "http://maps.apple.com/?daddr=\(address)")!)
@@ -244,20 +251,14 @@ class PlaceMapController: UIViewController, UIGestureRecognizerDelegate, MKMapVi
                 UIApplication.shared.open(URL(string: "https://www.google.com/maps/?daddr=\(address)")!)
             }
         }
-
-        Analytics.logEvent("rip_action", parameters: [
-            AnalyticsParameterItemCategory: "click_extended_map_map" as NSObject
-        ])
     }
 
     @objc func onShowHeading(_ sender: Any) {
+        self.controller.apply(click: .mapHeading)
+
         mapView.showsUserLocation = true
         mapView.showsCompass = false
         mapView.setUserTrackingMode(.followWithHeading, animated: true)
-
-        Analytics.logEvent("rip_action", parameters: [
-            AnalyticsParameterItemCategory: "click_extended_map_heading" as NSObject
-        ])
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
