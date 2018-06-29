@@ -192,6 +192,7 @@ class PlaceBasicClosedCard: PlaceCardView {
 
 class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
     private static let size = CGSize(width: 18, height: 8)
+    private static let rightMargin: CGFloat = 16
     let nameLabel: UILabel = {
         let nameLabel = UILabel()
         nameLabel.font = UIFont.systemFont(ofSize: 26.0, weight: .medium)
@@ -232,7 +233,7 @@ class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
 
         tagCollection.snp.makeConstraints { (make) in
             make.left.equalTo(collectionHolderView).inset(24)
-            make.right.equalTo(collectionHolderView).inset(16)
+            make.right.equalTo(collectionHolderView).inset(PlaceBasicNameTagCard.rightMargin)
             make.top.equalTo(collectionHolderView)
         }
 
@@ -280,7 +281,7 @@ class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
 
     private func numberOfLines(tags: [String]) -> Int {
         let font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
-        let workingWidth = UIScreen.main.bounds.width - (leftRight * 2)
+        let workingWidth = UIScreen.main.bounds.width - leftRight - PlaceBasicNameTagCard.rightMargin
 
         var lines = 0
         var currentRemaining: CGFloat = 0

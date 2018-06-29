@@ -128,13 +128,6 @@ class SearchController: UIViewController {
         self.search(searchQuery: self.searchQuery, animated: false)
     }
 
-    private func registerControls() {
-        refreshControl.addTarget(self, action: #selector(handleRefresh(_:)), for: .valueChanged)
-        let edgePan = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(screenEdgeSwiped))
-        edgePan.edges = .left
-        self.view.addGestureRecognizer(edgePan)
-    }
-
     func scrollsToTop(animated: Bool = true) {
         cardTableView.scrollToRow(at: .init(row: 0, section: 0), at: .top, animated: animated)
     }
@@ -229,16 +222,24 @@ extension SearchController {
     }
 
     func reset(force: Bool = false) {
-        if force, cardManager.startDate.addingTimeInterval(60 * 60) < Date() {
+        if force || cardManager.startDate.addingTimeInterval(60 * 60) < Date() {
             // Query requires refresh as it expired in 1 hour
             headerView.queryHistories.removeAll()
-            search(searchQuery: searchQuery)
+            search(searchQuery: SearchQuery())
         }
     }
 }
 
 // MARK: Refresh & Swipe Back
 extension SearchController {
+    private func registerControls() {
+        refreshControl.addTarget(self, action: #selector(handleRefresh(_:)), for: .valueChanged)
+
+        let edgePan = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(screenEdgeSwiped(_:)))
+        edgePan.edges = .left
+        self.view.addGestureRecognizer(edgePan)
+    }
+
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
         self.search(searchQuery: searchQuery)
         refreshControl.endRefreshing()

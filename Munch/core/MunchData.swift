@@ -301,7 +301,7 @@ extension Hour {
             let split = time.split(separator: ":")
             if let hour = split.get(0), let min = split.get(1) {
                 if let h = Int(hour), let m = Int(min) {
-                    return h * 60 + m
+                    return (h * 60) + m
                 }
             }
         }
@@ -352,28 +352,19 @@ extension Hour.Day {
     }
 
     static var today: Hour.Day {
-        switch Calendar.current.component(.weekday, from: Date()) {
-        case 1: return .mon
-        case 2: return .tue
-        case 3: return .wed
-        case 4: return .thu
-        case 5: return .fri
-        case 6: return .sat
-        case 7: return .sun
-        default: return .other
-        }
+        return self.add(days: 0)
     }
 
     static func add(days: Int = 0) -> Hour.Day {
         if let date = Calendar.current.date(byAdding: .day, value: days, to: Date()) {
-            switch Calendar.current.component(.weekday, from: date) {
-            case 1: return .mon
-            case 2: return .tue
-            case 3: return .wed
-            case 4: return .thu
-            case 5: return .fri
-            case 6: return .sat
-            case 7: return .sun
+            switch dayFormatter.string(from: date).lowercased() {
+            case "mon": return .mon
+            case "tue": return .tue
+            case "wed": return .wed
+            case "thu": return .thu
+            case "fri": return .fri
+            case "sat": return .sat
+            case "sun": return .sun
             default: return .other
             }
         }
@@ -445,7 +436,7 @@ extension Array where Element == Hour {
 
         for hour in currentHours {
             if hour.isBetween(date: date) {
-                if hour.isBetween(date: date, closing: 30) {
+                if !hour.isBetween(date: date, closing: 30) {
                     return .closing
                 }
                 return .open

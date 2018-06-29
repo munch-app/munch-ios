@@ -41,30 +41,27 @@ public class MunchLocation {
     }
 
     public class func requestLocation() -> Single<String?> {
-        switch Locator.state {
-        case .notDetermined:
-            return request(force: true)
-        case .disabled:
-            return Single<String?>.create { single in
+        if isEnabled {
+            return self.request(force: true)
+        }
+
+        return Single<String?>.create { single in
+            switch Locator.state {
+            case .notDetermined:
+                Locator.requestAuthorizationIfNeeded(.whenInUse)
+            case .disabled:
                 if let url = URL(string: "App-Prefs:root=Privacy&path=LOCATION") {
                     UIApplication.shared.open(url)
                 }
-                single(.success(nil))
-                return Disposables.create()
-            }
-        case .denied:
-            return Single<String?>.create { single in
+            case .denied:
                 if let url = URL(string: "App-Prefs:root=Privacy&path=LOCATION/co.munch.MunchApp") {
                     UIApplication.shared.open(url)
                 }
-                single(.success(nil))
-                return Disposables.create()
+            default: break
             }
-        default:
-            return Single<String?>.create { single in
-                single(.success(nil))
-                return Disposables.create()
-            }
+
+            single(.success(nil))
+            return Disposables.create()
         }
     }
 

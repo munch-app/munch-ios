@@ -73,9 +73,16 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
         } else {
             Analytics.logEvent("enable_location", parameters: [:])
             MunchLocation.requestLocation()
-                    .subscribe()
+                    .subscribe { event in
+                        switch event {
+                        case .success:
+                            self.actionButton.setTitle("Refresh Search", for: .normal)
+                            self.actionButton.backgroundColor = .secondary
+                        case .error(let error):
+                            self.controller.alert(error: error)
+                        }
+                    }
                     .disposed(by: disposeBag)
-            actionButton.setTitle("Refresh Search", for: .normal)
         }
     }
 

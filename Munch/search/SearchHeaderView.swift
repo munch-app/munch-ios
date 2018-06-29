@@ -158,7 +158,7 @@ class SearchHeaderView: UIView, FilterTagViewDelegate {
 
     func render(query: SearchQuery) {
         // Save a copy here if don't already exist for navigation
-        if let last = queryHistories.last, last != query {
+        if queryHistories.last != query {
             queryHistories.append(query)
         }
 
