@@ -53,6 +53,10 @@ class PlacePartnerInstagramController: UIViewController, UIGestureRecognizerDele
         super.init(nibName: nil, bundle: nil)
 
         self.headerView = PlaceHeaderView(controller: self, place: controller.place)
+
+        if medias.isEmpty && nextPlaceSort == nil {
+            self.appendLoad(force: true)
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -156,14 +160,14 @@ extension PlacePartnerInstagramController {
         }
     }
 
-    private func appendLoad() {
-        if nextPlaceSort != nil {
+    private func appendLoad(force: Bool = false) {
+        if nextPlaceSort != nil || force {
             let cell = self.tableView.cellForRow(at: .init(row: 0, section: 1)) as? PlacePartnerInstagramControllerCellLoading
             cell?.indicator.startAnimating()
 
-            provider.rx.request(.articles(self.place.placeId, self.nextPlaceSort, 20))
+            provider.rx.request(.medias(self.place.placeId, self.nextPlaceSort, 20))
                     .map { response throws -> ([InstagramMedia], String?) in
-                        let placeSort = try response.map([String: String].self, atKeyPath: "next", failsOnEmptyData: false)["placeSort"]
+                        let placeSort = (try? response.map([String: String].self, atKeyPath: "next", failsOnEmptyData: false))?["placeSort"]
                         return try (response.map(data: [InstagramMedia].self), placeSort)
                     }.subscribe { event in
                         switch event {

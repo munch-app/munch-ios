@@ -12,6 +12,7 @@ import Moya
 extension UIViewController {
 
     func alert(error: Error) {
+        print(error)
         if let error = error as? MoyaError {
             alert(error: error)
         } else {
@@ -20,6 +21,7 @@ extension UIViewController {
     }
 
     func alert(title: String, error: Error) {
+        print(error)
         alert(title: title, message: error.localizedDescription)
     }
 

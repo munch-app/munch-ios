@@ -52,6 +52,10 @@ class PlacePartnerArticleController: UIViewController, UIGestureRecognizerDelega
         super.init(nibName: nil, bundle: nil)
 
         self.headerView = PlaceHeaderView(controller: self, place: controller.place)
+
+        if articles.isEmpty && nextPlaceSort == nil {
+            self.appendLoad(force: true)
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -156,14 +160,14 @@ extension PlacePartnerArticleController {
     }
 
 
-    private func appendLoad() {
-        if nextPlaceSort != nil {
+    private func appendLoad(force: Bool = false) {
+        if nextPlaceSort != nil || force {
             let cell = self.tableView.cellForRow(at: .init(row: 0, section: 1)) as? PlacePartnerArticleControllerCellLoading
             cell?.indicator.startAnimating()
 
             provider.rx.request(.articles(self.place.placeId, self.nextPlaceSort, 20))
                     .map { response throws -> ([Article], String?) in
-                        let placeSort = try response.map([String: String].self, atKeyPath: "next", failsOnEmptyData: false)["placeSort"]
+                        let placeSort = (try? response.map([String: String].self, atKeyPath: "next", failsOnEmptyData: false))?["placeSort"]
                         return try (response.map(data: [Article].self), placeSort)
                     }.subscribe { event in
                         switch event {
