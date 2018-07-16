@@ -363,7 +363,6 @@ extension SearchFilterManager {
 
         case .name(let name, _):
             searchQuery.filter.hour.name = name
-            select(tag: name)
         }
 
         trigger([.count, .price])

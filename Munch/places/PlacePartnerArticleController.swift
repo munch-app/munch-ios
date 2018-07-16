@@ -129,7 +129,9 @@ extension PlacePartnerArticleController: UITableViewDataSource, UITableViewDeleg
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "PlacePartnerArticleControllerCell") as! PlacePartnerArticleControllerCell
         cell.render(article: articles[indexPath.row], controller: self, indexPath: indexPath)
-        self.controller.apply(navigation: .partnerArticleItem(indexPath.row))
+        if indexPath.row > 1 {
+            self.controller.apply(navigation: .partnerArticleItem(indexPath.row))
+        }
         return cell
     }
 

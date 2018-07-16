@@ -130,7 +130,9 @@ extension PlacePartnerInstagramController: UITableViewDataSource, UITableViewDel
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "PlacePartnerInstagramControllerCell") as! PlacePartnerInstagramControllerCell
         cell.render(media: medias[indexPath.row], controller: self, indexPath: indexPath)
-        self.controller.apply(navigation: .partnerInstagramItem(indexPath.row))
+        if indexPath.row > 3 {
+            self.controller.apply(navigation: .partnerInstagramItem(indexPath.row))
+        }
         return cell
     }
 
