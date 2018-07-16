@@ -51,13 +51,13 @@ class UserPlaceActivityAction: Object {
     @objc dynamic var _startedMillis: Int = 0
     @objc dynamic var _endedMillis: Int = 0
 
-    @objc dynamic var id: Int = Int(Date().timeIntervalSince1970)
+    @objc dynamic var id: Int = Date.currentMillis
     @objc dynamic var name: String = ""
 }
 
 class UserPlaceActivityTracker {
     let placeId: String
-    let startedMillis = Int(Date().timeIntervalSince1970)
+    let startedMillis = Date.currentMillis
     let realm = try! Realm()
 
     init(place: Place) {
@@ -66,7 +66,7 @@ class UserPlaceActivityTracker {
     }
 
     func end() {
-        let endedMillis = Int(Date().timeIntervalSince1970)
+        let endedMillis = Date.currentMillis
 
         try! realm.write {
             realm.objects(UserPlaceActivityAction.self)

@@ -45,3 +45,13 @@ extension String {
         return data(using: .utf8)!
     }
 }
+
+extension Date {
+    var millis: Int {
+        return Int(self.timeIntervalSince1970 * 1000)
+    }
+
+    static var currentMillis: Int {
+        return Date().millis
+    }
+}

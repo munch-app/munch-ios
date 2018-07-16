@@ -16,7 +16,7 @@ class RecentPlaceDatabase: RecentDataDatabase<Place> {
 
 class RecentData: Object {
     @objc dynamic var _name: String = ""
-    @objc dynamic var _date = Int(Date().timeIntervalSince1970)
+    @objc dynamic var _date = Date.currentMillis
 
 
     @objc dynamic var id: String = ""
@@ -49,7 +49,7 @@ class RecentDataDatabase<T> where T: Codable {
         if let exist = realm.objects(RecentData.self)
                 .filter("_name == '\(name)' AND id == '\(id)'").first {
             try! realm.write {
-                exist._date = Int(Date().timeIntervalSince1970)
+                exist._date = Date.currentMillis
                 exist.data = encoded
             }
         } else {
