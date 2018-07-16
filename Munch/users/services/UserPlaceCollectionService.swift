@@ -68,23 +68,42 @@ struct UserPlaceCollection: Codable {
     var name: String
     var description: String?
 
-    var visibility: Visibility
+    var access: Access
+    var createdBy: CreatedBy
+
     var createdMillis: Int?
     var updatedMillis: Int?
 
     var count: Int?
 
-    enum Visibility: String, Codable {
-        case anyone
-        case personal
-        case other
+    enum Access: String, Codable {
+        case Public
+        case Private
+        case Other
 
         /// Defensive Decoding
         init(from decoder: Decoder) throws {
             switch try decoder.singleValueContainer().decode(String.self) {
-            case "anyone": self = .anyone
-            case "personal": self = .personal
-            default: self = .other
+            case "Public": self = .Public
+            case "Private": self = .Private
+            default: self = .Other
+            }
+        }
+    }
+
+    enum CreatedBy: String, Codable {
+        case User
+        case Award
+        case ForYou
+        case Other
+
+        /// Defensive Decoding
+        init(from decoder: Decoder) throws {
+            switch try decoder.singleValueContainer().decode(String.self) {
+            case "User": self = .User
+            case "Award": self = .Award
+            case "ForYou": self = .ForYou
+            default: self = .Other
             }
         }
     }
