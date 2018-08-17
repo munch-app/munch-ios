@@ -438,6 +438,9 @@ extension SearchFilterManager {
         if isNearby {
             return false
         }
+        if searchQuery.filter.area?.type == .City {
+            return true
+        }
         return searchQuery.filter.area == nil
     }
 }
