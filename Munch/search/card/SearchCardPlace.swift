@@ -249,8 +249,14 @@ fileprivate class SearchPlaceCardBottomView: UIView {
     }
 
     private func render(tag place: Place) {
-        // Count is Controlled by View
         self.tagView.removeAll()
+
+        // Render price as first tag
+        if let price = place.price?.perPax {
+            self.tagView.add(text: "~$\(price)", config: PriceTagViewConfig())
+        }
+
+        // Count is Controlled by View
         for tag in place.tags.prefix(3) {
             self.tagView.add(text: tag.name)
         }

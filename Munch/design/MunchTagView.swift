@@ -135,3 +135,11 @@ struct DefaultTagViewConfig: MunchTagViewConfig {
 
     let extra = CGSize(width: 14, height: 8)
 }
+
+struct PriceTagViewConfig: MunchTagViewConfig {
+    let font = UIFont.systemFont(ofSize: 13.0, weight: .regular)
+    let textColor = UIColor(hex: "222222")
+    let backgroundColor = UIColor.bgTag2
+
+    let extra = CGSize(width: 10, height: 8)
+}

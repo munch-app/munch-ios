@@ -41,6 +41,7 @@ extension UIColor {
     }
 
     static let bgTag = UIColor(hex: "F0F0F7")
+    static let bgTag2 = UIColor(hex: "f7f0f0")
     static let bgRed = UIColor(hex: "ffddea")
 
     // MARK: Color Palette of Munch App
