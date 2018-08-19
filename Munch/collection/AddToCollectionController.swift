@@ -99,6 +99,7 @@ class AddToCollectionController: UIViewController {
     }
 
     private class HeaderView: UIView {
+        let titleView = UILabel()
         fileprivate let cancelButton: UIButton = {
             let button = UIButton()
             button.setTitle("CANCEL", for: .normal)
@@ -108,7 +109,6 @@ class AddToCollectionController: UIViewController {
             button.contentHorizontalAlignment = .right
             return button
         }()
-        let titleView = UILabel()
 
         override init(frame: CGRect = CGRect.zero) {
             super.init(frame: frame)
@@ -236,7 +236,6 @@ extension AddToCollectionController: UITableViewDataSource, UITableViewDelegate 
         })
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
 
-        //finally presenting the dialog box
         self.present(alertController, animated: true, completion: nil)
     }
 

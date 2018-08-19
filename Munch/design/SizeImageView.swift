@@ -45,18 +45,18 @@ class SizeImageView: UIImageView {
     }
 
     func render(sizes: [Image.Size]) {
-        self.image = nil
-
         if let size = SizeImageView.find(sizes: sizes, minWidth: minWidth, minHeight: minHeight) {
             render(url: size.url)
+        } else {
+            kf.setImage(with: nil)
         }
     }
 
     func render(url: String?) {
-        self.image = nil
-
         if let url = url {
             kf.setImage(with: URL(string: url))
+        } else {
+            kf.setImage(with: nil)
         }
     }
 

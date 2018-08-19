@@ -170,30 +170,41 @@ class UserPlaceCollectionDatabase {
                 .disposed(by: disposeBag)
     }
 
-    func update(collection: UserPlaceCollection) {
-        provider.rx.request(.patch(collection.collectionId!, collection))
+    func update(collection: UserPlaceCollection) -> Single<UserPlaceCollection> {
+        return provider.rx.request(.patch(collection.collectionId!, collection))
                 .map { response throws -> UserPlaceCollection in
                     return try response.map(data: UserPlaceCollection.self)
-                }
-                .subscribe { event in
-                    switch event {
-                    case .success(let collection):
-                        let realm = try! Realm()
-                        try! realm.write {
-                            if let object = realm.objects(UserPlaceCollectionObject.self)
-                                    .filter("collectionId == '\(collection.collectionId!)'").first {
-                                object.collectionId = collection.collectionId!
-                                object.sort = collection.sort!
-                                object.updatedMillis = collection.updatedMillis!
-                                object.data = try! self.encoder.encode(collection)
-                            }
+                }.do(onSuccess: { collection in
+                    let realm = try! Realm()
+                    try! realm.write {
+                        if let object = realm.objects(UserPlaceCollectionObject.self)
+                                .filter("collectionId == '\(collection.collectionId!)'").first {
+                            object.collectionId = collection.collectionId!
+                            object.sort = collection.sort!
+                            object.updatedMillis = collection.updatedMillis!
+                            object.data = try! self.encoder.encode(collection)
                         }
-                        self.sendLocal()
-                    case .error(let error):
-                        self.observer?.on(.error(error))
                     }
-                }
-                .disposed(by: disposeBag)
+                    self.sendLocal()
+                }, onError: { error in
+                    self.observer?.on(.error(error))
+                })
+    }
+
+    func delete(collection: UserPlaceCollection) -> Single<UserPlaceCollection> {
+        return provider.rx.request(.delete(collection.collectionId!))
+                .map { response throws -> UserPlaceCollection in
+                    return try response.map(data: UserPlaceCollection.self)
+                }.do(onSuccess: { collection in
+                    let realm = try! Realm()
+                    try! realm.write {
+                        let objects = realm.objects(UserPlaceCollectionObject.self).filter("collectionId == '\(collection.collectionId!)'")
+                        realm.delete(objects)
+                    }
+                    self.sendLocal()
+                }, onError: { error in
+                    self.observer?.on(.error(error))
+                })
     }
 
     func has(collection: UserPlaceCollection, place: Place) -> Bool {

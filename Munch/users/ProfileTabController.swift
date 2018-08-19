@@ -138,6 +138,7 @@ extension ProfileController: UICollectionViewDataSource, UICollectionViewDelegat
             switch self.items[row] {
             case .loading:
                 return dequeue(cellClass: ProfileTabLoadingCell.self)
+
             case .collection(let collection):
                 let cell = dequeue(cellClass: ProfileTabCollectionItemCell.self) as! ProfileTabCollectionItemCell
                 cell.render(collection: collection)

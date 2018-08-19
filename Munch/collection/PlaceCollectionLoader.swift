@@ -19,37 +19,30 @@ class PlaceCollectionLoader {
     private(set) var next: Int?
     private(set) var more: Bool = false
 
-    func observe(collectionId: String, withCompletion: @escaping (UserPlaceCollection?, Error?) -> Void) -> Observable<([UserPlaceCollection.Item], Bool)> {
-        provider.rx.request(.get(collectionId))
+    func start(collectionId: String) -> Single<UserPlaceCollection> {
+        return provider.rx.request(.get(collectionId))
                 .map { response throws -> UserPlaceCollection in
                     return try response.map(data: UserPlaceCollection.self)
-                }
-                .subscribe { event in
-                    switch event {
-                    case let .success(collection):
-                        self.collection = collection
-                        withCompletion(collection, nil)
+                }.do(onSuccess: { collection in
+                    self.collection = collection
+                    self.more = true
+                })
+    }
 
-                        self.more = true
-                        self.loadMore()
-                    case .error(let error):
-                        withCompletion(nil, error)
-                    }
-                }
-                .disposed(by: disposeBag)
-
+    func observe() -> Observable<([UserPlaceCollection.Item], Bool)> {
         return Observable.create { (observer: AnyObserver<([UserPlaceCollection.Item], Bool)>) in
             self.observer = observer
+            self.loadMore()
             return Disposables.create()
         }
     }
 
     func loadMore() {
-        guard more else {
+        guard more, let collectionId = self.collection?.collectionId else {
             return
         }
 
-        provider.rx.request(.itemsList(collection!.collectionId!, 15, next))
+        provider.rx.request(.itemsList(collectionId, 15, next))
                 .map { response throws -> (Int?, [UserPlaceCollection.Item]) in
                     let items = try response.map(data: [UserPlaceCollection.Item].self)
                     let next = try response.mapNext()

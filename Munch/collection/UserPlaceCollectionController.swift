@@ -19,24 +19,36 @@ class UserPlaceCollectionController: UIViewController, UIGestureRecognizerDelega
     private let headerView = HeaderView()
     private let tableView = UITableView()
 
-    private let disposeBag = DisposeBag()
     private let collectionDatabase = UserPlaceCollectionDatabase()
     private let itemDatabase = UserPlaceCollectionItemDatabase()
     private let provider = MunchProvider<UserPlaceCollectionService>()
+    private let disposeBag = DisposeBag()
 
     private var collection: UserPlaceCollection?
-    private var collectionId: String?
+    private let collectionId: String
+    private let isUser: Bool
 
     private var items: [UserPlaceCollectionItem] = [.loading]
-    private var loader: PlaceCollectionLoader?
+    private let loader: PlaceCollectionLoader?
 
     init(collection: UserPlaceCollection) {
         self.collection = collection
+        self.collectionId = collection.collectionId!
+        self.isUser = true
+        self.loader = nil
+        if collection.createdBy != UserPlaceCollection.CreatedBy.User {
+            self.headerView.editButton.isHidden = true
+        }
+
         super.init(nibName: nil, bundle: nil)
     }
 
     init(collectionId: String) {
         self.collectionId = collectionId
+        self.isUser = false
+        self.loader = PlaceCollectionLoader()
+        self.headerView.editButton.isHidden = true
+
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -64,8 +76,9 @@ class UserPlaceCollectionController: UIViewController, UIGestureRecognizerDelega
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
 
         self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
+        self.headerView.editButton.addTarget(self, action: #selector(onEditButton(_:)), for: .touchUpInside)
 
-        if let collection = collection {
+        if self.isUser, let collection = collection {
             self.headerView.titleView.text = collection.name
             itemDatabase.observe(collection: collection).subscribe { event in
                 switch event {
@@ -87,38 +100,38 @@ class UserPlaceCollectionController: UIViewController, UIGestureRecognizerDelega
                     return
                 }
             }.disposed(by: disposeBag)
-        } else if let collectionId = collectionId {
-            self.loader = PlaceCollectionLoader()
+        } else {
+            loader!.start(collectionId: collectionId).subscribe { event in
+                switch event {
+                case let .success(collection):
+                    self.collection = collection
+                    self.headerView.titleView.text = collection.name
+                case let .error(error):
+                    self.alert(error: error)
+                }
+            }.disposed(by: disposeBag)
 
-            loader!.observe(collectionId: collectionId) { collection, error in
-                        if let collection = collection {
-                            self.collection = collection
-                            self.headerView.titleView.text = collection.name
-                        } else if let error = error {
-                            self.alert(error: error)
+            loader!.observe().subscribe { event in
+                switch event {
+                case let .next(items, more):
+                    self.items = items.compactMap({
+                        if let place = $0.place {
+                            return UserPlaceCollectionItem.place($0, place)
                         }
+                        return nil
+                    })
+                    if more {
+                        self.items.append(.loading)
                     }
-                    .subscribe { event in
-                        switch event {
-                        case let .next(items, more):
-                            self.items = items.compactMap({
-                                if let place = $0.place {
-                                    return UserPlaceCollectionItem.place($0, place)
-                                }
-                                return nil
-                            })
-                            if more {
-                                self.items.append(.loading)
-                            }
-                            self.tableView.reloadData()
+                    self.tableView.reloadData()
 
-                        case .error(let error):
-                            self.alert(error: error)
-                        case .completed:
-                            return
-                        }
-                    }
-                    .disposed(by: disposeBag)
+                case .error(let error):
+                    self.alert(error: error)
+
+                case .completed:
+                    return
+                }
+            }.disposed(by: disposeBag)
         }
     }
 
@@ -149,6 +162,71 @@ class UserPlaceCollectionController: UIViewController, UIGestureRecognizerDelega
         navigationController?.popViewController(animated: true)
     }
 
+    @objc func onEditButton(_ sender: Any) {
+        guard isUser, collection?.createdBy == UserPlaceCollection.CreatedBy.User else {
+            return
+        }
+
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "Edit Name", style: .default, handler: { action in
+            self.onActionEdit()
+        }))
+        alert.addAction(UIAlertAction(title: "Delete Collection", style: .destructive, handler: { action in
+            self.onActionDelete()
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        self.present(alert, animated: true)
+    }
+
+    func onActionEdit() {
+        let alertController = UIAlertController(title: "Edit Collection", message: "Enter name of collection", preferredStyle: .alert)
+        alertController.addTextField { (textField) in
+            textField.placeholder = "Enter Name"
+        }
+        alertController.addAction(UIAlertAction(title: "Update", style: .default) { (_) in
+            if let name = alertController.textFields?[0].text {
+                self.view.makeToastActivity(.center)
+
+                var collection = self.collection!
+                collection.name = name
+                self.collectionDatabase.update(collection: collection).subscribe { event in
+                    switch event {
+                    case let .success(collection):
+                        self.headerView.titleView.text = collection.name
+                        self.view.hideToastActivity()
+
+                    case let .error(error):
+                        self.alert(error: error)
+                    }
+                }.disposed(by: self.disposeBag)
+            }
+        })
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        self.present(alertController, animated: true, completion: nil)
+    }
+
+    func onActionDelete() {
+        let name: String = collection!.name
+        let alertController = UIAlertController(title: "Delete Collection", message: "Delete '\(name)' Collection", preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Confirm", style: .destructive) { (_) in
+            self.view.makeToastActivity(.center)
+
+            self.collectionDatabase.delete(collection: self.collection!).subscribe { event in
+                switch event {
+                case .success:
+                    self.navigationController?.popViewController(animated: true)
+
+                case let .error(error):
+                    self.alert(error: error)
+                }
+            }.disposed(by: self.disposeBag)
+        })
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        self.present(alertController, animated: true, completion: nil)
+    }
+
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
@@ -168,6 +246,15 @@ class UserPlaceCollectionController: UIViewController, UIGestureRecognizerDelega
             titleView.textAlignment = .center
             return titleView
         }()
+        fileprivate let editButton: UIButton = {
+            let button = UIButton()
+            button.setTitle("EDIT", for: .normal)
+            button.setTitleColor(UIColor(hex: "333333"), for: .normal)
+            button.titleLabel?.font = .systemFont(ofSize: 12, weight: .medium)
+            button.titleEdgeInsets.right = 24
+            button.contentHorizontalAlignment = .right
+            return button
+        }()
 
         override init(frame: CGRect = CGRect.zero) {
             super.init(frame: frame)
@@ -178,19 +265,30 @@ class UserPlaceCollectionController: UIViewController, UIGestureRecognizerDelega
             self.backgroundColor = .white
             self.addSubview(titleView)
             self.addSubview(backButton)
+            self.addSubview(editButton)
 
             titleView.snp.makeConstraints { make in
-                make.centerX.equalTo(self)
                 make.top.equalTo(self.safeArea.top)
                 make.bottom.equalTo(self)
+
+                make.centerX.equalTo(self)
                 make.height.equalTo(44)
             }
 
             backButton.snp.makeConstraints { make in
                 make.top.equalTo(self.safeArea.top)
-                make.left.equalTo(self)
                 make.bottom.equalTo(self)
+
+                make.left.equalTo(self)
                 make.width.equalTo(64)
+            }
+
+            editButton.snp.makeConstraints { make in
+                make.top.equalTo(self.safeArea.top)
+                make.bottom.equalTo(self)
+
+                make.right.equalTo(self)
+                make.width.equalTo(90)
             }
         }
 
