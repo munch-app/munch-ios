@@ -325,7 +325,7 @@ fileprivate class UserPlaceCollectionEmptyCell: UITableViewCell {
         let titleView = UILabel()
         titleView.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         titleView.textColor = UIColor.black.withAlphaComponent(0.8)
-        titleView.text = "There is no items in this Collection.".localized()
+        titleView.text = "There are no items in this Collection".localized()
         titleView.textAlignment = .center
         return titleView
     }()

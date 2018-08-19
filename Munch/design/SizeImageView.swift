@@ -41,7 +41,7 @@ class SizeImageView: UIImageView {
     }
 
     func render(image: Image?) {
-        render(sizes: image?.sizes ?? [])
+        self.render(sizes: image?.sizes ?? [])
     }
 
     func render(sizes: [Image.Size]) {

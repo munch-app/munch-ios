@@ -352,7 +352,7 @@ fileprivate class AddToCollectionCreateCell: UITableViewCell {
 
         leftImageView.render(named: "Collection-CreateNew")
         titleView.text = "Create a new collection".localized()
-        subtitleView.text = "Collect and share places in Munch".localized()
+        subtitleView.text = "Save and share places in Munch".localized()
     }
 
     required init?(coder aDecoder: NSCoder) {
