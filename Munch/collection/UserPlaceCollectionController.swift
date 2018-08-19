@@ -1,5 +1,5 @@
 //
-// Created by Fuxing Loh on 19/8/18.
+// ?Created by Fuxing Loh on 19/8/18.
 // Copyright (c) 2018 Munch Technologies. All rights reserved.
 //
 
@@ -15,7 +15,7 @@ import NVActivityIndicatorView
 
 import FirebaseAnalytics
 
-class UserPlaceCollectionController: UIViewController {
+class UserPlaceCollectionController: UIViewController, UIGestureRecognizerDelegate {
     private let headerView = HeaderView()
     private let tableView = UITableView()
 
@@ -60,6 +60,9 @@ class UserPlaceCollectionController: UIViewController {
         self.tableView.delegate = self
         self.tableView.dataSource = self
 
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+
         self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
 
         if let collection = collection {
@@ -73,6 +76,9 @@ class UserPlaceCollectionController: UIViewController {
                         }
                         return nil
                     })
+                    if items.isEmpty {
+                        self.items = [.empty]
+                    }
                     self.tableView.reloadData()
 
                 case .error(let error):
@@ -201,6 +207,7 @@ class UserPlaceCollectionController: UIViewController {
 
 fileprivate enum UserPlaceCollectionItem {
     case loading
+    case empty
     case place(UserPlaceCollection.Item, Place)
 }
 
@@ -212,6 +219,7 @@ extension UserPlaceCollectionController: UITableViewDataSource, UITableViewDeleg
 
         register(cellClass: UserPlaceCollectionLoadingCell.self)
         register(cellClass: UserPlaceCollectionItemCell.self)
+        register(cellClass: UserPlaceCollectionEmptyCell.self)
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -227,7 +235,9 @@ extension UserPlaceCollectionController: UITableViewDataSource, UITableViewDeleg
         switch items[indexPath.row] {
         case .loading:
             return dequeue(cellClass: UserPlaceCollectionLoadingCell.self)
-        case let .place(item, place):
+        case .empty:
+            return dequeue(cellClass: UserPlaceCollectionEmptyCell.self)
+        case .place:
             return dequeue(cellClass: UserPlaceCollectionItemCell.self)
         }
     }
@@ -254,6 +264,8 @@ extension UserPlaceCollectionController: UITableViewDataSource, UITableViewDeleg
             (cell as? UserPlaceCollectionItemCell)?.render(item: item, place: place) {
                 self.actionMore(item: item)
             }
+        default:
+            return
         }
     }
 
@@ -300,6 +312,31 @@ fileprivate class UserPlaceCollectionLoadingCell: UITableViewCell {
         indicator.snp.makeConstraints { make in
             make.left.right.equalTo(self)
             make.height.equalTo(40)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+fileprivate class UserPlaceCollectionEmptyCell: UITableViewCell {
+    private let titleView: UILabel = {
+        let titleView = UILabel()
+        titleView.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        titleView.textColor = UIColor.black.withAlphaComponent(0.8)
+        titleView.text = "There is no items in this Collection.".localized()
+        titleView.textAlignment = .center
+        return titleView
+    }()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.addSubview(titleView)
+        titleView.snp.makeConstraints { make in
+            make.left.right.equalTo(self)
+            make.top.bottom.equalTo(self)
+            make.height.equalTo(60)
         }
     }
 

@@ -251,12 +251,6 @@ class UserPlaceCollectionItemDatabase {
 
     private func sendLocal(collection: UserPlaceCollection) {
         let items = get(collection: collection)
-
-        // If it's empty, wait for server reply
-        if items.isEmpty {
-            return
-        }
-
         self.observer?.on(.next(items))
     }
 
