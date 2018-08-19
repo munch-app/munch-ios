@@ -204,6 +204,7 @@ extension SearchSuggestController {
         let textControl: ControlProperty<String?> = self.headerView.textField.rx.text
         textControl
                 .debounce(0.3, scheduler: MainScheduler.instance)
+                .distinctUntilChanged()
                 .flatMapFirst { s -> Observable<[SearchSuggestType]> in
                     guard let text = s?.lowercased(), text.count > 2 else {
                         return Observable.just([.rowRecent])
