@@ -75,17 +75,3 @@ extension UIColor {
     static let secondary900 = UIColor(hex: "03723F")
     static let secondary950 = UIColor(hex: "036236")
 }
-
-let DefaultToastStyle: Toast_Swift.ToastStyle = {
-    var style = ToastStyle()
-    style.backgroundColor = UIColor.bgTag
-    style.cornerRadius = 5
-    style.imageSize = CGSize(width: 20, height: 20)
-    style.fadeDuration = 6.0
-    style.messageColor = UIColor.black.withAlphaComponent(0.85)
-    style.messageFont = UIFont.systemFont(ofSize: 15, weight: .regular)
-    style.messageNumberOfLines = 2
-    style.messageAlignment = .left
-
-    return style
-}()

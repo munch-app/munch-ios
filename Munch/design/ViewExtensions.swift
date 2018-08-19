@@ -5,6 +5,7 @@
 
 import Foundation
 import UIKit
+import Toast_Swift
 
 import SnapKit
 import Moya
@@ -29,6 +30,44 @@ extension UIViewController {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
         present(alert, animated: true)
+    }
+}
+
+let DefaultToastStyle: Toast_Swift.ToastStyle = {
+    var style = ToastStyle()
+    style.backgroundColor = UIColor.bgTag
+    style.cornerRadius = 5
+    style.imageSize = CGSize(width: 20, height: 20)
+    style.fadeDuration = 6.0
+    style.messageColor = UIColor.black.withAlphaComponent(0.85)
+    style.messageFont = UIFont.systemFont(ofSize: 15, weight: .regular)
+    style.messageNumberOfLines = 2
+    style.messageAlignment = .left
+
+    return style
+}()
+
+extension UIViewController {
+    enum ToastImage {
+        case named(String)
+        case checkmark
+        case close
+
+        var image: UIImage? {
+            switch self {
+            case .checkmark:
+                return UIImage(named: "RIP-Toast-Checkmark")
+            case .close:
+                return UIImage(named: "RIP-Toast-Close")
+            case .named(let name):
+                return UIImage(named: name)
+            }
+        }
+    }
+
+
+    func makeToast(_ text: String, image: ToastImage) {
+        self.view.makeToast(text, image: image.image, style: DefaultToastStyle)
     }
 }
 

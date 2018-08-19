@@ -10,7 +10,7 @@ import RxSwift
 import Crashlytics
 
 enum UserPlaceCollectionService {
-    case list(Int, String?) // size, next.sort
+    case list(Int, Int?) // size, next.sort
     case get(String)
 
     case post(UserPlaceCollection)
@@ -18,7 +18,8 @@ enum UserPlaceCollectionService {
     case delete(String) // collectionId
 
     // ITEMS
-    case itemsList(String, Int, String?) // collectionId, size, next.sort
+    case itemsList(String, Int, Int?) // collectionId, size, next.sort
+    case itemsGet(String, String) // collectionId, placeId
     case itemsPut(String, String) // collectionId, placeId
     case itemsDelete(String, String) // collectionId, placeId
 }
@@ -28,15 +29,17 @@ extension UserPlaceCollectionService: TargetType {
         switch self {
         case .list, .post:
             return "/users/places/collections"
-        case let .get(collectionId), let .delete(collectionId), let .patch(collectionId, _), let .itemsList(collectionId, _, _):
+        case let .get(collectionId), let .delete(collectionId), let .patch(collectionId, _):
             return "/users/places/collections/\(collectionId)"
-        case let .itemsPut(collectionId, placeId), let .itemsDelete(collectionId, placeId):
-            return "/users/places/collections/\(collectionId)/\(placeId)"
+        case let .itemsList(collectionId, _, _):
+            return "/users/places/collections/\(collectionId)/items"
+        case let .itemsPut(collectionId, placeId), let .itemsDelete(collectionId, placeId), let .itemsGet(collectionId, placeId):
+            return "/users/places/collections/\(collectionId)/items/\(placeId)"
         }
     }
     var method: Moya.Method {
         switch self {
-        case .list, .get, .itemsList:
+        case .list, .get, .itemsList, .itemsGet:
             return .get
         case .post:
             return .post
@@ -51,10 +54,14 @@ extension UserPlaceCollectionService: TargetType {
     var task: Task {
         switch self {
         case let .list(size, next), let .itemsList(_, size, next):
-            return .requestParameters(parameters: ["size": size, "next.sort": next as Any], encoding: URLEncoding.default)
+            var parameters: [String: Any] = ["size": size]
+            if let next = next {
+                parameters["next.sort"] = next
+            }
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
         case let .patch(_, collection), let .post(collection):
             return .requestJSONEncodable(collection)
-        case .get, .delete, .itemsDelete, .itemsPut:
+        case .get, .delete, .itemsDelete, .itemsPut, .itemsGet:
             return .requestPlain
         }
     }
@@ -67,6 +74,7 @@ struct UserPlaceCollection: Codable {
 
     var name: String
     var description: String?
+    var image: Image?
 
     var access: Access
     var createdBy: CreatedBy
@@ -95,6 +103,7 @@ struct UserPlaceCollection: Codable {
         case User
         case Award
         case ForYou
+        case Default
         case Other
 
         /// Defensive Decoding
@@ -103,6 +112,7 @@ struct UserPlaceCollection: Codable {
             case "User": self = .User
             case "Award": self = .Award
             case "ForYou": self = .ForYou
+            case "Default": self = .Default
             default: self = .Other
             }
         }
@@ -114,5 +124,7 @@ struct UserPlaceCollection: Codable {
 
         var sort: Int
         var createdMillis: Int
+
+        var place: Place?
     }
 }

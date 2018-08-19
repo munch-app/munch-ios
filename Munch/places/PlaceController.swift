@@ -246,6 +246,8 @@ extension PlaceController: UIGestureRecognizerDelegate, SFSafariViewControllerDe
         case partnerInstagram
         case partnerArticle
 
+        case addedToCollection
+
         case direction
         case call
 
@@ -268,6 +270,8 @@ extension PlaceController: UIGestureRecognizerDelegate, SFSafariViewControllerDe
             case .map: return "click_map"
             case .partnerInstagram: return "click_partner_instagram"
             case .partnerArticle: return "click_partner_article"
+
+            case .addedToCollection: return "click_added_to_collection"
 
             case .direction: return "click_direction"
             case .call: return "click_call"
@@ -780,7 +784,23 @@ class PlaceAddButton: UIButton {
             switch state {
             case .loggedIn:
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                    // TODO, with action tracking
+                let controller = AddToCollectionController(place: place) { action in
+                    switch action {
+                    case .add(let collection):
+                        if let placeController = self.controller as? PlaceController {
+                            placeController.apply(click: .addedToCollection)
+                        }
+                        self.controller?.makeToast("Added to \(collection.name)", image: .checkmark)
+
+                    case .remove(let collection):
+                        self.controller?.makeToast("Removed from \(collection.name)", image: .checkmark)
+
+                    default:
+                        return
+                    }
+
+                }
+                self.controller?.present(controller, animated: true)
             default:
                 return
             }

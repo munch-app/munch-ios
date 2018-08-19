@@ -157,6 +157,13 @@ extension Moya.Response {
         return nil
     }
 
+    func mapNext(failsOnEmptyData: Bool = true) throws -> [String: Any]? {
+        if let json = try mapJSON(failsOnEmptyData: failsOnEmptyData) as? [String: Any], let next = json["next"] as? [String: Any] {
+            return next
+        }
+        return nil
+    }
+
     func mapJSON(atDataKeyPath keyPath: String, failsOnEmptyData: Bool = true) throws -> Any? {
         if let json = try mapJSON(failsOnEmptyData: failsOnEmptyData) as? [String: Any], let data = json["data"] as? [String: Any], let path = data[keyPath] {
             return path
@@ -231,5 +238,21 @@ extension UIViewController {
 
     private func alert(error: Meta.Error, moyaError: MoyaError) {
         alert(title: error.type ?? "Unhandled Error", message: error.message ?? moyaError.localizedDescription)
+    }
+}
+
+extension Error {
+    var type: String? {
+        if let error = self as? MoyaError {
+            switch error {
+            case let .underlying(_, response):
+                if let error = response?.meta.error {
+                    return error.type
+                }
+            default: break
+            }
+        }
+
+        return nil
     }
 }
