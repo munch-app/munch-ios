@@ -20,7 +20,7 @@ class AddToCollectionController: UIViewController {
     private let collectionDatabase = UserPlaceCollectionDatabase()
     private let itemDatabase = UserPlaceCollectionItemDatabase()
 
-    private var items: [AddToCollectionItem] = [.create]
+    private var items: [AddToCollectionItem] = [.create, .loading]
 
     private let place: Place
     private let onDismiss: ((AddToCollectionAction) -> Void)
@@ -349,8 +349,8 @@ fileprivate class AddToCollectionCreateCell: UITableViewCell {
         }
 
         leftImageView.render(named: "Collection-CreateNew")
-        titleView.text = "Create new collection".localized()
-        subtitleView.text = "Add places to this collection".localized()
+        titleView.text = "Create a new collection".localized()
+        subtitleView.text = "Collect and share places in Munch".localized()
     }
 
     required init?(coder aDecoder: NSCoder) {

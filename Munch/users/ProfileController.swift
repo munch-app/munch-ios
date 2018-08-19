@@ -6,6 +6,7 @@
 import Foundation
 import UIKit
 import Localize_Swift
+import RxSwift
 
 import SnapKit
 import NVActivityIndicatorView
@@ -31,18 +32,11 @@ class ProfileRootController: UINavigationController, UINavigationControllerDeleg
 
 class ProfileController: UIViewController {
     let headerView = ProfileHeaderView()
-    let collectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 18
+    let collectionView: UICollectionView = initCollection()
 
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.showsVerticalScrollIndicator = false
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.alwaysBounceVertical = true
-        collectionView.backgroundColor = UIColor.white
-        return collectionView
-    }()
+    let collectionDatabase = UserPlaceCollectionDatabase()
+    let disposeBag = DisposeBag()
+    var items: [ProfileTabDataType] = [.loading]
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -68,6 +62,7 @@ class ProfileController: UIViewController {
         super.viewDidLoad()
         self.initViews()
         self.initTabs()
+        self.initObserver()
 
         self.headerView.render()
         self.headerView.settingButton.addTarget(self, action: #selector(onActionSetting(_:)), for: .touchUpInside)
@@ -272,7 +267,7 @@ class ProfileHeaderView: UIView {
 // Header Scroll to Hide Functions
 extension ProfileHeaderView {
     var contentHeight: CGFloat {
-        return 55 + 40 + 44 // + 18 Because of top constraints
+        return 55 + 40 + 44
     }
 
     var maxHeight: CGFloat {

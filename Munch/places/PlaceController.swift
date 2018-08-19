@@ -320,7 +320,6 @@ extension PlaceController: UIGestureRecognizerDelegate, SFSafariViewControllerDe
             AnalyticsParameterItemCategory: click.name as NSObject
         ])
 
-        // TODO Actions Place Client Loaded Cards Migrations
         switch click {
         case .map:
             let controller = PlaceMapController(controller: self)

@@ -5,22 +5,42 @@
 
 import Foundation
 import UIKit
+import SnapKit
+
 import Toast_Swift
 import Localize_Swift
-
 import NVActivityIndicatorView
 
 import FirebaseAnalytics
 
-fileprivate enum ProfileTabDataType {
-    case createCollection
-    case collection
+enum ProfileTabDataType {
+    case collection(UserPlaceCollection)
+    case loading
 }
 
 extension ProfileController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    class func initCollection() -> UICollectionView {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 0
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.alwaysBounceVertical = true
+        collectionView.backgroundColor = UIColor.white
+        return collectionView
+    }
+
     func initTabs() {
-        self.collectionView.register(ProfileTabLoadingCell.self, forCellWithReuseIdentifier: "ProfileTabLoadingCell")
-        self.collectionView.register(ProfileTabCollectionCreateCell.self, forCellWithReuseIdentifier: "ProfileTabCollectionCreateCell")
+        func register(cellClass: UICollectionViewCell.Type) {
+            self.collectionView.register(cellClass, forCellWithReuseIdentifier: String(describing: cellClass))
+        }
+
+        register(cellClass: ProfileTabInsetCell.self)
+        register(cellClass: ProfileTabLoadingCell.self)
+        register(cellClass: ProfileTabCollectionItemCell.self)
 
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
@@ -35,104 +55,89 @@ extension ProfileController: UICollectionViewDataSource, UICollectionViewDelegat
         self.collectionView.addSubview(refreshControl)
     }
 
+    func initObserver() {
+        collectionDatabase.observe().subscribe { event in
+            switch event {
+            case .next(let items):
+                self.items = items.map({ ProfileTabDataType.collection($0) })
+                self.collectionView.reloadData()
+
+            case .error(let error):
+                self.alert(error: error)
+            case .completed:
+                return
+            }
+        }.disposed(by: disposeBag)
+    }
+
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 2
+        return 3
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch section {
-        case 0: return 0
-        case 1: return 1 // Loader & Space Filler Cell
-        default: return 0
+        case 1:
+            return self.items.count
+        default:
+            return 1 // Top, Bottom
         }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        if (section == 0) {
-            return UIEdgeInsets(top: 18, left: 24, bottom: 18, right: 24)
-        }
-        return .zero
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if indexPath.section == 1 {
-            return CGSize(width: UIScreen.main.bounds.width - 24 * 2, height: 40)
-        }
+        switch indexPath.section {
+        case 1:
+            return CGSize(width: UIScreen.main.bounds.width, height: 60 + 24)
 
-        return .zero
-        /*
-        switch dataLoader.items[indexPath.row] {
-        case .collection:
-            fallthrough
-        case .createCollection:
-            return CGSize(width: self.squareWidth, height: self.squareWidth)
-        case .emptyLike:
-            return CGSize(width: UIScreen.main.bounds.width - 24 * 2, height: self.squareWidth)
+        default:
+            return CGSize(width: UIScreen.main.bounds.width, height: 12)
         }
-        */
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if indexPath.section == 1 {
-            return
-        }
-        return
-
-        /*
-        switch dataLoader.items[indexPath.row] {
-        case .createCollection:
-            let alert = UIAlertController(title: "Create New Collection", message: "Enter a name for this new collection", preferredStyle: .alert)
-            alert.addTextField { textField in
-                textField.text = nil
-            }
-            alert.addAction(.init(title: "CANCEL", style: .destructive))
-            alert.addAction(.init(title: "OK", style: .default) { action in
-                let textField = alert.textFields![0]
-                var collection = PlaceCollection()
-                collection.privacy = "public"
-                collection.name = textField.text
-
-                MunchApi.collections.post(collection: collection) { meta, collection in
-                    if meta.isOk(), let collection = collection {
-                        self.dataLoader.collections.insert([collection], at: 0)
-                        self.collectionView.reloadData()
-
-                        Analytics.logEvent("collection_create", parameters: [
-                            "from": "profile" as NSObject,
-                        ])
-                    } else {
-                        self.present(meta.createAlert(), animated: true)
-                    }
+        switch (indexPath.section, indexPath.row) {
+        case (1, let row):
+            switch self.items[row] {
+            case .collection(let collection):
+                if let collectionId = collection.collectionId {
+                    // TODO
+//                let controller = CollectionPlaceController(collectionId: collectionId, placeCollection: placeCollection)
+//                self.navigationController?.pushViewController(controller, animated: true)
                 }
-            })
-            self.present(alert, animated: true, completion: nil)
-        case .collection(let placeCollection):
-            if let collectionId = placeCollection.collectionId {
-                let controller = CollectionPlaceController(collectionId: collectionId, placeCollection: placeCollection)
-                self.navigationController?.pushViewController(controller, animated: true)
+            default:
+                return
             }
         default:
             return
         }
-        */
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if indexPath.section == 1 {
-            return collectionView.dequeueReusableCell(withReuseIdentifier: "ProfileTabLoadingCell", for: indexPath)
+        func dequeue(cellClass: UICollectionViewCell.Type) -> UICollectionViewCell {
+            let identifier = String(describing: cellClass)
+            return collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath)
         }
 
-        return UICollectionViewCell()
-        /*
-        switch dataLoader.items[indexPath.row] {
-        case .collection(let placeCollection):
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AccountDataCollectionCell", for: indexPath) as! AccountDataCollectionCell
-            cell.render(collection: placeCollection)
-            return cell
-        case .createCollection:
-            return collectionView.dequeueReusableCell(withReuseIdentifier: "AccountDataCollectionCreateCell", for: indexPath)
+        switch (indexPath.section, indexPath.row) {
+        case (0, _):
+            fallthrough
+        case (2, _):
+            return dequeue(cellClass: ProfileTabInsetCell.self)
+
+        case (1, let row):
+            switch self.items[row] {
+            case .loading:
+                return dequeue(cellClass: ProfileTabLoadingCell.self)
+            case .collection(let collection):
+                let cell = dequeue(cellClass: ProfileTabCollectionItemCell.self) as! ProfileTabCollectionItemCell
+                cell.render(collection: collection)
+                return cell
+            }
+
+        default:
+            return UICollectionViewCell()
         }
-        */
+
+
     }
 
     @objc func collectionView(handleRefresh refreshControl: UIRefreshControl) {
@@ -166,45 +171,15 @@ extension ProfileController {
     }
 }
 
-/*
-extension AccountProfileController {
-    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        switch indexPath {
-        case [1, 0]:
-            self.appendLoad()
-        default: break
-        }
+fileprivate class ProfileTabInsetCell: UICollectionViewCell {
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
     }
 
-    private func appendLoad() {
-        if dataLoader.more, !dataLoader.isLoading {
-            let loadingCell = self.collectionView.cellForItem(at: .init(row: 0, section: 1)) as? AccountDataLoadingCell
-            loadingCell?.startAnimating()
-
-            dataLoader.append(delegate: self, load: { meta in
-                DispatchQueue.main.async {
-                    guard self.headerView.selectedType == self.dataLoader.selectedType else {
-                        return // User changed tab
-                    }
-
-                    if (meta.isOk()) {
-                        if (!self.dataLoader.more) {
-                            let loadingCell = self.collectionView.cellForItem(at: .init(row: 0, section: 1)) as? AccountDataLoadingCell
-                            loadingCell?.stopAnimating()
-                        }
-                        self.collectionView.reloadData()
-                    } else {
-                        self.present(meta.createAlert(), animated: true)
-                    }
-                }
-            })
-        } else {
-            let loadingCell = self.collectionView.cellForItem(at: .init(row: 0, section: 1)) as? AccountDataLoadingCell
-            loadingCell?.stopAnimating()
-        }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
-*/
 
 fileprivate class ProfileTabLoadingCell: UICollectionViewCell {
     private var indicator: NVActivityIndicatorView!
@@ -220,64 +195,7 @@ fileprivate class ProfileTabLoadingCell: UICollectionViewCell {
         indicator.snp.makeConstraints { make in
             make.left.right.equalTo(self)
             make.height.equalTo(40)
-        }
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func startAnimating() {
-        self.indicator.startAnimating()
-    }
-
-    func stopAnimating() {
-        self.indicator.stopAnimating()
-    }
-}
-
-fileprivate class ProfileTabCollectionCreateCell: UICollectionViewCell {
-    private let imageView: UIView = {
-        let view = UIView()
-        view.layer.cornerRadius = 2
-        view.backgroundColor = UIColor(hex: "AAAAAA")
-        return view
-    }()
-    private let nameLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Make A New Collection"
-        label.numberOfLines = 0
-        label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 16.0, weight: .medium)
-        return label
-    }()
-    private let descriptionLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Collect and share places in Munch"
-        label.numberOfLines = 0
-        label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 14.0, weight: .regular)
-        return label
-    }()
-
-    override init(frame: CGRect = .zero) {
-        super.init(frame: frame)
-        self.addSubview(imageView)
-        self.addSubview(nameLabel)
-        self.addSubview(descriptionLabel)
-
-        imageView.snp.makeConstraints { make in
-            make.edges.equalTo(self)
-        }
-
-        nameLabel.snp.makeConstraints { make in
-            make.top.equalTo(self).inset(8)
-            make.left.right.equalTo(self).inset(11)
-        }
-
-        descriptionLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(self).inset(8)
-            make.left.right.equalTo(self).inset(11)
+            make.centerY.equalTo(self)
         }
     }
 
@@ -286,130 +204,80 @@ fileprivate class ProfileTabCollectionCreateCell: UICollectionViewCell {
     }
 }
 
-/*
-fileprivate class AccountDataLikedPlaceCell: UICollectionViewCell {
-    private let gradientLayer: CAGradientLayer = {
-        let layer = CAGradientLayer()
-        return layer
+fileprivate class ProfileTabCollectionItemCell: UICollectionViewCell {
+    private let leftImageView: SizeShimmerImageView = {
+        let imageView = SizeShimmerImageView(points: 60, height: 60)
+        return imageView
     }()
 
-    private let imageGradientView: UIView = {
-        let imageGradientView = UIView()
-        imageGradientView.layer.cornerRadius = 2
-        imageGradientView.backgroundColor = .clear
-        return imageGradientView
+    private let titleView: UILabel = {
+        let titleView = UILabel()
+        titleView.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        titleView.textColor = .black
+        return titleView
     }()
-    private let imageView: ShimmerImageView = {
-        let view = ShimmerImageView()
-        view.layer.cornerRadius = 2
-        view.backgroundColor = UIColor(hex: "F0F0F0")
-        return view
+
+    private let subtitleView: UILabel = {
+        let titleView = UILabel()
+        titleView.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        titleView.textColor = .black
+        return titleView
     }()
-    private let nameLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 13.0, weight: .medium)
-        return label
+    private let checkedView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "Collection-Next")
+        imageView.tintColor = .black
+        return imageView
     }()
 
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
-        self.addSubview(imageView)
-        self.addSubview(imageGradientView)
-        self.addSubview(nameLabel)
+        self.addSubview(leftImageView)
 
-        imageGradientView.layer.insertSublayer(gradientLayer, at: 0)
-        imageGradientView.snp.makeConstraints { make in
-            make.bottom.equalTo(self)
-            make.left.right.equalTo(self)
-            make.height.equalTo(30)
+        let rightView = UIView()
+        self.addSubview(rightView)
+        rightView.addSubview(titleView)
+        rightView.addSubview(subtitleView)
+        rightView.addSubview(checkedView)
+
+        leftImageView.snp.makeConstraints { make in
+            make.left.equalTo(self).inset(24)
+            make.top.bottom.equalTo(self).inset(12)
+            make.width.equalTo(60)
+            make.height.equalTo(60)
         }
 
-        imageView.snp.makeConstraints { make in
-            make.edges.equalTo(self)
+        rightView.snp.makeConstraints { make in
+            make.left.equalTo(leftImageView.snp.right).inset(-18)
+            make.right.equalTo(checkedView).inset(-18)
+            make.centerY.equalTo(leftImageView)
         }
 
-        nameLabel.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(11)
-            make.bottom.equalTo(self).inset(8)
+        titleView.snp.makeConstraints { make in
+            make.left.right.equalTo(rightView)
+            make.top.equalTo(rightView)
         }
-    }
 
-    func render(likedPlace: LikedPlace) {
-        imageView.render(sourcedImage: likedPlace.place.images?.get(0))
-        nameLabel.text = likedPlace.place.name
-    }
+        subtitleView.snp.makeConstraints { make in
+            make.left.right.equalTo(rightView)
+            make.top.equalTo(titleView.snp.bottom).inset(-2)
+            make.bottom.equalTo(rightView)
+        }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        self.gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.55).cgColor]
-        self.gradientLayer.cornerRadius = 2
-        self.gradientLayer.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: 30)
+        checkedView.snp.makeConstraints { make in
+            make.right.equalTo(self).inset(24)
+            make.width.height.equalTo(18)
+            make.centerY.equalTo(leftImageView)
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
 
-fileprivate class AccountDataCollectionCell: UICollectionViewCell {
-    private let imageView: ShimmerImageView = {
-        let view = ShimmerImageView()
-        view.layer.cornerRadius = 2
-        view.backgroundColor = UIColor(hex: "AAAAAA")
-        return view
-    }()
-    private let imageGradientView: UIView = {
-        let view = UIView()
-        view.layer.cornerRadius = 2
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.3)
-        return view
-    }()
-    private let nameLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 0
-        label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 16.0, weight: .medium)
-        return label
-    }()
-    private let descriptionLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 0
-        label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 14.0, weight: .regular)
-        return label
-    }()
-
-    override init(frame: CGRect = .zero) {
-        super.init(frame: frame)
-        self.addSubview(imageView)
-        self.addSubview(imageGradientView)
-        self.addSubview(nameLabel)
-        self.addSubview(descriptionLabel)
-
-        imageView.snp.makeConstraints { make in
-            make.edges.equalTo(self)
-        }
-
-        imageGradientView.snp.makeConstraints { make in
-            make.edges.equalTo(self)
-        }
-
-        nameLabel.snp.makeConstraints { make in
-            make.top.equalTo(self).inset(8)
-            make.left.right.equalTo(self).inset(11)
-        }
-
-        descriptionLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(self).inset(8)
-            make.left.right.equalTo(self).inset(11)
-        }
-    }
-
-    func render(collection: PlaceCollection) {
-        nameLabel.text = collection.name
-        descriptionLabel.text = "\(collection.count ?? 0) Places"
-        imageView.render(images: collection.thumbnail)
+    func render(collection: UserPlaceCollection) {
+        self.leftImageView.render(image: collection.image)
+        self.titleView.text = collection.name
+        self.subtitleView.text = "\(collection.count ?? 0) places"
     }
 }
-*/
