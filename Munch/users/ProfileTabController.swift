@@ -40,6 +40,7 @@ extension ProfileController: UICollectionViewDataSource, UICollectionViewDelegat
         }
 
         register(cellClass: ProfileTabInsetCell.self)
+        register(cellClass: ProfileTabCollectionCreateCell.self)
         register(cellClass: ProfileTabLoadingCell.self)
         register(cellClass: ProfileTabCollectionItemCell.self)
 
@@ -77,16 +78,22 @@ extension ProfileController: UICollectionViewDataSource, UICollectionViewDelegat
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch section {
+        case 0:
+            return 2
         case 1:
             return self.items.count
+        case 2:
+            return 1
         default:
-            return 1 // Top, Bottom
+            return 0
         }
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        switch indexPath.section {
-        case 1:
+        switch (indexPath.section, indexPath.row) {
+        case (0, 1):
+            fallthrough
+        case (1, _):
             return CGSize(width: UIScreen.main.bounds.width, height: 60 + 24)
 
         default:
@@ -96,6 +103,9 @@ extension ProfileController: UICollectionViewDataSource, UICollectionViewDelegat
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch (indexPath.section, indexPath.row) {
+        case (0, 1):
+            self.actionCreate()
+
         case (1, let row):
             switch self.items[row] {
             case .collection(let collection):
@@ -116,6 +126,9 @@ extension ProfileController: UICollectionViewDataSource, UICollectionViewDelegat
         }
 
         switch (indexPath.section, indexPath.row) {
+        case (0, 1):
+            return dequeue(cellClass: ProfileTabCollectionCreateCell.self)
+
         case (0, _):
             fallthrough
         case (2, _):
@@ -134,8 +147,35 @@ extension ProfileController: UICollectionViewDataSource, UICollectionViewDelegat
         default:
             return UICollectionViewCell()
         }
+    }
 
+    private func actionCreate() {
+        let alertController = UIAlertController(title: "Create Collection", message: "Enter name of collection", preferredStyle: .alert)
+        alertController.addTextField { (textField) in
+            textField.placeholder = "Enter Name"
+        }
+        alertController.addAction(UIAlertAction(title: "Create", style: .default) { (_) in
+            if let name = alertController.textFields?[0].text {
+                let collection = UserPlaceCollection(
+                        collectionId: nil,
+                        userId: nil,
+                        sort: nil,
+                        name: name,
+                        description: nil,
+                        image: nil,
+                        access: .Public,
+                        createdBy: .User,
+                        createdMillis: nil,
+                        updatedMillis: nil,
+                        count: nil
+                )
+                self.collectionDatabase.create(collection: collection)
+            }
+        })
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
 
+        //finally presenting the dialog box
+        self.present(alertController, animated: true, completion: nil)
     }
 
     @objc func collectionView(handleRefresh refreshControl: UIRefreshControl) {
@@ -196,6 +236,70 @@ fileprivate class ProfileTabLoadingCell: UICollectionViewCell {
             make.height.equalTo(40)
             make.centerY.equalTo(self)
         }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+fileprivate class ProfileTabCollectionCreateCell: UICollectionViewCell {
+    private let leftImageView: SizeShimmerImageView = {
+        let imageView = SizeShimmerImageView(points: 60, height: 60)
+        imageView.tintColor = UIColor.black
+        return imageView
+    }()
+
+    private let titleView: UILabel = {
+        let titleView = UILabel()
+        titleView.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        titleView.textColor = .black
+        return titleView
+    }()
+
+    private let subtitleView: UILabel = {
+        let titleView = UILabel()
+        titleView.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        titleView.textColor = .black
+        return titleView
+    }()
+
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        self.addSubview(leftImageView)
+
+        let rightView = UIView()
+        self.addSubview(rightView)
+        rightView.addSubview(titleView)
+        rightView.addSubview(subtitleView)
+
+        leftImageView.snp.makeConstraints { make in
+            make.left.equalTo(self).inset(24)
+            make.top.bottom.equalTo(self).inset(12)
+            make.width.equalTo(60)
+            make.height.equalTo(60)
+        }
+
+        rightView.snp.makeConstraints { make in
+            make.left.equalTo(leftImageView.snp.right).inset(-18)
+            make.right.equalTo(self).inset(24)
+            make.centerY.equalTo(leftImageView)
+        }
+
+        titleView.snp.makeConstraints { make in
+            make.left.right.equalTo(rightView)
+            make.top.equalTo(rightView)
+        }
+
+        subtitleView.snp.makeConstraints { make in
+            make.left.right.equalTo(rightView)
+            make.top.equalTo(titleView.snp.bottom).inset(-2)
+            make.bottom.equalTo(rightView)
+        }
+
+        leftImageView.render(named: "Collection-CreateNew")
+        titleView.text = "Create a new collection".localized()
+        subtitleView.text = "Save and share places in Munch".localized()
     }
 
     required init?(coder aDecoder: NSCoder) {
