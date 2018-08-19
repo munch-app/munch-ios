@@ -53,6 +53,7 @@ class ProfileController: UIViewController {
         if Authentication.isAuthenticated() {
             self.headerView.render()
             self.collectionView.reloadData()
+            self.collectionDatabase.sendLocal()
         } else {
             self.tabBarController?.selectedIndex = 0
         }

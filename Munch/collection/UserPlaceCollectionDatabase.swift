@@ -55,6 +55,36 @@ class UserPlaceCollectionDatabase {
         self.observer?.on(.next(collections))
     }
 
+    func get(collectionId: String, withCompletion: @escaping (SingleEvent<UserPlaceCollection>) -> ()) {
+        provider.rx.request(.get(collectionId))
+                .map { response -> UserPlaceCollection in
+                    return try response.map(data: UserPlaceCollection.self)
+                }.subscribe { event in
+                    switch event {
+                    case let .success(collection):
+                        let realm = try! Realm()
+                        try! realm.write {
+                            let objects = realm.objects(UserPlaceCollectionObject.self).filter("collectionId == '\(collectionId)'")
+                            realm.delete(objects)
+
+                            let object = UserPlaceCollectionObject()
+                            object.collectionId = collection.collectionId!
+                            object.sort = collection.sort!
+                            object.updatedMillis = collection.updatedMillis!
+                            object.data = try! self.encoder.encode(collection)
+                            realm.add(object)
+                        }
+                        self.sendLocal()
+                        withCompletion(.success(collection))
+
+                    case let .error(error):
+                        self.observer?.on(.error(error))
+                        withCompletion(.error(error))
+                    }
+                }
+                .disposed(by: disposeBag)
+    }
+
     private func refresh() {
         var collected: [UserPlaceCollection] = []
 
@@ -208,7 +238,7 @@ class UserPlaceCollectionItemDatabase {
         let realm = try! Realm()
         let objects = realm.objects(UserPlaceCollectionItemObject.self)
                 .filter("collectionId == '\(collection.collectionId!)'")
-                .sorted(byKeyPath: "sort", ascending: false)
+                .sorted(byKeyPath: "sort", ascending: true)
 
         return Array(objects).map { (object: UserPlaceCollectionItemObject) -> UserPlaceCollection.Item in
             return UserPlaceCollection.Item(collectionId: object.collectionId,

@@ -6,6 +6,7 @@
 import Foundation
 import UIKit
 import SnapKit
+import RxSwift
 
 import Toast_Swift
 import Localize_Swift
@@ -98,11 +99,8 @@ extension ProfileController: UICollectionViewDataSource, UICollectionViewDelegat
         case (1, let row):
             switch self.items[row] {
             case .collection(let collection):
-                if let collectionId = collection.collectionId {
-                    // TODO
-//                let controller = CollectionPlaceController(collectionId: collectionId, placeCollection: placeCollection)
-//                self.navigationController?.pushViewController(controller, animated: true)
-                }
+                let controller = UserPlaceCollectionController(collection: collection)
+                self.navigationController?.pushViewController(controller, animated: true)
             default:
                 return
             }
@@ -141,6 +139,7 @@ extension ProfileController: UICollectionViewDataSource, UICollectionViewDelegat
     }
 
     @objc func collectionView(handleRefresh refreshControl: UIRefreshControl) {
+        self.collectionDatabase.sendLocal()
         collectionView.reloadData()
         refreshControl.endRefreshing()
     }

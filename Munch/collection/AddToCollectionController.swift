@@ -250,8 +250,10 @@ extension AddToCollectionController: UITableViewDataSource, UITableViewDelegate 
                 return
             }
 
-            self.onDismiss(AddToCollectionAction.add(collection))
-            self.dismiss(animated: true)
+            self.collectionDatabase.get(collectionId: collection.collectionId!) { event in
+                self.onDismiss(AddToCollectionAction.add(collection))
+                self.dismiss(animated: true)
+            }
         }
     }
 
