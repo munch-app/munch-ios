@@ -41,6 +41,7 @@ class PlaceCollectionLoader {
         guard more, let collectionId = self.collection?.collectionId else {
             return
         }
+        self.more = false
 
         provider.rx.request(.itemsList(collectionId, 15, next))
                 .map { response throws -> (Int?, [UserPlaceCollection.Item]) in
