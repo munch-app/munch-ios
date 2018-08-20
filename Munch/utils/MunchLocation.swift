@@ -50,11 +50,12 @@ public class MunchLocation {
             case .notDetermined:
                 Locator.requestAuthorizationIfNeeded(.whenInUse)
             case .disabled:
-                if let url = URL(string: "App-Prefs:root=Privacy&path=LOCATION") {
+                if let url = URL(string: "\(UIApplicationOpenSettingsURLString)&path=LOCATION") {
                     UIApplication.shared.open(url)
                 }
             case .denied:
-                if let url = URL(string: "App-Prefs:root=Privacy&path=LOCATION/co.munch.MunchApp") {
+                if let bundleId = Bundle.main.bundleIdentifier,
+                   let url = URL(string: "\(UIApplicationOpenSettingsURLString)&path=LOCATION/\(bundleId)") {
                     UIApplication.shared.open(url)
                 }
             default: break
