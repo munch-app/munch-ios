@@ -404,6 +404,15 @@ class UserPlaceCollectionItemDatabase {
                             let objects = realm.objects(UserPlaceCollectionItemObject.self)
                                     .filter("collectionId == '\(item.collectionId)' AND placeId == '\(item.placeId)'")
                             realm.delete(objects)
+
+                            if let object = realm.objects(UserPlaceCollectionObject.self).filter("collectionId == '\(item.collectionId)'").first {
+                                var collection = try! self.decoder.decode(UserPlaceCollection.self, from: object.data!)
+                                if let count = collection.count, count > 0 {
+                                    collection.count = count - 1
+                                }
+                                object.data = try! self.encoder.encode(collection)
+
+                            }
                         }
                         onComplete(nil)
                         self.sendLocal(collection: collection)
