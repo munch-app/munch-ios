@@ -346,12 +346,13 @@ extension PlacePartnerInstagramCard: UICollectionViewDataSource, UICollectionVie
 }
 
 fileprivate class PlacePartnerInstagramCardCell: UICollectionViewCell {
-    private let imageView: ShimmerImageView = {
-        let imageView = ShimmerImageView()
+    private let imageView: SizeImageView = {
+        let imageView = SizeImageView(points: PlacePartnerInstagramCard.width, height: PlacePartnerInstagramCard.width)
         imageView.layer.cornerRadius = 4
         imageView.tintColor = .white
         return imageView
     }()
+
     private let authorLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
@@ -384,13 +385,13 @@ fileprivate class PlacePartnerInstagramCardCell: UICollectionViewCell {
     }
 
     func render(media: InstagramMedia) {
-        imageView.render(images: media.images) { (image, error, type, url) -> Void in
-            if image == nil {
-                self.imageView.render(named: "RIP-No-Image")
-            }
+        if let image = media.image {
+            imageView.render(image: image)
+        } else {
+            imageView.render(named: "RIP-No-Image")
         }
 
-        authorLabel.text = "@\(media.username ?? "")"
+        authorLabel.text = "@\(media.user?.username ?? "")"
     }
 
     override func layoutSubviews() {

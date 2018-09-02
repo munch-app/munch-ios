@@ -49,8 +49,13 @@ extension PlacePartnerService: TargetType {
         switch self {
         case .articles(_, let next, let size):
             return .requestParameters(parameters: ["size": size, "next.placeSort": next as Any], encoding: URLEncoding.default)
-        case .medias(_, let next, let size):
-            return .requestParameters(parameters: ["size": size, "next.placeSort": next as Any], encoding: URLEncoding.default)
+
+        case .medias(_, let sort, let size):
+            var parameters: [String: Any] = ["size": size]
+            if sort != nil {
+                parameters["next.sort"] = sort
+            }
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
         }
     }
 }
@@ -72,19 +77,22 @@ struct Article: Codable {
 }
 
 struct InstagramMedia: Codable {
-    var userId: String?
+    var accountId: String?
     var mediaId: String?
+    var link: String?
 
-    var locationId: String?
+    var image: Image?
 
-    var placeId: String?
-    var placeSort: String?
-    var placeName: String?
-
+    var user: User?
     var type: String?
     var caption: String?
-    var username: String?
-    var profilePicture: String?
 
-    var images: [String: String]?
+    var createdMillis: Int?
+
+    struct User: Codable {
+        var userId: String?
+        var username: String?
+        var fullName: String?
+        var profileImage: Image?
+    }
 }

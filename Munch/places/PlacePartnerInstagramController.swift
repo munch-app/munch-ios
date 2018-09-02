@@ -117,8 +117,13 @@ extension PlacePartnerInstagramController: UITableViewDataSource, UITableViewDel
     }
 
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        if let height = cachedHeight[indexPath.row] {
-            return height
+        switch (indexPath.section, indexPath.row) {
+        case (0, let row):
+            if let image = medias[row].image, let size = image.sizes.first {
+                let modifier: CGFloat = PlacePartnerInstagramControllerCell.width / CGFloat(size.width)
+                return CGFloat(size.height) * modifier
+            }
+        default: break
         }
         return UITableViewAutomaticDimension
     }
@@ -142,7 +147,7 @@ extension PlacePartnerInstagramController: UITableViewDataSource, UITableViewDel
         }
 
         let media = medias[indexPath.row]
-        if let username = media.username, let url = URL(string: "https://instagram.com/" + username) {
+        if let link = media.link, let url = URL(string: link) {
             let safari = SFSafariViewController(url: url)
             safari.delegate = self
             self.present(safari, animated: true, completion: nil)
@@ -169,8 +174,8 @@ extension PlacePartnerInstagramController {
 
             provider.rx.request(.medias(self.place.placeId, self.nextPlaceSort, 20))
                     .map { response throws -> ([InstagramMedia], String?) in
-                        let placeSort = (try? response.map([String: String].self, atKeyPath: "next", failsOnEmptyData: false))?["placeSort"]
-                        return try (response.map(data: [InstagramMedia].self), placeSort)
+                        let sort = try response.mapNext(atKeyPath: "sort") as? String
+                        return try (response.map(data: [InstagramMedia].self), sort)
                     }.subscribe { event in
                         switch event {
                         case .success(let medias, let nextPlaceSort):
@@ -190,12 +195,10 @@ extension PlacePartnerInstagramController {
 }
 
 fileprivate class PlacePartnerInstagramControllerCell: UITableViewCell {
-    let bannerImageView: ShimmerImageView = {
-        let imageView = ShimmerImageView()
+    static let width = UIScreen.main.bounds.width - 48
+    let bannerImageView: SizeImageView = {
+        let imageView = SizeImageView(points: width, height: width)
         imageView.tintColor = .white
-
-        let width = UIScreen.main.bounds.width - 48
-        imageView.size = CGSize(width: width, height: width)
         return imageView
     }()
     private let authorLabel: UIButton = {
@@ -276,18 +279,19 @@ fileprivate class PlacePartnerInstagramControllerCell: UITableViewCell {
     }
 
     func render(media: InstagramMedia, controller: PlacePartnerInstagramController, indexPath: IndexPath) {
-        bannerImageView.render(images: media.images) { (image, error, type, url) -> Void in
-            if image == nil {
-                self.bannerImageView.render(named: "RIP-No-Image")
-            }
+        // Dynamic Image Sizing
+        if let image = media.image {
+            bannerImageView.render(image: image)
+        } else {
+            bannerImageView.render(named: "RIP-No-Image")
         }
 
-        authorLabel.setTitle("@\(media.username ?? "")", for: .normal)
+        authorLabel.setTitle("@\(media.user?.username ?? "")", for: .normal)
 
         descriptionLabel.text = media.caption
         descriptionLabel.sizeToFit()
 
-        readMoreButton.text = "More from @\(media.username ?? "")"
+        readMoreButton.text = "More from @\(media.user?.username ?? "")"
     }
 
     fileprivate override func layoutSubviews() {
