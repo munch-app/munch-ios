@@ -17,6 +17,7 @@ target 'Munch' do
   pod 'SnapKit', '~> 4.0'
   pod 'SwiftRichString', '~> 1.0'
   pod 'Cache'
+  pod 'Localize-Swift'
 
   # Firebase
   pod 'Firebase/Core'

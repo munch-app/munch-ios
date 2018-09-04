@@ -8,6 +8,8 @@
 
 import Foundation
 import UIKit
+
+import Localize_Swift
 import ESTabBarController_swift
 
 
@@ -23,61 +25,38 @@ enum InitialViewProvider {
         return TabBarController()
     }
 
-    fileprivate static func search() -> UIViewController {
-        let controller = DiscoverNavigationalController()
-        controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "Discover", image: UIImage(named: "TabBar-Search"))
+    fileprivate static func search() -> SearchRootController {
+        let controller = SearchRootController()
+        controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "Search".localized(), image: UIImage(named: "TabBar-Search"))
         return controller
     }
 
-    fileprivate static func account() -> UIViewController {
-        let controller = AccountController()
-        controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "Profile", image: UIImage(named: "TabBar-Profile"))
+    fileprivate static func profile() -> ProfileRootController {
+        let controller = ProfileRootController()
+        controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "Profile".localized(), image: UIImage(named: "TabBar-Profile"))
         return controller
     }
 }
 
-class TabBarController: ESTabBarController, UITabBarControllerDelegate {
-    var previousController: UIViewController?
-    var sameTabCounter = 0
-
-    let searchController = InitialViewProvider.search()
-    let accountController = InitialViewProvider.account()
-
-    init() {
-        super.init(nibName: nil, bundle: nil)
-        tabBar.isTranslucent = false
-        tabBar.backgroundColor = UIColor.white
-        tabBar.shadowImage = UIImage()
-        tabBar.backgroundImage = UIImage()
-        tabBar.shadow(vertical: -2)
-        tabBar.frame = tabBar.frame.offsetBy(dx: 0, dy: -10)
-
-        self.delegate = self
-        self.viewControllers = [searchController, accountController]
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
+// MARK: TabBar Selecting
+extension TabBarController {
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         switch viewController {
-        case is AccountController where Authentication.isAuthenticated():
+        case is ProfileRootController where Authentication.isAuthenticated():
             return true
 
-        case is AccountController where !Authentication.isAuthenticated():
+        case is ProfileRootController where !Authentication.isAuthenticated():
             Authentication.requireAuthentication(controller: self) { state in
                 switch state {
                 case .loggedIn:
-                    tabBarController.selectedViewController = self.accountController
-                default:
-                    return
+                    tabBarController.selectedViewController = viewController
+                default: return
                 }
             }
             return false
 
-        case let nav as UINavigationController:
-            if let controller = nav.topViewController as? DiscoverController {
+        case let root as SearchRootController:
+            if let controller = root.topViewController as? SearchController {
                 if (self.previousController == viewController) {
                     sameTabCounter += 1
                     if (sameTabCounter >= 2) {
@@ -89,25 +68,46 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
                 self.previousController = viewController
             }
             return true
+
         default: return true
         }
     }
+}
 
-    var discoverController: DiscoverController? {
-        if let controllers = viewControllers {
-            for controller in controllers {
-                if let controller = (controller as? UINavigationController)?.topViewController as? DiscoverController {
-                    return controller
-                }
-            }
-        }
-        return nil
+// MARK: TabBar Styling
+class TabBarController: ESTabBarController, UITabBarControllerDelegate {
+    var previousController: UIViewController?
+    var sameTabCounter = 0
+
+    let searchRoot = InitialViewProvider.search()
+    let profileRoot = InitialViewProvider.profile()
+
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        tabBar.isTranslucent = false
+        tabBar.backgroundColor = UIColor.white
+        tabBar.shadowImage = UIImage()
+        tabBar.backgroundImage = UIImage()
+        tabBar.shadow(vertical: -2)
+        tabBar.frame = tabBar.frame.offsetBy(dx: 0, dy: -10)
+
+        self.delegate = self
+        self.viewControllers = [searchRoot, profileRoot]
+    }
+
+    var searchController: SearchController {
+        return searchRoot.searchController
+    }
+
+    var profileController: ProfileController {
+        return profileRoot.profileController
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
-/**
- Main tab bar content styling
- */
 class MunchTabBarContentView: ESTabBarItemContentView {
     override init(frame: CGRect) {
         super.init(frame: frame)
