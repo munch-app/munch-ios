@@ -256,7 +256,8 @@ class UserPlaceCollectionItemDatabase {
                     placeId: object.placeId,
                     sort: object.sort,
                     createdMillis: object.createdMillis,
-                    place: try? decoder.decode(Place.self, from: object.place!))
+                    place: try? decoder.decode(Place.self, from: object.place!),
+                    award: nil)
         }
     }
 

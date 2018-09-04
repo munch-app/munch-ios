@@ -10,7 +10,7 @@ import SnapKit
 import SwiftyJSON
 import FirebaseAnalytics
 
-/*class PlaceExtendedPlaceAwardCard: PlaceCardView {
+class PlaceExtendedPlaceAwardCard: PlaceCardView {
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
@@ -27,16 +27,16 @@ import FirebaseAnalytics
         return collectionView
     }()
 
-    private var awardList = [JSON]()
+    private var items = [UserPlaceCollection.Item]()
 
     override func didLoad(card: PlaceCard) {
-        self.awardList = card.data["contents"].array ?? []
+        self.items = card.decode(name: "contents", [UserPlaceCollection.Item].self) ?? []
         self.addSubview(collectionView)
 
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
 
-        if (!awardList.isEmpty) {
+        if (!items.isEmpty) {
             collectionView.snp.makeConstraints { make in
                 make.top.bottom.equalTo(self).inset(topBottom)
                 make.height.equalTo(50).priority(999)
@@ -56,31 +56,23 @@ import FirebaseAnalytics
     }
 
     override class var cardId: String? {
-        return "extended_PlaceAward_20180506"
+        return "extended_Award_20180904"
     }
 }
 
 extension PlaceExtendedPlaceAwardCard: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return awardList.count
+        return items.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PlaceExtendedPlaceAwardCardCell", for: indexPath) as! PlaceExtendedPlaceAwardCardCell
-        cell.render(award: awardList[indexPath.row])
+        cell.render(item: items[indexPath.row])
         return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let award = awardList[indexPath.row]
-        if let collectionId = award["collectionId"].string, let userId = award["userId"].string {
-            let controller = CollectionPlaceController(userId: userId, collectionId: collectionId)
-            self.controller.navigationController?.pushViewController(controller, animated: true)
-        }
-
-        Analytics.logEvent("rip_action", parameters: [
-            AnalyticsParameterItemCategory: "click_award" as NSObject
-        ])
+        self.controller.apply(click: .award(items[indexPath.row].collectionId))
     }
 }
 
@@ -116,11 +108,11 @@ fileprivate class PlaceExtendedPlaceAwardCardCell: UICollectionViewCell {
         }
     }
 
-    func render(award: JSON) {
-        labelView.text = award["awardName"].string
+    func render(item: UserPlaceCollection.Item) {
+        labelView.text = item.award?.name
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}*/
+}

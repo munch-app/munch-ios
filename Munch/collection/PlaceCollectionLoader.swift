@@ -26,6 +26,7 @@ class PlaceCollectionLoader {
                 }.do(onSuccess: { collection in
                     self.collection = collection
                     self.more = true
+                    self.loadMore()
                 })
     }
 

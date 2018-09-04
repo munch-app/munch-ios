@@ -198,8 +198,7 @@ extension PlaceController: UITableViewDelegate, UITableViewDataSource {
         register(PlaceBasicWebsiteCard.self)
 
         // Register Extended Loaded Cards
-        // TODO Add back PlaceAward Card when ready
-//        register(PlaceExtendedPlaceAwardCard.self)
+        register(PlaceExtendedPlaceAwardCard.self)
 
         // Register Suggest Edit Cards
         register(PlaceSuggestEditCard.self)
@@ -264,6 +263,7 @@ extension PlaceController: UIGestureRecognizerDelegate, SFSafariViewControllerDe
         case partnerInstagramItem(Int)
         case partnerArticleItem(Int)
         case menuImageItem(Int)
+        case award(String)
 
         var name: String {
             switch self {
@@ -292,6 +292,9 @@ extension PlaceController: UIGestureRecognizerDelegate, SFSafariViewControllerDe
                 return "click_partner_article_item(\(count))"
             case .menuImageItem(let count):
                 return "click_menu_image_item(\(count))"
+
+            case .award(let collectionId):
+                return "click_award(\(collectionId)"
             }
         }
     }
@@ -332,6 +335,10 @@ extension PlaceController: UIGestureRecognizerDelegate, SFSafariViewControllerDe
         case .partnerArticle:
             let controller = PlacePartnerArticleController(controller: self, articles: [], nextPlaceSort: nil)
             self.navigationController!.pushViewController(controller, animated: true)
+
+        case .award(let collectionId):
+            let controller = UserPlaceCollectionController(collectionId: collectionId)
+            self.navigationController?.pushViewController(controller, animated: true)
 
         case .suggestEdit: self.clickSuggestEdit()
         case .direction: self.clickDirection()
