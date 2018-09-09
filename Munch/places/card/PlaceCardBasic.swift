@@ -91,7 +91,7 @@ class PlaceBasicImageBannerCard: PlaceCardView {
         }
 
         pageTitleView.snp.makeConstraints { make in
-            make.width.equalTo(32)
+//            make.width.equalTo(32)
             make.right.equalTo(self.collectionView).inset(leftRight)
             make.bottom.equalTo(self.collectionView).inset(topBottom)
         }
