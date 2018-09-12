@@ -188,7 +188,7 @@ extension SearchFilterType.Category {
         case .cuisine: return ["Singaporean", "Japanese", "Italian", "Thai", "Chinese", "Korean", "Mexican", "Mediterranean"]
         case .moreCuisine: return ["Chinese", "Singaporean", "Western", "Italian", "Japanese", "Indian", "Cantonese", "Thai", "Korean", "English", "Fusion", "Asian", "Hainanese", "American", "French", "Hong Kong", "Teochew", "Taiwanese", "Malaysian", "Mexican", "Shanghainese", "Indonesian", "Vietnamese", "European", "Peranakan", "Sze Chuan", "Spanish", "Middle Eastern", "Modern European", "Filipino", "Turkish", "Hakka", "German", "Mediterranean", "Swiss", "Hawaiian", "Australian"]
         case .establishment: return ["Hawker", "Drinks", "Bakery", "Dessert", "Snacks", "Cafe", "Bars & Pubs", "Fast Food", "BBQ", "Buffet", "Hotpot & Steamboat", "High Tea", "Fine Dining"]
-        case .amenities: return ["Romantic", "Supper", "Brunch", "Business Meal", "Scenic View", "Child-Friendly", "Large Group", "Vegetarian Options", "Halal", "Healthy", "Alcohol", "Vegetarian", "Private Dining", "Budget", "Pet-Friendly", "Live Music", "Vegan", "Vegan Options"]
+        case .amenities: return ["Romantic", "Supper", "Brunch", "Business Meal", "Scenic View", "Child-Friendly", "Large Group", "Vegetarian Options", "Halal", "Healthy", "Alcohol", "Vegetarian", "Private Dining", "Value For Money", "Pet-Friendly", "Live Music", "Vegan", "Vegan Options"]
         }
     }
 
