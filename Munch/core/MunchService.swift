@@ -52,20 +52,20 @@ class MunchProvider<Target>: MoyaProvider<Target> where Target: Moya.TargetType 
     public final class ErrorIntercept: PluginType {
         let data502: Data = {
             return try! JSON(["meta": ["code": 502, "error": [
-                "type": "ServiceUnavailable",
+                "type": "Service Unavailable",
                 "message": "Server temporary down, try again later."
             ]]]).rawData()
         }()
-        let data301: Data = {
+        let data410: Data = {
             return try! JSON(["meta": ["code": 410, "error": [
-                "type": "UnsupportedException",
+                "type": "App Update Required",
                 "message": "Your application version is not supported. Please update the app."
             ]]]).rawData()
         }()
         let data500: Data = {
-            return try! JSON(["meta": ["code": 410, "error": [
-                "type": "UnknownError",
-                "message": "Unknown Error"
+            return try! JSON(["meta": ["code": 500, "error": [
+                "type": "Unknown Error",
+                "message": "Try refreshing the page?"
             ]]]).rawData()
         }()
 
@@ -85,15 +85,12 @@ class MunchProvider<Target>: MoyaProvider<Target> where Target: Moya.TargetType 
                     return Result.failure(MoyaError.statusCode(response))
 
                 case 301, 410:
-                    let response = Response(statusCode: response.statusCode, data: data301)
-                    return Result.failure(MoyaError.statusCode(response))
-
-                case 500:
-                    let response = Response(statusCode: response.statusCode, data: data500)
+                    let response = Response(statusCode: response.statusCode, data: data410)
                     return Result.failure(MoyaError.statusCode(response))
 
                 default:
                     if let error = response.error {
+                        Crashlytics.sharedInstance().recordError(error)
                         return Result.failure(MoyaError.underlying(error, response))
                     }
                     return result
@@ -135,7 +132,7 @@ class MunchProvider<Target>: MoyaProvider<Target> where Target: Moya.TargetType 
     }
 
     public init() {
-        super.init(requestClosure: MunchProvider.requestMapping, plugins: [ErrorIntercept(), LoggingPlugin()])
+        super.init(requestClosure: MunchProvider.requestMapping, plugins: [LoggingPlugin(), ErrorIntercept()])
     }
 }
 

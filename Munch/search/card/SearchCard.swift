@@ -95,10 +95,24 @@ class SearchCardManager {
                         self.append(contents: cards)
                         self.more = !cards.isEmpty
                         self.from += self.size
+
                     case .error(let error):
-                        self.cards.append(SearchStaticErrorCard.create(type: .error(error)))
+                        if let error = error as? MoyaError {
+                            switch error {
+                            case let .statusCode(response):
+                                let type = response.meta.error?.type ?? "Unknown Error"
+                                let message = response.meta.error?.message
+                                self.cards.append(SearchStaticErrorCard.create(type: .message(type, message)))
+
+                            case let .underlying(error, _):
+                                self.cards.append(SearchStaticErrorCard.create(type: .error(error)))
+
+                            default: break
+                            }
+                        }
                         self.more = false
                     }
+
                     self.loading = false
                     observer()
                 })
