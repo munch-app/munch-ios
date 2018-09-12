@@ -479,7 +479,7 @@ extension FilterCount {
                            postfix: String = "Restaurants".localized()) -> String {
         if count == 0 {
             return empty
-        } else if count > 100 {
+        } else if count >= 100 {
             return "\(prefix) 100+ \(postfix)"
         } else if count <= 10 {
             return "\(prefix) \(count) \(postfix)"
