@@ -69,7 +69,7 @@ class AccountBoardingController: UIViewController {
         OnboardingData(backgroundImage: UIImage(named: "Onboarding-Bg-1"),
                 backgroundColor: UIColor(hex: "fcab5a"), contextImage: nil,
                 title: "Welcome to Munch".localized(),
-                description: "Whether you're looking for the perfect date spot or the hottest bar in town - Munch helps you answer the question:\\n\\n<bold>'What do you want to eat?'</bold>".localized()),
+                description: "Whether you're looking for the perfect date spot or the hottest bar in town - Munch helps you answer the question:\n\n<bold>'What do you want to eat?'</bold>".localized()),
 
         OnboardingData(backgroundImage: UIImage(named: "Onboarding-Bg-2"),
                 backgroundColor: UIColor(hex: "46b892"), contextImage: UIImage(named: "Onboarding-Singapore"),
