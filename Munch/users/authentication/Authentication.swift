@@ -23,7 +23,7 @@ public class Authentication {
 
     public class func getToken(withCompletion: @escaping (_ token: String?) -> Void) {
         if let currentUser = Auth.auth().currentUser {
-            currentUser.getIDTokenForcingRefresh(true) { idToken, error in
+            currentUser.getIDTokenForcingRefresh(false) { idToken, error in
                 // Handle Error if Any
                 if let error = error {
                     Crashlytics.sharedInstance().recordError(error)
