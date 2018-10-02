@@ -80,6 +80,8 @@ class PlaceController: UIViewController {
         self.cardTableView.delegate = self
         self.cardTableView.dataSource = self
 
+
+
         provider.rx.request(.cards(self.placeId))
                 .map { response throws -> ([PlaceCard], Place) in
                     let cards = try response.mapJSON(atDataKeyPath: "cards") as? [[String: Any]]

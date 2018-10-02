@@ -60,6 +60,17 @@ extension PlacePartnerService: TargetType {
     }
 }
 
+struct PlacePackage: Codable {
+    var place: Place
+    var articles: [Article]
+    var instagram: Instagram
+    // TODO: Awards
+
+    struct Instagram: Codable {
+        var medias: [InstagramMedia]
+    }
+}
+
 struct Article: Codable {
     var articleId: String?
     var articleListNo: String?
