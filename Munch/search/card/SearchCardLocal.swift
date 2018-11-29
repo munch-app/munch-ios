@@ -258,7 +258,7 @@ class SearchStaticUnsupportedCard: UITableViewCell, SearchCardView {
         }
 
         actionButton.layer.cornerRadius = 3
-        actionButton.backgroundColor = .primary
+        actionButton.backgroundColor = .primary500
         actionButton.setTitle("Update Munch".localized(), for: .normal)
         actionButton.contentEdgeInsets.left = 32
         actionButton.contentEdgeInsets.right = 32

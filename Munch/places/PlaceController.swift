@@ -510,10 +510,10 @@ fileprivate class PlaceBottomView: UIView {
     }
 
     static let openStyle = Style {
-        $0.color = UIColor.secondary
+        $0.color = UIColor.secondary500
     }
     static let closeStyle = Style {
-        $0.color = UIColor.primary
+        $0.color = UIColor.primary500
     }
 
     override init(frame: CGRect = CGRect.zero) {
@@ -531,11 +531,11 @@ fileprivate class PlaceBottomView: UIView {
 
         mainButton.setTitle("ACTION", for: .normal)
         mainButton.setTitleColor(.white, for: .normal)
-        mainButton.backgroundColor = .primary
+        mainButton.backgroundColor = .primary500
         mainButton.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         mainButton.layer.cornerRadius = 3
         mainButton.layer.borderWidth = 1.0
-        mainButton.layer.borderColor = UIColor.primary.cgColor
+        mainButton.layer.borderColor = UIColor.primary500.cgColor
         mainButton.snp.makeConstraints { make in
             make.right.equalTo(self).inset(24)
             make.top.equalTo(self).inset(10)
@@ -634,7 +634,7 @@ fileprivate class PlaceBottomView: UIView {
 class PlaceHeaderView: UIView {
     private let toastStyle: ToastStyle = {
         var style = ToastStyle()
-        style.backgroundColor = UIColor.bgTag
+        style.backgroundColor = UIColor.whisper100
         style.cornerRadius = 5
         style.imageSize = CGSize(width: 20, height: 20)
         style.fadeDuration = 6.0
@@ -760,7 +760,7 @@ class PlaceHeaderView: UIView {
 class PlaceAddButton: UIButton {
     private let toastStyle: ToastStyle = {
         var style = ToastStyle()
-        style.backgroundColor = UIColor.bgTag
+        style.backgroundColor = UIColor.whisper100
         style.cornerRadius = 5
         style.imageSize = CGSize(width: 20, height: 20)
         style.fadeDuration = 6.0

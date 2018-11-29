@@ -268,11 +268,11 @@ class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
 
             tagBorderWidth = 0
             tagTextColor = UIColor.black.withAlphaComponent(0.88)
-            tagBackgroundColor = UIColor.bgTag
+            tagBackgroundColor = UIColor.whisper100
 
             tagSelectedBorderWidth = 0
             tagSelectedTextColor = UIColor.black.withAlphaComponent(0.88)
-            tagSelectedBackgroundColor = UIColor.bgTag
+            tagSelectedBackgroundColor = UIColor.whisper100
             tagSelectedCornerRadius = 3
 
             tagExtraSpace = PlaceBasicNameTagCard.size
@@ -320,11 +320,11 @@ class PlaceBasicNameTagCard: PlaceCardView, TTGTextTagCollectionViewDelegate {
 
 class PlaceBasicBusinessHourCard: PlaceCardView {
     static let openStyle = Style {
-        $0.color = UIColor.secondary
+        $0.color = UIColor.secondary500
         $0.font = UIFont.systemFont(ofSize: 17.0, weight: .semibold)
     }
     static let closeStyle = Style {
-        $0.color = UIColor.primary
+        $0.color = UIColor.primary500
         $0.font = UIFont.systemFont(ofSize: 17.0, weight: .semibold)
     }
     static let hourStyle = Style {

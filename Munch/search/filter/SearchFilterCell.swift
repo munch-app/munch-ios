@@ -58,7 +58,7 @@ class SearchFilterCellLocation: UITableViewCell {
     private let moreButton: UIButton = {
         let button = UIButton()
         button.setTitle("See All".localized(), for: .normal)
-        button.setTitleColor(UIColor.primary, for: .normal)
+        button.setTitleColor(UIColor.primary500, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
 
         button.contentHorizontalAlignment = .right
@@ -965,7 +965,7 @@ class SearchFilterCellTagMore: UITableViewCell {
         let titleLabel = UILabel()
         titleLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         titleLabel.text = "Show All"
-        titleLabel.textColor = UIColor.primary
+        titleLabel.textColor = UIColor.primary500
         return titleLabel
     }()
     private let moreImageView: UIImageView = {
@@ -1028,8 +1028,8 @@ class SearchFilterCellTag: UITableViewCell {
         checkButton.isEnabled = false
 
         checkButton.onCheckColor = .white
-        checkButton.onTintColor = .primary
-        checkButton.onFillColor = .primary
+        checkButton.onTintColor = .primary500
+        checkButton.onFillColor = .primary500
         return checkButton
     }()
     private let sizeLabel: UILabel = {

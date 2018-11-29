@@ -190,19 +190,19 @@ fileprivate class SearchPlaceCardBottomView: UIView {
     })
     static let closingSoonText = "Closing Soon".localized().set(style: Style {
         $0.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-        $0.color = UIColor.primary
+        $0.color = UIColor.primary500
     })
     static let closedNowText = "Closed Now".localized().set(style: Style {
         $0.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-        $0.color = UIColor.primary
+        $0.color = UIColor.primary500
     })
     static let openingSoonText = "Opening Soon".localized().set(style: Style {
         $0.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-        $0.color = UIColor.secondary
+        $0.color = UIColor.secondary500
     })
     static let openNowText = "Open Now".localized().set(style: Style {
         $0.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-        $0.color = UIColor.secondary
+        $0.color = UIColor.secondary500
     })
 
     override init(frame: CGRect = CGRect()) {

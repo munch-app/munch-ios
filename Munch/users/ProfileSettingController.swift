@@ -179,7 +179,7 @@ extension ProfileSettingController: UITableViewDataSource, UITableViewDelegate {
         header.tintColor = .white
         header.textLabel!.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
         header.textLabel!.textColor = UIColor.black
-        header.backgroundView?.backgroundColor = .bgTag
+        header.backgroundView?.backgroundColor = .whisper100
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -309,8 +309,8 @@ fileprivate class SettingPreferenceTagCell: UITableViewCell {
         checkButton.isEnabled = false
 
         checkButton.onCheckColor = .white
-        checkButton.onTintColor = .primary
-        checkButton.onFillColor = .primary
+        checkButton.onTintColor = .primary500
+        checkButton.onFillColor = .primary500
         return checkButton
     }()
 

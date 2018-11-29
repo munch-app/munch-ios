@@ -35,7 +35,7 @@ extension UIViewController {
 
 let DefaultToastStyle: Toast_Swift.ToastStyle = {
     var style = ToastStyle()
-    style.backgroundColor = UIColor.bgTag
+    style.backgroundColor = UIColor.whisper100
     style.cornerRadius = 5
     style.imageSize = CGSize(width: 20, height: 20)
     style.fadeDuration = 6.0

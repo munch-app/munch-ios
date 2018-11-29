@@ -410,7 +410,7 @@ fileprivate class SearchFilterBottomView: UIView {
     fileprivate let applyBtn: UIButton = {
         let applyBtn = UIButton()
         applyBtn.layer.cornerRadius = 3
-        applyBtn.backgroundColor = .primary
+        applyBtn.backgroundColor = .primary500
         applyBtn.setTitleColor(.white, for: .normal)
         applyBtn.titleLabel!.font = UIFont.systemFont(ofSize: 15, weight: .medium)
         return applyBtn
@@ -449,10 +449,10 @@ fileprivate class SearchFilterBottomView: UIView {
             if count == 0 {
                 self.applyBtn.setTitle("No Results".localized(), for: .normal)
                 self.applyBtn.backgroundColor = .white
-                self.applyBtn.setTitleColor(.primary, for: .normal)
+                self.applyBtn.setTitleColor(.primary500, for: .normal)
             } else {
                 self.applyBtn.setTitle(FilterCount.countTitle(count: count), for: .normal)
-                self.applyBtn.backgroundColor = .primary
+                self.applyBtn.backgroundColor = .primary500
                 self.applyBtn.setTitleColor(.white, for: .normal)
             }
         } else {

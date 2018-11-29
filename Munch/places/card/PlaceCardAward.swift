@@ -45,7 +45,7 @@ class PlaceExtendedPlaceAwardCard: PlaceCardView {
         } else {
             let titleView = UILabel()
             titleView.text = "Error Loading Awards"
-            titleView.textColor = .primary
+            titleView.textColor = .primary500
             self.addSubview(titleView)
 
             titleView.snp.makeConstraints { make in

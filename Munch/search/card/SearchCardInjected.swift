@@ -52,7 +52,7 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
         }
 
         actionButton.layer.cornerRadius = 3
-        actionButton.backgroundColor = .primary
+        actionButton.backgroundColor = .primary500
         actionButton.setTitle("Enable Location".localized(), for: .normal)
         actionButton.contentEdgeInsets.left = 32
         actionButton.contentEdgeInsets.right = 32
@@ -77,7 +77,7 @@ class SearchNoLocationCard: UITableViewCell, SearchCardView {
                         switch event {
                         case .success:
                             self.actionButton.setTitle("Refresh Search", for: .normal)
-                            self.actionButton.backgroundColor = .secondary
+                            self.actionButton.backgroundColor = .secondary500
                         case .error(let error):
                             self.controller.alert(error: error)
                         }

@@ -133,7 +133,7 @@ class SearchSuggestCellAssumptionResult: UITableViewCell {
     struct TagTokenConfig: MunchTagViewConfig {
         let font = UIFont.systemFont(ofSize: 14.0, weight: .medium)
         let textColor = UIColor(hex: "222222")
-        let backgroundColor = UIColor.bgTag
+        let backgroundColor = UIColor.whisper100
         let extra = CGSize(width: 20, height: 13)
     }
 
@@ -368,7 +368,7 @@ extension SearchSuggestCellTextSuggest: UICollectionViewDataSource, UICollection
         override init(frame: CGRect = .zero) {
             super.init(frame: frame)
             self.addSubview(textLabel)
-            self.backgroundColor = .bgTag
+            self.backgroundColor = .whisper100
 
             textLabel.snp.makeConstraints { make in
                 make.left.right.equalTo(self).inset(SuggestTextCell.leftRight)
