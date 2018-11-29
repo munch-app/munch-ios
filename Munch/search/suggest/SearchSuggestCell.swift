@@ -5,6 +5,7 @@
 
 import Foundation
 import UIKit
+import SwiftRichString
 
 import SnapKit
 import FirebaseAnalytics
@@ -579,21 +580,21 @@ class SearchSuggestCellPlace: UITableViewCell {
 
         let string = NSMutableAttributedString()
         if let latLng = place.location.latLng, let distance = MunchLocation.distance(asMetric: latLng) {
-            string.append(distance.set(style: .default { make in
-                make.color = UIColor(hex: "606060")
+            string.append(distance.set(style: Style {
+                $0.color = UIColor(hex: "606060")
             }))
             string.append(NSAttributedString(string: ", "))
         }
 
         let locationName = place.location.neighbourhood ?? ""
-        string.append(locationName.set(style: .default { make in
-            make.color = UIColor(hex: "505050")
+        string.append(locationName.set(style: Style {
+            $0.color = UIColor(hex: "505050")
         }))
 
         if place.status.type != .open {
             string.append(NSAttributedString(string: ", "))
-            string.append(place.status.type.name.set(style: .default { make in
-                make.color = UIColor.primary500
+            string.append(place.status.type.name.set(style: Style {
+                $0.color = UIColor.primary500
             }))
         }
 

@@ -357,25 +357,24 @@ class SearchAreaClusterHeaderCard: UITableViewCell, SearchCardView {
     private(set) static var cardId: String = "injected_AreaClusterHeader_20180621"
 
     fileprivate class AddressLineView: SRCopyableView {
-        static let headerStyle = Style("open", {
+        static let headerStyle = Style{
             $0.color = UIColor.black
-            $0.font = FontAttribute(font: .systemFont(ofSize: 13.0, weight: .medium))
-        })
-        static let addressStyle = Style("close", {
+            $0.font = UIFont.systemFont(ofSize: 13.0, weight: .medium)
+        }
+        static let addressStyle = Style {
             $0.color = UIColor.black
-            $0.font = FontAttribute(font: .systemFont(ofSize: 15.0, weight: .regular))
-        })
-
-        static let countStyle = Style("close", {
+            $0.font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
+        }
+        static let countStyle = Style {
             $0.color = UIColor.black
-            $0.font = FontAttribute(font: .systemFont(ofSize: 15.0, weight: .regular))
-            $0.align = .center
-        })
-        static let placeStyle = Style("open", {
+            $0.alignment = .center
+            $0.font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
+        }
+        static let placeStyle = Style {
             $0.color = UIColor.black
-            $0.font = FontAttribute(font: .systemFont(ofSize: 13.0, weight: .medium))
-            $0.align = .center
-        })
+            $0.alignment = .center
+            $0.font = UIFont.systemFont(ofSize: 13.0, weight: .medium)
+        }
 
         static let height: CGFloat = 52
         static let rightWidth: CGFloat = 70
@@ -441,22 +440,22 @@ class SearchAreaClusterHeaderCard: UITableViewCell, SearchCardView {
     }
 
     fileprivate class HourLineView: UIView {
-        static let openStyle = Style("open", {
+        static let openStyle = Style {
             $0.color = UIColor.secondary
-            $0.font = FontAttribute(font: .systemFont(ofSize: 17.0, weight: .semibold))
-        })
-        static let closeStyle = Style("close", {
+            $0.font = UIFont.systemFont(ofSize: 17.0, weight: .semibold)
+        }
+        static let closeStyle = Style {
             $0.color = UIColor.primary
-            $0.font = FontAttribute(font: .systemFont(ofSize: 17.0, weight: .semibold))
-        })
-        static let hourStyle = Style("hour", {
+            $0.font = UIFont.systemFont(ofSize: 17.0, weight: .semibold)
+        }
+        static let hourStyle = Style {
             $0.color = UIColor.black
-            $0.font = FontAttribute(font: .systemFont(ofSize: 14, weight: .regular))
-        })
-        static let boldStyle = Style("bold", {
+            $0.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        }
+        static let boldStyle = Style {
             $0.color = UIColor.black
-            $0.font = FontAttribute(font: .systemFont(ofSize: 14, weight: .semibold))
-        })
+            $0.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        }
 
         private let leftLabel: UILabel = {
             let label = UILabel()

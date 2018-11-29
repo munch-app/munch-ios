@@ -7,15 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		032548622014831500F51D85 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 032548612014831500F51D85 /* GoogleService-Info.plist */; };
-		032548632014831500F51D85 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 032548612014831500F51D85 /* GoogleService-Info.plist */; };
-		032548642014831500F51D85 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 032548612014831500F51D85 /* GoogleService-Info.plist */; };
+		032270B221AFC67A00FA733C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B4B73BB2757D0BE5CC888EDA /* GoogleService-Info.plist */; };
 		032F88FC1E82DFA300AD3818 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F88FB1E82DFA300AD3818 /* AppDelegate.swift */; };
 		032F89031E82DFA300AD3818 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 032F89021E82DFA300AD3818 /* Assets.xcassets */; };
 		032F89061E82DFA300AD3818 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 032F89041E82DFA300AD3818 /* LaunchScreen.storyboard */; };
 		032F89111E82DFA300AD3818 /* MunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F89101E82DFA300AD3818 /* MunchTests.swift */; };
 		032F891C1E82DFA300AD3818 /* MunchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F891B1E82DFA300AD3818 /* MunchUITests.swift */; };
-		033E62F81F1D381F00AE97FA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 033E62F71F1D381F00AE97FA /* Main.storyboard */; };
 		03D3FEE21E8947D200ACFF50 /* MunchClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D3FEE01E8947D200ACFF50 /* MunchClientTests.swift */; };
 		03D3FEE41E89494300ACFF50 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89301E82EF8B00AD3818 /* Alamofire.framework */; };
 		03D3FEE51E89494600ACFF50 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F89331E82F14A00AD3818 /* SwiftyJSON.framework */; };
@@ -41,6 +38,7 @@
 		B4B733162CE1B0A62B893122 /* PlaceCardSuggest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B731D151BB6D9601680CD1 /* PlaceCardSuggest.swift */; };
 		B4B733B083D8DF8F2DDFF66D /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73695F4F2693D0E750704 /* ViewExtensions.swift */; };
 		B4B733C48DCACF9F5A977BE1 /* ProfileTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738C639DA188BF1AFD8CE /* ProfileTabController.swift */; };
+		B4B73487CEAE343636DE6A74 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B4B73BB2757D0BE5CC888EDA /* GoogleService-Info.plist */; };
 		B4B734CADB20622FE502984B /* SearchSuggestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73376F42AA38286FD7CFB /* SearchSuggestManager.swift */; };
 		B4B734EF0CB213199DFCBA63 /* SearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73045342B6980ED0FC2A2 /* SearchService.swift */; };
 		B4B73562BD47A7DF8D9334FC /* PlaceCardLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73FAD47BB85633497CC31 /* PlaceCardLocation.swift */; };
@@ -64,6 +62,7 @@
 		B4B73A71181051AAA885028F /* PlaceCardReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73FF474CDAC60816F2825 /* PlaceCardReview.swift */; };
 		B4B73B07AABF07B6FDE8D393 /* AccountBoardingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73A0BB710E2ACF0BB3BA8 /* AccountBoardingController.swift */; };
 		B4B73B6E1C087CED1A58117F /* BrandGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73A0BC5FD76AC914D048A /* BrandGuide.swift */; };
+		B4B73B972B7D33E163095E60 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B4B73BB2757D0BE5CC888EDA /* GoogleService-Info.plist */; };
 		B4B73BBC419593C4FD7A7F0A /* MunchTagCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7375F54B00CC6DF37E159 /* MunchTagCollectionView.swift */; };
 		B4B73C3AB908951BEF2451FF /* PlaceCollectionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73A8D9255EEE7A5009815 /* PlaceCollectionLoader.swift */; };
 		B4B73C41A4C3F3BA7EFF5AB4 /* PlaceCardBasic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7328A63C083C2FD99C847 /* PlaceCardBasic.swift */; };
@@ -112,7 +111,6 @@
 		031C2F411E9AADDB0022F0AF /* NYTPhotoViewerCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NYTPhotoViewerCore.framework; path = Carthage/Build/iOS/NYTPhotoViewerCore.framework; sourceTree = "<group>"; };
 		031C2F431E9AEFC10022F0AF /* FLAnimatedImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLAnimatedImage.framework; path = Carthage/Build/iOS/FLAnimatedImage.framework; sourceTree = "<group>"; };
 		031C2F451E9CAE170022F0AF /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
-		032548612014831500F51D85 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		032F88F81E82DFA300AD3818 /* Munch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Munch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		032F88FB1E82DFA300AD3818 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		032F89021E82DFA300AD3818 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -208,6 +206,7 @@
 		B4B73B64C65657ADAF5CF301 /* PlaceService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceService.swift; sourceTree = "<group>"; };
 		B4B73B8C080EA9D51F87FE13 /* MunchLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchLocation.swift; sourceTree = "<group>"; };
 		B4B73B9D662F15799EE0F2ED /* SearchCardInstagram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardInstagram.swift; sourceTree = "<group>"; };
+		B4B73BB2757D0BE5CC888EDA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.info; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B4B73BC576ED59153B1056A9 /* SearchSuggestController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchSuggestController.swift; sourceTree = "<group>"; };
 		B4B73BC96A97609AEE2FB5D5 /* PlaceCardStatic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardStatic.swift; sourceTree = "<group>"; };
 		B4B73BF6B8D464037F4FC986 /* ProfileSettingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileSettingController.swift; sourceTree = "<group>"; };
@@ -289,7 +288,6 @@
 				032F89021E82DFA300AD3818 /* Assets.xcassets */,
 				032F89041E82DFA300AD3818 /* LaunchScreen.storyboard */,
 				032F89071E82DFA300AD3818 /* Info.plist */,
-				032548612014831500F51D85 /* GoogleService-Info.plist */,
 				B4B7378B383CC0C6448D2AB0 /* sources */,
 				B4B730682DB064058651EA33 /* users */,
 				B4B731FB6D67596B54B90179 /* places */,
@@ -298,6 +296,7 @@
 				B4B734760A49D43FBEAB4C2C /* design */,
 				B4B73BA986418DB88709209B /* utils */,
 				B4B736934E1DBDBE623B712F /* collection */,
+				B4B73BB2757D0BE5CC888EDA /* GoogleService-Info.plist */,
 			);
 			path = Munch;
 			sourceTree = "<group>";
@@ -576,8 +575,6 @@
 				032F89081E82DFA300AD3818 /* Sources */,
 				032F89091E82DFA300AD3818 /* Frameworks */,
 				032F890A1E82DFA300AD3818 /* Resources */,
-				6D41BE2C57BDC4B9DF15DA58 /* [CP] Embed Pods Frameworks */,
-				7C04B18D9AA74C95A9E9C8C9 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -597,8 +594,6 @@
 				032F89131E82DFA300AD3818 /* Sources */,
 				032F89141E82DFA300AD3818 /* Frameworks */,
 				032F89151E82DFA300AD3818 /* Resources */,
-				AF80B0809F9371F596742B74 /* [CP] Embed Pods Frameworks */,
-				12C71011B4719C6DB2FCC2A7 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -674,10 +669,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				03F5287520D8FC8800DF2604 /* Localizable.strings in Resources */,
+				032270B221AFC67A00FA733C /* GoogleService-Info.plist in Resources */,
 				032F89061E82DFA300AD3818 /* LaunchScreen.storyboard in Resources */,
 				032F89031E82DFA300AD3818 /* Assets.xcassets in Resources */,
-				033E62F81F1D381F00AE97FA /* Main.storyboard in Resources */,
-				032548622014831500F51D85 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -685,7 +679,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				032548632014831500F51D85 /* GoogleService-Info.plist in Resources */,
+				B4B73487CEAE343636DE6A74 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -693,7 +687,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				032548642014831500F51D85 /* GoogleService-Info.plist in Resources */,
+				B4B73B972B7D33E163095E60 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -711,7 +705,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Fabric/run\"";
+			shellScript = "\"${PODS_ROOT}/Fabric/run\"\n";
 		};
 		04E3203581C25708D74FE008 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -749,21 +743,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		12C71011B4719C6DB2FCC2A7 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MunchUITests/Pods-MunchUITests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		3E733620BF62C6A3F7EB9420 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -782,21 +761,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		6D41BE2C57BDC4B9DF15DA58 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MunchTests/Pods-MunchTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		7046F4ACF02FE6EFC14D06D9 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -813,9 +777,9 @@
 				"${BUILT_PRODUCTS_DIR}/ESTabBarController-swift/ESTabBarController_swift.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKCoreKit/FBSDKCoreKit.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKLoginKit/FBSDKLoginKit.framework",
-				"${BUILT_PRODUCTS_DIR}/GTMOAuth2/GTMOAuth2.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
 				"${BUILT_PRODUCTS_DIR}/KMNavigationBarTransition/KMNavigationBarTransition.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/Localize-Swift/Localize_Swift.framework",
@@ -826,6 +790,7 @@
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/Result/Result.framework",
+				"${BUILT_PRODUCTS_DIR}/RxAtomic/RxAtomic.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SKPhotoBrowser/SKPhotoBrowser.framework",
@@ -849,9 +814,9 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ESTabBarController_swift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKCoreKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKLoginKit.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMOAuth2.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KMNavigationBarTransition.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Localize_Swift.framework",
@@ -862,6 +827,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Result.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxAtomic.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SKPhotoBrowser.framework",
@@ -879,36 +845,6 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Munch/Pods-Munch-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		7C04B18D9AA74C95A9E9C8C9 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MunchTests/Pods-MunchTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		AF80B0809F9371F596742B74 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MunchUITests/Pods-MunchUITests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		EA522B14E4229C34A326768B /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -916,13 +852,13 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Munch/Pods-Munch-resources.sh",
-				$PODS_CONFIGURATION_BUILD_DIR/FirebaseUI/FirebaseAuthUI.bundle,
-				$PODS_CONFIGURATION_BUILD_DIR/FirebaseUI/FirebaseFacebookAuthUI.bundle,
-				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseUI/FirebaseAuthUI.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseUI/FirebaseFacebookAuthUI.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FirebaseAuthUI.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FirebaseFacebookAuthUI.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

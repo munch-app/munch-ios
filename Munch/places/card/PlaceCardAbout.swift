@@ -87,9 +87,9 @@ class PlaceBasicPhoneCard: PlaceCardView, SFSafariViewControllerDelegate {
             make.width.equalTo(70)
         }
 
-        phoneLabel.attributedText = phone?.set(style: .default { make in
-            make.font = FontAttribute(font: UIFont.systemFont(ofSize: 15.0, weight: .regular))
-            make.color = UIColor.black.withAlphaComponent(0.8)
+        phoneLabel.attributedText = phone?.set(style: Style {
+            $0.font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
+            $0.color = UIColor.black.withAlphaComponent(0.8)
         })
         phoneLabel.textAlignment = .right
         phoneLabel.numberOfLines = 1
@@ -175,9 +175,9 @@ class PlaceBasicWebsiteCard: PlaceCardView, SFSafariViewControllerDelegate {
         }
 
         let domain = card.string(name: "domain") ?? websiteUrl
-        websiteLabel.attributedText = domain?.set(style: .default { make in
-            make.font = FontAttribute(font: UIFont.systemFont(ofSize: 15.0, weight: .regular))
-            make.color = UIColor.black.withAlphaComponent(0.8)
+        websiteLabel.attributedText = domain?.set(style: Style {
+            $0.font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
+            $0.color = UIColor.black.withAlphaComponent(0.8)
         })
         websiteLabel.textAlignment = .right
         websiteLabel.numberOfLines = 1

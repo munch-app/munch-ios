@@ -3,49 +3,46 @@ platform :ios, '10.0'
 target 'Munch' do
   use_frameworks!
 
-  # Core Pods for Munch
-  pod 'RxSwift', '~> 4.0'
-  pod 'RxCocoa', '~> 4.0'
-  pod 'Moya', '~> 11.0'
-  pod 'Moya/RxSwift', '~> 11.0'
+  # Core Frameworks
+  pod 'RxSwift', '~> 4.4'
+  pod 'RxCocoa', '~> 4.4'
+  pod 'Moya', '~> 12.0'
+  pod 'Moya/RxSwift', '~> 12.0'
+  pod 'RealmSwift', '~> 3.12.0'
+  pod 'SnapKit', '~> 4.2'
 
-  pod 'RealmSwift', '~> 3.0'
-  pod 'Alamofire', '~> 4.5'
-  pod 'SwiftyJSON', '~> 4.0'
-  pod 'SwiftLocation', '~> 3.1'
-  pod 'Kingfisher', '~> 4.2'
-  pod 'SnapKit', '~> 4.0'
-  pod 'SwiftRichString', '~> 1.0'
+  # Core Helpers
+  pod 'SwiftLocation', '~> 3.2'
+  pod 'Kingfisher', '~> 4.10'
+  pod 'SwiftRichString', '~> 2.0.5'
   pod 'Cache'
   pod 'Localize-Swift'
 
-  # Firebase
+  # Firebase (Auth/Analytics)
   pod 'Firebase/Core'
   pod 'Firebase/Messaging'
   pod 'Firebase/Performance'
   pod 'Firebase/Auth'
   pod 'FirebaseUI/Facebook'
-  # TODO: Remove GoogleSignIn
-  pod 'GoogleSignIn'
-  pod 'Fabric', '~> 1.7.2'
-  pod 'Crashlytics', '~> 3.10.0'
-
-  # Transition Library
-  pod 'KMNavigationBarTransition', '~> 1.1'
+  pod 'Fabric', '~> 1.9.0'
+  pod 'Crashlytics', '~> 3.12.0'
 
   # UI Components Library
+  pod 'KMNavigationBarTransition', '~> 1.1'
   pod 'Shimmer'
-  pod 'Toast-Swift', '~> 3.0.1'
-
+  pod 'Toast-Swift', '~> 4.0.1'
   pod 'NVActivityIndicatorView', '~> 4.0'
-  pod 'ESTabBarController-swift', '2.5'
-  pod 'TTGTagCollectionView', :git => 'https://github.com/Fuxingloh/TTGTagCollectionView.git', :branch => 'master'
-
-  pod 'Charts'
-  pod 'SKPhotoBrowser', '~> 5.0'
-  pod 'Cosmos', '~> 13.0'
   pod 'BEMCheckBox', '~> 1.4'
   pod 'RangeSeekSlider', '~> 1.7'
+
+  # Deprecation:
+  pod 'Charts'
+  pod 'Alamofire', '~> 4.5'
+  pod 'SKPhotoBrowser', '~> 5.0'
+  pod 'Cosmos', '~> 13.0'
+  pod 'SwiftyJSON', '~> 4.0'
+  pod 'ESTabBarController-swift', '2.5'
+  pod 'TTGTagCollectionView', :git => 'https://github.com/Fuxingloh/TTGTagCollectionView.git', :branch => 'master'
 
   # Pods for Testing
   target 'MunchTests' do

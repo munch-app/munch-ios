@@ -14,7 +14,6 @@ import SwiftRichString
 
 import FBSDKCoreKit
 import FBSDKLoginKit
-import GoogleSignIn
 
 import Crashlytics
 import FirebaseAnalytics
@@ -109,7 +108,8 @@ class AccountBoardingController: UIViewController {
     private let headerIconLabel: UIButton = {
         let button = UIButton()
         button.isUserInteractionEnabled = false
-        button.setImage(UIImage(named: "Onboarding-Icon"), for: .normal)
+        button.setImage(UIImage(named: "Onboarding-Icon")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        button.tintColor = .white
         button.imageEdgeInsets.right = 24
         button.setTitle("Munch", for: .normal)
 
@@ -451,10 +451,10 @@ fileprivate class BoardingCardCell: UICollectionViewCell {
         return label
     }()
 
-    static let boldStyle = Style("bold", {
-        $0.align = .center
-        $0.font = FontAttribute.init(font: UIFont.systemFont(ofSize: 17, weight: .bold))
-    })
+    static let boldStyle = Style{
+        $0.alignment = .center
+        $0.font = UIFont.systemFont(ofSize: 17, weight: .bold)
+    }
 
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
@@ -499,8 +499,8 @@ fileprivate class BoardingCardCell: UICollectionViewCell {
 
         self.titleView.text = data.title
 
-        let parser = MarkupString(source: data.description, styles: [BoardingCardCell.boldStyle])!
-        self.descriptionView.attributedText = parser.render()
+        let myGroup = StyleGroup(["bold": BoardingCardCell.boldStyle])
+        self.descriptionView.attributedText = data.description.set(style: myGroup)
     }
 
     required init?(coder aDecoder: NSCoder) {

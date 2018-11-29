@@ -185,25 +185,25 @@ fileprivate class SearchPlaceCardBottomView: UIView {
 
     private var tagLabelWidth: Constraint!
 
-    static let periodText = " • ".set(style: Style("open", {
-        $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 15, weight: .ultraLight))
-    }))
-    static let closingSoonText = "Closing Soon".localized().set(style: Style("open", {
-        $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 13, weight: .semibold))
+    static let periodText = " • ".set(style: Style {
+        $0.font = UIFont.systemFont(ofSize: 15, weight: .ultraLight)
+    })
+    static let closingSoonText = "Closing Soon".localized().set(style: Style {
+        $0.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
         $0.color = UIColor.primary
-    }))
-    static let closedNowText = "Closed Now".localized().set(style: Style("open", {
-        $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 13, weight: .semibold))
+    })
+    static let closedNowText = "Closed Now".localized().set(style: Style {
+        $0.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
         $0.color = UIColor.primary
-    }))
-    static let openingSoonText = "Opening Soon".localized().set(style: Style("open", {
-        $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 13, weight: .semibold))
+    })
+    static let openingSoonText = "Opening Soon".localized().set(style: Style {
+        $0.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
         $0.color = UIColor.secondary
-    }))
-    static let openNowText = "Open Now".localized().set(style: Style("open", {
-        $0.font = FontAttribute(font: UIFont.systemFont(ofSize: 13, weight: .semibold))
+    })
+    static let openNowText = "Open Now".localized().set(style: Style {
+        $0.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
         $0.color = UIColor.secondary
-    }))
+    })
 
     override init(frame: CGRect = CGRect()) {
         super.init(frame: frame)

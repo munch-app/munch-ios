@@ -509,12 +509,12 @@ fileprivate class PlaceBottomView: UIView {
         }
     }
 
-    static let openStyle = Style("open", {
+    static let openStyle = Style {
         $0.color = UIColor.secondary
-    })
-    static let closeStyle = Style("close", {
+    }
+    static let closeStyle = Style {
         $0.color = UIColor.primary
-    })
+    }
 
     override init(frame: CGRect = CGRect.zero) {
         super.init(frame: frame)
