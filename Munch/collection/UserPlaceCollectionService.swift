@@ -126,7 +126,6 @@ struct UserPlaceCollection: Codable {
         var createdMillis: Int
 
         var place: Place?
-
         var award: Award?
 
         struct Award: Codable {

@@ -12,34 +12,16 @@ import Crashlytics
 
 enum PlaceService {
     case get(String)
-    case cards(String)
-}
-
-enum PlacePartnerService {
-    case articles(String, String?, Int)
-    case medias(String, String?, Int)
+    case images(String, String?)
+    case articles(String, String?)
 }
 
 extension PlaceService: TargetType {
     var path: String {
         switch self {
         case .get(let placeId): return "/places/\(placeId)"
-        case .cards(let placeId): return "/places/\(placeId)/cards"
-        }
-    }
-    var method: Moya.Method {
-        return .get
-    }
-    var task: Task {
-        return .requestPlain
-    }
-}
-
-extension PlacePartnerService: TargetType {
-    var path: String {
-        switch self {
-        case .articles(let placeId, _, _): return "/places/\(placeId)/partners/articles"
-        case .medias(let placeId, _, _): return "/places/\(placeId)/partners/instagram/medias"
+        case .images(let placeId, _): return "/places/\(placeId)/images"
+        case .articles(let placeId, _): return "/places/\(placeId)/articles"
         }
     }
     var method: Moya.Method {
@@ -47,63 +29,73 @@ extension PlacePartnerService: TargetType {
     }
     var task: Task {
         switch self {
-        case .articles(_, let next, let size):
-            return .requestParameters(parameters: ["size": size, "next.placeSort": next as Any], encoding: URLEncoding.default)
-
-        case .medias(_, let sort, let size):
-            var parameters: [String: Any] = ["size": size]
-            if sort != nil {
-                parameters["next.sort"] = sort
-            }
-            return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
+        case .get:
+            return .requestPlain
+        case .articles(_, let sort):
+            fallthrough
+        case .images(_, let sort):
+            return .requestParameters(parameters: ["next.sort": sort], encoding: URLEncoding.default)
         }
     }
 }
 
-struct PlacePackage: Codable {
+struct PlaceData: Codable {
     var place: Place
+    var awards: [UserPlaceCollection.Item]
     var articles: [Article]
-    var instagram: Instagram
-    // TODO: Awards
-
-    struct Instagram: Codable {
-        var medias: [InstagramMedia]
-    }
+    var images: [PlaceImage]
 }
 
 struct Article: Codable {
-    var articleId: String?
-    var articleListNo: String?
+    var articleId: String
+    var sort: String
 
-    var placeId: String?
-    var placeSort: String?
-    var placeName: String?
+    var domainId: String
+    var domain: Domain
 
-    var url: String?
-    var brand: String?
+    var url: String
     var title: String?
     var description: String?
 
-    var thumbnail: [String: String]?
-}
-
-struct InstagramMedia: Codable {
-    var accountId: String?
-    var mediaId: String?
-    var link: String?
-
-    var image: Image?
-
-    var user: User?
-    var type: String?
-    var caption: String?
-
+    var thumbnail: Image?
     var createdMillis: Int?
 
-    struct User: Codable {
-        var userId: String?
+    struct Domain: Codable {
+        var name: String
+        var url: String
+    }
+}
+
+struct PlaceImage: Codable {
+    var imageId: String
+    var sort: String
+    var sizes: [Image.Size]
+
+    var title: String?
+    var caption: String?
+
+    var article: Article?
+    var instagram: Instagram?
+    var createdMillis: Int?
+
+    struct Article: Codable {
+        var articleId: String
+        var url: String
+
+        var domainId: String
+        var domain: Domain
+
+        struct Domain: Codable {
+            var name: String
+            var url: String
+        }
+    }
+
+    struct Instagram: Codable {
+        var accountId: String
+        var mediaId: String
+
+        var link: String?
         var username: String?
-        var fullName: String?
-        var profileImage: Image?
     }
 }

@@ -56,17 +56,18 @@ extension TabBarController {
             return false
 
         case let root as SearchRootController:
-            if let controller = root.topViewController as? SearchController {
-                if (self.previousController == viewController) {
-                    sameTabCounter += 1
-                    if (sameTabCounter >= 2) {
-                        controller.scrollsToTop(animated: true)
-                    }
-                } else {
-                    sameTabCounter = 0
-                }
-                self.previousController = viewController
-            }
+            // TODO
+//            if let controller = root.topViewController as? SearchController {
+//                if (self.previousController == viewController) {
+//                    sameTabCounter += 1
+//                    if (sameTabCounter >= 2) {
+//                        controller.scrollsToTop(animated: true)
+//                    }
+//                } else {
+//                    sameTabCounter = 0
+//                }
+//                self.previousController = viewController
+//            }
             return true
 
         default: return true
@@ -95,11 +96,11 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
         self.viewControllers = [searchRoot, profileRoot]
     }
 
-    var searchController: SearchController {
+    var searchController: UIViewController {
         return searchRoot.searchController
     }
 
-    var profileController: ProfileController {
+    var profileController: UIViewController {
         return profileRoot.profileController
     }
 

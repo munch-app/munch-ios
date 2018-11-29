@@ -114,14 +114,14 @@ extension UserSetting {
 
     static let managed = ["halal", "vegetarian options"]
 
-    static func request(toPerm searchQuery: SearchQuery) -> String? {
-        for tag in searchQuery.filter.tag.positives {
-            if request(toPerm: tag) {
-                return tag
-            }
-        }
-        return nil
-    }
+//    static func request(toPerm searchQuery: SearchQuery) -> String? {
+//        for tag in searchQuery.filter.tag.positives {
+//            if request(toPerm: tag) {
+//                return tag
+//            }
+//        }
+//        return nil
+//    }
 
     static func request(toPerm tag: String) -> Bool {
         let tag = tag.lowercased()

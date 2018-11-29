@@ -10,7 +10,6 @@ struct Place: ElasticObject, Codable {
     var status: Status
 
     var name: String
-    var names: [String]
     var tags: [Tag]
 
     var phone: String?
@@ -19,7 +18,6 @@ struct Place: ElasticObject, Codable {
 
     var menu: Menu?
     var price: Price?
-    var counts: Counts?
 
     var location: Location
 
@@ -28,9 +26,6 @@ struct Place: ElasticObject, Codable {
     var areas: [Area]
 
     var createdMillis: Int?
-    var updatedMillis: Int?
-
-    var ranking: Double?
 
     struct Status: Codable {
         var type: StatusType
@@ -78,23 +73,6 @@ struct Place: ElasticObject, Codable {
     struct Price: Codable {
         var perPax: Double?
     }
-
-    struct Counts: Codable {
-        var article: Article?
-        var instagram: Instagram?
-
-        struct Article: Codable {
-            var profile: Int
-            var single: Int
-            var list: Int
-            var total: Int
-        }
-
-        struct Instagram: Codable {
-            var profile: Int
-            var total: Int
-        }
-    }
 }
 
 struct Area: ElasticObject, Codable {
@@ -102,7 +80,6 @@ struct Area: ElasticObject, Codable {
 
     var type: AreaType
     var name: String
-    var names: [String]?
 
     var website: String?
     var description: String?
@@ -113,21 +90,22 @@ struct Area: ElasticObject, Codable {
 
     var location: Location
 
-    var updatedMillis: Int?
-    var createdMillis: Int?
-
     enum AreaType: String, Codable {
         case City
+        case Superset
         case Region
         case Cluster
+        case Generated
         case Other
 
         /// Defensive Decoding
         init(from decoder: Decoder) throws {
             switch try decoder.singleValueContainer().decode(String.self) {
             case "City": self = .City
+            case "Superset": self = .Superset
             case "Region": self = .Region
             case "Cluster": self = .Cluster
+            case "Generated": self = .Generated
             default: self = .Other
             }
         }
@@ -146,19 +124,15 @@ extension Area {
                 polygon: Location.Polygon(points: points), landmarks: nil)
 
         return Area(
-                areaId: "singapore",
+                areaId: "30918bf3-eeaf-43f3-b27c-afc3128acd16",
                 type: .City,
                 name: "Singapore",
-                names: nil,
                 website: nil,
                 description: nil,
-                images: [],
-                hour: [],
+                images: nil,
+                hour: nil,
                 counts: nil,
-                location: location,
-                updatedMillis: nil,
-                createdMillis: nil
-        )
+                location: location)
     }
 }
 
@@ -168,9 +142,6 @@ struct Landmark: ElasticObject, Codable {
     var type: LandmarkType
     var name: String
     var location: Location
-
-    var updatedMillis: Int?
-    var createdMillis: Int?
 
     enum LandmarkType: String, Codable {
         case train
@@ -190,10 +161,6 @@ struct Tag: ElasticObject, Codable {
     var tagId: String
     var name: String
     var type: TagType
-
-    var names: [String]?
-    var createdMillis: Int?
-    var updatedMillis: Int?
 
     enum TagType: String, Codable {
         case Food
@@ -454,7 +421,4 @@ extension Array where Element == Hour {
 }
 
 protocol ElasticObject: Codable {
-//    var dataType: String { get }
-//    var createdMillis: Int { get }
-//    var updatedMillis: Int { get }
 }

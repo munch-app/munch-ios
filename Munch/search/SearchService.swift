@@ -12,18 +12,21 @@ import RealmSwift
 import Crashlytics
 
 enum SearchService {
-    case search(SearchQuery, Int, Int)
+    case search(SearchQuery, String, Int)
+
+    case qid(String)
+
+    case named(String)
+}
+
+enum SuggestService {
     case suggest(String, SearchQuery)
 }
 
 enum SearchFilterService {
     case count(SearchQuery)
-    case price(SearchQuery)
-}
-
-enum SearchFilterAreaService {
-    case head
-    case get
+    case areas
+    case betweenSearch(String)
 }
 
 extension SearchService: TargetType {
@@ -31,23 +34,47 @@ extension SearchService: TargetType {
         switch self {
         case .search:
             return "/search"
-        case .suggest:
-            return "/search/suggest"
+        case .named(let slug):
+            return "/search/named/\(slug)"
+        case .qid(let qid):
+            return "/search/qid/\(qid)"
         }
+    }
+    var method: Moya.Method {
+        switch self {
+        case .named:
+            return .get
+        case .qid:
+            return .get
+        case .search:
+            return .post
+        }
+    }
+    var task: Task {
+        switch self {
+        case let .search(searchQuery, screen, page):
+            return requestJSONQueryString(searchQuery, parameters: ["page": page, "screen": screen])
+        default:
+            return .requestPlain
+        }
+    }
+}
+
+extension SuggestService: TargetType {
+    var path: String {
+        return "/suggest"
     }
     var method: Moya.Method {
         return .post
     }
     var task: Task {
         switch self {
-        case let .search(searchQuery, from, size):
-            return requestJSONQueryString(searchQuery, parameters: ["from": from, "size": size])
         case let .suggest(text, searchQuery):
-            return .requestJSONEncodable(SearchSearchRequest(text: text, searchQuery: searchQuery))
+            return .requestJSONEncodable(SuggestPayload(text: text, searchQuery: searchQuery))
         }
     }
 
-    struct SearchSearchRequest: Codable {
+    struct SuggestPayload: Codable {
         var text: String
         var searchQuery: SearchQuery
     }
@@ -57,153 +84,70 @@ extension SearchFilterService: TargetType {
     var path: String {
         switch self {
         case .count:
-            return "/search/filter/count"
-        case .price:
-            return "/search/filter/price"
+            return "/search/filter"
+        case .areas:
+            return "/search/filter/areas"
+        case .betweenSearch:
+            return "/search/filter/between/search"
         }
     }
     var method: Moya.Method {
-        return .post
+        switch (self) {
+        case .areas:
+            return .get
+        default:
+            return .post
+        }
     }
     var task: Task {
         switch self {
         case .count(let searchQuery):
             return .requestJSONEncodable(searchQuery)
-        case .price(let searchQuery):
-            return .requestJSONEncodable(searchQuery)
+        case .areas:
+            return .requestPlain
+        case .betweenSearch(let text):
+            return .requestJSONEncodable(BetweenSearchPayload(text: text))
         }
+    }
+
+    struct BetweenSearchPayload: Codable {
+        var text: String
     }
 }
 
-extension SearchFilterAreaService: TargetType {
-    var path: String {
-        return "/search/filter/areas"
-    }
-    var method: Moya.Method {
-        switch self {
-        case .get:
-            return .get
-        case .head:
-            return .head
-        }
-    }
-    var task: Task {
-        return .requestPlain
-    }
-}
-
-class LocalAreaData: Object {
-    @objc dynamic var id: String = ""
-    @objc dynamic var name: String = ""
-    @objc dynamic var updatedMillis: Int = 0
-    @objc dynamic var data: Data?
-}
-
-class AreaDatabase {
-    private let decoder = JSONDecoder()
-    private let encoder = JSONEncoder()
-
-    private let provider = MunchProvider<SearchFilterAreaService>()
-
-    var lastModifiedMillis: Int {
-        let realm = try! Realm()
-        return realm.objects(LocalAreaData.self)
-                .sorted(byKeyPath: "updatedMillis", ascending: false)
-                .first?.updatedMillis ?? 0
-    }
-
-    var lastRefresh: Date? {
-        get {
-            return UserDefaults.standard.object(forKey: "search.filter.AreaDatabase.lastRefresh") as? Date
-        }
-        set(value) {
-            UserDefaults.standard.set(value, forKey: "search.filter.AreaDatabase.lastRefresh")
-        }
-    }
-
-    func list() -> Single<[Area]> {
-        return Single<[Area]>.create { single in
-            let areas = self.get()
-
-            if !areas.isEmpty {
-                single(.success(areas))
-            }
-
-            // Allow skip if loaded and last refresh is within 3 days
-            if !areas.isEmpty, let lastRefresh = self.lastRefresh {
-                if let diff = Calendar.current.dateComponents([.hour], from: lastRefresh, to: Date()).hour, diff < 24 * 5 {
-                    // Only refresh if 5 days has passed
-                    return Disposables.create()
-                }
-            }
-
-            let request = self.provider.rx.request(.get)
-                    .map { response throws -> [Area] in
-                        try response.map(data: [Area].self)
-                    }
-                    .subscribe { event in
-                        switch event {
-                        case .success(let loadedAreas):
-                            if areas.isEmpty {
-                                single(.success(loadedAreas))
-                            }
-                            self.update(areas: loadedAreas)
-                        case .error(let error):
-                            single(.error(error))
-                        }
-                    }
-
-            return Disposables.create {
-                request.dispose()
-            }
-        }
-    }
-
-    private func get() -> [Area] {
-        self.lastRefresh = Date()
-        let realm = try! Realm()
-
-        var areas = [Area]()
-        realm.objects(LocalAreaData.self)
-                .sorted(byKeyPath: "name", ascending: true)
-                .forEach { data in
-                    if let data = data.data, let area = try? self.decoder.decode(Area.self, from: data) {
-                        areas.append(area)
-                    }
-                }
-        return areas
-    }
-
-    func update(areas: [Area]) {
-        let realm = try! Realm()
-
-        try! realm.write {
-            realm.delete(realm.objects(LocalAreaData.self))
-
-            for area in areas {
-                do {
-                    let data = LocalAreaData()
-                    data.id = area.areaId
-                    data.name = area.name
-                    data.updatedMillis = area.updatedMillis ?? 0
-                    data.data = try encoder.encode(area)
-                    realm.add(data)
-                } catch {
-                    print(error)
-                    Crashlytics.sharedInstance().recordError(error)
-                }
-            }
-        }
-    }
-}
-
-struct FilterPrice: Codable {
-    var frequency: [String: Int]
-}
-
-struct FilterCount: Codable {
+struct FilterResult: Codable {
     var count: Int
-    var tags: [String: Int]
+    var tagGraph: TagGraph
+    var priceGraph: PriceGraph
+
+    struct TagGraph: Codable {
+        var tags: [Tag]
+
+        struct Tag: Codable {
+            var tagId: String
+            var type: String
+            var name: String
+            var count: Int
+        }
+    }
+
+    struct PriceGraph: Codable {
+        var min: Double
+        var max: Double
+
+        var points: [Point]
+        var ranges: [String: Range]
+
+        struct Point: Codable {
+            var price: Double
+            var count: Int
+        }
+
+        struct Range: Codable {
+            var min: Double
+            var max: Double
+        }
+    }
 }
 
 extension SearchQuery {
@@ -211,8 +155,20 @@ extension SearchQuery {
         self.init(filter: SearchQuery.Filter(), sort: SearchQuery.Sort())
 
         if let tags = UserSetting.instance?.search.tags {
-            for tag in tags {
-                filter.tag.positives.insert(tag.capitalized)
+            if (tags.contains("halal")) {
+                filter.tags.append(Tag(
+                        tagId: "abb22d3d-7d23-4677-b4ef-a3e09f2f9ada",
+                        name: "Halal",
+                        type: .Amenities
+                ))
+            }
+
+            if (tags.contains("vegetarian options")) {
+                filter.tags.append(Tag(
+                        tagId: "fdf77b3b-8f90-419f-b711-dd25f97046fe",
+                        name: "Vegetarian Options",
+                        type: .Amenities
+                ))
             }
         }
     }
@@ -223,10 +179,11 @@ struct SearchQuery: Codable {
     var sort: Sort
 
     struct Filter: Codable {
-        var price = Price()
-        var tag = Tag()
-        var hour = Hour()
-        var area: Area?
+        var price: Price?
+        var hour: Hour?
+
+        var tags = [Tag]()
+        var location = Location()
 
         struct Price: Codable {
             var name: String?
@@ -234,16 +191,38 @@ struct SearchQuery: Codable {
             var max: Double?
         }
 
-        struct Tag: Codable {
-            var positives = Set<String>()
-        }
-
         struct Hour: Codable {
-            var name: String?
+            var type: HourType?
 
             var day: String?
             var open: String?
             var close: String?
+
+            enum HourType: String, Codable {
+                case OpenNow
+                case OpenDay
+            }
+        }
+
+        struct Location: Codable {
+            var type: LocationType = .Anywhere
+            var areas = [Area]()
+            var points = [Point]()
+
+            struct Point: Codable {
+                var name: String
+                var latLng: String
+            }
+
+            /**
+             * Follows strict API don't need defensive checks
+             */
+            enum LocationType: String, Codable {
+                case Between
+                case Where
+                case Nearby
+                case Anywhere
+            }
         }
     }
 
@@ -253,21 +232,21 @@ struct SearchQuery: Codable {
     }
 }
 
-extension SearchQuery: Equatable {
-    static func ==(lhs: SearchQuery, rhs: SearchQuery) -> Bool {
-        return lhs.filter.price.name == rhs.filter.price.name &&
-                lhs.filter.price.min == rhs.filter.price.min &&
-                lhs.filter.price.max == rhs.filter.price.max &&
-
-                lhs.filter.tag.positives == rhs.filter.tag.positives &&
-
-                lhs.filter.hour.name == rhs.filter.hour.name &&
-                lhs.filter.hour.day == rhs.filter.hour.day &&
-                lhs.filter.hour.open == rhs.filter.hour.open &&
-                lhs.filter.hour.close == rhs.filter.hour.close &&
-
-                lhs.filter.area?.areaId == rhs.filter.area?.areaId &&
-
-                lhs.sort.type == rhs.sort.type
-    }
-}
+//extension SearchQuery: Equatable {
+//    static func ==(lhs: SearchQuery, rhs: SearchQuery) -> Bool {
+//        return lhs.filter.price.name == rhs.filter.price.name &&
+//                lhs.filter.price.min == rhs.filter.price.min &&
+//                lhs.filter.price.max == rhs.filter.price.max &&
+//
+//                lhs.filter.tag.positives == rhs.filter.tag.positives &&
+//
+//                lhs.filter.hour.name == rhs.filter.hour.name &&
+//                lhs.filter.hour.day == rhs.filter.hour.day &&
+//                lhs.filter.hour.open == rhs.filter.hour.open &&
+//                lhs.filter.hour.close == rhs.filter.hour.close &&
+//
+//                lhs.filter.area?.areaId == rhs.filter.area?.areaId &&
+//
+//                lhs.sort.type == rhs.sort.type
+//    }
+//}

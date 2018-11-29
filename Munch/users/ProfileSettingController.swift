@@ -240,7 +240,6 @@ extension ProfileSettingController: UITableViewDataSource, UITableViewDelegate {
                         case .success(let setting):
                             self.setting = setting
                             self.view.makeToast("Removed '\(tag.capitalized)' from Search Preference.", image: UIImage(named: "RIP-Toast-Close"), style: DefaultToastStyle)
-                            (self.tabBarController as? TabBarController)?.searchController.reset(force: true)
                         case .error(let error):
                             self.alert(error: error)
                         }
@@ -258,7 +257,6 @@ extension ProfileSettingController: UITableViewDataSource, UITableViewDelegate {
                         case .success(let setting):
                             self.setting = setting
                             self.view.makeToast("Added '\(tag.capitalized)' to Search Preference.", image: UIImage(named: "RIP-Toast-Checkmark"), style: DefaultToastStyle)
-                            (self.tabBarController as? TabBarController)?.searchController.reset(force: true)
                         case .error(let error):
                             self.alert(error: error)
                         }
