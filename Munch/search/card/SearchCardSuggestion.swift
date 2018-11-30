@@ -80,7 +80,7 @@
 //        }
 //    }
 //
-//    func render(card: SearchCard, controller: SearchController) {
+//    func render(card: SearchCard, delegate: SearchTableViewDelegate) {
 //        if let locationName = card.string(name: "locationName") {
 //            self.descriptionLabel.text = "Here are some suggestions of what’s good in".localized() + " \(locationName)."
 //        } else {

@@ -167,6 +167,13 @@ extension Moya.Response {
 
     // TODO Map next node list?
 
+    func mapJSON(atKeyPath keyPath: String, failsOnEmptyData: Bool = true) throws -> Any? {
+        if let json = try mapJSON(failsOnEmptyData: failsOnEmptyData) as? [String: Any], let data = json[keyPath] {
+            return data
+        }
+        return nil
+    }
+
     func mapJSON(atDataKeyPath keyPath: String, failsOnEmptyData: Bool = true) throws -> Any? {
         if let json = try mapJSON(failsOnEmptyData: failsOnEmptyData) as? [String: Any], let data = json["data"] as? [String: Any], let path = data[keyPath] {
             return path

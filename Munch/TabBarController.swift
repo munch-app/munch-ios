@@ -10,36 +10,37 @@ import Foundation
 import UIKit
 
 import Localize_Swift
-import ESTabBarController_swift
 
-
-/**
- Initial view provider
- */
 enum InitialViewProvider {
 
     /**
      Main tab controllers for Munch App
      */
-    static func main() -> TabBarController {
-        return TabBarController()
+    static func main() -> MunchTabBarController {
+        return MunchTabBarController()
+    }
+
+    fileprivate static func home() -> HomeRootController {
+        let controller = HomeRootController()
+        controller.tabBarItem = UITabBarItem(title: "Home".localized(), image: UIImage(named: "TabBar_Home"), tag: 0)
+        return controller
     }
 
     fileprivate static func search() -> SearchRootController {
         let controller = SearchRootController()
-        controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "Search".localized(), image: UIImage(named: "TabBar-Search"))
+        controller.tabBarItem = UITabBarItem(title: "Search".localized(), image: UIImage(named: "TabBar_Search"), tag: 0)
         return controller
     }
 
     fileprivate static func profile() -> ProfileRootController {
         let controller = ProfileRootController()
-        controller.tabBarItem = ESTabBarItem(MunchTabBarContentView(), title: "Profile".localized(), image: UIImage(named: "TabBar-Profile"))
+        controller.tabBarItem = UITabBarItem(title: "Profile".localized(), image: UIImage(named: "TabBar_Profile"), tag: 0)
         return controller
     }
 }
 
 // MARK: TabBar Selecting
-extension TabBarController {
+extension MunchTabBarController {
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         switch viewController {
         case is ProfileRootController where Authentication.isAuthenticated():
@@ -76,12 +77,13 @@ extension TabBarController {
 }
 
 // MARK: TabBar Styling
-class TabBarController: ESTabBarController, UITabBarControllerDelegate {
+class MunchTabBarController: UITabBarController, UITabBarControllerDelegate {
     var previousController: UIViewController?
     var sameTabCounter = 0
 
-    let searchRoot = InitialViewProvider.search()
-    let profileRoot = InitialViewProvider.profile()
+    let home = InitialViewProvider.home()
+    let search = InitialViewProvider.search()
+    let profile = InitialViewProvider.profile()
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -90,38 +92,21 @@ class TabBarController: ESTabBarController, UITabBarControllerDelegate {
         tabBar.shadowImage = UIImage()
         tabBar.backgroundImage = UIImage()
         tabBar.shadow(vertical: -2)
-        tabBar.frame = tabBar.frame.offsetBy(dx: 0, dy: -10)
 
         self.delegate = self
-        self.viewControllers = [searchRoot, profileRoot]
+        self.viewControllers = [home, search, profile]
     }
 
-    var searchController: UIViewController {
-        return searchRoot.searchController
+    var homeController: HomeController {
+        return home.controller
+    }
+
+    var searchController: SearchController {
+        return search.controller
     }
 
     var profileController: UIViewController {
-        return profileRoot.profileController
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class MunchTabBarContentView: ESTabBarItemContentView {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        titleLabel.font = UIFont.systemFont(ofSize: 9, weight: .semibold)
-        insets.bottom = 4
-        insets.top = 5
-
-        textColor = UIColor(hex: "A0A0A0")
-        highlightTextColor = UIColor.primary500
-
-        iconColor = UIColor(hex: "A0A0A0")
-        highlightIconColor = UIColor.primary500
-
+        return profile.controller
     }
 
     required init?(coder aDecoder: NSCoder) {

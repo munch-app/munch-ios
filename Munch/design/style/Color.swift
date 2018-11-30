@@ -42,6 +42,10 @@ extension UIColor {
 }
 
 extension UIColor {
+    static let ba75 = UIColor.black.withAlphaComponent(0.75)
+    static let ba80 = UIColor.black.withAlphaComponent(0.80)
+    static let ba85 = UIColor.black.withAlphaComponent(0.85)
+
     static let primary050 = UIColor(hex: "FACFC4")
     static let primary100 = UIColor(hex: "F7AF9D")
     static let primary200 = UIColor(hex: "F59982")
@@ -82,5 +86,8 @@ extension UIColor {
     static let whisper200 = UIColor(hex: "dfdff0")
 
     static let open = UIColor(hex: "20A700")
+    static let success = UIColor(hex: "20A700")
+
     static let close = UIColor(hex: "EC152C")
+    static let error = UIColor(hex: "EC152C")
 }

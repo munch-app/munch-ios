@@ -12,11 +12,11 @@ import UIKit
 //import NVActivityIndicatorView
 //
 class ProfileRootController: UINavigationController, UINavigationControllerDelegate {
-    let profileController = UIViewController()
+    let controller = UIViewController()
 
     required init() {
         super.init(nibName: nil, bundle: nil)
-        self.viewControllers = [profileController]
+        self.viewControllers = [controller]
         self.delegate = self
     }
 

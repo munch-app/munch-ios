@@ -10,8 +10,6 @@ struct Image: Codable {
     var sizes: [Size]
 
     var profile: Profile?
-    var source: Source?
-    var meta: Meta?
 
     struct Size: Codable {
         var width: Int
@@ -23,20 +21,5 @@ struct Image: Codable {
         var type: String?
         var id: String?
         var name: String?
-    }
-
-    struct Source: Codable {
-        var domain: String?
-        var originUrl: String?
-        var pageUrl: String?
-        var pageTitle: String?
-    }
-
-    struct Meta: Codable {
-        var contentType: String?
-        var width: Int?
-        var height: Int?
-        var bytes: Int?
-        var createdMillis: Int?
     }
 }

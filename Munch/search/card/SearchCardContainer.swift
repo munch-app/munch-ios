@@ -62,7 +62,7 @@
 //        }
 //    }
 //
-//    func render(card: SearchCard, controller: SearchController) {
+//    func render(card: SearchCard, delegate: SearchTableViewDelegate) {
 //        if self.instanceId == card.instanceId {
 //            return
 //        }
@@ -275,7 +275,7 @@
 //        }
 //    }
 //
-//    func render(card: SearchCard, controller: SearchController) {
+//    func render(card: SearchCard, delegate: SearchTableViewDelegate) {
 //        guard let area: Area = card.decode(name: "area", Area.self) else {
 //            return
 //        }

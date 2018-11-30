@@ -11,8 +11,16 @@ import RealmSwift
 
 import Crashlytics
 
+enum SearchScreen: String {
+    case search
+    case home
+    case location
+    case award
+    case collection
+}
+
 enum SearchService {
-    case search(SearchQuery, String, Int)
+    case search(SearchQuery, SearchScreen, Int)
 
     case qid(String)
 
@@ -42,12 +50,12 @@ extension SearchService: TargetType {
     }
     var method: Moya.Method {
         switch self {
+        case .search:
+            return .post
         case .named:
             return .get
         case .qid:
             return .get
-        case .search:
-            return .post
         }
     }
     var task: Task {
@@ -150,30 +158,6 @@ struct FilterResult: Codable {
     }
 }
 
-extension SearchQuery {
-    init() {
-        self.init(filter: SearchQuery.Filter(), sort: SearchQuery.Sort())
-
-        if let tags = UserSetting.instance?.search.tags {
-            if (tags.contains("halal")) {
-                filter.tags.append(Tag(
-                        tagId: "abb22d3d-7d23-4677-b4ef-a3e09f2f9ada",
-                        name: "Halal",
-                        type: .Amenities
-                ))
-            }
-
-            if (tags.contains("vegetarian options")) {
-                filter.tags.append(Tag(
-                        tagId: "fdf77b3b-8f90-419f-b711-dd25f97046fe",
-                        name: "Vegetarian Options",
-                        type: .Amenities
-                ))
-            }
-        }
-    }
-}
-
 struct SearchQuery: Codable {
     var filter: Filter
     var sort: Sort
@@ -229,6 +213,94 @@ struct SearchQuery: Codable {
     // See MunchCore for the available sort methods
     struct Sort: Codable, Equatable {
         var type: String?
+    }
+}
+
+extension SearchQuery {
+    init() {
+        self.init(filter: SearchQuery.Filter(), sort: SearchQuery.Sort())
+
+        if let tags = UserSetting.instance?.search.tags {
+            if (tags.contains("halal")) {
+                filter.tags.append(Tag(
+                        tagId: "abb22d3d-7d23-4677-b4ef-a3e09f2f9ada",
+                        name: "Halal",
+                        type: .Amenities
+                ))
+            }
+
+            if (tags.contains("vegetarian options")) {
+                filter.tags.append(Tag(
+                        tagId: "fdf77b3b-8f90-419f-b711-dd25f97046fe",
+                        name: "Vegetarian Options",
+                        type: .Amenities
+                ))
+            }
+        }
+    }
+}
+
+/**
+ Search typed Cards
+ Access json through the subscript
+ */
+struct SearchCard {
+    private static let decoder = JSONDecoder()
+
+    var cardId: String
+    var uniqueId: String?
+    var instanceId: String
+
+    private var dictionary: [String: Any]
+
+    /**
+     * Create card locally with cardId
+     */
+    init(cardId: String, dictionary: [String: Any] = [:]) {
+        self.cardId = cardId
+        self.instanceId = String(arc4random())
+        self.dictionary = dictionary
+    }
+
+    init(dictionary: [String: Any]) {
+        self.dictionary = dictionary
+        self.cardId = dictionary["_cardId"] as! String
+        self.uniqueId = dictionary["_uniqueId"] as? String
+        self.instanceId = String(arc4random())
+    }
+
+    subscript(name: String) -> Any? {
+        return dictionary[name]
+    }
+}
+
+// Helper Method
+extension SearchCard {
+    func string(name: String) -> String? {
+        return self[name] as? String
+    }
+
+    func int(name: String) -> Int? {
+        return self[name] as? Int
+    }
+
+    func decode<T>(name: String, _ type: T.Type) -> T? where T: Decodable {
+        do {
+            if let dict = self[name] {
+                let data = try JSONSerialization.data(withJSONObject: dict)
+                return try SearchCard.decoder.decode(type, from: data)
+            }
+        } catch {
+            print(error)
+            Crashlytics.sharedInstance().recordError(error)
+        }
+        return nil
+    }
+}
+
+extension SearchCard: Equatable {
+    static func ==(lhs: SearchCard, rhs: SearchCard) -> Bool {
+        return lhs.cardId == rhs.cardId && lhs.uniqueId == rhs.uniqueId
     }
 }
 
