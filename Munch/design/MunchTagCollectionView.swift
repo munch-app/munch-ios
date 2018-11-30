@@ -5,7 +5,6 @@
 
 import Foundation
 import UIKit
-
 import SnapKit
 
 enum MunchTagCollectionType {

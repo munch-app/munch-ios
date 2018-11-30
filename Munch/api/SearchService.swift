@@ -171,16 +171,16 @@ struct SearchQuery: Codable {
 
         struct Price: Codable {
             var name: String?
-            var min: Double?
-            var max: Double?
+            var min: Double
+            var max: Double
         }
 
         struct Hour: Codable {
-            var type: HourType?
+            var type: HourType
 
-            var day: String?
-            var open: String?
-            var close: String?
+            var day: String
+            var open: String
+            var close: String
 
             enum HourType: String, Codable {
                 case OpenNow

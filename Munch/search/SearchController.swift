@@ -37,9 +37,9 @@ class SearchRootController: UINavigationController, UINavigationControllerDelega
 }
 
 class SearchController: UIViewController {
-    let searchTableView = SearchTableView(screen: .search)
-    // SearchHeaderView.contentHeight
-    //    let headerView = SearchHeaderView()
+    static let inset = UIEdgeInsets(top: SearchHeaderView.contentHeight, left: 0, bottom: 0, right: 0)
+    let searchTableView = SearchTableView(screen: .search, inset: inset)
+    let headerView = SearchHeaderView()
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -51,31 +51,29 @@ class SearchController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-//        self.cardTableView.reloadData()
+        self.searchTableView.reloadData()
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.addSubview(searchTableView)
+        self.view.addSubview(headerView)
 
-        searchTableView.snp.makeConstraints { make in
-            make.edges.equalTo(self.view)
+        headerView.snp.makeConstraints { maker in
+            maker.top.left.right.equalTo(self.view)
         }
 
+        searchTableView.snp.makeConstraints { maker in
+            maker.edges.equalTo(self.view)
+        }
+
+        self.headerView.controller = self
         self.searchTableView.cardDelegate = self
         self.searchTableView.search(screen: .search)
-    }
-}
-
-extension SearchController: SearchTableViewDelegate {
-    func searchTableView(didSelectCardAt card: SearchCard) {
-//            let controller = PlaceController(place: place)
-//            self.navigationController!.pushViewController(controller, animated: true)
+        self.headerView.render(query: self.searchTableView.cardManager.searchQuery)
+        self.searchTableView.scrollsToTop()
     }
 
-    func searchTableView(requireController: @escaping (UIViewController) -> Void) {
-        requireController(self)
-    }
 
     //        case .filter:
 //            let controller = SearchFilterRootController(searchQuery: self.searchQuery, extensionDismiss: completable)
@@ -83,6 +81,37 @@ extension SearchController: SearchTableViewDelegate {
 //        case .suggest:
 //            let controller = SearchSuggestRootController(searchQuery: self.searchQuery, extensionDismiss: completable)
 //            self.present(controller, animated: true)
+}
+
+extension SearchController: SearchTableViewDelegate {
+    func searchTableView(didSelectCardAt card: SearchCard) {
+        switch card.cardId {
+        case SearchPlaceCard.cardId:
+            //            let controller = PlaceController(place: place)
+//            self.navigationController!.pushViewController(controller, animated: true)
+            return
+
+        default:
+            return
+        }
+
+    }
+
+    func searchTableView(requireController: @escaping (UIViewController) -> Void) {
+        requireController(self)
+    }
+
+    func searchTableView(didScroll searchTableView: SearchTableView) {
+        self.headerView.contentDidScroll(scrollView: searchTableView)
+    }
+
+    func searchTableView(didScrollFinish searchTableView: SearchTableView) {
+        // Check nearest locate and move to it
+        if let y = self.headerView.contentShouldMove(scrollView: searchTableView) {
+            let point = CGPoint(x: 0, y: y)
+            searchTableView.setContentOffset(point, animated: true)
+        }
+    }
 }
 
 // MARK: Search Query Rendering
@@ -122,31 +151,6 @@ extension SearchController {
 //                })
 //                self.present(alert, animated: true)
 //            }
-//        }
-//    }
-}
-
-// MARK: Scroll View
-extension SearchController {
-//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        self.headerView.contentDidScroll(scrollView: scrollView)
-//    }
-//
-//    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-//        if (!decelerate) {
-//            scrollViewDidFinish(scrollView)
-//        }
-//    }
-//
-//    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-//        scrollViewDidFinish(scrollView)
-//    }
-//
-//    func scrollViewDidFinish(_ scrollView: UIScrollView) {
-//        // Check nearest locate and move to it
-//        if let y = self.headerView.contentShouldMove(scrollView: scrollView) {
-//            let point = CGPoint(x: 0, y: y)
-//            scrollView.setContentOffset(point, animated: true)
 //        }
 //    }
 }

@@ -95,6 +95,18 @@ protocol SearchTableViewDelegate {
     func searchTableView(didSelectCardAt card: SearchCard)
 
     func searchTableView(requireController: @escaping (UIViewController) -> Void)
+
+    func searchTableView(didScroll searchTableView: SearchTableView)
+
+    func searchTableView(didScrollFinish searchTableView: SearchTableView)
+}
+
+extension SearchTableViewDelegate {
+    func searchTableView(didScroll searchTableView: SearchTableView) {
+    }
+
+    func searchTableView(didScrollFinish searchTableView: SearchTableView) {
+    }
 }
 
 extension SearchTableView {
@@ -228,5 +240,21 @@ extension SearchTableView {
         } else {
             self.loadingCard.stopAnimating()
         }
+    }
+}
+
+extension SearchTableView {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        self.cardDelegate.searchTableView(didScroll: self)
+    }
+
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if (!decelerate) {
+            self.cardDelegate.searchTableView(didScrollFinish: self)
+        }
+    }
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        self.cardDelegate.searchTableView(didScrollFinish: self)
     }
 }
