@@ -31,7 +31,7 @@ extension SearchCardView {
     }
 
     var topBottom: CGFloat {
-        return 16.0
+        return 18.0
     }
 
     static var leftRight: CGFloat {
@@ -39,7 +39,7 @@ extension SearchCardView {
     }
 
     static var topBottom: CGFloat {
-        return 16.0
+        return 18.0
     }
 
     static var width: CGFloat {

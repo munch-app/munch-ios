@@ -22,8 +22,28 @@ enum FontStyle {
 }
 
 extension UILabel {
+    func with(text: String) -> UILabel {
+        self.text = text
+        return self
+    }
+
+    func with(numberOfLines: Int) -> UILabel {
+        self.numberOfLines = numberOfLines
+        return self
+    }
+
+    func with(alignment: NSTextAlignment) -> UILabel {
+        self.textAlignment = alignment
+        return self
+    }
+
     func with(color: UIColor) -> UILabel {
         self.textColor = color
+        return self
+    }
+
+    func with(font: UIFont) -> UILabel {
+        self.font = font
         return self
     }
 

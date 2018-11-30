@@ -72,20 +72,18 @@ class SearchTableView: UITableView {
         register(SearchStaticUnsupportedCard.self)
         register(SearchShimmerPlaceCard.self)
 
-        register(SearchHeaderCard.self)
-        register(SearchPlaceCard.self)
-
-//        register(SearchAreaClusterListCard.self)
-
         register(SearchNoLocationCard.self)
         register(SearchNoResultCard.self)
         register(SearchNoResultLocationCard.self)
 
-        // Register Top Cards
-//        register(SearchAreaClusterHeaderCard.self)
+        register(SearchHomeTabCard.self)
 
-        // Register Middle Cards
-//        register(SearchCardSuggestionTag.self)
+        register(SearchHeaderCard.self)
+        register(SearchPlaceCard.self)
+
+        register(SearchAreaClusterListCard.self)
+        register(SearchAreaClusterHeaderCard.self)
+        register(SearchTagSuggestion.self)
     }
 
     required init?(coder aDecoder: NSCoder) {
