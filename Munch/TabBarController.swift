@@ -20,15 +20,15 @@ enum InitialViewProvider {
         return MunchTabBarController()
     }
 
-    fileprivate static func home() -> HomeRootController {
-        let controller = HomeRootController()
-        controller.tabBarItem = UITabBarItem(title: "Home".localized(), image: UIImage(named: "TabBar_Home"), tag: 0)
+    fileprivate static func discover() -> SearchRootController {
+        let controller = SearchRootController()
+        controller.tabBarItem = UITabBarItem(title: "Discover".localized(), image: UIImage(named: "TabBar_Search"), tag: 0)
         return controller
     }
 
-    fileprivate static func search() -> SearchRootController {
-        let controller = SearchRootController()
-        controller.tabBarItem = UITabBarItem(title: "Search".localized(), image: UIImage(named: "TabBar_Search"), tag: 0)
+    fileprivate static func feed() -> FeedRootController {
+        let controller = FeedRootController()
+        controller.tabBarItem = UITabBarItem(title: "Feed".localized(), image: UIImage(named: "TabBar_Feed"), tag: 0)
         return controller
     }
 
@@ -81,8 +81,8 @@ class MunchTabBarController: UITabBarController, UITabBarControllerDelegate {
     var previousController: UIViewController?
     var sameTabCounter = 0
 
-    let home = InitialViewProvider.home()
-    let search = InitialViewProvider.search()
+    let discover = InitialViewProvider.discover()
+    let feed = InitialViewProvider.feed()
     let profile = InitialViewProvider.profile()
 
     init() {
@@ -94,15 +94,15 @@ class MunchTabBarController: UITabBarController, UITabBarControllerDelegate {
         tabBar.shadow(vertical: -2)
 
         self.delegate = self
-        self.viewControllers = [home, search, profile]
+        self.viewControllers = [discover, feed, profile]
     }
 
-    var homeController: HomeController {
-        return home.controller
+    var discoverController: SearchController {
+        return discover.controller
     }
 
-    var searchController: SearchController {
-        return search.controller
+    var feedController: FeedController {
+        return feed.controller
     }
 
     var profileController: UIViewController {

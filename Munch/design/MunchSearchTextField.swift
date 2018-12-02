@@ -7,37 +7,44 @@ import Foundation
 import UIKit
 
 class MunchSearchTextField: UITextField {
-
-    let leftImagePadding: CGFloat = 3
-    let leftImageWidth: CGFloat = 32
-    let leftImageSize: CGFloat = 18
+    private let leftImagePadding: CGFloat = 6
+    private let leftImageSize: CGFloat = 18
 
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
         self.layer.cornerRadius = 4
         self.backgroundColor = .whisper100
 
-        self.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-
+        self.font = UIFont.systemFont(ofSize: 16, weight: .regular)
 
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: leftImageSize, height: leftImageSize))
         imageView.contentMode = .scaleAspectFit
         imageView.image = UIImage(named: "SC-Search-18")
-        imageView.tintColor = .ba85
+        imageView.tintColor = .black
 
         self.leftViewMode = .always
         self.leftView = imageView
 
-        placeholder = "Search e.g. Italian in Marina Bay".localized()
-        attributedPlaceholder = NSAttributedString(string: placeholder != nil ? placeholder! : "", attributes: [NSAttributedStringKey.foregroundColor: UIColor.ba85])
+        self.placeholder = "Try \"Chinese\""
+
+        self.returnKeyType = .search
+        self.autocorrectionType = .no
+        self.clearButtonMode = .whileEditing
+        self.autocapitalizationType = .none
     }
 
     // Provides left padding for images
     override func leftViewRect(forBounds bounds: CGRect) -> CGRect {
-        var textRect = super.leftViewRect(forBounds: bounds)
-        textRect.origin.x += leftImagePadding
-        textRect.size.width = leftImageWidth
-        return textRect
+        var rect = super.leftViewRect(forBounds: bounds)
+        rect.origin.x += leftImagePadding
+        rect.size.width = leftImageSize + (leftImagePadding * 2)
+        return rect
+    }
+
+    override var placeholder: String? {
+        didSet {
+            attributedPlaceholder = NSAttributedString(string: placeholder ?? "", attributes: [.foregroundColor: UIColor.ba85])
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {

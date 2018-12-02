@@ -158,6 +158,39 @@ struct FilterResult: Codable {
     }
 }
 
+struct SuggestResult: Codable {
+    var suggests: [String]
+    var places: [Place]
+    var assumptions: [AssumptionQueryResult]
+}
+
+struct AssumptionQueryResult: Codable {
+    var searchQuery: SearchQuery
+    var tokens: [AssumptionToken]
+    var places: [Place]
+    var count: Int
+}
+
+struct AssumptionToken: Codable {
+    var text: String?
+    var type: AssumptionType
+
+    enum AssumptionType: String, Codable {
+        case tag
+        case text
+        case others
+
+        /// Defensive Decoding
+        init(from decoder: Decoder) throws {
+            switch try decoder.singleValueContainer().decode(String.self) {
+            case "tag": self = .tag
+            case "text": self = .text
+            default: self = .others
+            }
+        }
+    }
+}
+
 struct SearchQuery: Codable {
     var filter: Filter
     var sort: Sort
@@ -274,7 +307,6 @@ struct SearchCard {
     }
 }
 
-// Helper Method
 extension SearchCard {
     func string(name: String) -> String? {
         return self[name] as? String
@@ -303,22 +335,3 @@ extension SearchCard: Equatable {
         return lhs.cardId == rhs.cardId && lhs.uniqueId == rhs.uniqueId
     }
 }
-
-//extension SearchQuery: Equatable {
-//    static func ==(lhs: SearchQuery, rhs: SearchQuery) -> Bool {
-//        return lhs.filter.price.name == rhs.filter.price.name &&
-//                lhs.filter.price.min == rhs.filter.price.min &&
-//                lhs.filter.price.max == rhs.filter.price.max &&
-//
-//                lhs.filter.tag.positives == rhs.filter.tag.positives &&
-//
-//                lhs.filter.hour.name == rhs.filter.hour.name &&
-//                lhs.filter.hour.day == rhs.filter.hour.day &&
-//                lhs.filter.hour.open == rhs.filter.hour.open &&
-//                lhs.filter.hour.close == rhs.filter.hour.close &&
-//
-//                lhs.filter.area?.areaId == rhs.filter.area?.areaId &&
-//
-//                lhs.sort.type == rhs.sort.type
-//    }
-//}

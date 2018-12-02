@@ -91,7 +91,7 @@ fileprivate class SearchHomeTabCell: UICollectionViewCell {
     }()
 
     let nameLabel = UILabel()
-            .with(size: 17, weight: 600, color: .ba75)
+            .with(size: 17, weight: .medium, color: .ba75)
             .with(alignment: .center)
 
     override init(frame: CGRect = .zero) {

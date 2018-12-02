@@ -181,6 +181,10 @@ struct Tag: ElasticObject, Codable {
             default: self = .Other
             }
         }
+
+        var text: String {
+            return self.rawValue
+        }
     }
 }
 

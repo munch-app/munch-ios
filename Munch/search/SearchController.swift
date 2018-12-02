@@ -37,9 +37,9 @@ class SearchRootController: UINavigationController, UINavigationControllerDelega
 }
 
 class SearchController: UIViewController {
-    static let inset = UIEdgeInsets(top: SearchHeaderView.contentHeight, left: 0, bottom: 0, right: 0)
-    let searchTableView = SearchTableView(screen: .search, inset: inset)
+    static let inset = UIEdgeInsets(top: SearchHeaderView.height, left: 0, bottom: 0, right: 0)
     let headerView = SearchHeaderView()
+    let searchTableView = SearchTableView(screen: .search, inset: inset)
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -67,29 +67,23 @@ class SearchController: UIViewController {
             maker.edges.equalTo(self.view)
         }
 
-        self.headerView.controller = self
         self.searchTableView.cardDelegate = self
         self.searchTableView.search(screen: .search)
-        self.headerView.render(query: self.searchTableView.cardManager.searchQuery)
         self.searchTableView.scrollsToTop()
+
+        self.headerView.controller = self
+        self.headerView.searchQuery = self.searchTableView.cardManager.searchQuery
     }
-
-
-    //        case .filter:
-//            let controller = SearchFilterRootController(searchQuery: self.searchQuery, extensionDismiss: completable)
-//            self.present(controller, animated: true)
-//        case .suggest:
-//            let controller = SearchSuggestRootController(searchQuery: self.searchQuery, extensionDismiss: completable)
-//            self.present(controller, animated: true)
 }
 
 extension SearchController: SearchTableViewDelegate {
     func searchTableView(didSelectCardAt card: SearchCard) {
         switch card.cardId {
         case SearchPlaceCard.cardId:
-            //            let controller = PlaceController(place: place)
-//            self.navigationController!.pushViewController(controller, animated: true)
-            return
+            if let place = card.decode(name: "place", Place.self) {
+                let controller = RIPController(placeId: place.placeId)
+                self.navigationController!.pushViewController(controller, animated: true)
+            }
 
         default:
             return
@@ -102,15 +96,9 @@ extension SearchController: SearchTableViewDelegate {
     }
 
     func searchTableView(didScroll searchTableView: SearchTableView) {
-        self.headerView.contentDidScroll(scrollView: searchTableView)
     }
 
     func searchTableView(didScrollFinish searchTableView: SearchTableView) {
-        // Check nearest locate and move to it
-        if let y = self.headerView.contentShouldMove(scrollView: searchTableView) {
-            let point = CGPoint(x: 0, y: y)
-            searchTableView.setContentOffset(point, animated: true)
-        }
     }
 }
 
