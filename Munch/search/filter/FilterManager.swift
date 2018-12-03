@@ -137,12 +137,12 @@ extension FilterManager {
         self.dispatch()
     }
 
-    func select(price: SearchQuery.Filter.Price) {
+    func select(price: SearchQuery.Filter.Price?) {
         self.searchQuery.filter.price = price
         self.dispatch()
     }
 
-    func select(hour: SearchQuery.Filter.Hour) {
+    func select(hour: SearchQuery.Filter.Hour?) {
         self.searchQuery.filter.hour = hour
         self.dispatch()
     }
@@ -159,6 +159,21 @@ extension FilterManager {
         self.searchQuery.filter.location.areas = [area]
         self.searchQuery.filter.location.points = []
         self.dispatch()
+    }
+}
+
+// MARK: Is Selected
+extension FilterManager {
+    func isSelected(tag: Tag) -> Bool {
+        return searchQuery.filter.tags.contains(where: { $0.tagId == tag.tagId })
+    }
+
+    func isSelected(timing type: SearchQuery.Filter.Hour.HourType) -> Bool {
+        return searchQuery.filter.hour?.type == type
+    }
+
+    func isSelected(price: SearchQuery.Filter.Price) -> Bool {
+        return searchQuery.filter.price?.name == price.name
     }
 }
 

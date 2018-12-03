@@ -40,8 +40,8 @@ class FilterController: UIViewController {
     fileprivate let headerView = FilterHeaderView()
     fileprivate let bottomView = FilterBottomView()
 
-//    fileprivate var cellLocation: SearchFilterCellLocation!
-//    fileprivate var cellPriceRange: SearchFilterCellPriceRange!
+    fileprivate var cellLocation: FilterItemCellLocation!
+    fileprivate var cellPrice: FilterItemCellPrice!
     fileprivate var cellTiming: FilterItemCellTiming!
 
     let tableView: UITableView = {
@@ -51,6 +51,7 @@ class FilterController: UIViewController {
 
         tableView.tableFooterView = UIView(frame: .zero)
 
+        tableView.contentInset.top = 16
         tableView.contentInset.bottom = 16
         tableView.separatorStyle = .none
         return tableView
@@ -170,9 +171,8 @@ extension FilterController: UITableViewDataSource, UITableViewDelegate {
         self.tableView.delegate = self
         self.tableView.dataSource = self
 
-//        self.cellLocation = SearchFilterCellLocation(manager: self.manager, controller: self)
-//        self.cellPriceRange = SearchFilterCellPriceRange(manager: self.manager, controller: self)
-//        self.cellTagCategory = SearchFilterCellTagCategory(manager: self.manager, controller: self)
+        self.cellPrice = FilterItemCellPrice(manager: self.manager)
+        self.cellLocation = FilterItemCellLocation(manager: self.manager)
         self.cellTiming = FilterItemCellTiming(manager: self.manager)
 
         func register(cellClass: UITableViewCell.Type) {
@@ -195,6 +195,14 @@ extension FilterController: UITableViewDataSource, UITableViewDelegate {
         }
 
         switch items[indexPath.row] {
+        case .rowLocation:
+            cellLocation.reloadData()
+            return cellLocation
+
+        case .rowPrice:
+            cellPrice.reloadData()
+            return cellPrice
+
         case .rowTiming:
             cellTiming.reloadData()
             return cellTiming

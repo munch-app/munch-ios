@@ -97,35 +97,33 @@ extension FilterItemCellTiming: UICollectionViewDataSource, UICollectionViewDele
         switch timings[indexPath.row] {
         case let .now:
             let cell = cell as! FilterItemCellTimingNow
-            cell.render(text: "Open Now", selected: true)
+            cell.render(text: "Open Now", selected: self.manager.isSelected(timing: .OpenNow))
 
         case let .tag(tag):
             let cell = cell as! FilterItemCellTimingTag
-            cell.render(text: tag.name, selected: true)
+            cell.render(text: tag.name, selected: self.manager.isSelected(tag: tag))
         }
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let timing = timings[indexPath.row]
-//        manager.select(timing: timing)
-
-//        switch timing {
-//
+        switch timings[indexPath.row] {
+        case let .now:
+            if self.manager.isSelected(timing: .OpenNow) {
+                self.manager.select(hour: nil)
+            } else {
+                let date = Date()
+                let close = 23 == Calendar.current.component(.hour, from: date) ? "23:59" : Hour.machineFormatter.string(from: date.addingTimeInterval(30 * 60))
+                self.manager.select(hour: SearchQuery.Filter.Hour(
+                        type: .OpenNow,
+                        day: Hour.Day.today.rawValue.lowercased(),
+                        open: Hour.machineFormatter.string(from: date),
+                        close: close)
+                )
+            }
+        case let .tag(tag):
+            self.manager.select(tag: tag)
+        }
     }
-
-//
-//            searchQuery.filter.hour.name = name
-//
-//            let date = Date()
-//            searchQuery.filter.hour.day = Hour.Day.today.rawValue.lowercased()
-//            searchQuery.filter.hour.open = Hour.machineFormatter.string(from: date)
-//            // If time now is 23:00 onwards, OpenNow close time will be set to 23:59
-//            if (23 == Calendar.current.component(.hour, from: date)) {
-//                searchQuery.filter.hour.close = "23:59"
-//            } else {
-//                searchQuery.filter.hour.close = Hour.machineFormatter.string(from: date.addingTimeInterval(30 * 60))
-//            }
-
 }
 
 fileprivate class FilterItemCellTimingNow: UICollectionViewCell {
@@ -137,7 +135,7 @@ fileprivate class FilterItemCellTimingNow: UICollectionViewCell {
 
     let containerView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(hex: "F0F0F0")
+        view.backgroundColor = .whisper100
         return view
     }()
     let imageView: UIImageView = {
@@ -189,7 +187,6 @@ fileprivate class FilterItemCellTimingNow: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         containerView.layer.cornerRadius = 3.0
-        containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
     }
 
     func render(text: String?, selected: Bool) {
@@ -200,9 +197,9 @@ fileprivate class FilterItemCellTimingNow: UICollectionViewCell {
             nameLabel.textColor = .white
             imageView.tintColor = .white
         } else {
-            containerView.backgroundColor = UIColor(hex: "F0F0F0")
-            nameLabel.textColor = UIColor.black.withAlphaComponent(0.72)
-            imageView.tintColor = UIColor(hex: "444444")
+            containerView.backgroundColor = .whisper100
+            nameLabel.textColor = .ba85
+            imageView.tintColor = .ba75
         }
     }
 
@@ -216,7 +213,7 @@ fileprivate class FilterItemCellTimingTag: UICollectionViewCell {
 
     let containerView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(hex: "F0F0F0")
+        view.backgroundColor = .whisper100
         return view
     }()
     let nameLabel: UILabel = {
@@ -250,7 +247,6 @@ fileprivate class FilterItemCellTimingTag: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         containerView.layer.cornerRadius = 3.0
-        containerView.shadow(width: 1, height: 1, radius: 2, opacity: 0.4)
     }
 
     func render(text: String?, selected: Bool) {
@@ -260,8 +256,8 @@ fileprivate class FilterItemCellTimingTag: UICollectionViewCell {
             containerView.backgroundColor = .primary500
             nameLabel.textColor = .white
         } else {
-            containerView.backgroundColor = UIColor(hex: "F0F0F0")
-            nameLabel.textColor = UIColor.black.withAlphaComponent(0.72)
+            containerView.backgroundColor = .whisper100
+            nameLabel.textColor = .ba85
         }
     }
 
