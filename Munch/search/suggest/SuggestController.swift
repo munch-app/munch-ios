@@ -43,17 +43,17 @@ class SuggestController: UIViewController {
     fileprivate let tableView: UITableView = {
         let tableView = UITableView()
         tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.estimatedRowHeight = 50
+        tableView.estimatedRowHeight = 56
 
         tableView.tableFooterView = UIView(frame: .zero)
 
         tableView.contentInset.top = 8
-        tableView.contentInset.bottom = 16
+        tableView.contentInset.bottom = 8
         tableView.separatorStyle = .none
         return tableView
     }()
 
-    private var items: [SuggestType] = [.loading]
+    private var items: [SuggestType] = []
     private var firstLoad: Bool = true
 
     init(searchQuery: SearchQuery, onDismiss: @escaping ((SearchQuery?) -> Void)) {
@@ -164,21 +164,26 @@ extension SuggestController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        func dequeue<T: UITableViewCell>(_ type: T.Type) -> T {
+            let identifier = String(describing: type)
+            return tableView.dequeueReusableCell(withIdentifier: identifier) as! T
+        }
+
         switch items[indexPath.row] {
         case .place:
-            return tableView.dequeueReusableCell(withIdentifier: String(describing: SuggestCellPlace.self))!
+            return dequeue(SuggestCellPlace.self)
 
         case .loading:
-            return tableView.dequeueReusableCell(withIdentifier: String(describing: SuggestCellLoading.self))!
+            return dequeue(SuggestCellLoading.self)
 
         case .noResult:
-            return tableView.dequeueReusableCell(withIdentifier: String(describing: SuggestCellNoResult.self))!
+            return dequeue(SuggestCellNoResult.self)
 
         case .suggest:
-            return tableView.dequeueReusableCell(withIdentifier: String(describing: SuggestCellSuggest.self))!
+            return dequeue(SuggestCellSuggest.self)
 
         case .assumption:
-            return tableView.dequeueReusableCell(withIdentifier: String(describing: SuggestCellAssumption.self))!
+            return dequeue(SuggestCellAssumption.self)
         }
     }
 
@@ -189,24 +194,13 @@ extension SuggestController: UITableViewDataSource, UITableViewDelegate {
             cell.render(place: place)
 
         case .suggest(let text):
-            self.headerView.textField.text = text
-            self.headerView.textField.sendActions(for: .valueChanged)
+            let cell = cell as! SuggestCellSuggest
+            cell.suggest = text
 
+        case .assumption(let result):
+            let cell = cell as! SuggestCellAssumption
+            cell.render(result: result)
 
-//            self.onDismiss(searchQuery)
-//            self.dismiss(animated: true)
-
-//        case .rowSuggest(let suggests):
-//            let cell = cell as! SearchSuggestCellTextSuggest
-//            cell.render(texts: suggests)
-//
-//        case .rowAssumption(let queryResult):
-//            let cell = cell as! SearchSuggestCellAssumptionResult
-//            cell.render(result: queryResult)
-//
-//        case .rowRecent:
-//            let cell = cell as! SearchSuggestCellRecentPlace
-//            cell.render()
 
         default:
             return
@@ -221,6 +215,14 @@ extension SuggestController: UITableViewDataSource, UITableViewDelegate {
         case .place(let place):
             let controller = RIPController(placeId: place.placeId)
             self.navigationController?.pushViewController(controller, animated: true)
+
+        case .assumption(let result):
+            self.onDismiss(result.searchQuery)
+            self.dismiss(animated: true)
+
+        case .suggest(let text):
+            self.headerView.textField.text = text
+            self.headerView.textField.sendActions(for: .valueChanged)
 
         default:
             return

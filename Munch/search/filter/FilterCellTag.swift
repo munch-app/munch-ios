@@ -13,8 +13,7 @@ import Localize_Swift
 import BEMCheckBox
 
 class FilterItemCellTagHeader: UITableViewCell {
-    private let label = UILabel(style: .h1)
-            .with(numberOfLines: 1)
+    private let label = UILabel(style: .h2)
 
     var type: Tag.TagType! {
         didSet {

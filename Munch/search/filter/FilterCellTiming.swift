@@ -8,7 +8,7 @@ import UIKit
 import SnapKit
 
 class FilterItemCellTiming: UITableViewCell {
-    private let label = UILabel(style: .h1).with(text: "Timing")
+    private let label = UILabel(style: .h2).with(text: "Timing")
 
     fileprivate let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
