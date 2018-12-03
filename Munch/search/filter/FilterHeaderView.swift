@@ -51,7 +51,7 @@ class FilterHeaderView: UIView {
         }
     }
 
-    var tags: [FilterHeaderTag] = []
+    var tags: [FilterToken] = []
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -68,11 +68,11 @@ class FilterHeaderTagView: UIView {
     var second = TagView()
     var third = TagView()
 
-    var tags = [FilterHeaderTag]()
+    var tags = [FilterToken]()
     var query: SearchQuery? {
         didSet {
             if let query = self.query {
-                let tags = FilterHeaderTag.getTags(query: query)
+                let tags = FilterToken.getTokens(query: query)
                 self.first.text = tags.get(0)?.text
                 self.second.text = tags.get(1)?.text
 
@@ -146,71 +146,5 @@ class FilterHeaderTagView: UIView {
         required init?(coder aDecoder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
-    }
-}
-
-// MARK: Filter View
-enum FilterHeaderTag {
-    case tag(Tag)
-    case hour(SearchQuery.Filter.Hour)
-    case price(SearchQuery.Filter.Price)
-    case location(SearchQuery.Filter.Location)
-}
-
-extension FilterHeaderTag {
-    var text: String {
-        switch self {
-        case .tag(let tag):
-            return tag.name
-
-        case .price(let price):
-            let min = String(format: "%.0f", price.min)
-            let max = String(format: "%.0f", price.max)
-            return "$\(min) - $\(max)"
-
-        case .location(let location):
-            switch location.type {
-            case .Anywhere:
-                return "Anywhere"
-            case .Nearby:
-                return "Nearby"
-            case .Between:
-                return "EatBetween"
-            case .Where:
-                return location.areas.get(0)?.name ?? "Where"
-            }
-
-        case .hour(let hour):
-            switch hour.type {
-            case .OpenDay:
-                let day = hour.day
-                let open = hour.open
-                let close = hour.close
-                return "\(day): \(open)-\(close)"
-
-            case .OpenNow:
-                return "Open Now"
-            }
-        }
-    }
-}
-
-extension FilterHeaderTag {
-    static func getTags(query: SearchQuery) -> [FilterHeaderTag] {
-        var tags = [FilterHeaderTag]()
-        tags.append(.location(query.filter.location))
-
-        if let price = query.filter.price {
-            tags.append(.price(price))
-        }
-
-        if let hour = query.filter.hour {
-            tags.append(.hour(hour))
-        }
-
-        query.filter.tags.forEach { tag in
-            tags.append(.tag(tag))
-        }
-        return tags
     }
 }

@@ -26,9 +26,9 @@
 		B4B7307637309079F8D4644C /* SearchCardHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73FC8D2DDBFFEA71F5D3F /* SearchCardHome.swift */; };
 		B4B73092A3BE93B2D3CBE7D9 /* FilterCellLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738ACBC179DBD4A72FC01 /* FilterCellLocation.swift */; };
 		B4B730982D68D10417555D23 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7307B2B6D5C94C6592905 /* Color.swift */; };
-		B4B730E7C02C5C199C9E516C /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7387BA0913D261FD92F4F /* HomeController.swift */; };
 		B4B730ED3E9216817A85CDEE /* SearchCardPlace.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7348322E099298BEB7546 /* SearchCardPlace.swift */; };
 		B4B731365FBBAFD37E2E7366 /* PlaceCardPartnersContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7366CEC775D090EE1D49B /* PlaceCardPartnersContent.swift */; };
+		B4B7315086EE2F9687A565B6 /* FilterToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732DE1EA3B496C8EE6CB3 /* FilterToken.swift */; };
 		B4B7316A7CC5FD11A8091102 /* PlaceCardAbout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7305A5B27A41922ADEE57 /* PlaceCardAbout.swift */; };
 		B4B7317A88FBBF250ABABD73 /* CollectionViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73937402D628B2405A1F0 /* CollectionViewExtensions.swift */; };
 		B4B731C9E8B9A21CE5BBDF35 /* SearchCardArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7319F863F7D75472073D8 /* SearchCardArea.swift */; };
@@ -184,6 +184,7 @@
 		B4B7329A88030A09DC2A5187 /* MunchUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchUser.swift; sourceTree = "<group>"; };
 		B4B732B20AE677AF6243099A /* MunchTagView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchTagView.swift; sourceTree = "<group>"; };
 		B4B732D2B0FB00E6302B1769 /* AddToCollectionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddToCollectionController.swift; sourceTree = "<group>"; };
+		B4B732DE1EA3B496C8EE6CB3 /* FilterToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterToken.swift; sourceTree = "<group>"; };
 		B4B732E7ED481C66B5E5C06F /* FoundationExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundationExtensions.swift; sourceTree = "<group>"; };
 		B4B732ED64723C629C4B86F2 /* Authentication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Authentication.swift; sourceTree = "<group>"; };
 		B4B732F3E55F3E605210CE9D /* ReviewRatingUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReviewRatingUtils.swift; sourceTree = "<group>"; };
@@ -211,7 +212,6 @@
 		B4B737B877E6C0DDB8C12B56 /* FeedController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedController.swift; sourceTree = "<group>"; };
 		B4B738679F9E169693DC1515 /* Label.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Label.swift; sourceTree = "<group>"; };
 		B4B73874640BF8573F3D6DE2 /* RIPMapController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPMapController.swift; sourceTree = "<group>"; };
-		B4B7387BA0913D261FD92F4F /* HomeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
 		B4B738ACBC179DBD4A72FC01 /* FilterCellLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterCellLocation.swift; sourceTree = "<group>"; };
 		B4B738B688AE5A34954680EA /* SearchService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchService.swift; sourceTree = "<group>"; };
 		B4B738C639DA188BF1AFD8CE /* ProfileTabController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileTabController.swift; sourceTree = "<group>"; };
@@ -327,7 +327,6 @@
 				B4B73014A56AA60300F518FF /* feed */,
 				B4B73C1CDDC9DB33B83DBADD /* api */,
 				B4B735E65FE99426DE4CB375 /* authentication */,
-				B4B73A6052E29F6752D18CDD /* home */,
 			);
 			path = Munch;
 			sourceTree = "<group>";
@@ -466,6 +465,7 @@
 				B4B732F6C13FA997F61D35F0 /* FilterCellTiming.swift */,
 				B4B7329579F8E1B3F992EB18 /* FilterCellPrice.swift */,
 				B4B738ACBC179DBD4A72FC01 /* FilterCellLocation.swift */,
+				B4B732DE1EA3B496C8EE6CB3 /* FilterToken.swift */,
 			);
 			path = filter;
 			sourceTree = "<group>";
@@ -537,14 +537,6 @@
 				B4B73D56D29ADB145295DB94 /* module.modulemap */,
 			);
 			path = CCommonCrypto;
-			sourceTree = "<group>";
-		};
-		B4B73A6052E29F6752D18CDD /* home */ = {
-			isa = PBXGroup;
-			children = (
-				B4B7387BA0913D261FD92F4F /* HomeController.swift */,
-			);
-			path = home;
 			sourceTree = "<group>";
 		};
 		B4B73A631FEAF4A8430EA091 /* cells */ = {
@@ -991,7 +983,6 @@
 				B4B734D22634645ACBFBF487 /* Authentication.swift in Sources */,
 				B4B73A4F99622AF0D943C712 /* AccountBoardingController.swift in Sources */,
 				B4B730982D68D10417555D23 /* Color.swift in Sources */,
-				B4B730E7C02C5C199C9E516C /* HomeController.swift in Sources */,
 				B4B7333D1DDE171204DBEAEE /* SearchTableView.swift in Sources */,
 				B4B7395FCD466A8BB5C47BAA /* Label.swift in Sources */,
 				B4B73D25850A0104B2209E9D /* Shadow.swift in Sources */,
@@ -1008,6 +999,7 @@
 				B4B73CDD1CA1F7CAE5F7D071 /* Seperator.swift in Sources */,
 				B4B732D57D5E43FEEBCB4F30 /* FilterCellPrice.swift in Sources */,
 				B4B73092A3BE93B2D3CBE7D9 /* FilterCellLocation.swift in Sources */,
+				B4B7315086EE2F9687A565B6 /* FilterToken.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

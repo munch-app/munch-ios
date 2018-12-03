@@ -5,26 +5,29 @@
 
 import Foundation
 import UIKit
+import SwiftRichString
 
 class MunchSearchTextField: UITextField {
-    private let leftImagePadding: CGFloat = 6
-    private let leftImageSize: CGFloat = 18
+    private static let leftImagePadding: CGFloat = 8
+    private static let leftImageSize: CGFloat = 18
+
+    private let leftImageView: UIImageView = {
+        let view = UIImageView(frame: CGRect(x: 0, y: 0, width: leftImageSize, height: leftImageSize))
+        view.contentMode = .scaleAspectFit
+        view.tintColor = .black
+        return view
+    }()
 
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
-        self.layer.cornerRadius = 4
         self.backgroundColor = .whisper100
-
-        self.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: leftImageSize, height: leftImageSize))
-        imageView.contentMode = .scaleAspectFit
-        imageView.image = UIImage(named: "SC-Search-18")
-        imageView.tintColor = .black
+        self.layer.cornerRadius = 4
 
         self.leftViewMode = .always
-        self.leftView = imageView
+        self.leftView = self.leftImageView
+        self.set(icon: .glass)
 
+        self.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         self.placeholder = "Try \"Chinese\""
 
         self.returnKeyType = .search
@@ -36,18 +39,64 @@ class MunchSearchTextField: UITextField {
     // Provides left padding for images
     override func leftViewRect(forBounds bounds: CGRect) -> CGRect {
         var rect = super.leftViewRect(forBounds: bounds)
-        rect.origin.x += leftImagePadding
-        rect.size.width = leftImageSize + (leftImagePadding * 2)
+        rect.origin.x += MunchSearchTextField.leftImagePadding
+        rect.size.width = MunchSearchTextField.leftImageSize + (MunchSearchTextField.leftImagePadding * 2)
         return rect
-    }
-
-    override var placeholder: String? {
-        didSet {
-            attributedPlaceholder = NSAttributedString(string: placeholder ?? "", attributes: [.foregroundColor: UIColor.ba85])
-        }
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension MunchSearchTextField {
+    static let period = "  •  ".set(style: Style {
+        $0.font = UIFont.systemFont(ofSize: 15, weight: .ultraLight)
+        $0.color = UIColor.ba75
+    })
+
+    enum Icon: String {
+        case glass = "Search-Header-Glass"
+        case back = "Search-Header-Back"
+    }
+
+    override var placeholder: String? {
+        didSet {
+            attributedPlaceholder = NSAttributedString(string: placeholder ?? "", attributes: [.foregroundColor: UIColor.ba75])
+        }
+    }
+
+    func set(icon: Icon) {
+        self.leftImageView.image = UIImage(named: icon.rawValue)
+    }
+
+    func set(tokens: [FilterToken]) {
+        let attributed = NSMutableAttributedString()
+
+
+        if let first = tokens.get(0)?.text {
+            attributed.append(first.set(style: Style {
+                $0.color = UIColor.black
+                $0.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+            }))
+        }
+        if let second = tokens.get(1)?.text {
+            attributed.append(MunchSearchTextField.period)
+            attributed.append(second.set(style: Style {
+                $0.color = UIColor.black
+                $0.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+            }))
+        }
+
+        let count = tokens.count - 2
+        if count > 0 {
+            attributed.append(MunchSearchTextField.period)
+            attributed.append("+\(count)".set(style: Style {
+                $0.color = UIColor.black
+                $0.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+            }))
+        }
+
+        attributedPlaceholder = attributed
     }
 }

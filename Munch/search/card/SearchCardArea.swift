@@ -35,6 +35,7 @@ class SearchAreaClusterListCard: UITableViewCell, SearchCardView {
     }()
 
     private var areas = [Area]()
+    private var delegate: SearchTableViewDelegate!
 
     private var instanceId: String?
 
@@ -61,6 +62,8 @@ class SearchAreaClusterListCard: UITableViewCell, SearchCardView {
     }
 
     func render(card: SearchCard, delegate: SearchTableViewDelegate) {
+        self.delegate = delegate
+
         if self.instanceId == card.instanceId {
             return
         }
@@ -90,12 +93,6 @@ extension SearchAreaClusterListCard: UICollectionViewDataSource, UICollectionVie
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let area = areas[indexPath.row]
-
-        Analytics.logEvent(AnalyticsEventViewItem, parameters: [
-            AnalyticsParameterItemID: "area-\(area.areaId)" as NSObject,
-            AnalyticsParameterItemCategory: "search_areas" as NSObject
-        ])
-
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchAreaClusterListCardCell", for: indexPath) as! SearchAreaClusterListCardCell
         cell.render(area: area)
         return cell
@@ -104,10 +101,12 @@ extension SearchAreaClusterListCard: UICollectionViewDataSource, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let area = areas[indexPath.row]
 
-        // TODO
-//        self.controller.search { query in
-//            query.filter.area = area
-//        }
+        self.delegate.searchTableView { controller in
+            controller.push { query in
+                query.filter.location.type = .Where
+                query.filter.location.areas = [area]
+            }
+        }
     }
 
     fileprivate class SearchAreaClusterListCardCell: UICollectionViewCell {
@@ -349,7 +348,7 @@ class SearchAreaClusterHeaderCard: UITableViewCell, SearchCardView {
     private(set) static var cardId: String = "injected_AreaClusterHeader_20180621"
 
     fileprivate class AddressLineView: SRCopyableView {
-        static let headerStyle = Style{
+        static let headerStyle = Style {
             $0.color = UIColor.black
             $0.font = UIFont.systemFont(ofSize: 13.0, weight: .medium)
         }

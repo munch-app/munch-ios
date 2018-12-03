@@ -38,8 +38,8 @@ class SearchRootController: UINavigationController, UINavigationControllerDelega
 
 class SearchController: UIViewController {
     static let inset = UIEdgeInsets(top: SearchHeaderView.height, left: 0, bottom: 0, right: 0)
-    let headerView = SearchHeaderView()
-    let searchTableView = SearchTableView(screen: .search, inset: inset)
+    private let headerView = SearchHeaderView()
+    private let searchTableView = SearchTableView(screen: .search, inset: inset)
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -68,11 +68,38 @@ class SearchController: UIViewController {
         }
 
         self.searchTableView.cardDelegate = self
-        self.searchTableView.search(screen: .search)
-        self.searchTableView.scrollsToTop()
-
         self.headerView.controller = self
-        self.headerView.searchQuery = self.searchTableView.cardManager.searchQuery
+
+        self.push(searchQuery: SearchQuery())
+    }
+
+    var histories = [SearchQuery]()
+
+    func push(searchQuery: SearchQuery) {
+        histories.append(searchQuery)
+        self.searchTableView.search(query: searchQuery, screen: .search)
+        self.searchTableView.scrollsToTop()
+        self.headerView.searchQuery = searchQuery
+    }
+
+    func push(edit: @escaping (inout SearchQuery) -> Void) {
+        var searchQuery = self.histories.last!
+        edit(&searchQuery)
+        self.push(searchQuery: searchQuery)
+    }
+
+
+    func pop() {
+        if histories.popLast() != nil, let searchQuery = histories.last {
+            self.searchTableView.search(query: searchQuery, screen: .search)
+            self.searchTableView.scrollsToTop()
+            self.headerView.searchQuery = searchQuery
+        }
+    }
+
+    func reset() {
+        histories.removeAll()
+        push(searchQuery: SearchQuery())
     }
 }
 
@@ -88,17 +115,10 @@ extension SearchController: SearchTableViewDelegate {
         default:
             return
         }
-
     }
 
-    func searchTableView(requireController: @escaping (UIViewController) -> Void) {
+    func searchTableView(requireController: @escaping (SearchController) -> Void) {
         requireController(self)
-    }
-
-    func searchTableView(didScroll searchTableView: SearchTableView) {
-    }
-
-    func searchTableView(didScrollFinish searchTableView: SearchTableView) {
     }
 }
 

@@ -15,13 +15,22 @@ class SearchHeaderView: UIView {
     static let height: CGFloat = 64
 
     let backButton = SearchBackButton()
+    let cancelButton = SearchCancelButton()
     let textButton = SearchTextButton()
     let filterButton = SearchFilterButton()
 
     var controller: SearchController!
     var searchQuery: SearchQuery! {
         didSet {
-            // TODO :Better SearchQuery State Management
+            if self.controller.histories.count > 1 {
+                self.textButton.field.set(icon: .back)
+                self.textButton.field.set(tokens: FilterToken.getTokens(query: self.searchQuery))
+                self.backButton.isHidden = false
+            } else {
+                self.textButton.field.placeholder = "Try \"Chinese\""
+                self.textButton.field.set(icon: .glass)
+                self.backButton.isHidden = true
+            }
         }
     }
 
@@ -30,11 +39,10 @@ class SearchHeaderView: UIView {
         self.backgroundColor = .white
         self.addSubview(textButton)
         self.addSubview(backButton)
+        self.addSubview(cancelButton)
         self.addSubview(filterButton)
 
-        filterButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
-        textButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
-        backButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
+        self.addTargets()
 
         textButton.snp.makeConstraints { make in
             make.top.equalTo(self.safeArea.top)
@@ -62,26 +70,6 @@ class SearchHeaderView: UIView {
         }
     }
 
-    @objc func onHeaderAction(for view: UIView) {
-        if view is SearchTextButton {
-            self.controller.present(SuggestRootController(searchQuery: searchQuery) { query in
-                if let query = query {
-                    self.controller.searchTableView.search(query: query, screen: .search, animated: true)
-                }
-            }, animated: true)
-        } else if view is SearchBackButton {
-            // TODO
-        } else if view is SearchFilterButton {
-            self.controller.present(FilterRootController(searchQuery: searchQuery) { query in
-                if let query = query {
-                    self.controller.searchTableView.search(query: query, screen: .search, animated: true)
-                }
-            }, animated: true)
-        }
-
-        // TODO Search Cancel Button
-    }
-
     override func layoutSubviews() {
         super.layoutSubviews()
         self.shadow(vertical: 3)
@@ -92,8 +80,42 @@ class SearchHeaderView: UIView {
     }
 }
 
+extension SearchHeaderView {
+    func addTargets() {
+        filterButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
+        cancelButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
+        textButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
+        backButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
+    }
+
+    @objc func onHeaderAction(for view: UIView) {
+        if view is SearchTextButton {
+            self.controller.present(SuggestRootController(searchQuery: searchQuery) { query in
+                if let query = query {
+                    self.controller.push(searchQuery: query)
+                }
+            }, animated: true)
+        } else if view is SearchBackButton {
+            self.controller.pop()
+            // TODO
+        } else if view is SearchFilterButton {
+            self.controller.present(FilterRootController(searchQuery: searchQuery) { query in
+                if let query = query {
+                    self.controller.push(searchQuery: query)
+                }
+            }, animated: true)
+        } else if view is SearchCancelButton {
+            // TODO
+        }
+    }
+}
+
 // MARK: Buttons
 class SearchBackButton: UIButton {
+
+}
+
+class SearchCancelButton: UIButton {
 
 }
 
@@ -116,7 +138,7 @@ class SearchFilterButton: UIButton {
 class SearchTextButton: UIButton {
     fileprivate let field = MunchSearchTextField()
 
-    override init(frame: CGRect = CGRect()) {
+    override init(frame: CGRect = .zero) {
         super.init(frame: frame)
         self.addSubview(field)
         self.backgroundColor = .white

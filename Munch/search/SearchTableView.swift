@@ -94,7 +94,7 @@ class SearchTableView: UITableView {
 protocol SearchTableViewDelegate {
     func searchTableView(didSelectCardAt card: SearchCard)
 
-    func searchTableView(requireController: @escaping (UIViewController) -> Void)
+    func searchTableView(requireController: @escaping (SearchController) -> Void)
 
     func searchTableView(didScroll searchTableView: SearchTableView)
 
@@ -110,7 +110,7 @@ extension SearchTableViewDelegate {
 }
 
 extension SearchTableView {
-    func search(query: SearchQuery = SearchQuery(), screen: SearchScreen, animated: Bool = true) {
+    func search(query: SearchQuery, screen: SearchScreen, animated: Bool = true) {
         self.cardManager = SearchCardManager(query: query, screen: screen)
         self.reloadData()
 
@@ -119,18 +119,12 @@ extension SearchTableView {
         }
     }
 
-    func search(edit: @escaping (inout SearchQuery) -> Void) {
-        var searchQuery = self.cardManager.searchQuery
-        edit(&searchQuery)
-        self.search(query: searchQuery, screen: self.cardManager.searchScreen)
-    }
-
     func scrollsToTop(animated: Bool = true) {
         self.scrollToRow(at: .init(row: 0, section: 0), at: .top, animated: animated)
     }
 
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
-        self.search(screen: self.cardManager.searchScreen)
+        self.search(query: self.cardManager.searchQuery, screen: self.cardManager.searchScreen)
         refreshControl.endRefreshing()
     }
 }
