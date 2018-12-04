@@ -20,7 +20,7 @@ private let encoder = JSONEncoder()
 
 public extension TargetType {
     var baseURL: URL {
-        return URL(string: "https://api.munch.app/v0.16.0")!
+        return URL(string: "https://api.munch.app/v0.17.0")!
     }
 
     var sampleData: Data {
@@ -164,8 +164,6 @@ extension Moya.Response {
     func mapNext(atKeyPath keyPath: String, failsOnEmptyData: Bool = true) throws -> Any? {
         return try mapNext(failsOnEmptyData: failsOnEmptyData)?[keyPath]
     }
-
-    // TODO Map next node list?
 
     func mapJSON(atKeyPath keyPath: String, failsOnEmptyData: Bool = true) throws -> Any? {
         if let json = try mapJSON(failsOnEmptyData: failsOnEmptyData) as? [String: Any], let data = json[keyPath] {

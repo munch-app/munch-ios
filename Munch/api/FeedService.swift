@@ -14,7 +14,7 @@ enum FeedImageService {
 extension FeedImageService: TargetType {
     var path: String {
         switch self {
-        case let .query(country, latLng, from): return "/feed/images"
+        case let .query: return "/feed/images"
         case let .get(itemId): return "/feed/images/\(itemId)"
         }
     }
@@ -22,8 +22,21 @@ extension FeedImageService: TargetType {
         return .get
     }
     var task: Task {
-        return .requestPlain
+        switch self {
+        case let .query(country, latLng, from):
+            let parameters: [String: Any] = ["country": country, "latLng": latLng, "next.from": from]
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
+
+        default:
+            return .requestPlain
+        }
+
     }
+}
+
+struct ImageFeedResult: Codable {
+    var items: [ImageFeedItem]
+    var places: [String: Place]
 }
 
 struct ImageFeedItem: Codable {
@@ -31,7 +44,7 @@ struct ImageFeedItem: Codable {
     var sort: String
 
     var country: String
-    var latLat: String
+    var latLng: String
 
     var image: Image
     var createdMillis: Int
@@ -49,5 +62,9 @@ struct ImageFeedItem: Codable {
 
         var userId: String?
         var username: String?
+    }
+
+    struct Place: Codable {
+        var placeId: String
     }
 }

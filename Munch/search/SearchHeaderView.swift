@@ -97,7 +97,6 @@ extension SearchHeaderView {
             }, animated: true)
         } else if view is SearchBackButton {
             self.controller.pop()
-            // TODO
         } else if view is SearchFilterButton {
             self.controller.present(FilterRootController(searchQuery: searchQuery) { query in
                 if let query = query {

@@ -22,7 +22,7 @@ enum InitialViewProvider {
 
     fileprivate static func discover() -> SearchRootController {
         let controller = SearchRootController()
-        controller.tabBarItem = UITabBarItem(title: "Discover".localized(), image: UIImage(named: "TabBar_Search"), tag: 0)
+        controller.tabBarItem = UITabBarItem(title: "Discover".localized(), image: UIImage(named: "TabBar_Discover"), tag: 0)
         return controller
     }
 

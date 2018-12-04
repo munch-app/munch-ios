@@ -22,4 +22,10 @@ struct Image: Codable {
         var id: String?
         var name: String?
     }
+
+    var maxSize: Size? {
+        return self.sizes.max { size, size2 in
+            size.width < size2.width
+        }
+    }
 }

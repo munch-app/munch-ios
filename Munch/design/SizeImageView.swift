@@ -40,15 +40,19 @@ class SizeImageView: UIImageView {
         self.image = UIImage(named: named)
     }
 
-    func render(image: Image?) {
-        self.render(sizes: image?.sizes ?? [])
+    @discardableResult
+    func render(image: Image?) -> Image.Size? {
+        return self.render(sizes: image?.sizes ?? [])
     }
 
-    func render(sizes: [Image.Size]) {
+    @discardableResult
+    func render(sizes: [Image.Size]) -> Image.Size? {
         if let size = SizeImageView.find(sizes: sizes, minWidth: minWidth, minHeight: minHeight) {
             render(url: size.url)
+            return size
         } else {
             kf.setImage(with: nil)
+            return nil
         }
     }
 
