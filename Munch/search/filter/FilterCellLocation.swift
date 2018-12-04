@@ -239,7 +239,7 @@ fileprivate class SearchButton: UIButton {
 
     required init() {
         super.init(frame: .zero)
-        self.backgroundColor = UIColor(hex: "FBFBFB")
+        self.backgroundColor = UIColor(hex: "FCFCFC")
         self.layer.borderWidth = 1
         self.layer.borderColor = UIColor.ba15.cgColor
 

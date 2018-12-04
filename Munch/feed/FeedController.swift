@@ -41,13 +41,13 @@ class FeedController: UIViewController {
         collectionView.alwaysBounceVertical = true
         collectionView.backgroundColor = .white
 
-        collectionView.register(FeedCellHeader.self, forCellWithReuseIdentifier: String(describing: FeedCellHeader.self))
-        collectionView.register(FeedCellImage.self, forCellWithReuseIdentifier: String(describing: FeedCellImage.self))
-        collectionView.register(FeedCellLoading.self, forCellWithReuseIdentifier: String(describing: FeedCellLoading.self))
+        collectionView.register(type: FeedCellHeader.self)
+        collectionView.register(type: FeedCellImage.self)
+        collectionView.register(type: FeedCellLoading.self)
         return collectionView
     }()
 
-    private var items = [FeedCellItem]()
+    private var items: [FeedCellItem] = []
 
     private let manager = FeedManager()
     private let disposeBag = DisposeBag()
@@ -116,23 +116,19 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate {
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        func dequeue<T: UICollectionViewCell>(_ type: T.Type) -> T {
-            let identifier = String(describing: type)
-            return collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! T
-        }
-
         switch (indexPath.section, indexPath.row) {
         case (0, _):
-            return dequeue(FeedCellHeader.self)
+            return collectionView.dequeue(type: FeedCellHeader.self, for: indexPath)
 
         case (1, let row):
             switch items[row] {
-            case .image(let image):
-                return dequeue(FeedCellImage.self).render(with: image)
+            case let .image(item, _):
+                return collectionView.dequeue(type: FeedCellImage.self, for: indexPath)
+                        .render(with: item)
             }
 
         case (2, _):
-            return dequeue(FeedCellLoading.self)
+            return collectionView.dequeue(type: FeedCellLoading.self, for: indexPath)
 
         default:
             return UICollectionViewCell()
@@ -146,7 +142,17 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate {
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // TODO
+        switch (indexPath.section, indexPath.row) {
+        case (1, let row):
+            switch items[row] {
+            case let .image(item, places):
+                let controller = FeedImageController(item: item, places: places)
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
+
+        default:
+            break
+        }
     }
 }
 
@@ -192,7 +198,7 @@ extension FeedController: WaterfallLayoutDelegate {
         switch indexPath.section {
         case 1:
             switch items[indexPath.row] {
-            case .image(let image):
+            case .image(let image, _):
                 return FeedCellImage.size(item: image)
             }
 

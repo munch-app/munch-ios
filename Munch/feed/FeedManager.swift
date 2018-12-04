@@ -9,7 +9,7 @@ import Moya
 import RxSwift
 
 enum FeedCellItem {
-    case image(ImageFeedItem)
+    case image(ImageFeedItem, [Place])
 }
 
 class FeedManager {
@@ -17,6 +17,7 @@ class FeedManager {
 
     fileprivate(set) var loading = false
     fileprivate(set) var items = [ImageFeedItem]()
+    fileprivate(set) var places = [String: Place]()
 
     private var from: Int? = 0
     private var observer: AnyObserver<[FeedCellItem]>?
@@ -51,6 +52,9 @@ class FeedManager {
                     case let .success(result, from):
                         self.loading = false
                         self.items.append(contentsOf: result.items)
+                        result.places.forEach { key, value in
+                            self.places[key] = value
+                        }
                         self.observer?.on(.next(self.collect()))
                         self.from = from
 
@@ -68,7 +72,14 @@ class FeedManager {
     private func collect() -> [FeedCellItem] {
         var list = [FeedCellItem]()
         items.forEach { item in
-            list.append(.image(item))
+            var places = [Place]()
+            item.places.map({ $0.placeId }).forEach { s in
+                if let place = self.places[s] {
+                    places.append(place)
+                }
+            }
+
+            list.append(FeedCellItem.image(item, places))
         }
         return list
     }

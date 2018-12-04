@@ -83,7 +83,7 @@ fileprivate class RIPTagCollection: UIView {
         self.tags = Array(tags.prefix(6))
         super.init(frame: .zero)
 
-        let layout = UICollectionViewLeftAlignedLayout()
+        let layout = LeftAlignedLayout()
         layout.sectionInset = .zero
         layout.scrollDirection = .vertical
         layout.minimumInteritemSpacing = 10

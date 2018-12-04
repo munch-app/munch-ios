@@ -23,28 +23,28 @@ enum FontStyle {
     var font: UIFont {
         switch self {
         case .h1:
-            return UIFont.systemFont(ofSize: 32, weight: .medium)
+            return UIFont.systemFont(ofSize: 32, weight: .semibold)
         case .h2:
-            return UIFont.systemFont(ofSize: 24, weight: .medium)
+            return UIFont.systemFont(ofSize: 24, weight: .semibold)
         case .h3:
-            return UIFont.systemFont(ofSize: 20, weight: .medium)
+            return UIFont.systemFont(ofSize: 20, weight: .semibold)
         case .h4:
-            return UIFont.systemFont(ofSize: 18, weight: .medium)
+            return UIFont.systemFont(ofSize: 18, weight: .semibold)
         case .h5:
-            return UIFont.systemFont(ofSize: 16, weight: .medium)
+            return UIFont.systemFont(ofSize: 16, weight: .semibold)
         case .h6:
-            return UIFont.systemFont(ofSize: 14, weight: .medium)
+            return UIFont.systemFont(ofSize: 14, weight: .semibold)
 
         case .large:
             return UIFont.systemFont(ofSize: 19, weight: .regular)
         case .regular:
             return UIFont.systemFont(ofSize: 16, weight: .regular)
         case .subtext:
-            return UIFont.systemFont(ofSize: 14, weight: .medium)
+            return UIFont.systemFont(ofSize: 14, weight: .regular)
         case .small:
             return UIFont.systemFont(ofSize: 12, weight: .regular)
         case .smallBold:
-            return UIFont.systemFont(ofSize: 12, weight: .medium)
+            return UIFont.systemFont(ofSize: 12, weight: .semibold)
         }
     }
 
