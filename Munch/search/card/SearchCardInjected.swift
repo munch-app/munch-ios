@@ -8,11 +8,10 @@
 
 import Foundation
 import UIKit
-import RxSwift
-import Localize_Swift
-
 import SnapKit
-import SwiftyJSON
+import RxSwift
+
+import Localize_Swift
 import FirebaseAnalytics
 
 class SearchNoLocationCard: UITableViewCell, SearchCardView {
@@ -200,34 +199,5 @@ class SearchNoResultLocationCard: UITableViewCell, SearchCardView {
 
     static var cardId: String {
         return "injected_NoResultLocation_20171208"
-    }
-}
-
-class SearchHeaderCard: UITableViewCell, SearchCardView {
-    private let titleLabel = UILabel().with(style: .h2)
-
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-        self.addSubview(titleLabel)
-
-        titleLabel.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(leftRight)
-            make.top.equalTo(self).inset(topBottom)
-            make.bottom.equalTo(self)
-        }
-    }
-
-    func render(card: SearchCard, delegate: SearchTableViewDelegate) {
-        self.titleLabel.text = card.string(name: "title")
-        self.layoutIfNeeded()
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    static var cardId: String {
-        return "Header_2018-11-29"
     }
 }

@@ -25,7 +25,6 @@ class PlaceCard: UIView {
     }()
     private let tagView: MunchTagView = {
         let tagView = MunchTagView()
-        tagView.isUserInteractionEnabled = false
         return tagView
     }()
     private let locationLabel: UILabel = {
@@ -51,6 +50,8 @@ class PlaceCard: UIView {
         self.addSubview(nameLabel)
         self.addSubview(tagView)
         self.addSubview(locationLabel)
+
+        self.isUserInteractionEnabled = false
 
         imageView.snp.makeConstraints { maker in
             maker.top.left.right.equalTo(self)

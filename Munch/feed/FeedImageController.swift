@@ -7,6 +7,9 @@ import Foundation
 import UIKit
 import SnapKit
 
+import SwiftRichString
+import SafariServices
+
 class FeedImageController: UIViewController, UIGestureRecognizerDelegate {
     private let provider = MunchProvider<FeedImageService>()
 
@@ -45,6 +48,7 @@ class FeedImageController: UIViewController, UIGestureRecognizerDelegate {
 
         self.scrollView.addSubview(self.stackView)
         self.addArrangedSubview()
+        self.addTargets()
 
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
@@ -112,13 +116,47 @@ class FeedImageHeaderView: UIView {
     }
 }
 
-extension FeedImageController {
+extension FeedImageController: SFSafariViewControllerDelegate {
     func addArrangedSubview() {
         self.stackView.addArrangedSubview(FeedImage(item: self.item))
         self.stackView.addArrangedSubview(FeedButtonGroup(item: self.item))
         self.stackView.addArrangedSubview(FeedContent(item: self.item))
         if let place = self.places.get(0) {
             self.stackView.addArrangedSubview(FeedPlace(place: place))
+        }
+    }
+
+    func addTargets() {
+        if let group = self.stackView.arrangedSubviews[1] as? FeedButtonGroup {
+            group.saveButton.addTarget(self, action: #selector(onSave(_:)), for: .touchUpInside)
+            group.placeButton.addTarget(self, action: #selector(onPlace(_:)), for: .touchUpInside)
+        }
+
+        if let content = self.stackView.arrangedSubviews[2] as? FeedContent {
+            content.addTarget(self, action: #selector(onContent(_:)), for: .touchUpInside)
+        }
+
+        if let place = self.stackView.arrangedSubviews[3] as? FeedPlace {
+            place.addTarget(self, action: #selector(onPlace(_:)), for: .touchUpInside)
+        }
+    }
+
+    @objc func onSave(_ sender: Any) {
+        // TODO
+    }
+
+    @objc func onContent(_ sender: Any) {
+        if let link = self.item.instagram?.link, let url = URL(string: link) {
+            let safari = SFSafariViewController(url: url)
+            safari.delegate = self
+            present(safari, animated: true, completion: nil)
+        }
+    }
+
+    @objc func onPlace(_ sender: Any) {
+        if let place = self.places.get(0) {
+            let controller = RIPController(placeId: place.placeId)
+            self.navigationController?.pushViewController(controller, animated: true)
         }
     }
 }
@@ -175,7 +213,7 @@ fileprivate class FeedButtonGroup: UIView {
     }
 }
 
-fileprivate class FeedContent: UIView {
+fileprivate class FeedContent: UIControl {
     let caption = UILabel(style: .subtext)
             .with(numberOfLines: 2)
     let username = UILabel(style: .h5)
@@ -187,7 +225,14 @@ fileprivate class FeedContent: UIView {
         self.addSubview(username)
 
         caption.text = item.instagram?.caption
-        username.text = "by \(item.instagram?.username ?? "") on \(item.createdMillis.asMonthDayYear)"
+
+        let mutable = NSMutableAttributedString()
+        mutable.append(NSAttributedString(string: "by "))
+        mutable.append((item.instagram?.username ?? "").set(style: Style {
+            $0.color = UIColor.secondary700
+        }))
+        mutable.append(NSAttributedString(string: " on \(item.createdMillis.asMonthDayYear)"))
+        username.attributedText = mutable
 
         caption.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(24)
@@ -206,7 +251,7 @@ fileprivate class FeedContent: UIView {
     }
 }
 
-fileprivate class FeedPlace: UIView {
+fileprivate class FeedPlace: UIControl {
     let label = UILabel(style: .h2)
             .with(text: "Place Mentioned")
     let placeCard = PlaceCard()

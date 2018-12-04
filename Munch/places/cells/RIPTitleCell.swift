@@ -57,7 +57,7 @@ class RIPTitleCell: RIPCell {
 
         locationLabel.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(24)
-            maker.top.equalTo(nameLabel.snp.bottom)
+            maker.top.equalTo(nameLabel.snp.bottom).inset(-4)
         }
 
         tagView.snp.makeConstraints { maker in
