@@ -39,6 +39,11 @@ class FilterController: UIViewController {
 
     fileprivate let headerView = FilterHeaderView()
     fileprivate let bottomView = FilterBottomView()
+    fileprivate let indicator: NVActivityIndicatorView = {
+        let indicator = NVActivityIndicatorView(frame: .zero, type: .ballTrianglePath, color: .secondary500, padding: 0)
+        indicator.startAnimating()
+        return indicator
+    }()
 
     fileprivate var cellLocation: FilterItemCellLocation!
     fileprivate var cellPrice: FilterItemCellPrice!
@@ -84,29 +89,34 @@ class FilterController: UIViewController {
         self.view.addSubview(tableView)
         self.view.addSubview(headerView)
         self.view.addSubview(bottomView)
+        self.view.addSubview(indicator)
 
         self.headerView.manager = self.manager
         self.headerView.searchQuery = self.manager.searchQuery
         self.bottomView.count = nil
 
-        self.headerView.snp.makeConstraints { make in
+        headerView.snp.makeConstraints { make in
             make.top.equalTo(self.view)
             make.left.right.equalTo(self.view)
         }
 
-        self.bottomView.snp.makeConstraints { make in
+        bottomView.snp.makeConstraints { make in
             make.bottom.equalTo(self.view)
             make.left.right.equalTo(self.view)
         }
 
-        self.tableView.snp.makeConstraints { make in
+        tableView.snp.makeConstraints { make in
             make.left.right.equalTo(self.view)
             make.top.equalTo(self.headerView.snp.bottom)
             make.bottom.equalTo(self.bottomView.snp.top)
         }
 
+        indicator.snp.makeConstraints { maker in
+            maker.center.equalTo(tableView)
+            maker.width.height.equalTo(32)
+        }
+
         self.manager.observe()
-                .debounce(0.5, scheduler: MainScheduler.instance)
                 .catchError { (error: Error) in
                     self.alert(error: error)
                     return Observable.empty()
@@ -114,12 +124,18 @@ class FilterController: UIViewController {
                 .subscribe { event in
                     switch event {
                     case .next(let items):
-                        self.items = items
-
                         self.headerView.searchQuery = self.manager.searchQuery
-                        self.bottomView.count = self.manager.result?.count
+                        self.items = items
                         self.tableView.reloadData()
 
+                        // Loading
+                        if items.isEmpty {
+                            self.bottomView.count = nil
+                            self.indicator.isHidden = false
+                        } else {
+                            self.bottomView.count = self.manager.result?.count
+                            self.indicator.isHidden = true
+                        }
                     case .error(let error):
                         self.alert(error: error)
 
@@ -138,6 +154,7 @@ class FilterController: UIViewController {
 extension FilterController {
     func addTargets() {
         self.headerView.closeButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
+        self.headerView.resetButton.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
         self.bottomView.applyButton.addTarget(self, action: #selector(actionApply(_:)), for: .touchUpInside)
 
         self.headerView.tagView.first.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
@@ -250,7 +267,7 @@ fileprivate class FilterBottomView: UIView {
         button.layer.cornerRadius = 3
         button.backgroundColor = .secondary500
         button.setTitleColor(.white, for: .normal)
-        button.titleLabel!.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        button.titleLabel!.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
         return button
     }()
     fileprivate let indicator: NVActivityIndicatorView = {

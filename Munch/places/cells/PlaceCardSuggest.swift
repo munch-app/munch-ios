@@ -7,7 +7,6 @@
 //import UIKit
 //import SafariServices
 //
-//import SwiftyJSON
 //import SnapKit
 //
 //class PlaceSuggestEditCard: PlaceCardView, SFSafariViewControllerDelegate {

@@ -8,13 +8,8 @@ PODS:
     - Bolts/Tasks
   - Bolts/Tasks (1.9.0)
   - Cache (5.2.0)
-  - Charts (3.2.1):
-    - Charts/Core (= 3.2.1)
-  - Charts/Core (3.2.1)
-  - Cosmos (13.0.0)
   - Crashlytics (3.12.0):
     - Fabric (~> 1.9.0)
-  - ESTabBarController-swift (2.5)
   - Fabric (1.9.0)
   - FBSDKCoreKit (4.38.1):
     - Bolts (~> 1.9)
@@ -153,23 +148,18 @@ PODS:
   - RxSwift (4.4.0):
     - RxAtomic (~> 4.4)
   - Shimmer (1.0.2)
-  - SKPhotoBrowser (5.1.0)
   - SnapKit (4.2.0)
   - SwiftLocation (3.2.3):
     - SwiftyJSON (~> 4.0.0-alpha.1)
   - SwiftRichString (2.0.5)
   - SwiftyJSON (4.0.0)
   - Toast-Swift (4.0.1)
-  - TTGTagCollectionView (1.8.2)
 
 DEPENDENCIES:
   - Alamofire (~> 4.5)
   - BEMCheckBox (~> 1.4)
   - Cache
-  - Charts
-  - Cosmos (~> 13.0)
   - Crashlytics (~> 3.12.0)
-  - ESTabBarController-swift (= 2.5)
   - Fabric (~> 1.9.0)
   - Firebase/Auth
   - Firebase/Core
@@ -187,13 +177,11 @@ DEPENDENCIES:
   - RxCocoa (~> 4.4)
   - RxSwift (~> 4.4)
   - Shimmer
-  - SKPhotoBrowser (~> 5.0)
   - SnapKit (~> 4.2)
   - SwiftLocation (~> 3.2)
   - SwiftRichString (~> 2.0.5)
   - SwiftyJSON (~> 4.0)
   - Toast-Swift (~> 4.0.1)
-  - TTGTagCollectionView (from `https://github.com/Fuxingloh/TTGTagCollectionView.git`, branch `master`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -201,10 +189,7 @@ SPEC REPOS:
     - BEMCheckBox
     - Bolts
     - Cache
-    - Charts
-    - Cosmos
     - Crashlytics
-    - ESTabBarController-swift
     - Fabric
     - FBSDKCoreKit
     - FBSDKLoginKit
@@ -239,32 +224,18 @@ SPEC REPOS:
     - RxCocoa
     - RxSwift
     - Shimmer
-    - SKPhotoBrowser
     - SnapKit
     - SwiftLocation
     - SwiftRichString
     - SwiftyJSON
     - Toast-Swift
 
-EXTERNAL SOURCES:
-  TTGTagCollectionView:
-    :branch: master
-    :git: https://github.com/Fuxingloh/TTGTagCollectionView.git
-
-CHECKOUT OPTIONS:
-  TTGTagCollectionView:
-    :commit: 0655c0ef79589c0e5fc7ac0f0a60bb73a71c4125
-    :git: https://github.com/Fuxingloh/TTGTagCollectionView.git
-
 SPEC CHECKSUMS:
   Alamofire: 3ec537f71edc9804815215393ae2b1a8ea33a844
   BEMCheckBox: 5ba6e37ade3d3657b36caecc35c8b75c6c2b1a4e
   Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
   Cache: 807c5d86d01a177f06ede9865add3aea269bbfd4
-  Charts: f122fb70b19847fa5817d018b77d6c5a2296ab25
-  Cosmos: af3973becc045af335b64498c9812034876b7661
   Crashlytics: 07fb167b1694128c1c9a5a5cc319b0e9c3ca0933
-  ESTabBarController-swift: 8daa432f2a9be8ebd25101dc46c84472fd760512
   Fabric: f988e33c97f08930a413e08123064d2e5f68d655
   FBSDKCoreKit: 8d47857400e2f5bdea697a80daff882e91c84ef6
   FBSDKLoginKit: 4621c690d9dd8628031a4791497062183ea34b0d
@@ -299,14 +270,12 @@ SPEC CHECKSUMS:
   RxCocoa: df63ebf7b9a70d6b4eeea407ed5dd4efc8979749
   RxSwift: 5976ecd04fc2fefd648827c23de5e11157faa973
   Shimmer: c5374be1c2b0c9e292fb05b339a513cf291cac86
-  SKPhotoBrowser: c20c1da34d737b4e3e101feead6c8dd92ebf860a
   SnapKit: fe8a619752f3f27075cc9a90244d75c6c3f27e2a
   SwiftLocation: a3c3bc2023118171ef3572188a31def94aa0892c
   SwiftRichString: a3ebe72b13db2e1b917cdbb6b44d817254a7ff73
   SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
   Toast-Swift: e42a638589a2f95036b4bb7626cfbdde7daf0393
-  TTGTagCollectionView: 20cf236b538ea9a17d1f0538968148c8d304414a
 
-PODFILE CHECKSUM: 8881d3736d85264efec60b8118b0dc5ce418bca7
+PODFILE CHECKSUM: 9b98c1b2a50144f537a798259f1dae48c79b09e8
 
 COCOAPODS: 1.5.3

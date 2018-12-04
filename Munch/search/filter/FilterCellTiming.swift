@@ -141,7 +141,7 @@ fileprivate class FilterItemCellTimingNow: UICollectionViewCell {
     let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.tintColor = UIColor(hex: "444444")
-        imageView.image = UIImage(named: "Search-Timing-Present")
+        imageView.image = UIImage(named: "Search-Filter-Timing-Now")
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()

@@ -122,7 +122,7 @@ class SearchFilterButton: UIButton {
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
 
-        setImage(UIImage(named: "Search-Filter"), for: .normal)
+        setImage(UIImage(named: "Search-Header-Filter"), for: .normal)
         tintColor = .ba85
         contentHorizontalAlignment = .right
         contentEdgeInsets.right = 24

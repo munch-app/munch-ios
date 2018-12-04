@@ -11,11 +11,17 @@ import Localize_Swift
 
 class FilterHeaderView: UIView {
     let tagView = FilterHeaderTagView()
+    let resetButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "Search-Header-Reset"), for: .normal)
+        button.tintColor = .black
+        return button
+    }()
     let closeButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "Search-Close"), for: .normal)
+        button.setImage(UIImage(named: "Search-Header-Close"), for: .normal)
         button.tintColor = .black
-        button.imageEdgeInsets.right = 18
+        button.imageEdgeInsets.right = 24
         button.contentHorizontalAlignment = .right
         return button
     }()
@@ -32,22 +38,29 @@ class FilterHeaderView: UIView {
         self.backgroundColor = .white
 
         self.addSubview(tagView)
+        self.addSubview(resetButton)
         self.addSubview(closeButton)
 
         tagView.snp.makeConstraints { maker in
             maker.top.equalTo(self.safeArea.top).inset(10)
-            maker.height.equalTo(32)
             maker.bottom.equalTo(self).inset(10)
+            maker.height.equalTo(32)
 
             maker.left.equalTo(self).inset(24)
-            maker.right.equalTo(closeButton.snp_right).inset(-18)
+            maker.right.equalTo(resetButton.snp.right).inset(-16)
+        }
+
+        resetButton.snp.makeConstraints { maker in
+            maker.top.bottom.equalTo(tagView)
+            maker.right.equalTo(closeButton.snp.left).inset(-8)
+            maker.width.equalTo(24)
         }
 
         closeButton.snp.makeConstraints { maker in
             maker.top.bottom.equalTo(tagView)
 
             maker.right.equalTo(self)
-            maker.width.equalTo(64)
+            maker.width.equalTo(24 + 24)
         }
     }
 
@@ -55,7 +68,7 @@ class FilterHeaderView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.shadow(vertical: 2)
+        self.shadow(vertical: 1)
     }
 
     required init?(coder aDecoder: NSCoder) {

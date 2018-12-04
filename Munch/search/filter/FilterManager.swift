@@ -14,7 +14,6 @@ enum FilterItem {
 
     case tagHeader(Tag.TagType)
     case tag(Int, Tag)
-    case tagLoading
     case tagMore(Tag.TagType)
 
     enum Location {
@@ -56,12 +55,15 @@ class FilterManager {
     private func dispatch() {
         self.result = nil
         self.loading = true
-        self.observer?.on(.next(self.collect()))
+
+        // Return empty if loading
+        self.observer?.on(.next([]))
 
         self.provider.rx.request(.count(self.searchQuery))
                 .map { response -> FilterResult in
                     return try response.map(data: FilterResult.self)
                 }
+                .delay(1, scheduler: MainScheduler.instance)
                 .subscribe { event in
                     switch event {
                     case .success(let result):
@@ -90,7 +92,7 @@ class FilterManager {
 
     private func collect(tag type: Tag.TagType) -> [FilterItem] {
         guard let tags = result?.tagGraph.tags else {
-            return [.tagHeader(type), .tagLoading]
+            return [.tagHeader(type)]
         }
 
         var list = [FilterItem]()

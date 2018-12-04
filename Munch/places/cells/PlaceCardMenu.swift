@@ -7,9 +7,7 @@
 //import UIKit
 //import SafariServices
 //
-//import Cosmos
 //import SnapKit
-//import SwiftyJSON
 //
 //class PlaceHeaderMenuCard: PlaceTitleCardView, SFSafariViewControllerDelegate {
 //    let webButton: UIButton = {
