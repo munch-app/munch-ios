@@ -40,7 +40,7 @@ enum FontStyle {
         case .regular:
             return UIFont.systemFont(ofSize: 16, weight: .regular)
         case .subtext:
-            return UIFont.systemFont(ofSize: 14, weight: .regular)
+            return UIFont.systemFont(ofSize: 15, weight: .medium)
         case .small:
             return UIFont.systemFont(ofSize: 12, weight: .regular)
         case .smallBold:

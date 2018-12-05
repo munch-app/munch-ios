@@ -104,7 +104,7 @@ class SizeShimmerImageView: SizeImageView {
 
         self.contentMode = .scaleAspectFill
         self.clipsToBounds = true
-        self.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        self.backgroundColor = UIColor.whisper100
     }
 
     override init(points width: CGFloat, height: CGFloat) {
@@ -113,7 +113,7 @@ class SizeShimmerImageView: SizeImageView {
         self.kf.indicatorType = .custom(indicator: indicator)
         self.contentMode = .scaleAspectFill
         self.clipsToBounds = true
-        self.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        self.backgroundColor = UIColor.whisper100
     }
 
     required init?(coder aDecoder: NSCoder) {

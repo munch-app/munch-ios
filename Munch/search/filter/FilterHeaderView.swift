@@ -68,7 +68,7 @@ class FilterHeaderView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.shadow(vertical: 1)
+        self.shadow(vertical: 2)
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -30,7 +30,7 @@ class RIPImageBannerCell: RIPCell {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.alwaysBounceHorizontal = true
-        collectionView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        collectionView.backgroundColor = UIColor.whisper100
         collectionView.register(BannerCell.self, forCellWithReuseIdentifier: "BannerCell")
         return collectionView
     }()

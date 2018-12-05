@@ -50,7 +50,7 @@ class MunchSearchTextField: UITextField {
 
 extension MunchSearchTextField {
     static let period = "  •  ".set(style: Style {
-        $0.font = UIFont.systemFont(ofSize: 15, weight: .ultraLight)
+        $0.font = UIFont.systemFont(ofSize: 14, weight: .ultraLight)
         $0.color = UIColor.ba75
     })
 

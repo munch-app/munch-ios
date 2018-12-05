@@ -41,7 +41,7 @@ class ShimmerImageView: MunchImageView {
 
         self.contentMode = .scaleAspectFill
         self.clipsToBounds = true
-        self.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        self.backgroundColor = UIColor.whisper100
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -58,7 +58,7 @@ class ScaledHeightShimmerImageView: MunchImageView {
 
         self.contentMode = .scaleAspectFill
         self.clipsToBounds = true
-        self.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        self.backgroundColor = UIColor.whisper100
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -84,7 +84,7 @@ class ScaledHeightShimmerImageView: MunchImageView {
 
 class ShimmerView: FBShimmeringView {
 
-    init(frame: CGRect = CGRect(), color: UIColor = UIColor.black.withAlphaComponent(0.1)) {
+    init(frame: CGRect = CGRect(), color: UIColor = .whisper100) {
         super.init(frame: frame)
         self.contentView = UIView()
         self.contentView.backgroundColor = color

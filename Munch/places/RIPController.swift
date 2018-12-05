@@ -336,7 +336,7 @@ extension RIPController: UIGestureRecognizerDelegate, SFSafariViewControllerDele
 }
 
 // MARK: Scrolling
-extension RIPController {
+extension RIPController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         updateNavigationBackground(y: scrollView.contentOffset.y)
     }
@@ -423,7 +423,7 @@ class RIPHeaderView: UIView {
         }
     }
     override var tintColor: UIColor! {
-        didSet  {
+        didSet {
             self.backButton.tintColor = tintColor
             self.titleView.textColor = tintColor
         }

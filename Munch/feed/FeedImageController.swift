@@ -46,6 +46,7 @@ class FeedImageController: UIViewController, UIGestureRecognizerDelegate {
         self.view.addSubview(scrollView)
         self.view.addSubview(headerView)
 
+        self.scrollView.delegate = self
         self.scrollView.addSubview(self.stackView)
         self.addArrangedSubview()
         self.addTargets()
@@ -53,13 +54,14 @@ class FeedImageController: UIViewController, UIGestureRecognizerDelegate {
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
+        self.headerView.isOpaque = false
 
         headerView.snp.makeConstraints { maker in
             maker.top.left.right.equalTo(self.view)
         }
 
         scrollView.snp.makeConstraints { maker in
-            maker.top.equalTo(headerView.snp.bottom)
+            maker.top.equalTo(self.view)
             maker.left.right.bottom.equalTo(self.view)
         }
 
@@ -82,19 +84,63 @@ class FeedImageController: UIViewController, UIGestureRecognizerDelegate {
     }
 }
 
+// MARK: Scrolling
+extension FeedImageController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        updateNavigationBackground(y: scrollView.contentOffset.y)
+    }
+
+    func updateNavigationBackground(y: CGFloat) {
+        if (120 < y) {
+            headerView.isOpaque = true
+        } else {
+            headerView.isOpaque = false
+        }
+        self.setNeedsStatusBarAppearanceUpdate()
+    }
+
+    override open var preferredStatusBarStyle: UIStatusBarStyle {
+        let y = self.scrollView.contentOffset.y
+        if (120 < y) {
+            return .default
+        } else {
+            return .lightContent
+        }
+    }
+}
+
 class FeedImageHeaderView: UIView {
     let backButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "NavigationBar-Back"), for: .normal)
-        button.tintColor = .black
+        button.tintColor = .white
         button.imageEdgeInsets.left = 18
         button.contentHorizontalAlignment = .left
         return button
     }()
 
+    let backgroundView = UIView()
+    let shadowView = UIView()
+
+    override var isOpaque: Bool {
+        didSet {
+            if isOpaque {
+                self.backButton.tintColor = .black
+                self.backgroundView.backgroundColor = .white
+                self.shadowView.isHidden = false
+            } else {
+                self.backButton.tintColor = .white
+                self.backgroundView.backgroundColor = .clear
+                self.shadowView.isHidden = true
+            }
+        }
+    }
+
     required init() {
         super.init(frame: .zero)
-        self.backgroundColor = .white
+        self.backgroundColor = .clear
+        self.addSubview(shadowView)
+        self.addSubview(backgroundView)
         self.addSubview(backButton)
 
         backButton.snp.makeConstraints { make in
@@ -104,11 +150,19 @@ class FeedImageHeaderView: UIView {
             make.width.equalTo(56)
             make.height.equalTo(44)
         }
+
+        backgroundView.snp.makeConstraints { make in
+            make.edges.equalTo(self)
+        }
+
+        shadowView.snp.makeConstraints { make in
+            make.edges.equalTo(self)
+        }
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.shadow(vertical: 1)
+        shadowView.shadow(vertical: 2)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -189,7 +243,7 @@ fileprivate class FeedImage: UIView {
 }
 
 fileprivate class FeedButtonGroup: UIView {
-    let saveButton = MunchButton(style: .borderSmall).with(text: "Save")
+    let saveButton = MunchButton(style: .borderSmall).with(text: "Save Place")
     let placeButton = MunchButton(style: .primarySmall).with(text: "Open Place")
 
     init(item: ImageFeedItem) {

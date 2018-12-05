@@ -416,7 +416,7 @@ fileprivate class CollectionPlaceCollectionCell: UICollectionViewCell {
     private let imageView: ShimmerImageView = {
         let view = ShimmerImageView()
         view.layer.cornerRadius = 2
-        view.backgroundColor = UIColor(hex: "F0F0F0")
+        view.backgroundColor = .whisper100
         return view
     }()
     private let nameLabel: UILabel = {

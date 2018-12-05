@@ -26,7 +26,7 @@
 //        button.tintColor = UIColor(hex: "222222")
 //
 //        button.layer.cornerRadius = 3
-//        button.backgroundColor = UIColor(hex: "F0F0F7")
+//        button.backgroundColor = .whisper100
 //
 //        button.semanticContentAttribute = .forceRightToLeft
 //        return button
@@ -156,7 +156,7 @@
 //    let imageView: ShimmerImageView = {
 //        let imageView = ShimmerImageView()
 //        imageView.layer.cornerRadius = 2
-//        imageView.backgroundColor = UIColor(hex: "F0F0F7")
+//        imageView.backgroundColor = .whisper100
 //        return imageView
 //    }()
 //
@@ -215,7 +215,7 @@
 //        super.init(frame: frame)
 //        self.addSubview(imageView)
 //        self.layer.cornerRadius = 3
-//        self.backgroundColor = UIColor(hex: "F0F0F7")
+//        self.backgroundColor = .whisper100
 //
 //        imageView.snp.makeConstraints { make in
 //            make.center.equalTo(self)

@@ -18,7 +18,7 @@ import NVActivityIndicatorView
 
 class SearchShimmerPlaceCard: UITableViewCell, SearchCardView {
 
-    let topView = ShimmerView(color: UIColor.black.withAlphaComponent(0.12))
+    let topView = ShimmerView(color: UIColor.whisper100)
     let bottomView = BottomView()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {

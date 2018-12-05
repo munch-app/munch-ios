@@ -80,7 +80,7 @@
 //    private let imageView: UIImageView = {
 //        let imageView = UIImageView()
 //        imageView.layer.cornerRadius = 3
-//        imageView.backgroundColor = UIColor(hex: "F0F0F7")
+//        imageView.backgroundColor = .whisper100
 //        return imageView
 //    }()
 //

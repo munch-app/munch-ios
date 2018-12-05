@@ -126,7 +126,7 @@ class ProfileHeaderView: UIView {
         let imageView = SizeImageView(points: 22, height: 22)
         imageView.layer.cornerRadius = 22
 
-        imageView.backgroundColor = UIColor(hex: "F0F0F0")
+        imageView.backgroundColor = .whisper100
         imageView.clipsToBounds = true
         return imageView
     }()

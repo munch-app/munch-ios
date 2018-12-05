@@ -16,7 +16,7 @@ class RIPLoadingImageCell: RIPCell {
     override func didLoad(data: PlaceData!) {
         let shimmerView = FBShimmeringView()
         let colorView = UIView()
-        colorView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        colorView.backgroundColor = UIColor.whisper100
         shimmerView.contentView = colorView
         shimmerView.isShimmering = true
         self.addSubview(shimmerView)
@@ -32,7 +32,7 @@ class RIPLoadingNameCell: RIPCell {
     override func didLoad(data: PlaceData!) {
         let shimmerView = FBShimmeringView()
         let colorView = UIView()
-        colorView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        colorView.backgroundColor = UIColor.whisper100
         shimmerView.contentView = colorView
         shimmerView.isShimmering = true
         self.addSubview(shimmerView)

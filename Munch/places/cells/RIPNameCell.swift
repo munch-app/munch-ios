@@ -177,7 +177,7 @@ fileprivate class RIPTagCollectionCell: UICollectionViewCell {
     }
 
     static func size(text: String) -> CGSize {
-        return UILabel.textSize(font: font, text: text, extra: CGSize(width: 24, height: 12))
+        return UILabel.textSize(font: font, text: text, extra: CGSize(width: 22, height: 13))
     }
 
     required init?(coder aDecoder: NSCoder) {
