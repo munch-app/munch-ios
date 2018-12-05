@@ -88,7 +88,6 @@ class SearchController: UIViewController {
         self.push(searchQuery: searchQuery)
     }
 
-
     func pop() {
         if histories.popLast() != nil, let searchQuery = histories.last {
             self.searchTableView.search(query: searchQuery, screen: .search)

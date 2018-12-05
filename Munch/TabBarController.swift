@@ -40,7 +40,7 @@ enum InitialViewProvider {
 }
 
 // MARK: TabBar Selecting
-extension MunchTabBarController {
+extension MunchTabBarController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         switch viewController {
         case is ProfileRootController where Authentication.isAuthenticated():
@@ -56,30 +56,27 @@ extension MunchTabBarController {
             }
             return false
 
-        case let root as SearchRootController:
-            // TODO
-//            if let controller = root.topViewController as? SearchController {
-//                if (self.previousController == viewController) {
-//                    sameTabCounter += 1
-//                    if (sameTabCounter >= 2) {
-//                        controller.scrollsToTop(animated: true)
-//                    }
-//                } else {
-//                    sameTabCounter = 0
-//                }
-//                self.previousController = viewController
-//            }
+        case let root as SearchRootController where self.previousController == viewController:
+            guard let controller = root.topViewController as? SearchController else {
+                return true
+            }
+
+            controller.reset()
             return true
 
-        default: return true
+        default:
+            return true
         }
+    }
+
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        self.previousController = viewController
     }
 }
 
 // MARK: TabBar Styling
-class MunchTabBarController: UITabBarController, UITabBarControllerDelegate {
-    var previousController: UIViewController?
-    var sameTabCounter = 0
+class MunchTabBarController: UITabBarController {
+    var previousController: UIViewController!
 
     let discover = InitialViewProvider.discover()
     let feed = InitialViewProvider.feed()
@@ -95,6 +92,7 @@ class MunchTabBarController: UITabBarController, UITabBarControllerDelegate {
 
         self.delegate = self
         self.viewControllers = [discover, feed, profile]
+        self.previousController = self.viewControllers![0]
     }
 
     var discoverController: SearchController {
@@ -105,7 +103,7 @@ class MunchTabBarController: UITabBarController, UITabBarControllerDelegate {
         return feed.controller
     }
 
-    var profileController: UIViewController {
+    var profileController: ProfileController {
         return profile.controller
     }
 
