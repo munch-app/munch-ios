@@ -47,12 +47,11 @@ class FilterManager {
     func observe() -> Observable<[FilterItem]> {
         return Observable.create { (observer: AnyObserver<[FilterItem]>) in
             self.observer = observer
-            self.dispatch()
             return Disposables.create()
         }
     }
 
-    private func dispatch() {
+    func dispatch(delay: RxTimeInterval = 1) {
         self.result = nil
         self.loading = true
 
@@ -63,7 +62,7 @@ class FilterManager {
                 .map { response -> FilterResult in
                     return try response.map(data: FilterResult.self)
                 }
-                .delay(1, scheduler: MainScheduler.instance)
+                .delay(delay, scheduler: MainScheduler.instance)
                 .subscribe { event in
                     switch event {
                     case .success(let result):

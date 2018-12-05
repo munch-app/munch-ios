@@ -16,9 +16,11 @@ class FilterItemCellLocation: UITableViewCell {
     private let buttons = LocationButtonGroup()
 
     private let manager: FilterManager
+    private let controller: UIViewController
 
-    init(manager: FilterManager) {
+    init(manager: FilterManager, controller: UIViewController) {
         self.manager = manager
+        self.controller = controller
         super.init(style: .default, reuseIdentifier: nil)
         self.selectionStyle = .none
 
@@ -26,7 +28,6 @@ class FilterItemCellLocation: UITableViewCell {
         self.addSubview(search)
         self.addSubview(buttons)
         self.addTargets()
-
 
         label.snp.makeConstraints { maker in
             maker.left.equalTo(self).inset(24)
@@ -82,7 +83,12 @@ extension FilterItemCellLocation {
     }
 
     @objc fileprivate func onSearch(for button: SearchButton) {
-        // TODO Popover
+        let controller = FilterLocationSearchController(searchQuery: manager.searchQuery) { query in
+            if let query = query {
+                self.manager.select(searchQuery: query)
+            }
+        }
+        self.controller.present(controller, animated: true)
     }
 }
 

@@ -21,18 +21,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="AppIconLarge" translatesAutoresizingMaskIntoConstraints="NO" id="Zeu-yD-Q4w">
-                                <rect key="frame" x="147.5" y="293.5" width="80" height="80"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="AppIconBrand" translatesAutoresizingMaskIntoConstraints="NO" id="Zeu-yD-Q4w">
+                                <rect key="frame" x="16" y="301.5" width="343" height="64"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="80" id="dJw-4A-mDM"/>
-                                    <constraint firstAttribute="width" constant="80" id="lcM-Sn-l4T"/>
+                                    <constraint firstAttribute="height" constant="64" id="dJw-4A-mDM"/>
                                 </constraints>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="Zeu-yD-Q4w" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="I68-en-sjI"/>
-                            <constraint firstItem="Zeu-yD-Q4w" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="hf2-WN-Tsb"/>
+                            <constraint firstItem="Zeu-yD-Q4w" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" id="M7U-lM-ZfF"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Zeu-yD-Q4w" secondAttribute="trailing" id="kZQ-Cg-cIT"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -42,6 +42,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="AppIconLarge" width="1024" height="1024"/>
+        <image name="AppIconBrand" width="120" height="44"/>
     </resources>
 </document>

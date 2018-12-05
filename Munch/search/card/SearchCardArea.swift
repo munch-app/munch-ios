@@ -286,7 +286,7 @@ class SearchAreaClusterHeaderCard: UITableViewCell, SearchCardView {
         }
 
         // Address Line
-        if let address = area.location.address, let latLng = area.location.latLng, let total = area.counts?.total {
+        if let address = area.location?.address, let latLng = area.location?.latLng, let total = area.counts?.total {
             self.addressLineView.address = address
             self.addressLineView.latLng = latLng
             self.addressLineView.count = total
@@ -324,7 +324,7 @@ class SearchAreaClusterHeaderCard: UITableViewCell, SearchCardView {
         }
 
         // Address Line
-        if area.location.address != nil, area.location.latLng != nil {
+        if area.location?.address != nil, area.location?.latLng != nil {
             height += AddressLineView.height
         }
 

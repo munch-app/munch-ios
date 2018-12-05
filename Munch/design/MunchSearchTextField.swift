@@ -28,7 +28,6 @@ class MunchSearchTextField: UITextField {
         self.set(icon: .glass)
 
         self.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        self.placeholder = "Try \"Chinese\""
 
         self.returnKeyType = .search
         self.autocorrectionType = .no

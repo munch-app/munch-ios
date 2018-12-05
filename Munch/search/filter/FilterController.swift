@@ -80,10 +80,6 @@ class FilterController: UIViewController {
         navigationController?.navigationBar.shadowImage = UIImage()
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.addSubview(tableView)
@@ -113,7 +109,7 @@ class FilterController: UIViewController {
 
         indicator.snp.makeConstraints { maker in
             maker.center.equalTo(tableView)
-            maker.width.height.equalTo(32)
+            maker.width.height.equalTo(40)
         }
 
         self.manager.observe()
@@ -143,6 +139,7 @@ class FilterController: UIViewController {
                         return
                     }
                 }.disposed(by: disposeBag)
+        self.manager.dispatch(delay: 0)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -189,16 +186,12 @@ extension FilterController: UITableViewDataSource, UITableViewDelegate {
         self.tableView.dataSource = self
 
         self.cellPrice = FilterItemCellPrice(manager: self.manager)
-        self.cellLocation = FilterItemCellLocation(manager: self.manager)
+        self.cellLocation = FilterItemCellLocation(manager: self.manager, controller: self)
         self.cellTiming = FilterItemCellTiming(manager: self.manager)
 
-        func register(cellClass: UITableViewCell.Type) {
-            tableView.register(cellClass, forCellReuseIdentifier: String(describing: cellClass))
-        }
-
-        register(cellClass: FilterItemCellTagHeader.self)
-        register(cellClass: FilterItemCellTag.self)
-        register(cellClass: FilterItemCellTagMore.self)
+        tableView.register(type: FilterItemCellTagHeader.self)
+        tableView.register(type: FilterItemCellTag.self)
+        tableView.register(type: FilterItemCellTagMore.self)
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -206,11 +199,6 @@ extension FilterController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        func dequeue<T: UITableViewCell>(_ type: T.Type) -> T {
-            let identifier = String(describing: type)
-            return tableView.dequeueReusableCell(withIdentifier: identifier) as! T
-        }
-
         switch items[indexPath.row] {
         case .rowLocation:
             cellLocation.reloadData()
@@ -225,23 +213,20 @@ extension FilterController: UITableViewDataSource, UITableViewDelegate {
             return cellTiming
 
         case let .tagHeader(type):
-            let cell = dequeue(FilterItemCellTagHeader.self)
+            let cell = tableView.dequeue(type: FilterItemCellTagHeader.self)
             cell.type = type
             return cell
 
         case let .tag(count, tag):
-            let cell = dequeue(FilterItemCellTag.self)
+            let cell = tableView.dequeue(type: FilterItemCellTag.self)
             let selected = self.manager.searchQuery.filter.tags.contains(where: { $0.tagId == tag.tagId })
             cell.render(name: tag.name, count: count, selected: selected)
             return cell
 
         case let .tagMore(type):
-            let cell = dequeue(FilterItemCellTagMore.self)
+            let cell = tableView.dequeue(type: FilterItemCellTagMore.self)
             cell.type = type
             return cell
-
-        default:
-            return UITableViewCell.init()
         }
     }
 
@@ -271,7 +256,7 @@ fileprivate class FilterBottomView: UIView {
         return button
     }()
     fileprivate let indicator: NVActivityIndicatorView = {
-        let indicator = NVActivityIndicatorView(frame: .zero, type: .ballBeat, color: .secondary500, padding: 6)
+        let indicator = NVActivityIndicatorView(frame: .zero, type: .ballBeat, color: .secondary500, padding: 4)
         indicator.stopAnimating()
         return indicator
     }()

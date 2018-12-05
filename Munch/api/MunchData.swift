@@ -77,7 +77,6 @@ struct Place: ElasticObject, Codable {
 
 struct Area: ElasticObject, Codable {
     var areaId: String
-
     var type: AreaType
     var name: String
 
@@ -88,7 +87,7 @@ struct Area: ElasticObject, Codable {
     var hour: [Hour]?
     var counts: Counts?
 
-    var location: Location
+    var location: Location?
 
     enum AreaType: String, Codable {
         case City

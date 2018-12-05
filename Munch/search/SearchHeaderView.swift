@@ -15,7 +15,6 @@ class SearchHeaderView: UIView {
     static let height: CGFloat = 64
 
     let backButton = SearchBackButton()
-    let cancelButton = SearchCancelButton()
     let textButton = SearchTextButton()
     let filterButton = SearchFilterButton()
 
@@ -39,7 +38,6 @@ class SearchHeaderView: UIView {
         self.backgroundColor = .white
         self.addSubview(textButton)
         self.addSubview(backButton)
-        self.addSubview(cancelButton)
         self.addSubview(filterButton)
 
         self.addTargets()
@@ -83,7 +81,6 @@ class SearchHeaderView: UIView {
 extension SearchHeaderView {
     func addTargets() {
         filterButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
-        cancelButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
         textButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
         backButton.addTarget(self, action: #selector(onHeaderAction(for:)), for: .touchUpInside)
     }
@@ -103,18 +100,12 @@ extension SearchHeaderView {
                     self.controller.push(searchQuery: query)
                 }
             }, animated: true)
-        } else if view is SearchCancelButton {
-            // TODO
         }
     }
 }
 
 // MARK: Buttons
 class SearchBackButton: UIButton {
-
-}
-
-class SearchCancelButton: UIButton {
 
 }
 
@@ -143,9 +134,9 @@ class SearchTextButton: UIButton {
         self.backgroundColor = .white
 
         field.isEnabled = false
-        field.snp.makeConstraints { make in
-            make.left.right.equalTo(self)
-            make.top.bottom.equalTo(self).inset(12)
+        field.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self)
+            maker.top.bottom.equalTo(self).inset(12)
         }
     }
 

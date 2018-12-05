@@ -23,7 +23,7 @@ class SearchHeaderCard: UITableViewCell, SearchCardView {
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(self).inset(topBottom)
-            make.bottom.equalTo(self).inset(6)
+            make.bottom.equalTo(self)
         }
     }
 
