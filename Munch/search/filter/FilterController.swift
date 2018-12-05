@@ -223,9 +223,9 @@ extension FilterController: UITableViewDataSource, UITableViewDelegate {
             cell.render(name: tag.name, count: count, selected: selected)
             return cell
 
-        case let .tagMore(type):
+        case let .tagMore(item):
             let cell = tableView.dequeue(type: FilterItemCellTagMore.self)
-            cell.type = type
+            cell.render(with: item)
             return cell
         }
     }
@@ -240,6 +240,8 @@ extension FilterController: UITableViewDataSource, UITableViewDelegate {
             }
             self.manager.select(tag: tag)
 
+        case let .tagMore(type):
+            return
         default:
             return
         }

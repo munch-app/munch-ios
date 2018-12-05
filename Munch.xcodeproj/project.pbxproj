@@ -38,7 +38,7 @@
 		B4B731E974188D4D409E7E65 /* SizeImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B739BB97B1798D44BDECC2 /* SizeImageView.swift */; };
 		B4B731EC40D9169F08F70FC4 /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7306D542D1854D216A57E /* SearchController.swift */; };
 		B4B731F495A2A0C6E24A566E /* UICollectionView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737E1E2482A53D7CB6F6B /* UICollectionView+Extension.swift */; };
-		B4B73269CB4EDD10C4D06F1D /* FilterLocationSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B734C84BE5379569DEC024 /* FilterLocationSearchController.swift */; };
+		B4B73269CB4EDD10C4D06F1D /* FilterControllerLocationSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B734C84BE5379569DEC024 /* FilterControllerLocationSearch.swift */; };
 		B4B73298BEAF7713C239120E /* WaterfallLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7391BA1D0CE49C5890B1C /* WaterfallLayout.swift */; };
 		B4B732A34ADA308FD9FB3F83 /* SearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738B688AE5A34954680EA /* SearchService.swift */; };
 		B4B732CC1464F187F8931167 /* SearchCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B739624FB135D4B899356A /* SearchCard.swift */; };
@@ -77,7 +77,7 @@
 		B4B739958180490BDD7B47B8 /* MunchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B734D7C6E45CD6D4F8E8E8 /* MunchService.swift */; };
 		B4B7399F3FF79673F9F8089F /* RIPTitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B739E61B078D6FB36F0BAC /* RIPTitleCell.swift */; };
 		B4B739A826B911E094D4A616 /* ProfileSettingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73BF6B8D464037F4FC986 /* ProfileSettingController.swift */; };
-		B4B739E6B1A00BA895618F79 /* FilterLocationBetweenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73E853230C2F199B5FC38 /* FilterLocationBetweenController.swift */; };
+		B4B739E6B1A00BA895618F79 /* FilterControllerLocationBetween.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73E853230C2F199B5FC38 /* FilterControllerLocationBetween.swift */; };
 		B4B73A27FF8C27B661FDE549 /* ReviewRatingUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732F3E55F3E605210CE9D /* ReviewRatingUtils.swift */; };
 		B4B73A4F99622AF0D943C712 /* AccountBoardingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7347AD60C415D1700F116 /* AccountBoardingController.swift */; };
 		B4B73A71181051AAA885028F /* PlaceCardReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73FF474CDAC60816F2825 /* PlaceCardReview.swift */; };
@@ -211,7 +211,7 @@
 		B4B7340F0AD8271793C8BF1B /* FeedService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedService.swift; sourceTree = "<group>"; };
 		B4B7347AD60C415D1700F116 /* AccountBoardingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountBoardingController.swift; sourceTree = "<group>"; };
 		B4B7348322E099298BEB7546 /* SearchCardPlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardPlace.swift; sourceTree = "<group>"; };
-		B4B734C84BE5379569DEC024 /* FilterLocationSearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterLocationSearchController.swift; sourceTree = "<group>"; };
+		B4B734C84BE5379569DEC024 /* FilterControllerLocationSearch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterControllerLocationSearch.swift; sourceTree = "<group>"; };
 		B4B734D7C6E45CD6D4F8E8E8 /* MunchService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchService.swift; sourceTree = "<group>"; };
 		B4B734F5A092F3E9F0F16379 /* UserPlaceCollectionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPlaceCollectionController.swift; sourceTree = "<group>"; };
 		B4B73591F9EB2CF93F88F218 /* SearchCardManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardManager.swift; sourceTree = "<group>"; };
@@ -259,7 +259,7 @@
 		B4B73D378A46D9D36E031331 /* SearchHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchHeaderView.swift; sourceTree = "<group>"; };
 		B4B73D56D29ADB145295DB94 /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		B4B73D86A1832193FD128FC6 /* RIPCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPCell.swift; sourceTree = "<group>"; };
-		B4B73E853230C2F199B5FC38 /* FilterLocationBetweenController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterLocationBetweenController.swift; sourceTree = "<group>"; };
+		B4B73E853230C2F199B5FC38 /* FilterControllerLocationBetween.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterControllerLocationBetween.swift; sourceTree = "<group>"; };
 		B4B73F008A9EAFCE407879A2 /* FilterCellTag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterCellTag.swift; sourceTree = "<group>"; };
 		B4B73F4E5D6FC418C11071AC /* FileService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileService.swift; sourceTree = "<group>"; };
 		B4B73F90EE462A9E722D4F91 /* RIPImageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPImageCell.swift; sourceTree = "<group>"; };
@@ -485,7 +485,7 @@
 			isa = PBXGroup;
 			children = (
 				B4B732495DE29798E2A46696 /* FilterController.swift */,
-				B4B734C84BE5379569DEC024 /* FilterLocationSearchController.swift */,
+				B4B734C84BE5379569DEC024 /* FilterControllerLocationSearch.swift */,
 				B4B7301088D63A05D3DCDB13 /* FilterManager.swift */,
 				B4B73B3C572E241C11D57AE5 /* FilterHeaderView.swift */,
 				B4B73F008A9EAFCE407879A2 /* FilterCellTag.swift */,
@@ -493,7 +493,7 @@
 				B4B7329579F8E1B3F992EB18 /* FilterCellPrice.swift */,
 				B4B738ACBC179DBD4A72FC01 /* FilterCellLocation.swift */,
 				B4B732DE1EA3B496C8EE6CB3 /* FilterToken.swift */,
-				B4B73E853230C2F199B5FC38 /* FilterLocationBetweenController.swift */,
+				B4B73E853230C2F199B5FC38 /* FilterControllerLocationBetween.swift */,
 			);
 			path = filter;
 			sourceTree = "<group>";
@@ -981,7 +981,7 @@
 				B4B737860D03B00FCF941B40 /* SearchCardInjected.swift in Sources */,
 				B4B7358B55C3DB9F4EF818EC /* FilterController.swift in Sources */,
 				B4B73C59D9E144CD476FA73F /* SuggestController.swift in Sources */,
-				B4B73269CB4EDD10C4D06F1D /* FilterLocationSearchController.swift in Sources */,
+				B4B73269CB4EDD10C4D06F1D /* FilterControllerLocationSearch.swift in Sources */,
 				B4B73F6FC011092193C534CB /* FilterManager.swift in Sources */,
 				B4B73F16F3517C2E945BF368 /* SuggestCell.swift in Sources */,
 				B4B734CADB20622FE502984B /* SuggestManager.swift in Sources */,
@@ -1040,7 +1040,7 @@
 				B4B7303E897DD022DEAE1AE5 /* Int+Extension.swift in Sources */,
 				B4B7352BE9A0840E05837D97 /* Button.swift in Sources */,
 				B4B73066188914BABE8724A8 /* SearchCardHeader.swift in Sources */,
-				B4B739E6B1A00BA895618F79 /* FilterLocationBetweenController.swift in Sources */,
+				B4B739E6B1A00BA895618F79 /* FilterControllerLocationBetween.swift in Sources */,
 				B4B73B64ED85D15DB8E2AEEE /* UITableView+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

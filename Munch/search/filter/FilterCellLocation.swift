@@ -12,8 +12,11 @@ import Localize_Swift
 
 class FilterItemCellLocation: UITableViewCell {
     private let label = UILabel(style: .h2).with(text: "Where")
-    private let search = SearchButton()
+    private let searchBtn = SearchButton()
+    private let whereBtn = WhereButton()
     private let buttons = LocationButtonGroup()
+
+    private var whereConstraint: Constraint!
 
     private let manager: FilterManager
     private let controller: UIViewController
@@ -25,7 +28,8 @@ class FilterItemCellLocation: UITableViewCell {
         self.selectionStyle = .none
 
         self.addSubview(label)
-        self.addSubview(search)
+        self.addSubview(searchBtn)
+        self.addSubview(whereBtn)
         self.addSubview(buttons)
         self.addTargets()
 
@@ -34,14 +38,20 @@ class FilterItemCellLocation: UITableViewCell {
             maker.top.equalTo(self).inset(16)
         }
 
-        search.snp.makeConstraints { maker in
+        searchBtn.snp.makeConstraints { maker in
             maker.right.equalTo(self).inset(24)
             maker.centerY.equalTo(label)
         }
 
-        buttons.snp.makeConstraints { maker in
+        whereBtn.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(24)
             maker.top.equalTo(label.snp.bottom).inset(-16)
+        }
+
+        buttons.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self).inset(24)
+            maker.top.equalTo(searchBtn.snp.bottom).inset(-16).priority(.medium)
+            whereConstraint = maker.top.equalTo(whereBtn.snp.bottom).inset(-16).constraint
             maker.bottom.equalTo(self).inset(16)
         }
     }
@@ -50,6 +60,14 @@ class FilterItemCellLocation: UITableViewCell {
         let location = manager.searchQuery.filter.location
         self.buttons.reloadData(location: location)
 
+        if location.type == .Where, let area = location.areas.get(0) {
+            whereBtn.area = area
+            whereBtn.isHidden = false
+            whereConstraint.activate()
+        } else {
+            whereBtn.isHidden = true
+            whereConstraint.deactivate()
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -63,7 +81,12 @@ extension FilterItemCellLocation {
             button.addTarget(self, action: #selector(onLocation(for:)), for: .touchUpInside)
         }
 
-        search.addTarget(self, action: #selector(onSearch(for:)), for: .touchUpInside)
+        searchBtn.addTarget(self, action: #selector(onSearch(for:)), for: .touchUpInside)
+        whereBtn.addTarget(self, action: #selector(onWhere(for:)), for: .touchUpInside)
+    }
+
+    @objc fileprivate func onWhere(for button: WhereButton) {
+        self.manager.select(location: .Anywhere)
     }
 
     @objc fileprivate func onLocation(for button: LocationButton) {
@@ -278,4 +301,61 @@ fileprivate class SearchButton: UIButton {
     }
 }
 
-// TODO Where Button
+fileprivate class WhereButton: UIButton {
+    private let cancelImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "Search-Filter-Location-Cancel")
+        imageView.tintColor = .white
+        imageView.contentMode = .center
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+    private let nameLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 16.0, weight: .semibold)
+        label.textAlignment = .center
+        label.numberOfLines = 1
+        return label
+    }()
+
+    var area: Area? {
+        didSet {
+            if let area = area {
+                self.nameLabel.text = area.name
+            }
+        }
+    }
+
+    required init() {
+        super.init(frame: .zero)
+        self.addSubview(nameLabel)
+        self.addSubview(cancelImage)
+
+        nameLabel.textColor = .white
+        backgroundColor = .primary500
+
+        nameLabel.snp.makeConstraints { maker in
+            maker.top.bottom.equalTo(self)
+            maker.centerX.equalTo(self)
+
+            maker.left.equalTo(self).inset(24)
+            maker.right.equalTo(cancelImage.snp.left).inset(24).priority(750)
+            maker.height.equalTo(42).priority(999)
+        }
+
+        cancelImage.snp.makeConstraints { maker in
+            maker.right.equalTo(self).inset(8)
+            maker.width.equalTo(24)
+            maker.top.bottom.equalTo(self)
+        }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.layer.cornerRadius = 3.0
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}

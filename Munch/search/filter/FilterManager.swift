@@ -14,7 +14,7 @@ enum FilterItem {
 
     case tagHeader(Tag.TagType)
     case tag(Int, Tag)
-    case tagMore(Tag.TagType)
+    case tagMore(Int, Tag.TagType)
 
     enum Location {
         case nearby
@@ -110,7 +110,7 @@ class FilterManager {
         }
 
         if empty > 0 {
-            list.append(.tagMore(type))
+            list.append(.tagMore(empty, type))
         }
 
         return list

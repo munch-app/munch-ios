@@ -181,7 +181,7 @@ extension FilterLocationSearchController: UITableViewDataSource, UITableViewDele
     }
 }
 
-class FilterLocationSearchCell: UITableViewCell {
+fileprivate class FilterLocationSearchCell: UITableViewCell {
     private let titleLabel = UILabel(style: .regular)
             .with(numberOfLines: 1)
 
@@ -209,7 +209,7 @@ class FilterLocationSearchCell: UITableViewCell {
     }
 }
 
-class FilterLocationSearchHeaderView: UIView {
+fileprivate class FilterLocationSearchHeaderView: UIView {
     let field: MunchSearchTextField = {
         let field = MunchSearchTextField()
         field.placeholder = "Search"

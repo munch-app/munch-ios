@@ -40,11 +40,6 @@ class FilterItemCellTagHeader: UITableViewCell {
 
 class FilterItemCellTagMore: UITableViewCell {
     private let titleLabel = UILabel(size: 17, weight: .medium, color: .secondary500)
-    var type: Tag.TagType? {
-        didSet {
-            titleLabel.text = "Show All \(self.type!.text)"
-        }
-    }
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -55,6 +50,10 @@ class FilterItemCellTagMore: UITableViewCell {
             maker.top.bottom.equalTo(self).inset(10)
             maker.left.right.equalTo(self).inset(24)
         }
+    }
+
+    func render(with item: (count: Int, type: Tag.TagType)) {
+        titleLabel.text = "\(item.count) hidden with 0 results"
     }
 
     required init?(coder aDecoder: NSCoder) {
