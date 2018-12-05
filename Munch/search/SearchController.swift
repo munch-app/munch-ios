@@ -39,6 +39,7 @@ class SearchRootController: UINavigationController, UINavigationControllerDelega
 class SearchController: UIViewController {
     static let inset = UIEdgeInsets(top: SearchHeaderView.height, left: 0, bottom: 0, right: 0)
     private let headerView = SearchHeaderView()
+    private let recent = RecentSearchQueryDatabase()
     private let searchTableView = SearchTableView(screen: .search, inset: inset)
 
     override func viewWillAppear(_ animated: Bool) {
@@ -77,6 +78,8 @@ class SearchController: UIViewController {
 
     func push(searchQuery: SearchQuery) {
         histories.append(searchQuery)
+        recent.add(id: String(arc4random()), data: searchQuery)
+
         self.searchTableView.search(query: searchQuery, screen: .search)
         self.searchTableView.scrollsToTop()
         self.headerView.searchQuery = searchQuery

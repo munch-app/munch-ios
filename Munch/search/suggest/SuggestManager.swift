@@ -13,9 +13,13 @@ enum SuggestType {
     case noResult
     case loading
 
+
     case suggest(String)
     case assumption(AssumptionQueryResult)
     case place(Place)
+
+    // Icon, SearchQuery
+    case query(String, SearchQuery)
 }
 
 extension SuggestResult {
@@ -45,48 +49,82 @@ extension SuggestResult {
     }
 }
 
-//class SuggestManager {
-//    private let provider = MunchProvider<SuggestService>()
-//    private let disposeBag = DisposeBag()
-//
-//    func start(textField: UITextField, _ on: @escaping (Event<[SuggestType]>) -> Void) {
-//        textField.rx.text
-//                .debounce(0.3, scheduler: MainScheduler.instance)
-//                .distinctUntilChanged()
-//                .flatMapFirst { s -> Observable<[SuggestType]> in
-//                    guard let text = s?.lowercased(), text.count > 2 else {
-//                        return Observable.just([.rowRecent])
-//                    }
-//
-//                    self.items = [.loading]
-//                    self.tableView.reloadData()
-//
-//                    return self.provider.rx.request(.suggest(text, self.searchQuery))
-//                            .map { res throws -> SuggestResult in
-//                                try res.map(data: SuggestResult.self)
-//                            }
-//                            .map { data -> [SuggestType] in
-//                                return data.items
-//                            }
-//                            .asObservable()
-//                }
-//                .catchError { (error: Error) in
-//                    self.alert(error: error)
-//                    return Observable.empty()
-//                }
-//                .subscribe { event in
-//                    switch event {
-//                    case .next(let items):
-//                        self.items = items
-//                        self.tableView.reloadData()
-//
-//                    case .error(let error):
-//                        self.alert(error: error)
-//
-//                    case .completed:
-//                        return
-//                    }
-//                }
-//                .disposed(by: disposeBag)
-//    }
-//}
+class SuggestManager {
+    private(set) var searchQuery: SearchQuery
+    private(set) var loading = true
+
+    private var observer: AnyObserver<[SuggestType]>?
+
+    private let recent = RecentSearchQueryDatabase()
+    private let provider = MunchProvider<SuggestService>()
+    private let disposeBag = DisposeBag()
+
+    init(searchQuery: SearchQuery) {
+        self.searchQuery = searchQuery
+    }
+
+    func observe() -> Observable<[SuggestType]> {
+        return Observable.create { (observer: AnyObserver<[SuggestType]>) in
+            self.observer = observer
+            return Disposables.create()
+        }
+    }
+
+    private var saves: [SuggestType] {
+        var list = [SuggestType]()
+
+        var nearby = SearchQuery()
+        nearby.filter.location.type = .Nearby
+        list.append(.query("Search-Suggest-Nearby", nearby))
+
+        var anywhere = SearchQuery()
+        anywhere.filter.location.type = .Anywhere
+        list.append(.query("Search-Suggest-Anywhere", anywhere))
+
+        recent.list().prefix(4).forEach { query in
+            if !query.isSimple() {
+                list.append(.query("Search-Suggest-Recent", query))
+            }
+        }
+
+
+        return list
+    }
+
+    func start(textField: UITextField) {
+        textField.rx.text
+                .debounce(0.3, scheduler: MainScheduler.instance)
+                .distinctUntilChanged()
+                .flatMapFirst { s -> Observable<[SuggestType]> in
+                    guard let text = s?.lowercased(), text.count > 2 else {
+                        return Observable.just(self.saves)
+                    }
+
+                    self.observer?.on(.next([.loading]))
+                    return self.suggest(text: text)
+                }
+                .subscribe { event in
+                    switch event {
+                    case .next(let items):
+                        self.observer?.on(.next(items))
+
+                    case .error(let error):
+                        self.observer?.on(.error(error))
+
+                    case .completed:
+                        self.observer?.on(.completed)
+                    }
+                }
+    }
+
+    private func suggest(text: String) -> Observable<[SuggestType]> {
+        return self.provider.rx.request(.suggest(text, self.searchQuery))
+                .map { res throws -> SuggestResult in
+                    try res.map(data: SuggestResult.self)
+                }
+                .map { data -> [SuggestType] in
+                    return data.items
+                }
+                .asObservable()
+    }
+}

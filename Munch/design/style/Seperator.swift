@@ -10,7 +10,7 @@ import SnapKit
 class SeparatorLine: UIView {
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
-        self.backgroundColor = UIColor(hex: "d5d4d8")
+        self.backgroundColor = UIColor.ba10
 
         self.snp.makeConstraints { maker in
             maker.height.equalTo(1.0 / UIScreen.main.scale)

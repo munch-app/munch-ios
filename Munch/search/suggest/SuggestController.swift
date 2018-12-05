@@ -33,11 +33,10 @@ class SuggestRootController: UINavigationController, UINavigationControllerDeleg
 
 class SuggestController: UIViewController {
     private let onDismiss: ((SearchQuery?) -> Void)
-    private var searchQuery: SearchQuery
 
     fileprivate let headerView = SuggestHeaderView()
 
-    private let provider = MunchProvider<SuggestService>()
+    private let manager: SuggestManager
     private let disposeBag = DisposeBag()
 
     fileprivate let tableView: UITableView = {
@@ -57,10 +56,11 @@ class SuggestController: UIViewController {
     private var firstLoad: Bool = true
 
     init(searchQuery: SearchQuery, onDismiss: @escaping ((SearchQuery?) -> Void)) {
-        self.searchQuery = searchQuery
+        self.manager = SuggestManager(searchQuery: searchQuery)
         self.onDismiss = onDismiss
         super.init(nibName: nil, bundle: nil)
         self.registerCells()
+        self.addTargets()
     }
 
     override func viewDidLoad() {
@@ -79,42 +79,6 @@ class SuggestController: UIViewController {
             make.top.equalTo(headerView.snp_bottom)
             make.bottom.left.right.equalTo(self.view)
         }
-
-        self.headerView.cancelButton.addTarget(self, action: #selector(onDismiss(button:)), for: .touchUpInside)
-        self.headerView.textField.rx.text
-                .debounce(0.3, scheduler: MainScheduler.instance)
-                .distinctUntilChanged()
-                .flatMapFirst { s -> Observable<[SuggestType]> in
-                    guard let text = s?.lowercased(), text.count > 2 else {
-                        return Observable.just([])
-                    }
-
-                    self.items = [.loading]
-                    self.tableView.reloadData()
-
-                    return self.provider.rx.request(.suggest(text, self.searchQuery))
-                            .map { res throws -> SuggestResult in
-                                try res.map(data: SuggestResult.self)
-                            }
-                            .map { data -> [SuggestType] in
-                                return data.items
-                            }
-                            .asObservable()
-                }
-                .subscribe { event in
-                    switch event {
-                    case .next(let items):
-                        self.items = items
-                        self.tableView.reloadData()
-
-                    case .error(let error):
-                        self.alert(error: error)
-
-                    case .completed:
-                        return
-                    }
-                }
-                .disposed(by: disposeBag)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -136,27 +100,48 @@ class SuggestController: UIViewController {
         self.headerView.textField.resignFirstResponder()
     }
 
-    @objc func onDismiss(button: Any) {
-        self.dismiss(animated: true)
-    }
-
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+// MARK: Add Targets
+extension SuggestController {
+    func addTargets() {
+        self.headerView.cancelButton.addTarget(self, action: #selector(onDismiss(button:)), for: .touchUpInside)
+
+        self.manager.observe()
+                .subscribe { event in
+                    switch event {
+                    case .next(let items):
+                        self.items = items
+                        self.tableView.reloadData()
+
+                    case .error(let error):
+                        self.alert(error: error)
+
+                    case .completed:
+                        return
+                    }
+                }
+                .disposed(by: disposeBag)
+        self.manager.start(textField: self.headerView.textField)
+    }
+
+    @objc func onDismiss(button: Any) {
+        self.dismiss(animated: true)
     }
 }
 
 // MARK: TableView & ScrollView
 extension SuggestController: UITableViewDataSource, UITableViewDelegate {
     func registerCells() {
-        func register(cellClass: UITableViewCell.Type) {
-            self.tableView.register(cellClass, forCellReuseIdentifier: String(describing: cellClass))
-        }
-
-        register(cellClass: SuggestCellLoading.self)
-        register(cellClass: SuggestCellPlace.self)
-        register(cellClass: SuggestCellNoResult.self)
-        register(cellClass: SuggestCellSuggest.self)
-        register(cellClass: SuggestCellAssumption.self)
+        tableView.register(type: SuggestCellLoading.self)
+        tableView.register(type: SuggestCellPlace.self)
+        tableView.register(type: SuggestCellNoResult.self)
+        tableView.register(type: SuggestCellSuggest.self)
+        tableView.register(type: SuggestCellAssumption.self)
+        tableView.register(type: SuggestCellQuery.self)
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -164,26 +149,24 @@ extension SuggestController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        func dequeue<T: UITableViewCell>(_ type: T.Type) -> T {
-            let identifier = String(describing: type)
-            return tableView.dequeueReusableCell(withIdentifier: identifier) as! T
-        }
-
         switch items[indexPath.row] {
         case .place:
-            return dequeue(SuggestCellPlace.self)
+            return tableView.dequeue(type: SuggestCellPlace.self)
 
         case .loading:
-            return dequeue(SuggestCellLoading.self)
+            return tableView.dequeue(type: SuggestCellLoading.self)
 
         case .noResult:
-            return dequeue(SuggestCellNoResult.self)
+            return tableView.dequeue(type: SuggestCellNoResult.self)
 
         case .suggest:
-            return dequeue(SuggestCellSuggest.self)
+            return tableView.dequeue(type: SuggestCellSuggest.self)
 
         case .assumption:
-            return dequeue(SuggestCellAssumption.self)
+            return tableView.dequeue(type: SuggestCellAssumption.self)
+
+        case .query:
+            return tableView.dequeue(type: SuggestCellQuery.self)
         }
     }
 
@@ -201,6 +184,9 @@ extension SuggestController: UITableViewDataSource, UITableViewDelegate {
             let cell = cell as! SuggestCellAssumption
             cell.render(result: result)
 
+        case let .query(tuple):
+            let cell = cell as! SuggestCellQuery
+            cell.render(with: tuple)
 
         default:
             return
@@ -223,6 +209,10 @@ extension SuggestController: UITableViewDataSource, UITableViewDelegate {
         case .suggest(let text):
             self.headerView.textField.text = text
             self.headerView.textField.sendActions(for: .valueChanged)
+
+        case let .query(_, query):
+            self.onDismiss(query)
+            self.dismiss(animated: true)
 
         default:
             return

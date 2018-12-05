@@ -192,6 +192,8 @@ struct AssumptionToken: Codable {
 }
 
 struct SearchQuery: Codable {
+    static let version = "2018-11-28"
+
     var filter: Filter
     var sort: Sort
 
@@ -269,6 +271,38 @@ extension SearchQuery {
                         type: .Amenities
                 ))
             }
+        }
+    }
+}
+
+extension SearchQuery {
+    func isSimple() -> Bool {
+        if self.sort.type != nil {
+            return false
+        }
+
+        if self.filter.tags.count > 0 {
+            return false
+        }
+
+        if self.filter.hour != nil {
+            return false
+        }
+
+        if self.filter.price != nil {
+            return false
+        }
+
+
+        switch self.filter.location.type {
+        case .Where:
+            return false
+
+        case .Between:
+            return false
+
+        default:
+            return true
         }
     }
 }

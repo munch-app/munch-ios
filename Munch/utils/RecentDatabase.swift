@@ -8,6 +8,13 @@ import Foundation
 import RealmSwift
 import SwiftyJSON
 
+
+class RecentSearchQueryDatabase: RecentDataDatabase<SearchQuery> {
+    init() {
+        super.init(type: SearchQuery.self, name: "SearchQuery+\(SearchQuery.version)", maxSize: 10)
+    }
+}
+
 class RecentPlaceDatabase: RecentDataDatabase<Place> {
     init() {
         super.init(type: Place.self, name: "RecentPlaceDatabase", maxSize: 20)

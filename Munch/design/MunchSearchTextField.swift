@@ -72,7 +72,6 @@ extension MunchSearchTextField {
     func set(tokens: [FilterToken]) {
         let attributed = NSMutableAttributedString()
 
-
         if let first = tokens.get(0)?.text {
             attributed.append(first.set(style: Style {
                 $0.color = UIColor.black

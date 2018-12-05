@@ -17,7 +17,7 @@ class SuggestCellAssumption: UITableViewCell {
     private let iconView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "Search-Suggest-Assumption")
-        imageView.tintColor = .ba85
+        imageView.tintColor = .ba75
         return imageView
     }()
     private let tagView = MunchTagView(extends: true)
@@ -41,7 +41,7 @@ class SuggestCellAssumption: UITableViewCell {
             maker.right.equalTo(self).inset(24)
             maker.left.equalTo(iconView.snp.right).inset(-16)
             maker.height.equalTo(30)
-            maker.top.bottom.equalTo(self).inset(15)
+            maker.top.bottom.equalTo(self).inset(16)
         }
 
         separator.snp.makeConstraints { maker in
@@ -89,12 +89,13 @@ class SuggestCellPlace: UITableViewCell {
     private let iconView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "Search-Suggest-Place")
-        imageView.tintColor = .ba85
+        imageView.tintColor = .ba75
         return imageView
     }()
 
     private let nameLabel = UILabel()
             .with(font: UIFont.systemFont(ofSize: 17, weight: .medium))
+            .with(color: .ba85)
             .with(numberOfLines: 1)
 
     private let locationLabel = UILabel(style: .small)
@@ -119,14 +120,14 @@ class SuggestCellPlace: UITableViewCell {
         nameLabel.snp.makeConstraints { maker in
             maker.left.equalTo(iconView.snp.right).inset(-16)
 
-            maker.top.equalTo(self).inset(10)
+            maker.top.equalTo(self).inset(12)
             maker.height.equalTo(22)
         }
 
         locationLabel.snp.makeConstraints { maker in
             maker.left.equalTo(iconView.snp.right).inset(-16)
             maker.top.equalTo(nameLabel.snp_bottom).inset(-2)
-            maker.bottom.equalTo(self).inset(10)
+            maker.bottom.equalTo(self).inset(12)
             maker.height.equalTo(16)
         }
 
@@ -224,7 +225,7 @@ class SuggestCellNoResult: UITableViewCell {
 
         self.label.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
-            make.top.bottom.equalTo(self).inset(8)
+            make.top.bottom.equalTo(self).inset(12)
         }
     }
 
@@ -256,8 +257,82 @@ class SuggestCellSuggest: UITableViewCell {
 
         self.label.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(24)
-            make.top.bottom.equalTo(self).inset(8)
+            make.top.bottom.equalTo(self).inset(12)
         }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class SuggestCellQuery: UITableViewCell {
+    private let iconView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.tintColor = .ba75
+        return imageView
+    }()
+    private let label = UILabel()
+            .with(font: UIFont.systemFont(ofSize: 16, weight: .medium))
+    private let separator = SeparatorLine()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+
+        self.addSubview(iconView)
+        self.addSubview(label)
+        self.addSubview(separator)
+
+        iconView.snp.makeConstraints { maker in
+            maker.left.equalTo(self).inset(24)
+            maker.width.height.equalTo(24)
+            maker.centerY.equalTo(self)
+        }
+
+        label.snp.makeConstraints { maker in
+            maker.right.equalTo(self).inset(24)
+            maker.left.equalTo(iconView.snp.right).inset(-16)
+            maker.height.equalTo(30)
+            maker.top.bottom.equalTo(self).inset(12)
+        }
+
+        separator.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self).inset(24)
+            maker.bottom.equalTo(self)
+        }
+    }
+
+    func render(with: (icon: String, query: SearchQuery)) {
+        self.iconView.image = UIImage(named: with.icon)
+
+        let tokens = FilterToken.getTokens(query: with.query)
+
+        let attributed = NSMutableAttributedString()
+
+        if let first = tokens.get(0)?.text {
+            attributed.append(first.set(style: Style {
+                $0.color = UIColor.black
+                $0.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+            }))
+        }
+        if let second = tokens.get(1)?.text {
+            attributed.append(MunchSearchTextField.period)
+            attributed.append(second.set(style: Style {
+                $0.color = UIColor.black
+                $0.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+            }))
+        }
+
+        let count = tokens.count - 2
+        if count > 0 {
+            attributed.append(MunchSearchTextField.period)
+            attributed.append("+\(count)".set(style: Style {
+                $0.color = UIColor.black
+                $0.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+            }))
+        }
+        label.attributedText = attributed
     }
 
     required init?(coder aDecoder: NSCoder) {
