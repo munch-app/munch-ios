@@ -324,7 +324,7 @@ fileprivate class FeedPlace: UIControl {
         placeCard.place = place
         placeCard.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(24)
-            maker.bottom.equalTo(self).inset(80)
+            maker.bottom.equalTo(self).inset(120)
             maker.top.equalTo(label.snp.bottom).inset(-24)
         }
     }

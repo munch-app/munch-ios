@@ -14,6 +14,7 @@ enum FontStyle {
     case h5
     case h6
 
+    case navHeader
     case large
     case regular
     case subtext
@@ -34,6 +35,9 @@ enum FontStyle {
             return UIFont.systemFont(ofSize: 16, weight: .semibold)
         case .h6:
             return UIFont.systemFont(ofSize: 14, weight: .semibold)
+
+        case .navHeader:
+            return UIFont.systemFont(ofSize: 16, weight: .semibold)
 
         case .large:
             return UIFont.systemFont(ofSize: 19, weight: .regular)
@@ -64,7 +68,8 @@ enum FontStyle {
         case .smallBold:
             return .black
 
-        case .subtext:
+        case .subtext: fallthrough
+        case .navHeader:
             return .ba85
         }
     }

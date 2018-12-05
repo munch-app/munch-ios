@@ -37,8 +37,8 @@ class FilterLocationSearchController: UIViewController {
         tableView.estimatedRowHeight = 50
 
         tableView.tableFooterView = UIView(frame: .zero)
-
         tableView.separatorStyle = .none
+        tableView.separatorInset.left = 24
         return tableView
     }()
 

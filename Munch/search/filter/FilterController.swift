@@ -111,6 +111,23 @@ class FilterController: UIViewController {
             maker.center.equalTo(tableView)
             maker.width.height.equalTo(40)
         }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+// MARK: Register Actions
+extension FilterController {
+    func addTargets() {
+        self.headerView.closeButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
+        self.headerView.resetButton.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
+        self.bottomView.applyButton.addTarget(self, action: #selector(actionApply(_:)), for: .touchUpInside)
+
+        self.headerView.tagView.first.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
+        self.headerView.tagView.second.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
+        self.headerView.tagView.third.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
 
         self.manager.observe()
                 .catchError { (error: Error) in
@@ -142,29 +159,16 @@ class FilterController: UIViewController {
         self.manager.dispatch(delay: 0)
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-// MARK: Register Actions
-extension FilterController {
-    func addTargets() {
-        self.headerView.closeButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
-        self.headerView.resetButton.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
-        self.bottomView.applyButton.addTarget(self, action: #selector(actionApply(_:)), for: .touchUpInside)
-
-        self.headerView.tagView.first.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
-        self.headerView.tagView.second.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
-        self.headerView.tagView.third.addTarget(self, action: #selector(actionReset(_:)), for: .touchUpInside)
-    }
-
     @objc func actionCancel(_ sender: Any) {
         self.onDismiss(nil)
         self.dismiss(animated: true)
     }
 
     @objc func actionApply(_ sender: Any) {
+        guard let count = manager.result?.count, count > 0 else {
+            return
+        }
+
         self.onDismiss(manager.searchQuery)
         self.dismiss(animated: true)
     }
@@ -270,8 +274,8 @@ fileprivate class FilterBottomView: UIView {
 
                 if count == 0 {
                     self.applyButton.setTitle("No Results".localized(), for: .normal)
-                    self.applyButton.backgroundColor = .white
-                    self.applyButton.setTitleColor(.secondary500, for: .normal)
+                    self.applyButton.backgroundColor = .secondary050
+                    self.applyButton.setTitleColor(.secondary700, for: .normal)
                 } else {
                     self.applyButton.setTitle(FilterManager.countTitle(count: count), for: .normal)
                     self.applyButton.backgroundColor = .secondary500

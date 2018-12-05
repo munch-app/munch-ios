@@ -51,7 +51,7 @@ class FilterManager {
         }
     }
 
-    func dispatch(delay: RxTimeInterval = 1) {
+    func dispatch(delay: RxTimeInterval = 0.5) {
         self.result = nil
         self.loading = true
 
@@ -152,6 +152,11 @@ extension FilterManager {
         self.searchQuery.filter.location.type = type
         self.searchQuery.filter.location.areas = []
         self.searchQuery.filter.location.points = []
+        self.dispatch()
+    }
+
+    func select(location: SearchQuery.Filter.Location) {
+        self.searchQuery.filter.location = location
         self.dispatch()
     }
 

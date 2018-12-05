@@ -92,7 +92,12 @@ extension FilterItemCellLocation {
     @objc fileprivate func onLocation(for button: LocationButton) {
         switch button.type {
         case .Between:
-            break // TODO
+            let controller = FilterLocationBetweenController(searchQuery: self.manager.searchQuery) { query in
+                if let query = query {
+                    self.manager.select(searchQuery: query)
+                }
+            }
+            self.controller.present(controller, animated: true)
 
         case .Nearby:
             self.manager.select(location: .Nearby)

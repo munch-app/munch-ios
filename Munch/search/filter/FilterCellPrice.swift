@@ -93,7 +93,7 @@ extension FilterItemCellPrice {
     }
 
     @objc fileprivate func onPriceButton(for button: UIButton) {
-        guard let ranges = manager.result?.priceGraph.ranges,
+        guard let ranges = manager.result?.priceGraph?.ranges,
               let name = button.title(for: .normal),
               let range = ranges[name] else {
             return

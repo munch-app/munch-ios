@@ -126,7 +126,7 @@ extension SearchFilterService: TargetType {
 struct FilterResult: Codable {
     var count: Int
     var tagGraph: TagGraph
-    var priceGraph: PriceGraph
+    var priceGraph: PriceGraph?
 
     struct TagGraph: Codable {
         var tags: [Tag]
