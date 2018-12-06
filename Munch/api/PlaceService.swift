@@ -34,7 +34,10 @@ extension PlaceService: TargetType {
         case .articles(_, let sort):
             fallthrough
         case .images(_, let sort):
-            return .requestParameters(parameters: ["next.sort": sort], encoding: URLEncoding.default)
+            if let sort = sort {
+                return .requestParameters(parameters: ["next.sort": sort, "size": "20"], encoding: URLEncoding.default)
+            }
+            return .requestParameters(parameters: ["size": "20"], encoding: URLEncoding.default)
         }
     }
 }

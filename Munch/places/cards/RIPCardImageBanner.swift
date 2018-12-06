@@ -7,7 +7,7 @@ import Foundation
 import UIKit
 import SnapKit
 
-class RIPImageBannerCell: RIPCell {
+class RIPImageBannerCard: RIPCard {
     private let imageGradientView: UIView = {
         let gradientLayer = CAGradientLayer()
         gradientLayer.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 64)
@@ -61,7 +61,7 @@ class RIPImageBannerCell: RIPCell {
 }
 
 
-extension RIPImageBannerCell: UICollectionViewDataSource, UICollectionViewDelegate {
+extension RIPImageBannerCard: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return images.count
     }

@@ -36,7 +36,7 @@ extension FeedImageService: TargetType {
 
 struct ImageFeedResult: Codable {
     var items: [ImageFeedItem]
-    var places: [String: Place]
+    var places: [String: Place?]
 }
 
 struct ImageFeedItem: Codable {

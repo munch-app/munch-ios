@@ -9,7 +9,7 @@ import SnapKit
 
 import Localize_Swift
 
-class RIPClosedCell: RIPCell {
+class RIPCardClosed: RIPCard {
     private let label = UILabel()
             .with(style: .h2)
             .with(numberOfLines: 1)
@@ -30,15 +30,15 @@ class RIPClosedCell: RIPCell {
     }
 }
 
-class RIPTitleCell: RIPCell {
+class RIPNameTagCard: RIPCard {
     fileprivate let nameLabel = UILabel()
             .with(style: .h1)
             .with(numberOfLines: 0)
     fileprivate let locationLabel = UILabel()
-            .with(style: .subtext)
+            .with(style: .h6)
             .with(numberOfLines: 1)
     fileprivate var tagView: RIPTagCollection!
-    fileprivate let separatorLine = RIPSeparatorLine()
+    private let separatorLine = RIPSeparatorLine()
 
     override func didLoad(data: PlaceData!) {
         self.nameLabel.text = data.place.name
@@ -67,7 +67,6 @@ class RIPTitleCell: RIPCell {
 
         separatorLine.snp.makeConstraints { maker in
             maker.left.right.equalTo(self)
-            maker.height.equalTo(1.0 / UIScreen.main.scale)
 
             maker.top.equalTo(tagView.snp.bottom).inset(-24)
             maker.bottom.equalTo(self).inset(12)

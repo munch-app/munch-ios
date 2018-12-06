@@ -228,10 +228,11 @@ fileprivate class FeedImage: UIView {
         super.init(frame: .zero)
         self.addSubview(imageView)
 
+
         imageView.render(image: item.image)
         imageView.snp.makeConstraints { maker in
             maker.edges.equalTo(self).priority(999)
-            if let size = item.image.maxSize {
+            if let size = item.image.sizes.max {
                 maker.height.equalTo(imageView.snp.width).multipliedBy(size.heightMultiplier)
             }
         }

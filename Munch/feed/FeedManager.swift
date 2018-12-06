@@ -4,7 +4,6 @@
 //
 
 import Foundation
-
 import Moya
 import RxSwift
 
@@ -17,7 +16,7 @@ class FeedManager {
 
     fileprivate(set) var loading = false
     fileprivate(set) var items = [ImageFeedItem]()
-    fileprivate(set) var places = [String: Place]()
+    fileprivate(set) var places = [String: Place?]()
 
     private var from: Int? = 0
     private var observer: AnyObserver<[FeedCellItem]>?
@@ -74,7 +73,7 @@ class FeedManager {
         items.forEach { item in
             var places = [Place]()
             item.places.map({ $0.placeId }).forEach { s in
-                if let place = self.places[s] {
+                if let place = self.places[s] as? Place {
                     places.append(place)
                 }
             }

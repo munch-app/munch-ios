@@ -94,7 +94,6 @@ class RIPMapController: UIViewController, UIGestureRecognizerDelegate, MKMapView
         self.controller = controller
         super.init(nibName: nil, bundle: nil)
 
-        self.headerView.controller = self
         self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
         self.headerView.backgroundView.isHidden = true
         self.headerView.shadowView.isHidden = true
@@ -240,8 +239,6 @@ class RIPMapController: UIViewController, UIGestureRecognizerDelegate, MKMapView
     }
 
     @objc func onOpenMap(_ sender: UIButton) {
-        self.controller.apply(click: .mapExternal)
-
         let address = place.location.address?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
         if sender == self.appleButton {
             UIApplication.shared.open(URL(string: "http://maps.apple.com/?daddr=\(address)")!)
@@ -255,8 +252,6 @@ class RIPMapController: UIViewController, UIGestureRecognizerDelegate, MKMapView
     }
 
     @objc func onShowHeading(_ sender: Any) {
-        self.controller.apply(click: .mapHeading)
-
         mapView.showsUserLocation = true
         mapView.showsCompass = false
         mapView.setUserTrackingMode(.followWithHeading, animated: true)

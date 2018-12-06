@@ -198,9 +198,6 @@ class PlaceAddButton: UIButton {
                 let controller = CollectionAddPlaceController(place: place) { action in
                     switch action {
                     case .add(let collection):
-                        if let placeController = self.controller as? RIPController {
-                            placeController.apply(click: .addedToCollection)
-                        }
                         self.controller?.makeToast("Added to \(collection.name)", image: .checkmark)
 
                     case .remove(let collection):

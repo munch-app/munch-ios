@@ -32,9 +32,9 @@ enum FontStyle {
         case .h4:
             return UIFont.systemFont(ofSize: 18, weight: .semibold)
         case .h5:
-            return UIFont.systemFont(ofSize: 16, weight: .semibold)
+            return UIFont.systemFont(ofSize: 17, weight: .semibold)
         case .h6:
-            return UIFont.systemFont(ofSize: 14, weight: .semibold)
+            return UIFont.systemFont(ofSize: 15, weight: .semibold)
 
         case .navHeader:
             return UIFont.systemFont(ofSize: 16, weight: .semibold)
@@ -44,7 +44,7 @@ enum FontStyle {
         case .regular:
             return UIFont.systemFont(ofSize: 16, weight: .regular)
         case .subtext:
-            return UIFont.systemFont(ofSize: 15, weight: .medium)
+            return UIFont.systemFont(ofSize: 14, weight: .regular)
         case .small:
             return UIFont.systemFont(ofSize: 12, weight: .regular)
         case .smallBold:
@@ -91,6 +91,20 @@ extension UILabel {
         return self
     }
 
+    func with(text: String?, lineSpacing: CGFloat) -> UILabel {
+        self.text = text
+        
+        if let text = text {
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineSpacing = lineSpacing
+
+            let attributedString = NSMutableAttributedString(string: text)
+            attributedString.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, attributedString.length))
+            self.attributedText = attributedString    
+        }
+        return self
+    }
+
     func with(numberOfLines: Int) -> UILabel {
         self.numberOfLines = numberOfLines
         return self
@@ -119,5 +133,27 @@ extension UILabel {
     func with(style: FontStyle) -> UILabel {
         return with(font: style.font)
                 .with(color: style.color)
+    }
+
+    func setLineSpacing(lineSpacing: CGFloat = 0.0, lineHeightMultiple: CGFloat = 0.0) {
+        guard let labelText = self.text else {
+            return
+        }
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = lineSpacing
+        paragraphStyle.lineHeightMultiple = lineHeightMultiple
+
+        let attributedString: NSMutableAttributedString
+        if let labelAttributeText = self.attributedText {
+            attributedString = NSMutableAttributedString(attributedString: labelAttributeText)
+        } else {
+            attributedString = NSMutableAttributedString(string: labelText)
+        }
+
+        attributedString.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, attributedString.length))
+
+
+        self.attributedText = attributedString
     }
 }

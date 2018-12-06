@@ -22,28 +22,82 @@ class RIPController: UIViewController {
     let placeId: String
     var data: PlaceData!
 
-    var tracker: UserPlaceActivityTracker?
-
-    let provider = MunchProvider<PlaceService>()
-    let disposeBag = DisposeBag()
-
-    private var cells = [RIPCell]()
-
-    fileprivate let tableView = UITableView()
-    fileprivate var headerView = RIPHeaderView(tintColor: .white, backgroundVisible: false)
     fileprivate let bottomView = RIPBottomView()
+    fileprivate var headerView = RIPHeaderView(tintColor: .white, backgroundVisible: false)
+    fileprivate let collectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: WaterfallLayout())
+        collectionView.showsVerticalScrollIndicator = true
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.alwaysBounceHorizontal = false
+        collectionView.alwaysBounceVertical = true
+        collectionView.backgroundColor = .white
 
-    fileprivate let contentView = UIView()
+        collectionView.contentInset = .zero
+        collectionView.contentInsetAdjustmentBehavior = .never
+        collectionView.isScrollEnabled = false
+        return collectionView
+    }()
+    fileprivate var cardTypes: [RIPCard.Type] = [RIPLoadingImageCard.self, RIPLoadingNameCard.self]
+    fileprivate var galleryItems = [RIPGalleryItem]()
+
+    private var galleryLoader = RIPGalleryLoader()
+
+    private let provider = MunchProvider<PlaceService>()
+    private let disposeBag = DisposeBag()
 
     init(placeId: String) {
         self.placeId = placeId
         Crashlytics.sharedInstance().setObjectValue(placeId, forKey: "RIPController.placeId")
-
         super.init(nibName: nil, bundle: nil)
 
-        // Might want to change this around for different pushing controller
         self.hidesBottomBarWhenPushed = true
-        self.cells = [RIPLoadingImageCell.create(controller: self), RIPLoadingNameCell.create(controller: self)]
+
+        self.provider.rx.request(.get(self.placeId))
+                .map { res throws -> (PlaceData) in
+                    return try res.map(data: PlaceData.self)
+                }.subscribe { event in
+                    switch event {
+                    case .success(let data):
+                        self.start(data: data)
+
+                    case .error(let error):
+                        self.alert(error: error)
+
+                    }
+                }.disposed(by: disposeBag)
+    }
+
+    func start(data: PlaceData) {
+        RecentPlaceDatabase().add(id: self.placeId, data: data.place)
+
+        // Data Binding
+        self.data = data
+        self.headerView.place = data.place
+        self.bottomView.place = data.place
+
+        galleryLoader.start(placeId: data.place.placeId, images: data.images)
+
+        // Collection View
+        self.cardTypes = self.collectionView(cellsForData: data)
+        self.galleryItems = galleryLoader.items
+
+        self.collectionView.isScrollEnabled = true
+        self.collectionView.reloadData()
+        self.scrollViewDidScroll(self.collectionView)
+
+        galleryLoader.observe().subscribe { event in
+            switch event {
+            case .next(let items):
+                self.galleryItems = items
+                self.collectionView.reloadData()
+
+            case .error(let error):
+                self.alert(error: error)
+
+            case .completed:
+                return
+            }
+        }.disposed(by: disposeBag)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -54,71 +108,23 @@ class RIPController: UIViewController {
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(handleScreenshot), name: .UIApplicationUserDidTakeScreenshot, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(onScreenshot), name: .UIApplicationUserDidTakeScreenshot, object: nil)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
         NotificationCenter.default.removeObserver(self, name: .UIApplicationUserDidTakeScreenshot, object: nil)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.initViews()
+        self.registerCells()
+        self.addTargets()
 
-        // Register Delegate
-        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
-        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
-        self.tableView.delegate = self
-        self.tableView.dataSource = self
-
-        self.headerView.controller = self
-        self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
-
-        self.provider.rx.request(.get(self.placeId))
-                .map { res throws -> (PlaceData) in
-                    return try res.map(data: PlaceData.self)
-                }.subscribe { event in
-                    switch event {
-                    case .success(let data):
-                        RecentPlaceDatabase().add(id: self.placeId, data: data.place)
-
-                        self.data = data
-                        self.tracker = UserPlaceActivityTracker(place: data.place)
-
-                        self.headerView.place = data.place
-                        self.bottomView.place = data.place
-
-                        self.cells = self.tableView(cellsForData: data)
-                        self.tableView.isScrollEnabled = true
-                        self.tableView.reloadData()
-                        self.scrollViewDidScroll(self.tableView)
-
-                    case .error(let error):
-                        self.alert(error: error)
-
-                    }
-                }.disposed(by: disposeBag)
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        tracker?.end()
-    }
-
-    private func initViews() {
-        self.view.addSubview(contentView)
+        self.view.addSubview(collectionView)
         self.view.addSubview(bottomView)
-        contentView.addSubview(tableView)
-        contentView.addSubview(headerView)
-
-        self.tableView.isScrollEnabled = false
-        self.tableView.separatorStyle = .none
-        self.tableView.rowHeight = UITableViewAutomaticDimension
-        self.tableView.estimatedRowHeight = 250
-        self.tableView.contentInset.top = 0
-        self.tableView.contentInset.bottom = 0
-        self.tableView.contentInsetAdjustmentBehavior = .never
+        self.view.addSubview(headerView)
 
         headerView.snp.makeConstraints { make in
             make.top.left.right.equalTo(self.view)
@@ -128,23 +134,11 @@ class RIPController: UIViewController {
             make.bottom.left.right.equalTo(self.view)
         }
 
-        tableView.snp.makeConstraints { make in
+        collectionView.snp.makeConstraints { make in
             make.left.right.equalTo(self.view)
             make.top.equalTo(self.view)
             make.bottom.equalTo(self.bottomView.snp.top)
         }
-
-        contentView.snp.makeConstraints { make in
-            make.edges.equalTo(tableView)
-        }
-    }
-
-    @objc func onBackButton(_ sender: Any) {
-        self.navigationController?.popViewController(animated: true)
-    }
-
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -152,138 +146,214 @@ class RIPController: UIViewController {
     }
 }
 
-// MARK: TableView
-extension RIPController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(cellsForData data: PlaceData) -> [RIPCell] {
-        var cells = [RIPCell]()
+// MARK: RIP Cards Cells
+extension RIPController {
+    func collectionView(cellsForData data: PlaceData) -> [RIPCard.Type] {
+        var types = [RIPCard.Type]()
 
-        func appendTo(type: RIPCell.Type) {
+        func appendTo(type: RIPCard.Type) {
             if type.isAvailable(data: data) {
-                cells.append(type.create(controller: self))
+                types.append(type)
             }
         }
 
-        appendTo(type: RIPImageBannerCell.self)
-        appendTo(type: RIPTitleCell.self)
-        appendTo(type: RIPClosedCell.self)
-        return cells
+        appendTo(type: RIPImageBannerCard.self)
+        appendTo(type: RIPCardClosed.self)
+        appendTo(type: RIPNameTagCard.self)
+        appendTo(type: RIPLocationCard.self)
+        appendTo(type: RIPArticleCard.self)
+        appendTo(type: RIPGalleryHeaderCard.self)
+        return types
+    }
+}
+
+// MARK: Collection View
+extension RIPController: UICollectionViewDataSource, UICollectionViewDelegate {
+    fileprivate enum RIPSection: Int, CaseIterable {
+        case card = 0
+        case gallery = 1
+        case loader = 2
     }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cells.count
+    fileprivate func registerCells() {
+        (collectionView.collectionViewLayout as! WaterfallLayout).delegate = self
+        collectionView.delegate = self
+        collectionView.dataSource = self
+
+        collectionView.register(type: RIPLoadingImageCard.self)
+        collectionView.register(type: RIPLoadingNameCard.self)
+        collectionView.register(type: RIPLoadingGalleryCard.self)
+
+        collectionView.register(type: RIPImageBannerCard.self)
+        collectionView.register(type: RIPNameTagCard.self)
+        collectionView.register(type: RIPCardClosed.self)
+
+        collectionView.register(type: RIPLocationCard.self)
+
+        collectionView.register(type: RIPArticleCard.self)
+
+        collectionView.register(type: RIPGalleryHeaderCard.self)
+        collectionView.register(type: RIPGalleryImageCard.self)
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return cells[indexPath.row]
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return RIPSection.allCases.count
     }
 
-//    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return cellHeights[indexPath.row]
-//    }
-//
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if let cell = cell as? RIPCell {
-            cell.willDisplay(data: data)
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        switch RIPSection(rawValue: section)! {
+        case .card:
+            return cardTypes.count
+
+        case .gallery:
+            return galleryItems.count
+
+        case .loader:
+            return 1
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        switch (RIPSection(rawValue: indexPath.section)!, indexPath.row) {
+        case (.card, let row):
+            let cell = collectionView.dequeue(type: cardTypes[row], for: indexPath) as! RIPCard
+            cell.register(data: self.data, controller: self)
+            return cell
+
+        case (.gallery, let row):
+            switch galleryItems[row] {
+            case .image(let image):
+                return collectionView.dequeue(type: RIPGalleryImageCard.self, for: indexPath)
+            }
+
+        case (.loader, let row):
+            return collectionView.dequeue(type: RIPLoadingGalleryCard.self, for: indexPath)
+
+        default:
+            break
+        }
+
+        return UICollectionViewCell()
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        switch (RIPSection(rawValue: indexPath.section)!, indexPath.row) {
+        case (.card, let row):
+            let cell = cell as! RIPCard
+            cell.willDisplay(data: self.data)
+
+        case (.gallery, let row):
+            switch galleryItems[row] {
+            case .image(let image):
+                let cell = cell as! RIPGalleryImageCard
+                cell.render(with: image)
+
+            }
+
+        case (.loader, let row):
+            let cell = cell as! RIPLoadingGalleryCard
+            if galleryLoader.more {
+                galleryLoader.append()
+            } else {
+                cell.indicator.stopAnimating()
+            }
+
+        default:
+            break
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // TODO
+    }
+}
+
+// MARK: Waterfall
+extension RIPController: WaterfallLayoutDelegate {
+    public func collectionViewLayout(for section: Int) -> WaterfallLayout.Layout {
+        switch RIPSection(rawValue: section)! {
+        case .card:
+            return .flow(column: 1)
+
+        case .gallery:
+            return .waterfall(column: 2, distributionMethod: .balanced)
+
+        case .loader:
+            return .flow(column: 1)
+        }
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, layout: WaterfallLayout, sectionInsetFor section: Int) -> UIEdgeInsets? {
+        switch RIPSection(rawValue: section)! {
+        case .gallery:
+            return UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+
+        default:
+            return UIEdgeInsets.zero
+        }
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, layout: WaterfallLayout, minimumInteritemSpacingFor section: Int) -> CGFloat? {
+        switch RIPSection(rawValue: section)! {
+        case .gallery:
+            return 16
+
+        default:
+            return 0
+        }
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, layout: WaterfallLayout, minimumLineSpacingFor section: Int) -> CGFloat? {
+        switch RIPSection(rawValue: section)! {
+        case .gallery:
+            return 16
+
+        default:
+            return 0
+        }
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, layout: WaterfallLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        switch (RIPSection(rawValue: indexPath.section)!, indexPath.row) {
+        case (.gallery, let row):
+            switch galleryItems[row] {
+            case .image(let image):
+                return RIPGalleryImageCard.size(image: image)
+            }
+
+        default:
+            break
+
+        }
+
+        return WaterfallLayout.automaticSize
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, layout: WaterfallLayout, estimatedSizeForItemAt indexPath: IndexPath) -> CGSize? {
+        switch RIPSection(rawValue: indexPath.section)! {
+        case .card:
+            return CGSize(width: UIScreen.main.bounds.width, height: 250)
+
+        case .gallery:
+            let width = (UIScreen.main.bounds.width - 24 - 24 - 16) / 2
+            return CGSize(width: width, height: width)
+
+        case .loader:
+            return CGSize(width: UIScreen.main.bounds.width, height: 100)
         }
     }
 }
 
-// MARK: Actions
+// MARK: Add Targets
 extension RIPController: UIGestureRecognizerDelegate, SFSafariViewControllerDelegate {
-    enum ClickAction {
-        case map
-        case partnerInstagram
-        case partnerArticle
+    fileprivate func addTargets() {
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
 
-        case addedToCollection
-
-        case direction
-        case call
-
-        case screenshot
-        case mapHeading
-        case mapExternal
-
-        case about
-        case suggestEdit
-        case menuWeb
-        case hours
-        case tag
-
-        case partnerInstagramItem(Int)
-        case partnerArticleItem(Int)
-        case menuImageItem(Int)
-        case award(String)
-
-        var name: String {
-            switch self {
-            case .map: return "click_map"
-            case .partnerInstagram: return "click_partner_instagram"
-            case .partnerArticle: return "click_partner_article"
-
-            case .addedToCollection: return "click_added_to_collection"
-
-            case .direction: return "click_direction"
-            case .call: return "click_call"
-
-            case .screenshot: return "click_screenshot"
-            case .mapHeading: return "click_map_heading"
-            case .mapExternal: return "click_map_external"
-
-            case .about: return "click_about"
-            case .suggestEdit: return "click_suggest_edit"
-            case .menuWeb: return "click_menu_web"
-            case .hours: return "click_hours"
-            case .tag: return "click_tag"
-
-            case .partnerInstagramItem(let count):
-                return "click_partner_instagram_item(\(count))"
-            case .partnerArticleItem(let count):
-                return "click_partner_article_item(\(count))"
-            case .menuImageItem(let count):
-                return "click_menu_image_item(\(count))"
-
-            case .award(let collectionId):
-                return "click_award(\(collectionId)"
-            }
-        }
+        self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
     }
 
-    func apply(click: ClickAction) {
-        tracker?.add(name: click.name)
-        Analytics.logEvent("rip_action", parameters: [
-            AnalyticsParameterItemID: "place-\(self.placeId)" as NSObject,
-            AnalyticsParameterItemCategory: click.name as NSObject
-        ])
-
-        switch click {
-//        case .map:
-//            let controller = PlaceMapController(controller: self)
-//            self.navigationController?.pushViewController(controller, animated: true)
-//
-//        case .partnerInstagram:
-//            let controller = PlacePartnerInstagramController(controller: self, medias: [], nextPlaceSort: nil)
-//            self.navigationController!.pushViewController(controller, animated: true)
-//
-//        case .partnerArticle:
-//            let controller = PlacePartnerArticleController(controller: self, articles: [], nextPlaceSort: nil)
-//            self.navigationController!.pushViewController(controller, animated: true)
-//
-//        case .award(let collectionId):
-//            let controller = UserPlaceCollectionController(collectionId: collectionId)
-//            self.navigationController?.pushViewController(controller, animated: true)
-//
-//        case .suggestEdit: self.clickSuggestEdit()
-//        case .direction: self.clickDirection()
-//        case .call: self.clickCall()
-//        case .menuWeb: self.clickWebMenu()
-
-        default:
-            return
-        }
-    }
-
-    private func clickDirection() {
+    func onDirection() {
         if let address = data.place.location.address?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
             // Monster Jobs uses comgooglemap url scheme, those fuckers
             if (UIApplication.shared.canOpenURL(URL(string: "https://www.google.com/maps/")!)) {
@@ -294,7 +364,7 @@ extension RIPController: UIGestureRecognizerDelegate, SFSafariViewControllerDele
         }
     }
 
-    private func clickCall() {
+    func onCall() {
         if let phone = data.place.phone?.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression, range: nil) {
             if let url = URL(string: "tel://\(phone)"), UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url)
@@ -302,27 +372,8 @@ extension RIPController: UIGestureRecognizerDelegate, SFSafariViewControllerDele
         }
     }
 
-    private func clickSuggestEdit() {
-//        Authentication.requireAuthentication(controller: self) { state in
-//            switch state {
-//            case .loggedIn:
-//                let urlComps = NSURLComponents(string: "https://airtable.com/shrfxcHiCwlSl1rjk")!
-//                urlComps.queryItems = [
-//                    URLQueryItem(name: "prefill_Place.id", value: self.placeId),
-//                    URLQueryItem(name: "prefill_Place.status", value: "Open"),
-//                    URLQueryItem(name: "prefill_Place.name", value: self.place?.name),
-//                    URLQueryItem(name: "prefill_Place.Location.address", value: self.place?.location.address)
-//                ]
-//                let safari = SFSafariViewController(url: urlComps.url!)
-//                safari.delegate = self
-//                self.present(safari, animated: true, completion: nil)
-//            default:
-//                return
-//            }
-//        }
-    }
 
-    private func clickWebMenu() {
+    func onWebMenu() {
         if let menuUrl = self.data.place.menu?.url, let url = URL(string: menuUrl) {
             let safari = SFSafariViewController(url: url)
             safari.delegate = self
@@ -330,8 +381,15 @@ extension RIPController: UIGestureRecognizerDelegate, SFSafariViewControllerDele
         }
     }
 
-    @objc func handleScreenshot() {
-        self.apply(click: .screenshot)
+    @objc func onScreenshot() {
+    }
+
+    @objc func onBackButton(_ sender: Any) {
+        self.navigationController?.popViewController(animated: true)
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
     }
 }
 
@@ -379,7 +437,7 @@ extension RIPController: UIScrollViewDelegate {
     override open var preferredStatusBarStyle: UIStatusBarStyle {
         // LightContent is white, Default is Black
         // See updateNavigationBackground for reference
-        let y = self.tableView.contentOffset.y
+        let y = self.collectionView.contentOffset.y
         if (y < -36.0) {
             return .default
         } else if (155 > y) {

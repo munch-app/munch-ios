@@ -14,12 +14,6 @@ class RIPBottomView: UIView {
         return btn
     }()
 
-    let moreBtn: MunchButton = {
-        let btn = MunchButton(style: .border)
-        btn.with(text: "More")
-        return btn
-    }()
-
     var place: Place? {
         didSet {
             if let place = place {
@@ -36,16 +30,9 @@ class RIPBottomView: UIView {
         self.setHidden(isHidden: true)
 
         self.addSubview(saveBtn)
-        self.addSubview(moreBtn)
 
         saveBtn.snp.makeConstraints { maker in
             maker.right.equalTo(self).inset(24)
-            maker.top.equalTo(self).inset(12)
-            maker.bottom.equalTo(self.safeArea.bottom).inset(12)
-        }
-
-        moreBtn.snp.makeConstraints { maker in
-            maker.right.equalTo(saveBtn.snp.left).inset(-12)
             maker.top.equalTo(self).inset(12)
             maker.bottom.equalTo(self.safeArea.bottom).inset(12)
         }
@@ -53,7 +40,6 @@ class RIPBottomView: UIView {
 
     private func setHidden(isHidden: Bool) {
         saveBtn.isHidden = isHidden
-        moreBtn.isHidden = isHidden
     }
 
     override func layoutSubviews() {

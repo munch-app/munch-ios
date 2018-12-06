@@ -1,5 +1,5 @@
 //
-// Created by Fuxing Loh on 2018-12-03.
+// Created by Fuxing Loh on 2018-12-06.
 // Copyright (c) 2018 Munch Technologies. All rights reserved.
 //
 
@@ -7,7 +7,26 @@ import Foundation
 import UIKit
 import SnapKit
 
-class FeedCellImage: UICollectionViewCell {
+class RIPGalleryHeaderCard: RIPCard {
+    private let label = UILabel(style: .h2)
+
+    override func didLoad(data: PlaceData!) {
+        self.addSubview(label)
+
+        label.with(text: "\(data.place.name) Images")
+        label.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self).inset(24)
+            maker.top.equalTo(self).inset(12)
+            maker.bottom.equalTo(self).inset(24)
+        }
+    }
+
+    override class func isAvailable(data: PlaceData) -> Bool {
+        return !data.images.isEmpty
+    }
+}
+
+class RIPGalleryImageCard: UICollectionViewCell {
     private let imageView: SizeImageView = {
         let width = (UIScreen.main.bounds.width - 24 - 24 - 16) / 2
         let imageView = SizeImageView(points: width, height: 1)
@@ -30,8 +49,8 @@ class FeedCellImage: UICollectionViewCell {
         }
     }
 
-    func render(with item: ImageFeedItem) -> FeedCellImage {
-        imageView.render(image: item.image)
+    func render(with image: PlaceImage) -> RIPGalleryImageCard {
+        imageView.render(sizes: image.sizes)
         return self
     }
 
@@ -39,8 +58,8 @@ class FeedCellImage: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    class func size(item: ImageFeedItem) -> CGSize {
-        if let size = item.image.sizes.max {
+    class func size(image: PlaceImage) -> CGSize {
+        if let size = image.sizes.max {
             return CGSize(width: size.width, height: size.height)
         }
         return CGSize(width: 10000, height: 10000)

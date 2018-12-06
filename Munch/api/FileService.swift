@@ -3,7 +3,6 @@
 // Copyright (c) 2018 Munch Technologies. All rights reserved.
 //
 
-
 struct Image: Codable {
     var imageId: String?
     var sizes: [Size]
@@ -23,10 +22,10 @@ struct Image: Codable {
     }
 }
 
-extension Image {
-    var maxSize: Size? {
-        return self.sizes.max { size, size2 in
-            size.width < size2.width
+extension Array where Element == Image.Size {
+    var max: Image.Size? {
+        return self.max { lhs, rhs in
+            lhs.width < rhs.width
         }
     }
 }

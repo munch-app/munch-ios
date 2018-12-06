@@ -84,7 +84,7 @@ extension MunchButtonStyle {
         case .borderSmall: fallthrough
         case .primarySmall: fallthrough
         case .secondarySmall:
-            return UIFont.systemFont(ofSize: 15, weight: .bold)
+            return UIFont.systemFont(ofSize: 14, weight: .bold)
 
         default:
             return UIFont.systemFont(ofSize: 16, weight: .bold)
@@ -96,15 +96,6 @@ class MunchButton: UIButton {
     private let nameLabel = UILabel()
             .with(alignment: .center)
             .with(numberOfLines: 1)
-
-    var text: String? {
-        get {
-            return self.nameLabel.text
-        }
-        set(value) {
-            self.nameLabel.text = value
-        }
-    }
 
     required init(style: MunchButtonStyle) {
         super.init(frame: .zero)
@@ -138,7 +129,7 @@ class MunchButton: UIButton {
 
 extension MunchButton {
     func with(text: String?) -> MunchButton {
-        self.text = text
+        self.nameLabel.text = text
         return self
     }
 }

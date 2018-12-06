@@ -9,29 +9,30 @@ import SnapKit
 
 import Crashlytics
 
-class RIPCell: UITableViewCell {
-    var data: PlaceData!
+class RIPCard: UICollectionViewCell {
     var controller: RIPController!
 
-    required init(data: PlaceData!, controller: RIPController) {
-        super.init(style: .default, reuseIdentifier: nil)
-        self.data = data
-        self.controller = controller
-        self.selectionStyle = .none
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+    }
 
-        self.didLoad(data: data)
-        self.willDisplay(data: data)
+    func register(data: PlaceData!, controller: RIPController) {
+        if self.controller == nil {
+            self.controller = controller
+            self.didLoad(data: data)
+        }
     }
 
     /**
-     * Might be called when PlaceData is nil
+     * didLoad & willDisplay separated for better convention
+     * Might be called when PlaceData is nil for card loaded before start
      */
     func didLoad(data: PlaceData!) {
 
     }
 
     /**
-     * Might be called when PlaceData is nil
+     * didLoad & willDisplay separated for better convention
      */
     func willDisplay(data: PlaceData!) {
 
@@ -49,19 +50,14 @@ class RIPCell: UITableViewCell {
     }
 }
 
-extension RIPCell {
-    /**
-     Create PlaceCardView from controller
-     */
-    class func create(controller: RIPController) -> RIPCell {
-        return self.init(data: controller.data, controller: controller)
-    }
-}
-
 class RIPSeparatorLine: UIView {
     override init(frame: CGRect) {
         super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 1.0 / UIScreen.main.scale))
-        self.backgroundColor = UIColor(hex: "d5d4d8")
+        self.backgroundColor = .ba10
+
+        snp.makeConstraints { maker in
+            maker.height.equalTo(1.0 / UIScreen.main.scale)
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -16,6 +16,14 @@ class RIPHeaderView: UIView {
         button.contentHorizontalAlignment = .left
         return button
     }()
+    let moreBtn: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "RIP-Header-More"), for: .normal)
+        button.tintColor = .white
+        button.imageEdgeInsets.right = 18
+        button.contentHorizontalAlignment = .right
+        return button
+    }()
     let titleView: UILabel = {
         let titleView = UILabel(style: .navHeader)
         return titleView
@@ -36,11 +44,10 @@ class RIPHeaderView: UIView {
     override var tintColor: UIColor! {
         didSet {
             self.backButton.tintColor = tintColor
+            self.moreBtn.tintColor = tintColor
             self.titleView.textColor = tintColor
         }
     }
-
-    var controller: UIViewController!
 
     init(tintColor: UIColor = .black, backgroundVisible: Bool = true, titleHidden: Bool = false) {
         super.init(frame: CGRect.zero)
@@ -62,27 +69,34 @@ class RIPHeaderView: UIView {
         self.addSubview(backgroundView)
         self.addSubview(backButton)
         self.addSubview(titleView)
+        self.addSubview(moreBtn)
 
-        backButton.snp.makeConstraints { make in
-            make.top.equalTo(self.safeArea.top)
-            make.left.bottom.equalTo(self)
+        backButton.snp.makeConstraints { maker in
+            maker.top.equalTo(self.safeArea.top)
+            maker.left.bottom.equalTo(self)
 
-            make.width.equalTo(56)
-            make.height.equalTo(44)
+            maker.width.equalTo(52)
+            maker.height.equalTo(44)
+        }
+
+        moreBtn.snp.makeConstraints { maker in
+            maker.right.equalTo(self)
+            maker.top.bottom.equalTo(backButton)
+            maker.width.equalTo(56)
         }
 
         titleView.snp.makeConstraints { maker in
             maker.top.bottom.equalTo(self.backButton)
             maker.left.equalTo(backButton.snp.right)
-            maker.right.equalTo(self).inset(24)
+            maker.right.equalTo(moreBtn.snp.left).inset(-16)
         }
 
-        backgroundView.snp.makeConstraints { make in
-            make.edges.equalTo(self)
+        backgroundView.snp.makeConstraints { maker in
+            maker.edges.equalTo(self)
         }
 
-        shadowView.snp.makeConstraints { make in
-            make.edges.equalTo(self)
+        shadowView.snp.makeConstraints { maker in
+            maker.edges.equalTo(self)
         }
     }
 
