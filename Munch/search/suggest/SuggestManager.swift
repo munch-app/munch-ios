@@ -82,9 +82,7 @@ class SuggestManager {
         list.append(.query("Search-Suggest-Anywhere", anywhere))
 
         recent.list().prefix(4).forEach { query in
-            if !query.isSimple() {
-                list.append(.query("Search-Suggest-Recent", query))
-            }
+            list.append(.query("Search-Suggest-Recent", query))
         }
 
 

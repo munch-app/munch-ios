@@ -78,7 +78,9 @@ class SearchController: UIViewController {
 
     func push(searchQuery: SearchQuery) {
         histories.append(searchQuery)
-        recent.add(id: String(arc4random()), data: searchQuery)
+        if !searchQuery.isSimple() {
+            recent.add(id: String(arc4random()), data: searchQuery)
+        }
 
         self.searchTableView.search(query: searchQuery, screen: .search)
         self.searchTableView.scrollsToTop()

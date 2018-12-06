@@ -12,7 +12,7 @@ import RxSwift
 import SnapKit
 import NVActivityIndicatorView
 
-class AddToCollectionController: UIViewController {
+class CollectionAddPlaceController: UIViewController {
     private let headerView = HeaderView()
     private let tableView = UITableView()
 
@@ -160,7 +160,7 @@ enum AddToCollectionAction {
     case cancel
 }
 
-extension AddToCollectionController: UITableViewDataSource, UITableViewDelegate {
+extension CollectionAddPlaceController: UITableViewDataSource, UITableViewDelegate {
     func registerCell() {
         func register(cellClass: UITableViewCell.Type) {
             tableView.register(cellClass, forCellReuseIdentifier: String(describing: cellClass))

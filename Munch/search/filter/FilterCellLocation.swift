@@ -19,9 +19,9 @@ class FilterItemCellLocation: UITableViewCell {
     private var whereConstraint: Constraint!
 
     private let manager: FilterManager
-    private let controller: UIViewController
+    private let controller: FilterController
 
-    init(manager: FilterManager, controller: UIViewController) {
+    init(manager: FilterManager, controller: FilterController) {
         self.manager = manager
         self.controller = controller
         super.init(style: .default, reuseIdentifier: nil)
@@ -94,7 +94,7 @@ extension FilterItemCellLocation {
         case .Between:
             let controller = FilterLocationBetweenController(searchQuery: self.manager.searchQuery) { query in
                 if let query = query {
-                    self.manager.select(searchQuery: query)
+                    self.controller.dismiss(query: query)
                 }
             }
             self.controller.present(controller, animated: true)

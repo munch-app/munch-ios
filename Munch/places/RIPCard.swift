@@ -195,7 +195,7 @@ class PlaceAddButton: UIButton {
             switch state {
             case .loggedIn:
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                let controller = AddToCollectionController(place: place) { action in
+                let controller = CollectionAddPlaceController(place: place) { action in
                     switch action {
                     case .add(let collection):
                         if let placeController = self.controller as? RIPController {

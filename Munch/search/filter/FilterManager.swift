@@ -51,7 +51,7 @@ class FilterManager {
         }
     }
 
-    func dispatch(delay: RxTimeInterval = 0.5) {
+    func dispatch(delay: RxTimeInterval = 0.25) {
         self.result = nil
         self.loading = true
 

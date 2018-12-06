@@ -87,7 +87,7 @@ extension MunchButtonStyle {
             return UIFont.systemFont(ofSize: 15, weight: .bold)
 
         default:
-            return UIFont.systemFont(ofSize: 17, weight: .bold)
+            return UIFont.systemFont(ofSize: 16, weight: .bold)
         }
     }
 }

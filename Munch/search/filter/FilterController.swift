@@ -89,7 +89,7 @@ class FilterController: UIViewController {
 
         self.headerView.manager = self.manager
         self.headerView.searchQuery = self.manager.searchQuery
-        self.bottomView.count = nil
+        self.bottomView.state = .loading
 
         headerView.snp.makeConstraints { make in
             make.top.equalTo(self.view)
@@ -141,13 +141,12 @@ extension FilterController {
                         self.items = items
                         self.tableView.reloadData()
 
-                        // Loading
-                        if items.isEmpty {
-                            self.bottomView.count = nil
-                            self.indicator.isHidden = false
-                        } else {
-                            self.bottomView.count = self.manager.result?.count
+                        if let count = self.manager.result?.count {
+                            self.bottomView.state = .count(count)
                             self.indicator.isHidden = true
+                        } else {
+                            self.bottomView.state = .loading
+                            self.indicator.isHidden = false
                         }
                     case .error(let error):
                         self.alert(error: error)
@@ -160,8 +159,7 @@ extension FilterController {
     }
 
     @objc func actionCancel(_ sender: Any) {
-        self.onDismiss(nil)
-        self.dismiss(animated: true)
+        self.dismiss(query: nil)
     }
 
     @objc func actionApply(_ sender: Any) {
@@ -169,7 +167,11 @@ extension FilterController {
             return
         }
 
-        self.onDismiss(manager.searchQuery)
+        self.dismiss(query: manager.searchQuery)
+    }
+
+    func dismiss(query: SearchQuery?) {
+        self.onDismiss(query)
         self.dismiss(animated: true)
     }
 
@@ -261,30 +263,28 @@ fileprivate class FilterBottomView: UIView {
         button.titleLabel!.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
         return button
     }()
-    fileprivate let indicator: NVActivityIndicatorView = {
-        let indicator = NVActivityIndicatorView(frame: .zero, type: .ballBeat, color: .secondary500, padding: 4)
-        indicator.stopAnimating()
-        return indicator
-    }()
 
-    var count: Int? {
+    enum State {
+        case count(Int)
+        case loading
+    }
+
+    var state: State = .loading {
         didSet {
-            if let count = count {
-                self.indicator.stopAnimating()
+            switch state {
+            case .count(let count) where count == 0:
+                self.applyButton.setTitle("No Results", for: .normal)
+                self.applyButton.backgroundColor = .secondary050
+                self.applyButton.setTitleColor(.secondary700, for: .normal)
 
-                if count == 0 {
-                    self.applyButton.setTitle("No Results".localized(), for: .normal)
-                    self.applyButton.backgroundColor = .secondary050
-                    self.applyButton.setTitleColor(.secondary700, for: .normal)
-                } else {
-                    self.applyButton.setTitle(FilterManager.countTitle(count: count), for: .normal)
-                    self.applyButton.backgroundColor = .secondary500
-                    self.applyButton.setTitleColor(.white, for: .normal)
-                }
-            } else {
-                self.indicator.startAnimating()
+            case .count(let count) where count > 0:
+                self.applyButton.setTitle(FilterManager.countTitle(count: count), for: .normal)
+                self.applyButton.backgroundColor = .secondary500
+                self.applyButton.setTitleColor(.white, for: .normal)
+
+            default:
                 self.applyButton.setTitle(nil, for: .normal)
-                self.applyButton.backgroundColor = .white
+                self.applyButton.backgroundColor = .secondary050
             }
         }
     }
@@ -293,17 +293,12 @@ fileprivate class FilterBottomView: UIView {
         super.init(frame: frame)
         self.backgroundColor = .white
         self.addSubview(applyButton)
-        self.addSubview(indicator)
 
         applyButton.snp.makeConstraints { (make) in
             make.top.equalTo(self).inset(12)
             make.bottom.equalTo(self.safeArea.bottom).inset(12)
             make.right.left.equalTo(self).inset(24)
             make.height.equalTo(46)
-        }
-
-        indicator.snp.makeConstraints { make in
-            make.edges.equalTo(applyButton)
         }
     }
 

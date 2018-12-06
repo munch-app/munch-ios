@@ -4,20 +4,23 @@
 //
 
 import Foundation
-
 import Moya
-import RealmSwift
 import RxSwift
 
-class PlaceCollectionLoader {
+class CollectionPlaceLoader {
     private let disposeBag = DisposeBag()
     private let provider = MunchProvider<UserPlaceCollectionService>()
     private var observer: AnyObserver<([UserPlaceCollection.Item], Bool)>?
 
     private(set) var collection: UserPlaceCollection?
     private(set) var items: [UserPlaceCollection.Item] = []
+
     private(set) var next: Int?
     private(set) var more: Bool = false
+
+    public var isEditable: Bool {
+        return false
+    }
 
     func start(collectionId: String) -> Single<UserPlaceCollection> {
         return provider.rx.request(.get(collectionId))
@@ -26,19 +29,17 @@ class PlaceCollectionLoader {
                 }.do(onSuccess: { collection in
                     self.collection = collection
                     self.more = true
-                    self.loadMore()
                 })
     }
 
     func observe() -> Observable<([UserPlaceCollection.Item], Bool)> {
         return Observable.create { (observer: AnyObserver<([UserPlaceCollection.Item], Bool)>) in
             self.observer = observer
-            self.loadMore()
             return Disposables.create()
         }
     }
 
-    func loadMore() {
+    func append() {
         guard more, let collectionId = self.collection?.collectionId else {
             return
         }

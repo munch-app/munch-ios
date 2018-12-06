@@ -35,6 +35,7 @@
 		B4B7317A88FBBF250ABABD73 /* LeftAlignedLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73937402D628B2405A1F0 /* LeftAlignedLayout.swift */; };
 		B4B731C9E8B9A21CE5BBDF35 /* SearchCardArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7319F863F7D75472073D8 /* SearchCardArea.swift */; };
 		B4B731E5D90A609A73841FDE /* MunchSearchTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B736C1DC599DBB26C5C9F9 /* MunchSearchTextField.swift */; };
+		B4B731E95AABC299F9F01054 /* RIPHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73DC7DEBA985360DC4267 /* RIPHeaderView.swift */; };
 		B4B731E974188D4D409E7E65 /* SizeImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B739BB97B1798D44BDECC2 /* SizeImageView.swift */; };
 		B4B731EC40D9169F08F70FC4 /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7306D542D1854D216A57E /* SearchController.swift */; };
 		B4B731F495A2A0C6E24A566E /* UICollectionView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737E1E2482A53D7CB6F6B /* UICollectionView+Extension.swift */; };
@@ -43,7 +44,7 @@
 		B4B732A34ADA308FD9FB3F83 /* SearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738B688AE5A34954680EA /* SearchService.swift */; };
 		B4B732CC1464F187F8931167 /* SearchCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B739624FB135D4B899356A /* SearchCard.swift */; };
 		B4B732D57D5E43FEEBCB4F30 /* FilterCellPrice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7329579F8E1B3F992EB18 /* FilterCellPrice.swift */; };
-		B4B732E70D293542B580ACC7 /* AddToCollectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732D2B0FB00E6302B1769 /* AddToCollectionController.swift */; };
+		B4B732E70D293542B580ACC7 /* CollectionAddPlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732D2B0FB00E6302B1769 /* CollectionAddPlaceController.swift */; };
 		B4B733162CE1B0A62B893122 /* PlaceCardSuggest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B731D151BB6D9601680CD1 /* PlaceCardSuggest.swift */; };
 		B4B7333D1DDE171204DBEAEE /* SearchTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73AD58260F2E709E78C41 /* SearchTableView.swift */; };
 		B4B733B083D8DF8F2DDFF66D /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73695F4F2693D0E750704 /* ViewExtensions.swift */; };
@@ -66,10 +67,11 @@
 		B4B7380CEE70044FE930F722 /* module.modulemap in Sources */ = {isa = PBXBuildFile; fileRef = B4B73D56D29ADB145295DB94 /* module.modulemap */; };
 		B4B7382A92E97651FFCA5A2E /* UserPlaceActivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73690A98B7622FC7BD1B4 /* UserPlaceActivityService.swift */; };
 		B4B7384B88D80A519B61487F /* PlaceCardAward.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73B2B2DAAB08F551868D7 /* PlaceCardAward.swift */; };
-		B4B7388AF9FD83F39F217600 /* UserPlaceCollectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B734F5A092F3E9F0F16379 /* UserPlaceCollectionController.swift */; };
+		B4B7388AF9FD83F39F217600 /* CollectionPlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B734F5A092F3E9F0F16379 /* CollectionPlaceController.swift */; };
 		B4B738B028A98E69BD3403F5 /* MunchTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732B20AE677AF6243099A /* MunchTagView.swift */; };
 		B4B738EA83700A1713184B9B /* RIPImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73F90EE462A9E722D4F91 /* RIPImageCell.swift */; };
 		B4B7392B5A989633BADD192D /* FeedService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7340F0AD8271793C8BF1B /* FeedService.swift */; };
+		B4B73938651082208D57C2BA /* RIPFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73669E03801B1ECEDF138 /* RIPFooterView.swift */; };
 		B4B7393A474C78AE30F0B91A /* MunchUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7329A88030A09DC2A5187 /* MunchUser.swift */; };
 		B4B7395FCD466A8BB5C47BAA /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738679F9E169693DC1515 /* Label.swift */; };
 		B4B7397B4A29B5FF71D35382 /* SearchCardSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B735C5E94EBF93921BAB82 /* SearchCardSuggestion.swift */; };
@@ -88,7 +90,7 @@
 		B4B73BB5EA282D04EAB6453A /* PlaceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732F9B4B08AB071D146BA /* PlaceService.swift */; };
 		B4B73BBC419593C4FD7A7F0A /* MunchTagCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7375F54B00CC6DF37E159 /* MunchTagCollectionView.swift */; };
 		B4B73BC804C766F147B36575 /* FileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73F4E5D6FC418C11071AC /* FileService.swift */; };
-		B4B73C3AB908951BEF2451FF /* PlaceCollectionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73A8D9255EEE7A5009815 /* PlaceCollectionLoader.swift */; };
+		B4B73C3AB908951BEF2451FF /* CollectionPlaceLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73A8D9255EEE7A5009815 /* CollectionPlaceLoader.swift */; };
 		B4B73C41A4C3F3BA7EFF5AB4 /* PlaceCardBasic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7328A63C083C2FD99C847 /* PlaceCardBasic.swift */; };
 		B4B73C4483DFF7CD8C6813DC /* FoundationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732E7ED481C66B5E5C06F /* FoundationExtensions.swift */; };
 		B4B73C5283FA6454158B1B4B /* RIPLoadingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73BC96A97609AEE2FB5D5 /* RIPLoadingCell.swift */; };
@@ -195,7 +197,7 @@
 		B4B7329579F8E1B3F992EB18 /* FilterCellPrice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterCellPrice.swift; sourceTree = "<group>"; };
 		B4B7329A88030A09DC2A5187 /* MunchUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchUser.swift; sourceTree = "<group>"; };
 		B4B732B20AE677AF6243099A /* MunchTagView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchTagView.swift; sourceTree = "<group>"; };
-		B4B732D2B0FB00E6302B1769 /* AddToCollectionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddToCollectionController.swift; sourceTree = "<group>"; };
+		B4B732D2B0FB00E6302B1769 /* CollectionAddPlaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionAddPlaceController.swift; sourceTree = "<group>"; };
 		B4B732DE1EA3B496C8EE6CB3 /* FilterToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterToken.swift; sourceTree = "<group>"; };
 		B4B732E7ED481C66B5E5C06F /* FoundationExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundationExtensions.swift; sourceTree = "<group>"; };
 		B4B732E83F10F53D700BFBA2 /* Int+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+Extension.swift"; sourceTree = "<group>"; };
@@ -213,10 +215,11 @@
 		B4B7348322E099298BEB7546 /* SearchCardPlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardPlace.swift; sourceTree = "<group>"; };
 		B4B734C84BE5379569DEC024 /* FilterControllerLocationSearch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterControllerLocationSearch.swift; sourceTree = "<group>"; };
 		B4B734D7C6E45CD6D4F8E8E8 /* MunchService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchService.swift; sourceTree = "<group>"; };
-		B4B734F5A092F3E9F0F16379 /* UserPlaceCollectionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPlaceCollectionController.swift; sourceTree = "<group>"; };
+		B4B734F5A092F3E9F0F16379 /* CollectionPlaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionPlaceController.swift; sourceTree = "<group>"; };
 		B4B73591F9EB2CF93F88F218 /* SearchCardManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardManager.swift; sourceTree = "<group>"; };
 		B4B735C5E94EBF93921BAB82 /* SearchCardSuggestion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardSuggestion.swift; sourceTree = "<group>"; };
 		B4B73655642A73F406ABBFA7 /* Shadow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Shadow.swift; sourceTree = "<group>"; };
+		B4B73669E03801B1ECEDF138 /* RIPFooterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPFooterView.swift; sourceTree = "<group>"; };
 		B4B7366CEC775D090EE1D49B /* PlaceCardPartnersContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardPartnersContent.swift; sourceTree = "<group>"; };
 		B4B7368204D2AD9856509B6D /* ShimmerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShimmerView.swift; sourceTree = "<group>"; };
 		B4B73690A98B7622FC7BD1B4 /* UserPlaceActivityService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPlaceActivityService.swift; sourceTree = "<group>"; };
@@ -241,7 +244,7 @@
 		B4B739E61B078D6FB36F0BAC /* RIPNameCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPNameCell.swift; sourceTree = "<group>"; };
 		B4B73A013583B2C9902370B6 /* CopyableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CopyableView.swift; sourceTree = "<group>"; };
 		B4B73A6F579638D5F835DDBE /* UITableView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableView+Extension.swift"; sourceTree = "<group>"; };
-		B4B73A8D9255EEE7A5009815 /* PlaceCollectionLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCollectionLoader.swift; sourceTree = "<group>"; };
+		B4B73A8D9255EEE7A5009815 /* CollectionPlaceLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionPlaceLoader.swift; sourceTree = "<group>"; };
 		B4B73AA1927908DE5CE73316 /* MunchImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchImageView.swift; sourceTree = "<group>"; };
 		B4B73AACCB0BC095B5C0D075 /* FeedManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedManager.swift; sourceTree = "<group>"; };
 		B4B73AD58260F2E709E78C41 /* SearchTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableView.swift; sourceTree = "<group>"; };
@@ -259,6 +262,7 @@
 		B4B73D378A46D9D36E031331 /* SearchHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchHeaderView.swift; sourceTree = "<group>"; };
 		B4B73D56D29ADB145295DB94 /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		B4B73D86A1832193FD128FC6 /* RIPCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPCell.swift; sourceTree = "<group>"; };
+		B4B73DC7DEBA985360DC4267 /* RIPHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPHeaderView.swift; sourceTree = "<group>"; };
 		B4B73E853230C2F199B5FC38 /* FilterControllerLocationBetween.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterControllerLocationBetween.swift; sourceTree = "<group>"; };
 		B4B73F008A9EAFCE407879A2 /* FilterCellTag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterCellTag.swift; sourceTree = "<group>"; };
 		B4B73F4E5D6FC418C11071AC /* FileService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileService.swift; sourceTree = "<group>"; };
@@ -477,6 +481,8 @@
 				B4B738FF32F231E9768CD5F5 /* RIPController.swift */,
 				B4B73874640BF8573F3D6DE2 /* RIPMapController.swift */,
 				B4B730F750D918BB79FAF597 /* RIPCard.swift */,
+				B4B73DC7DEBA985360DC4267 /* RIPHeaderView.swift */,
+				B4B73669E03801B1ECEDF138 /* RIPFooterView.swift */,
 			);
 			path = places;
 			sourceTree = "<group>";
@@ -530,10 +536,10 @@
 		B4B736934E1DBDBE623B712F /* collection */ = {
 			isa = PBXGroup;
 			children = (
-				B4B734F5A092F3E9F0F16379 /* UserPlaceCollectionController.swift */,
+				B4B734F5A092F3E9F0F16379 /* CollectionPlaceController.swift */,
 				B4B73AE09F083ADA7BF427D9 /* UserPlaceCollectionDatabase.swift */,
-				B4B732D2B0FB00E6302B1769 /* AddToCollectionController.swift */,
-				B4B73A8D9255EEE7A5009815 /* PlaceCollectionLoader.swift */,
+				B4B732D2B0FB00E6302B1769 /* CollectionAddPlaceController.swift */,
+				B4B73A8D9255EEE7A5009815 /* CollectionPlaceLoader.swift */,
 				B4B7335BABC0E6BF07362781 /* UserPlaceCollectionService.swift */,
 			);
 			path = collection;
@@ -998,10 +1004,10 @@
 				B4B73EB2FE22EA5E8593B33E /* RIPController.swift in Sources */,
 				B4B73A27FF8C27B661FDE549 /* ReviewRatingUtils.swift in Sources */,
 				B4B73D148D0C4822FCADE869 /* RIPMapController.swift in Sources */,
-				B4B7388AF9FD83F39F217600 /* UserPlaceCollectionController.swift in Sources */,
+				B4B7388AF9FD83F39F217600 /* CollectionPlaceController.swift in Sources */,
 				B4B73065A4CC7D618AD5D8D6 /* UserPlaceCollectionDatabase.swift in Sources */,
-				B4B732E70D293542B580ACC7 /* AddToCollectionController.swift in Sources */,
-				B4B73C3AB908951BEF2451FF /* PlaceCollectionLoader.swift in Sources */,
+				B4B732E70D293542B580ACC7 /* CollectionAddPlaceController.swift in Sources */,
+				B4B73C3AB908951BEF2451FF /* CollectionPlaceLoader.swift in Sources */,
 				B4B736B47B12B57380C86E22 /* UserPlaceCollectionService.swift in Sources */,
 				B4B7377C14988AD9E9420777 /* MunchData.swift in Sources */,
 				B4B73BC804C766F147B36575 /* FileService.swift in Sources */,
@@ -1042,6 +1048,8 @@
 				B4B73066188914BABE8724A8 /* SearchCardHeader.swift in Sources */,
 				B4B739E6B1A00BA895618F79 /* FilterControllerLocationBetween.swift in Sources */,
 				B4B73B64ED85D15DB8E2AEEE /* UITableView+Extension.swift in Sources */,
+				B4B731E95AABC299F9F01054 /* RIPHeaderView.swift in Sources */,
+				B4B73938651082208D57C2BA /* RIPFooterView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
