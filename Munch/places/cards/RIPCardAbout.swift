@@ -67,6 +67,15 @@ class RIPDescriptionCard: RIPCard {
     override class func isAvailable(data: PlaceData) -> Bool {
         return data.place.description != nil
     }
+
+    override func didSelect(data: PlaceData!, controller: RIPController) {
+        let destination = RIPDescriptionController(place: data.place)
+
+        let delegate = HalfModalTransitioningDelegate(viewController: controller, presentingViewController: destination)
+        destination.modalPresentationStyle = .custom
+        destination.transitioningDelegate = delegate
+        controller.present(destination, animated: true)
+    }
 }
 
 class RIPPhoneCard: RIPCard {
@@ -180,6 +189,53 @@ fileprivate class RIPLabelValue: UIView {
     var text: String? {
         didSet {
             self.value.text = text
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+fileprivate class RIPDescriptionController: HalfModalController {
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.alwaysBounceHorizontal = false
+        return scrollView
+    }()
+    private let header = UILabel(style: .h2)
+            .with(numberOfLines: 0)
+    private let label = UILabel(style: .regular)
+            .with(numberOfLines: 0)
+
+    init(place: Place) {
+        header.with(text: "About \(place.name)")
+        label.with(text: place.description, lineSpacing: 1.5)
+        super.init()
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        scrollView.addSubview(header)
+        scrollView.addSubview(label)
+        self.view.addSubview(scrollView)
+
+        scrollView.snp.makeConstraints { maker in
+            maker.top.equalTo(self.view.safeArea.top)
+            maker.bottom.equalTo(self.view.safeArea.bottom)
+            maker.left.right.equalTo(self.view)
+        }
+
+        header.snp.makeConstraints { maker in
+            maker.top.equalTo(scrollView).inset(24)
+            maker.left.right.equalTo(self.view).inset(24)
+        }
+
+        label.snp.makeConstraints { maker in
+            maker.top.equalTo(header.snp.bottom).inset(-16)
+            maker.bottom.equalTo(scrollView).inset(24)
+            maker.left.right.equalTo(self.view).inset(24)
         }
     }
 

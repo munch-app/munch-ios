@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		032270B221AFC67A00FA733C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B4B73BB2757D0BE5CC888EDA /* GoogleService-Info.plist */; };
+		032270B421BA84FD00FA733C /* HalfModalPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032270B321BA84FD00FA733C /* HalfModalPresentationController.swift */; };
+		032270B821BA850D00FA733C /* HalfModalTransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032270B521BA850C00FA733C /* HalfModalTransitionAnimator.swift */; };
+		032270B921BA850D00FA733C /* HalfModalInteractiveTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032270B621BA850D00FA733C /* HalfModalInteractiveTransition.swift */; };
+		032270BA21BA850D00FA733C /* HalfModalTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032270B721BA850D00FA733C /* HalfModalTransitioningDelegate.swift */; };
 		032F88FC1E82DFA300AD3818 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032F88FB1E82DFA300AD3818 /* AppDelegate.swift */; };
 		032F89031E82DFA300AD3818 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 032F89021E82DFA300AD3818 /* Assets.xcassets */; };
 		032F89061E82DFA300AD3818 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 032F89041E82DFA300AD3818 /* LaunchScreen.storyboard */; };
@@ -52,6 +56,7 @@
 		B4B73487CEAE343636DE6A74 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B4B73BB2757D0BE5CC888EDA /* GoogleService-Info.plist */; };
 		B4B734CADB20622FE502984B /* SuggestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73376F42AA38286FD7CFB /* SuggestManager.swift */; };
 		B4B734D22634645ACBFBF487 /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732ED64723C629C4B86F2 /* Authentication.swift */; };
+		B4B734F85F11D0328B1514C0 /* HalfModalController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7338D1D99FBE8C7AB1C8C /* HalfModalController.swift */; };
 		B4B7352BE9A0840E05837D97 /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7340918113A3681701BD5 /* Button.swift */; };
 		B4B73562BD47A7DF8D9334FC /* RIPCardLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73FAD47BB85633497CC31 /* RIPCardLocation.swift */; };
 		B4B73576A3FFF617E76552B2 /* RIPCardAbout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73950D3228A4659361348 /* RIPCardAbout.swift */; };
@@ -140,6 +145,10 @@
 		031C2F411E9AADDB0022F0AF /* NYTPhotoViewerCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NYTPhotoViewerCore.framework; path = Carthage/Build/iOS/NYTPhotoViewerCore.framework; sourceTree = "<group>"; };
 		031C2F431E9AEFC10022F0AF /* FLAnimatedImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLAnimatedImage.framework; path = Carthage/Build/iOS/FLAnimatedImage.framework; sourceTree = "<group>"; };
 		031C2F451E9CAE170022F0AF /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
+		032270B321BA84FD00FA733C /* HalfModalPresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HalfModalPresentationController.swift; path = "../../../../../Downloads/HalfModalPresentationController-master/HalfModalPresentationController/Presentation/HalfModalPresentationController.swift"; sourceTree = "<group>"; };
+		032270B521BA850C00FA733C /* HalfModalTransitionAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HalfModalTransitionAnimator.swift; sourceTree = "<group>"; };
+		032270B621BA850D00FA733C /* HalfModalInteractiveTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HalfModalInteractiveTransition.swift; sourceTree = "<group>"; };
+		032270B721BA850D00FA733C /* HalfModalTransitioningDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HalfModalTransitioningDelegate.swift; sourceTree = "<group>"; };
 		032F88F81E82DFA300AD3818 /* Munch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Munch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		032F88FB1E82DFA300AD3818 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		032F89021E82DFA300AD3818 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -210,6 +219,7 @@
 		B4B73320FAFE5D794A6CC576 /* UserService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
 		B4B7335BABC0E6BF07362781 /* UserPlaceCollectionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPlaceCollectionService.swift; sourceTree = "<group>"; };
 		B4B73376F42AA38286FD7CFB /* SuggestManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestManager.swift; sourceTree = "<group>"; };
+		B4B7338D1D99FBE8C7AB1C8C /* HalfModalController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HalfModalController.swift; sourceTree = "<group>"; };
 		B4B7340918113A3681701BD5 /* Button.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
 		B4B7340C343F684AB0020CEA /* SearchCardLocal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardLocal.swift; sourceTree = "<group>"; };
 		B4B7340F0AD8271793C8BF1B /* FeedService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedService.swift; sourceTree = "<group>"; };
@@ -525,6 +535,7 @@
 				B4B736C1DC599DBB26C5C9F9 /* MunchSearchTextField.swift */,
 				B4B7391BA1D0CE49C5890B1C /* WaterfallLayout.swift */,
 				B4B73C6EE3870CAAA60898F4 /* extension */,
+				B4B73E7A02599D40CAAEF029 /* controller */,
 			);
 			path = design;
 			sourceTree = "<group>";
@@ -634,6 +645,18 @@
 				B4B73A6F579638D5F835DDBE /* UITableView+Extension.swift */,
 			);
 			path = extension;
+			sourceTree = "<group>";
+		};
+		B4B73E7A02599D40CAAEF029 /* controller */ = {
+			isa = PBXGroup;
+			children = (
+				032270B621BA850D00FA733C /* HalfModalInteractiveTransition.swift */,
+				032270B521BA850C00FA733C /* HalfModalTransitionAnimator.swift */,
+				032270B721BA850D00FA733C /* HalfModalTransitioningDelegate.swift */,
+				032270B321BA84FD00FA733C /* HalfModalPresentationController.swift */,
+				B4B7338D1D99FBE8C7AB1C8C /* HalfModalController.swift */,
+			);
+			path = controller;
 			sourceTree = "<group>";
 		};
 		B4B73E9D5060BC3EA7F3BE1D /* suggest */ = {
@@ -983,6 +1006,7 @@
 				B4B738B028A98E69BD3403F5 /* MunchTagView.swift in Sources */,
 				B4B73BBC419593C4FD7A7F0A /* MunchTagCollectionView.swift in Sources */,
 				B4B739A826B911E094D4A616 /* ProfileSettingController.swift in Sources */,
+				032270B821BA850D00FA733C /* HalfModalTransitionAnimator.swift in Sources */,
 				B4B733C48DCACF9F5A977BE1 /* ProfileTabController.swift in Sources */,
 				B4B7397B4A29B5FF71D35382 /* SearchCardSuggestion.swift in Sources */,
 				B4B731C9E8B9A21CE5BBDF35 /* SearchCardArea.swift in Sources */,
@@ -1003,6 +1027,7 @@
 				B4B733162CE1B0A62B893122 /* RIPCardSuggest.swift in Sources */,
 				B4B73711AC311B37916A5C12 /* RIPCard.swift in Sources */,
 				B4B73EB2FE22EA5E8593B33E /* RIPController.swift in Sources */,
+				032270B421BA84FD00FA733C /* HalfModalPresentationController.swift in Sources */,
 				B4B73A27FF8C27B661FDE549 /* ReviewRatingUtils.swift in Sources */,
 				B4B73D148D0C4822FCADE869 /* RIPMapController.swift in Sources */,
 				B4B7388AF9FD83F39F217600 /* CollectionPlaceController.swift in Sources */,
@@ -1025,6 +1050,7 @@
 				B4B7395FCD466A8BB5C47BAA /* Label.swift in Sources */,
 				B4B73D25850A0104B2209E9D /* Shadow.swift in Sources */,
 				B4B73F0A2B82E0B3D5E35D0D /* SearchCardManager.swift in Sources */,
+				032270BA21BA850D00FA733C /* HalfModalTransitioningDelegate.swift in Sources */,
 				B4B7307637309079F8D4644C /* SearchCardHome.swift in Sources */,
 				B4B731E5D90A609A73841FDE /* MunchSearchTextField.swift in Sources */,
 				B4B73B10F58C84E27D808EF5 /* FeedController.swift in Sources */,
@@ -1043,6 +1069,7 @@
 				B4B736E204197450B24C1CB7 /* FeedManager.swift in Sources */,
 				B4B73298BEAF7713C239120E /* WaterfallLayout.swift in Sources */,
 				B4B733C8BC2504C159A2106C /* FeedImageController.swift in Sources */,
+				032270B921BA850D00FA733C /* HalfModalInteractiveTransition.swift in Sources */,
 				B4B731F495A2A0C6E24A566E /* UICollectionView+Extension.swift in Sources */,
 				B4B7303E897DD022DEAE1AE5 /* Int+Extension.swift in Sources */,
 				B4B7352BE9A0840E05837D97 /* Button.swift in Sources */,
@@ -1058,6 +1085,7 @@
 				B4B73D5F9F355089B7D4384C /* RIPCardHour.swift in Sources */,
 				B4B73915FD94C1B77DBD5D60 /* RIPCardAward.swift in Sources */,
 				B4B73E32F832B4FDC1A77C22 /* UserDefaults+Key.swift in Sources */,
+				B4B734F85F11D0328B1514C0 /* HalfModalController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
