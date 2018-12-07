@@ -20,7 +20,7 @@ class RIPHeaderView: UIView {
         let button = UIButton()
         button.setImage(UIImage(named: "RIP-Header-More"), for: .normal)
         button.tintColor = .white
-        button.imageEdgeInsets.right = 18
+        button.imageEdgeInsets.right = 24
         button.contentHorizontalAlignment = .right
         return button
     }()
@@ -29,6 +29,7 @@ class RIPHeaderView: UIView {
         return titleView
     }()
 
+    var controller: UIViewController!
     let backgroundView = UIView()
     let shadowView = UIView()
 
@@ -107,5 +108,52 @@ class RIPHeaderView: UIView {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension RIPHeaderView {
+    func addTargets(controller: UIViewController) {
+        self.controller = controller
+        self.moreBtn.addTarget(self, action: #selector(onMore), for: .touchUpInside)
+    }
+
+    @objc func onMore() {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.view.tintColor = .black
+
+        alert.addAction(UIAlertAction(title: "Suggest Edits", style: .default) { action in
+            Authentication.requireAuthentication(controller: self.controller) { state in
+                switch state {
+                case .loggedIn:
+                    self.onSuggestEdit()
+
+                default:
+                    return
+                }
+            }
+
+        })
+        alert.addAction(UIAlertAction(title: "Share", style: .default) { action in
+            self.onShare()
+        })
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        controller.present(alert, animated: true)
+    }
+
+    @objc func onSuggestEdit() {
+
+    }
+
+    @objc func onShare() {
+        guard let place = self.place else {
+            return
+        }
+
+        if let url = URL(string: "https://www.munch.app/places/\(place.placeId)") {
+            let controller = UIActivityViewController(activityItems: [place.name, url], applicationActivities: nil)
+            controller.excludedActivityTypes = [.airDrop, .addToReadingList, UIActivity.ActivityType.openInIBooks]
+            self.controller.present(controller, animated: true)
+        }
     }
 }

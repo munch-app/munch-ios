@@ -167,6 +167,9 @@ class RIPMapController: UIViewController, UIGestureRecognizerDelegate, MKMapView
     }
 
     private func render() {
+        self.headerView.place = self.place
+        self.headerView.addTargets(controller: self)
+
         self.bottomView.place = self.place
 
         if let latLng = place.location.latLng, let coordinate = CLLocation(latLng: latLng)?.coordinate {

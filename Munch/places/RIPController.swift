@@ -74,6 +74,8 @@ class RIPController: UIViewController {
         // Data Binding
         self.data = data
         self.headerView.place = data.place
+        self.headerView.addTargets(controller: self)
+
         self.footerView.place = data.place
         self.footerView.addButton.register(place: data.place, controller: self)
 
