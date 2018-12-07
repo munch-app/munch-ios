@@ -83,6 +83,13 @@ class RIPPhoneCard: RIPCard {
         self.labelValue.text = data.place.phone
     }
 
+    override func didSelect(data: PlaceData!, controller: RIPController) {
+        let phone = data.place.phone!.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
+        if let url = URL(string: "tel://\(phone)"), UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
+        }
+    }
+
     override class func isAvailable(data: PlaceData) -> Bool {
         return data.place.phone != nil
     }
@@ -107,7 +114,7 @@ class RIPPriceCard: RIPCard {
     }
 }
 
-class RIPWebsiteCard: RIPCard {
+class RIPWebsiteCard: RIPCard, SFSafariViewControllerDelegate {
     private let labelValue = RIPLabelValue(title: "WEBSITE")
 
     override func didLoad(data: PlaceData!) {
@@ -119,6 +126,21 @@ class RIPWebsiteCard: RIPCard {
 
     override func willDisplay(data: PlaceData!) {
         self.labelValue.text = data.place.website
+    }
+
+    override func didSelect(data: PlaceData!, controller: RIPController) {
+        guard  let url = URL.init(string: data.place.website!) else {
+            return
+        }
+
+        let alert = UIAlertController(title: nil, message: "Open in Safari?".localized(), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Open", style: .default, handler: { action in
+            let safari = SFSafariViewController(url: url)
+            safari.delegate = self
+            self.controller.present(safari, animated: true, completion: nil)
+        }))
+        controller.present(alert, animated: true, completion: nil)
     }
 
     override class func isAvailable(data: PlaceData) -> Bool {
@@ -165,24 +187,3 @@ fileprivate class RIPLabelValue: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 }
-
-//    override func didTap() {
-//        if let websiteUrl = websiteUrl, let url = URL.init(string: websiteUrl) {
-//            let alert = UIAlertController(title: nil, message: "Open in Safari?".localized(), preferredStyle: .alert)
-//            alert.addAction(UIAlertAction(title: "Cancel".localized(), style: .cancel, handler: nil))
-//            alert.addAction(UIAlertAction(title: "Open".localized(), style: .default, handler: { action in
-//                let safari = SFSafariViewController(url: url)
-//                safari.delegate = self
-//                self.controller.present(safari, animated: true, completion: nil)
-//            }))
-//            controller.present(alert, animated: true, completion: nil)
-//        }
-//    }
-
-//override func didTap() {
-//        if let phone = self.phone?.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression, range: nil) {
-//            if let url = URL(string: "tel://\(phone)"), UIApplication.shared.canOpenURL(url) {
-//                UIApplication.shared.open(url)
-//            }
-//        }
-//    }

@@ -19,7 +19,8 @@ class RIPMapController: UIViewController, UIGestureRecognizerDelegate, MKMapView
     let disposeBag = DisposeBag()
 
     private var headerView = RIPHeaderView()
-    private let bottomView = PlaceMapViewBottom()
+    private let bottomView = RIPMapViewBottom()
+
     private let mapView: MKMapView = {
         let mapView = MKMapView()
         mapView.showsPointsOfInterest = false
@@ -166,7 +167,7 @@ class RIPMapController: UIViewController, UIGestureRecognizerDelegate, MKMapView
     }
 
     private func render() {
-        self.bottomView.render(place: place)
+        self.bottomView.place = self.place
 
         if let latLng = place.location.latLng, let coordinate = CLLocation(latLng: latLng)?.coordinate {
             self.placeCoordinate = coordinate
@@ -327,32 +328,25 @@ fileprivate class LandmarkAnnotationView: MKAnnotationView {
     }
 }
 
-fileprivate class PlaceMapViewBottom: UIView {
-    private let addressLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14.0, weight: .regular)
-        label.numberOfLines = 0
-        return label
-    }()
+fileprivate class RIPMapViewBottom: UIView {
+    private let addressLabel = UILabel(style: .regular)
+            .with(numberOfLines: 0)
+    var place: Place? {
+        didSet {
+            self.addressLabel.text = place?.location.address
+        }
+    }
 
     override init(frame: CGRect = CGRect.zero) {
         super.init(frame: frame)
-        self.initViews()
-    }
-
-    private func initViews() {
         self.backgroundColor = .white
         self.addSubview(addressLabel)
 
         addressLabel.snp.makeConstraints { make in
-            make.top.equalTo(self).inset(12)
             make.left.right.equalTo(self).inset(24)
-            make.bottom.equalTo(self.safeArea.bottom).inset(8)
+            make.top.equalTo(self).inset(16)
+            make.bottom.equalTo(self.safeArea.bottom).inset(16)
         }
-    }
-
-    func render(place: Place) {
-        self.addressLabel.text = place.location.address
     }
 
     override func layoutSubviews() {
@@ -363,5 +357,4 @@ fileprivate class PlaceMapViewBottom: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
 }

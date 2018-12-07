@@ -388,6 +388,7 @@ extension RIPController: WaterfallLayoutDelegate {
 
 // MARK: Add Targets
 extension RIPController: UIGestureRecognizerDelegate, SFSafariViewControllerDelegate {
+
     fileprivate func addTargets() {
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
@@ -397,34 +398,6 @@ extension RIPController: UIGestureRecognizerDelegate, SFSafariViewControllerDele
 
     func scrollTo(indexPath: IndexPath) {
         self.collectionView.scrollToItem(at: indexPath, at: .centeredVertically, animated: true)
-    }
-
-    func onDirection() {
-        if let address = data.place.location.address?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
-            // Monster Jobs uses comgooglemap url scheme, those fuckers
-            if (UIApplication.shared.canOpenURL(URL(string: "https://www.google.com/maps/")!)) {
-                UIApplication.shared.open(URL(string: "https://www.google.com/maps/?daddr=\(address)")!)
-            } else if (UIApplication.shared.canOpenURL(URL(string: "http://maps.apple.com/")!)) {
-                UIApplication.shared.open(URL(string: "http://maps.apple.com/?daddr=\(address)")!)
-            }
-        }
-    }
-
-    func onCall() {
-        if let phone = data.place.phone?.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression, range: nil) {
-            if let url = URL(string: "tel://\(phone)"), UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url)
-            }
-        }
-    }
-
-
-    func onWebMenu() {
-        if let menuUrl = self.data.place.menu?.url, let url = URL(string: menuUrl) {
-            let safari = SFSafariViewController(url: url)
-            safari.delegate = self
-            self.present(safari, animated: true, completion: nil)
-        }
     }
 
     @objc func onBackButton(_ sender: Any) {

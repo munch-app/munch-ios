@@ -86,6 +86,11 @@ class RIPLocationCard: RIPCard {
             }
         }
     }
+
+    override func didSelect(data: PlaceData!, controller: RIPController) {
+        let mapController = RIPMapController(controller: controller)
+        self.controller.navigationController?.pushViewController(mapController, animated: true)
+    }
 }
 
 class AddressLabel: SRCopyableView {

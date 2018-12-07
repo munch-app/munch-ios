@@ -90,6 +90,8 @@ class MunchTabBarController: UITabBarController {
         tabBar.backgroundImage = UIImage()
         tabBar.shadow(vertical: -2)
 
+        tabBar.unselectedItemTintColor = UIColor.black.withAlphaComponent(0.66)
+
         self.delegate = self
         self.viewControllers = [discover, feed, profile]
         self.previousController = self.viewControllers![0]
