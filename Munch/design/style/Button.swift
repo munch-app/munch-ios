@@ -108,7 +108,7 @@ class MunchButton: UIButton {
         self.nameLabel.font = style.font
 
         snp.makeConstraints { maker in
-            maker.height.equalTo(style.height)
+            maker.height.equalTo(style.height).priority(.high)
         }
 
         nameLabel.snp.makeConstraints { maker in

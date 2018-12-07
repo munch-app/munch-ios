@@ -7,8 +7,10 @@ import Foundation
 import UIKit
 import SnapKit
 
-class RIPBottomView: UIView {
-    let saveBtn = RIPSaveButton()
+import Toast_Swift
+
+class RIPFooterView: UIView {
+    let addButton = AddPlaceButton()
 
     var place: Place? {
         didSet {
@@ -25,9 +27,9 @@ class RIPBottomView: UIView {
         self.backgroundColor = .white
         self.setHidden(isHidden: true)
 
-        self.addSubview(saveBtn)
+        self.addSubview(addButton)
 
-        saveBtn.snp.makeConstraints { maker in
+        addButton.snp.makeConstraints { maker in
             maker.right.equalTo(self).inset(24)
             maker.top.equalTo(self).inset(10)
             maker.bottom.equalTo(self.safeArea.bottom).inset(10)
@@ -35,7 +37,7 @@ class RIPBottomView: UIView {
     }
 
     private func setHidden(isHidden: Bool) {
-        saveBtn.isHidden = isHidden
+        addButton.isHidden = isHidden
     }
 
     override func layoutSubviews() {
@@ -48,11 +50,14 @@ class RIPBottomView: UIView {
     }
 }
 
-class RIPSaveButton: UIButton {
+class AddPlaceButton: UIButton {
     private let nameLabel = UILabel()
             .with(alignment: .center)
             .with(numberOfLines: 1)
-            .with(text: "Save Place")
+            .with(text: "Add Place")
+
+    private var controller: UIViewController!
+    private var place: Place!
 
     required init() {
         super.init(frame: .zero)
@@ -75,6 +80,21 @@ class RIPSaveButton: UIButton {
     override func layoutSubviews() {
         super.layoutSubviews()
         self.layer.cornerRadius = 3.0
+    }
+
+    func register(place: Place, controller: UIViewController) {
+        self.place = place
+        self.controller = controller
+        self.addTarget(self, action: #selector(onAddPlace), for: .touchUpInside)
+    }
+
+    @objc private func onAddPlace() {
+        Authentication.requireAuthentication(controller: self.controller) { state in
+            if case .loggedIn = state {
+                self.controller.view.makeToast("Added '\(self.place.name)'")
+                // TODO
+            }
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {

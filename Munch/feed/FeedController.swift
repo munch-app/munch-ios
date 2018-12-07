@@ -42,6 +42,11 @@ class FeedController: UIViewController {
         collectionView.backgroundColor = .white
         return collectionView
     }()
+    private let refreshView: UIRefreshControl = {
+        let control = UIRefreshControl()
+        control.tintColor = UIColor.secondary500
+        return control
+    }()
 
     private var items: [FeedCellItem] = []
 
@@ -60,6 +65,9 @@ class FeedController: UIViewController {
         super.viewDidLoad()
         self.view.addSubview(collectionView)
         self.view.addSubview(headerView)
+        self.collectionView.addSubview(refreshView)
+
+        self.addTargets()
 
         headerView.snp.makeConstraints { maker in
             maker.top.left.right.equalTo(self.view)
@@ -94,6 +102,51 @@ class FeedController: UIViewController {
     }
 }
 
+// MARK: Targets
+extension FeedController {
+    func addTargets() {
+        self.refreshView.addTarget(self, action: #selector(handleRefresh(_:)), for: .valueChanged)
+    }
+
+    @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
+        self.reset()
+        refreshControl.endRefreshing()
+    }
+
+    private func reset() {
+        self.manager.reset()
+    }
+}
+
+// MARK: NotificationCenter
+extension FeedController {
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        let center = NotificationCenter.default
+        center.addObserver(self,
+                selector: #selector(applicationWillEnterForeground(_:)),
+                name: NSNotification.Name.UIApplicationWillEnterForeground,
+                object: nil)
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        let center = NotificationCenter.default
+        center.removeObserver(self,
+                name: NSNotification.Name.UIApplicationWillEnterForeground,
+                object: nil)
+    }
+
+    func applicationWillEnterForeground(_ notification: NSNotification) {
+        if let date = UserDefaults.standard.object(forKey: UserDefaults.Key.globalResignActiveDate) as? Date {
+            if Date().millis - date.millis > 1000 * 60 * 60 {
+                self.reset()
+            }
+        }
+    }
+}
+
+// MARK: Register Cells
 extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate {
     func registerCells() {
         (collectionView.collectionViewLayout as! WaterfallLayout).delegate = self

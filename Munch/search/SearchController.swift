@@ -50,11 +50,6 @@ class SearchController: UIViewController {
         navigationController?.navigationBar.shadowImage = UIImage()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        self.searchTableView.reloadData()
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.addSubview(searchTableView)
@@ -104,6 +99,33 @@ class SearchController: UIViewController {
     func reset() {
         histories.removeAll()
         push(searchQuery: SearchQuery())
+    }
+}
+
+extension SearchController {
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        let center = NotificationCenter.default
+        center.addObserver(self,
+                selector: #selector(applicationWillEnterForeground(_:)),
+                name: NSNotification.Name.UIApplicationWillEnterForeground,
+                object: nil)
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        let center = NotificationCenter.default
+        center.removeObserver(self,
+                name: NSNotification.Name.UIApplicationWillEnterForeground,
+                object: nil)
+    }
+
+    func applicationWillEnterForeground(_ notification: NSNotification) {
+        if let date = UserDefaults.standard.object(forKey: UserDefaults.Key.globalResignActiveDate) as? Date {
+            if Date().millis - date.millis > 1000 * 60 * 60 {
+                self.reset()
+            }
+        }
     }
 }
 

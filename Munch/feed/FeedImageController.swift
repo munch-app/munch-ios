@@ -14,6 +14,8 @@ class FeedImageController: UIViewController, UIGestureRecognizerDelegate {
     private let provider = MunchProvider<FeedImageService>()
 
     private let headerView = FeedImageHeaderView()
+    private let footerView = FeedImageFooterView()
+
     private let scrollView: UIScrollView = {
         let view = UIScrollView()
         view.contentInsetAdjustmentBehavior = .never
@@ -30,15 +32,15 @@ class FeedImageController: UIViewController, UIGestureRecognizerDelegate {
     private let item: ImageFeedItem
     private let places: [Place]
 
+    private var place: Place? {
+        return places.get(0)
+    }
+
     required init(item: ImageFeedItem, places: [Place]) {
         self.item = item
         self.places = places
         super.init(nibName: nil, bundle: nil)
-
-        guard let place = places.get(0) else {
-            return
-        }
-        self.headerView.titleView.text = place.name
+        self.hidesBottomBarWhenPushed = true
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -54,29 +56,84 @@ class FeedImageController: UIViewController, UIGestureRecognizerDelegate {
         self.view.backgroundColor = .white
         self.view.addSubview(scrollView)
         self.view.addSubview(headerView)
+        self.view.addSubview(footerView)
 
-        self.scrollView.delegate = self
         self.scrollView.addSubview(self.stackView)
+
         self.addArrangedSubview()
         self.addTargets()
-
-        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
-        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
-        self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
-        self.headerView.isOpaque = false
 
         headerView.snp.makeConstraints { maker in
             maker.top.left.right.equalTo(self.view)
         }
 
+        footerView.snp.makeConstraints { make in
+            make.bottom.left.right.equalTo(self.view)
+        }
+
         scrollView.snp.makeConstraints { maker in
             maker.top.equalTo(self.view)
-            maker.left.right.bottom.equalTo(self.view)
+            maker.left.right.equalTo(self.view)
+            maker.bottom.equalTo(self.footerView.snp.top)
         }
 
         stackView.snp.makeConstraints { maker in
             maker.edges.equalTo(scrollView)
             maker.width.equalTo(scrollView.snp.width)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension FeedImageController {
+    func addArrangedSubview() {
+        self.stackView.addArrangedSubview(FeedImage(item: self.item))
+        self.stackView.addArrangedSubview(FeedContent(item: self.item))
+        if let place = self.place {
+            self.stackView.addArrangedSubview(FeedPlace(place: place))
+        }
+    }
+}
+
+// MARK: Add Targets
+extension FeedImageController: SFSafariViewControllerDelegate {
+    func addTargets() {
+        self.scrollView.delegate = self
+
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+
+        self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
+
+        if let place = place {
+            self.footerView.addButton.register(place: place, controller: self)
+            self.headerView.titleView.text = place.name
+        }
+
+        if let contentView = self.stackView.arrangedSubviews[1] as? FeedContent {
+            contentView.addTarget(self, action: #selector(onContent(_:)), for: .touchUpInside)
+        }
+
+        if let placeView = self.stackView.arrangedSubviews[2] as? FeedPlace {
+            placeView.addTarget(self, action: #selector(onPlace(_:)), for: .touchUpInside)
+        }
+    }
+
+    @objc func onContent(_ sender: Any) {
+        if let link = self.item.instagram?.link, let url = URL(string: link) {
+            let safari = SFSafariViewController(url: url)
+            safari.delegate = self
+            present(safari, animated: true, completion: nil)
+        }
+    }
+
+    @objc func onPlace(_ sender: Any) {
+        if let place = self.places.get(0) {
+            let controller = RIPController(placeId: place.placeId)
+            self.navigationController?.pushViewController(controller, animated: true)
         }
     }
 
@@ -86,10 +143,6 @@ class FeedImageController: UIViewController, UIGestureRecognizerDelegate {
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -180,6 +233,8 @@ class FeedImageHeaderView: UIView {
         shadowView.snp.makeConstraints { make in
             make.edges.equalTo(self)
         }
+
+        self.isOpaque = false
     }
 
     override func layoutSubviews() {
@@ -192,48 +247,28 @@ class FeedImageHeaderView: UIView {
     }
 }
 
-extension FeedImageController: SFSafariViewControllerDelegate {
-    func addArrangedSubview() {
-        self.stackView.addArrangedSubview(FeedImage(item: self.item))
-        self.stackView.addArrangedSubview(FeedButtonGroup(item: self.item))
-        self.stackView.addArrangedSubview(FeedContent(item: self.item))
-        if let place = self.places.get(0) {
-            self.stackView.addArrangedSubview(FeedPlace(place: place))
+class FeedImageFooterView: UIView {
+    let addButton = AddPlaceButton()
+
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        self.backgroundColor = .white
+        self.addSubview(addButton)
+
+        addButton.snp.makeConstraints { maker in
+            maker.right.equalTo(self).inset(24)
+            maker.top.equalTo(self).inset(10)
+            maker.bottom.equalTo(self.safeArea.bottom).inset(10)
         }
     }
 
-    func addTargets() {
-        if let group = self.stackView.arrangedSubviews[1] as? FeedButtonGroup {
-            group.saveButton.addTarget(self, action: #selector(onSave(_:)), for: .touchUpInside)
-            group.placeButton.addTarget(self, action: #selector(onPlace(_:)), for: .touchUpInside)
-        }
-
-        if let content = self.stackView.arrangedSubviews[2] as? FeedContent {
-            content.addTarget(self, action: #selector(onContent(_:)), for: .touchUpInside)
-        }
-
-        if let place = self.stackView.arrangedSubviews[3] as? FeedPlace {
-            place.addTarget(self, action: #selector(onPlace(_:)), for: .touchUpInside)
-        }
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.shadow(vertical: -1)
     }
 
-    @objc func onSave(_ sender: Any) {
-        // TODO
-    }
-
-    @objc func onContent(_ sender: Any) {
-        if let link = self.item.instagram?.link, let url = URL(string: link) {
-            let safari = SFSafariViewController(url: url)
-            safari.delegate = self
-            present(safari, animated: true, completion: nil)
-        }
-    }
-
-    @objc func onPlace(_ sender: Any) {
-        if let place = self.places.get(0) {
-            let controller = RIPController(placeId: place.placeId)
-            self.navigationController?.pushViewController(controller, animated: true)
-        }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -257,31 +292,6 @@ fileprivate class FeedImage: UIView {
             if let size = item.image.sizes.max {
                 maker.height.equalTo(imageView.snp.width).multipliedBy(size.heightMultiplier)
             }
-        }
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-fileprivate class FeedButtonGroup: UIView {
-    let saveButton = MunchButton(style: .borderSmall).with(text: "Save Place")
-    let placeButton = MunchButton(style: .primarySmall).with(text: "Open Place")
-
-    init(item: ImageFeedItem) {
-        super.init(frame: .zero)
-        self.addSubview(saveButton)
-        self.addSubview(placeButton)
-
-        saveButton.snp.makeConstraints { maker in
-            maker.top.bottom.equalTo(self).inset(24)
-            maker.right.equalTo(placeButton.snp.left).inset(-16)
-        }
-
-        placeButton.snp.makeConstraints { maker in
-            maker.top.bottom.equalTo(saveButton)
-            maker.right.equalTo(self).inset(24)
         }
     }
 
@@ -354,7 +364,7 @@ fileprivate class FeedPlace: UIControl {
 
         label.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(24)
-            maker.top.equalTo(self).inset(16)
+            maker.top.equalTo(self).inset(8)
             maker.height.equalTo(32)
         }
 

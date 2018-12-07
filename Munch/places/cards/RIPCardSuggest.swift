@@ -27,7 +27,7 @@ class RIPSuggestEditCard: RIPCard {
     override func didLoad(data: PlaceData!) {
         self.addSubview(button)
         self.addSubview(separatorLine)
-        self.registerTargets(controller: self.controller)
+        self.addTargets(controller: self.controller)
 
         button.snp.makeConstraints { maker in
             maker.left.right.equalTo(self)
@@ -44,7 +44,20 @@ class RIPSuggestEditCard: RIPCard {
 }
 
 extension RIPSuggestEditCard: SFSafariViewControllerDelegate {
-    func registerTargets(controller: RIPController) {
-        // TODO
+    func addTargets(controller: RIPController) {
+        self.button.addTarget(self, action: #selector(onSuggestEdit), for: .touchUpInside)
+    }
+
+    func onSuggestEdit() {
+        Authentication.requireAuthentication(controller: self.controller) { state in
+            switch state {
+            case .loggedIn:
+                // TODO Open With Token
+                break
+            default:
+                return
+            }
+        }
+
     }
 }

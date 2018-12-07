@@ -103,6 +103,7 @@
 		B4B73D5F9F355089B7D4384C /* RIPCardHour.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737BF2D6F72BC43E48CDB /* RIPCardHour.swift */; };
 		B4B73DB576F9692FA03D785F /* RIPCardMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7312DBF1E812FF4C051CD /* RIPCardMenu.swift */; };
 		B4B73DC66585ACDED59D2A4E /* FilterHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73B3C572E241C11D57AE5 /* FilterHeaderView.swift */; };
+		B4B73E32F832B4FDC1A77C22 /* UserDefaults+Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7316B2F8282E16BB01BD1 /* UserDefaults+Key.swift */; };
 		B4B73E797C3DFA9A4EA2888C /* ShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7368204D2AD9856509B6D /* ShimmerView.swift */; };
 		B4B73E949693D12B57F4DF62 /* MunchLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73B8C080EA9D51F87FE13 /* MunchLocation.swift */; };
 		B4B73EB2FE22EA5E8593B33E /* RIPController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738FF32F231E9768CD5F5 /* RIPController.swift */; };
@@ -189,6 +190,7 @@
 		B4B7307B2B6D5C94C6592905 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		B4B730F750D918BB79FAF597 /* PlaceCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCard.swift; sourceTree = "<group>"; };
 		B4B7312DBF1E812FF4C051CD /* RIPCardMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPCardMenu.swift; sourceTree = "<group>"; };
+		B4B7316B2F8282E16BB01BD1 /* UserDefaults+Key.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Key.swift"; sourceTree = "<group>"; };
 		B4B7318107D8ECA3F9373589 /* ProfileController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileController.swift; sourceTree = "<group>"; };
 		B4B7319F863F7D75472073D8 /* SearchCardArea.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardArea.swift; sourceTree = "<group>"; };
 		B4B731B0D43AA7156FB0A368 /* SearchCardHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardHeader.swift; sourceTree = "<group>"; };
@@ -604,6 +606,7 @@
 				B4B73B8C080EA9D51F87FE13 /* MunchLocation.swift */,
 				B4B732E7ED481C66B5E5C06F /* FoundationExtensions.swift */,
 				B4B739DCDCF47D235E36F976 /* RecentDatabase.swift */,
+				B4B7316B2F8282E16BB01BD1 /* UserDefaults+Key.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -1054,6 +1057,7 @@
 				B4B73576A3FFF617E76552B2 /* RIPCardAbout.swift in Sources */,
 				B4B73D5F9F355089B7D4384C /* RIPCardHour.swift in Sources */,
 				B4B73915FD94C1B77DBD5D60 /* RIPCardAward.swift in Sources */,
+				B4B73E32F832B4FDC1A77C22 /* UserDefaults+Key.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

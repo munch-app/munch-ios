@@ -17,10 +17,19 @@ class FeedManager {
     fileprivate(set) var loading = false
     fileprivate(set) var items = [ImageFeedItem]()
     fileprivate(set) var places = [String: Place?]()
+    fileprivate(set) var eventDate = Date()
 
     private var from: Int? = 0
     private var observer: AnyObserver<[FeedCellItem]>?
     private let disposeBag = DisposeBag()
+
+    func reset() {
+        self.items.removeAll()
+        self.places.removeAll()
+        self.from = 0
+        self.loading = false
+        self.append()
+    }
 
     func observe() -> Observable<[FeedCellItem]> {
         return Observable.create { (observer: AnyObserver<[FeedCellItem]>) in

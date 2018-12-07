@@ -22,8 +22,9 @@ class RIPController: UIViewController {
     let placeId: String
     var data: PlaceData!
 
-    fileprivate let bottomView = RIPBottomView()
     fileprivate var headerView = RIPHeaderView(tintColor: .white, backgroundVisible: false)
+    fileprivate let footerView = RIPFooterView()
+
     fileprivate let collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: WaterfallLayout())
         collectionView.showsVerticalScrollIndicator = true
@@ -73,7 +74,8 @@ class RIPController: UIViewController {
         // Data Binding
         self.data = data
         self.headerView.place = data.place
-        self.bottomView.place = data.place
+        self.footerView.place = data.place
+        self.footerView.addButton.register(place: data.place, controller: self)
 
         galleryLoader.start(placeId: data.place.placeId, images: data.images)
 
@@ -107,14 +109,6 @@ class RIPController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
-
-        NotificationCenter.default.addObserver(self, selector: #selector(onScreenshot), name: .UIApplicationUserDidTakeScreenshot, object: nil)
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-
-        NotificationCenter.default.removeObserver(self, name: .UIApplicationUserDidTakeScreenshot, object: nil)
     }
 
     override func viewDidLoad() {
@@ -123,26 +117,41 @@ class RIPController: UIViewController {
         self.addTargets()
 
         self.view.addSubview(collectionView)
-        self.view.addSubview(bottomView)
+        self.view.addSubview(footerView)
         self.view.addSubview(headerView)
 
         headerView.snp.makeConstraints { make in
             make.top.left.right.equalTo(self.view)
         }
 
-        bottomView.snp.makeConstraints { make in
+        footerView.snp.makeConstraints { make in
             make.bottom.left.right.equalTo(self.view)
         }
 
         collectionView.snp.makeConstraints { make in
             make.left.right.equalTo(self.view)
             make.top.equalTo(self.view)
-            make.bottom.equalTo(self.bottomView.snp.top)
+            make.bottom.equalTo(self.footerView.snp.top)
         }
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension RIPController {
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(onScreenshot), name: .UIApplicationUserDidTakeScreenshot, object: nil)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self, name: .UIApplicationUserDidTakeScreenshot, object: nil)
+    }
+
+    @objc func onScreenshot() {
     }
 }
 
@@ -416,9 +425,6 @@ extension RIPController: UIGestureRecognizerDelegate, SFSafariViewControllerDele
             safari.delegate = self
             self.present(safari, animated: true, completion: nil)
         }
-    }
-
-    @objc func onScreenshot() {
     }
 
     @objc func onBackButton(_ sender: Any) {

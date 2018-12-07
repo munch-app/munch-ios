@@ -78,9 +78,9 @@ extension MunchTabBarController: UITabBarControllerDelegate {
 class MunchTabBarController: UITabBarController {
     var previousController: UIViewController!
 
-    let discover = InitialViewProvider.discover()
-    let feed = InitialViewProvider.feed()
-    let profile = InitialViewProvider.profile()
+    private let discover = InitialViewProvider.discover()
+    private let feed = InitialViewProvider.feed()
+    private let profile = InitialViewProvider.profile()
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -93,18 +93,6 @@ class MunchTabBarController: UITabBarController {
         self.delegate = self
         self.viewControllers = [discover, feed, profile]
         self.previousController = self.viewControllers![0]
-    }
-
-    var discoverController: SearchController {
-        return discover.controller
-    }
-
-    var feedController: FeedController {
-        return feed.controller
-    }
-
-    var profileController: ProfileController {
-        return profile.controller
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -192,7 +192,6 @@ class AccountBoardingController: UIViewController {
     private func dismiss(state: AuthenticationState) {
         switch state {
         case .loggedIn:
-            // TODO Implement when ready
 //            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
 //            UNUserNotificationCenter.current().requestAuthorization(
 //                    options: authOptions,
