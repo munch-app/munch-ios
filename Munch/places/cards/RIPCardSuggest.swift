@@ -24,6 +24,8 @@ class RIPSuggestEditCard: RIPCard {
         return button
     }()
 
+    var place: Place?
+
     override func didLoad(data: PlaceData!) {
         self.addSubview(button)
         self.addSubview(separatorLine)
@@ -41,6 +43,10 @@ class RIPSuggestEditCard: RIPCard {
             maker.bottom.equalTo(self).inset(12)
         }
     }
+
+    override func willDisplay(data: PlaceData!) {
+        self.place = data.place
+    }
 }
 
 extension RIPSuggestEditCard: SFSafariViewControllerDelegate {
@@ -49,11 +55,25 @@ extension RIPSuggestEditCard: SFSafariViewControllerDelegate {
     }
 
     func onSuggestEdit() {
+        guard let place = self.place else {
+            return
+        }
+
         Authentication.requireAuthentication(controller: self.controller) { state in
             switch state {
             case .loggedIn:
-                // TODO Open With Token
-                break
+                Authentication.getToken { token in
+                    let urlComponents = NSURLComponents(string: "https://www.munch.app/authenticate")!
+                    urlComponents.queryItems = [
+                        URLQueryItem(name: "token", value: token),
+                        URLQueryItem(name: "redirect", value: "/places/suggest?placeId=\(place.placeId)"),
+                    ]
+
+                    let safari = SFSafariViewController(url: urlComponents.url!)
+                    safari.delegate = self
+                    self.present(safari, animated: true, completion: nil)
+                }
+
             default:
                 return
             }

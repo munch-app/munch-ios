@@ -74,6 +74,7 @@ class RIPHourCard: RIPCard {
 
         attributedText.append(grouped.todayDayTimeRange.set(style: RIPHourCard.hourStyle))
         openLabel.attributedText = attributedText
+        self.layoutIfNeeded()
     }
 
     override func didSelect(data: PlaceData!, controller: RIPController) {
@@ -150,8 +151,6 @@ fileprivate class RIPHourController: HalfModalController {
             }
             stackView.addArrangedSubview(view)
         }
-
-        self.layoutIfNeeded()
     }
 
     func getTexts(with grouped: Hour.Grouped) -> [NSAttributedString] {

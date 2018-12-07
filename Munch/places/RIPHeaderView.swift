@@ -111,7 +111,7 @@ class RIPHeaderView: UIView {
     }
 }
 
-extension RIPHeaderView {
+extension RIPHeaderView: SFSafariViewControllerDelegate {
     func addTargets(controller: UIViewController) {
         self.controller = controller
         self.moreBtn.addTarget(self, action: #selector(onMore), for: .touchUpInside)
@@ -142,7 +142,21 @@ extension RIPHeaderView {
     }
 
     @objc func onSuggestEdit() {
+        guard let place = self.place else {
+            return
+        }
 
+        Authentication.getToken { token in
+            let urlComponents = NSURLComponents(string: "https://www.munch.app/authenticate")!
+            urlComponents.queryItems = [
+                URLQueryItem(name: "token", value: token),
+                URLQueryItem(name: "redirect", value: "/places/suggest?placeId=\(place.placeId)"),
+            ]
+
+            let safari = SFSafariViewController(url: urlComponents.url!)
+            safari.delegate = self
+            self.present(safari, animated: true, completion: nil)
+        }
     }
 
     @objc func onShare() {
