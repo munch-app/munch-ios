@@ -71,7 +71,7 @@ extension RIPSuggestEditCard: SFSafariViewControllerDelegate {
 
                     let safari = SFSafariViewController(url: urlComponents.url!)
                     safari.delegate = self
-                    self.present(safari, animated: true, completion: nil)
+                    self.controller.present(safari, animated: true, completion: nil)
                 }
 
             default:
