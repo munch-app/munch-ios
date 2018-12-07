@@ -10,14 +10,15 @@ import SnapKit
 import SafariServices
 
 class RIPArticleCard: RIPCard {
-    private static let height: CGFloat = 354
+    fileprivate static let width: CGFloat = UIScreen.main.bounds.width - 48 - 36
+    fileprivate static let height: CGFloat = 326
 
     private let label = UILabel(style: .h2)
     private let separatorLine = RIPSeparatorLine()
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
-        layout.itemSize = CGSize(width: UIScreen.main.bounds.width - 24 * 3, height: RIPArticleCard.height)
+        layout.itemSize = CGSize(width: RIPArticleCard.width, height: RIPArticleCard.height)
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 24
 
@@ -101,7 +102,7 @@ extension RIPArticleCard: SFSafariViewControllerDelegate {
 
 fileprivate class RIPArticleCardCell: UICollectionViewCell {
     private let imageView: SizeShimmerImageView = {
-        let imageView = SizeShimmerImageView(points: UIScreen.main.bounds.width - 48 - 24, height: 128)
+        let imageView = SizeShimmerImageView(points: RIPArticleCard.width, height: 100)
         imageView.roundCorners([.topLeft, .topRight], radius: 3)
         return imageView
     }()
@@ -145,7 +146,7 @@ fileprivate class RIPArticleCardCell: UICollectionViewCell {
 
             imageView.snp.makeConstraints { maker in
                 maker.top.left.right.equalTo(container)
-                maker.height.equalTo(128).priority(999)
+                maker.height.equalTo(100).priority(999)
             }
 
             titleLabel.snp.makeConstraints { maker in

@@ -17,7 +17,7 @@ class RIPAboutFirstDividerCard: RIPCard {
 
         separatorLine.snp.makeConstraints { maker in
             maker.left.right.equalTo(self)
-            maker.top.bottom.equalTo(self).inset(12)
+            maker.top.bottom.equalTo(self).inset(24)
         }
     }
 
@@ -37,8 +37,8 @@ class RIPAboutSecondDividerCard: RIPCard {
 
         separatorLine.snp.makeConstraints { maker in
             maker.left.right.equalTo(self)
-            maker.top.equalTo(self).inset(12)
-            maker.bottom.equalTo(self).inset(0)
+            maker.top.equalTo(self).inset(24)
+            maker.bottom.equalTo(self).inset(12)
         }
     }
 
@@ -48,7 +48,6 @@ class RIPAboutSecondDividerCard: RIPCard {
                 RIPWebsiteCard.isAvailable(data: data)
     }
 }
-
 
 class RIPDescriptionCard: RIPCard {
     private let value = UILabel(style: .regular)
@@ -150,7 +149,7 @@ fileprivate class RIPLabelValue: UIView {
         }
 
         value.snp.makeConstraints { maker in
-            maker.top.bottom.equalTo(self).inset(8)
+            maker.top.bottom.equalTo(self).inset(10)
             maker.left.equalTo(label.snp.right).inset(-24)
             maker.right.equalTo(self).inset(24)
         }
