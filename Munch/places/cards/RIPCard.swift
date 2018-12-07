@@ -56,7 +56,7 @@ class RIPSeparatorLine: UIView {
         self.backgroundColor = .ba10
 
         snp.makeConstraints { maker in
-            maker.height.equalTo(1.0 / UIScreen.main.scale)
+            maker.height.equalTo(1.0 / UIScreen.main.scale).priority(.high)
         }
     }
 

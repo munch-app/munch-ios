@@ -35,28 +35,58 @@ class RIPImageBannerCard: RIPCard {
         return collectionView
     }()
 
+    private let moreButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .white
+        button.layer.borderColor = UIColor.ba10.cgColor
+        button.layer.borderWidth = 1
+        button.layer.cornerRadius = 3
+
+        button.setTitle("SHOW IMAGES", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.titleLabel?.font = FontStyle.smallBold.font
+        button.isUserInteractionEnabled = false
+
+        button.setImage(UIImage(named: "RIP-Card-Image-More"), for: .normal)
+        button.tintColor = UIColor.black
+        button.imageEdgeInsets.left = -12
+        button.contentEdgeInsets.left = 18
+        button.contentEdgeInsets.right = 12
+
+        return button
+    }()
     var images = [Image]()
 
     override func didLoad(data: PlaceData!) {
         self.addSubview(collectionView)
         self.addSubview(imageGradientView)
+        self.addSubview(moreButton)
 
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
 
-        collectionView.snp.makeConstraints { make in
-            make.height.equalTo(UIScreen.main.bounds.height * 0.30).priority(999)
-            make.edges.equalTo(self).inset(UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0))
+        collectionView.snp.makeConstraints { maker in
+            maker.height.equalTo(UIScreen.main.bounds.height * 0.30).priority(999)
+            maker.edges.equalTo(self).inset(UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0))
         }
 
-        imageGradientView.snp.makeConstraints { make in
-            make.height.equalTo(64)
-            make.top.left.right.equalTo(self)
+        imageGradientView.snp.makeConstraints { maker in
+            maker.height.equalTo(64)
+            maker.top.left.right.equalTo(self)
+        }
+
+        moreButton.snp.makeConstraints { maker in
+            maker.right.equalTo(self).inset(24)
+            maker.bottom.equalTo(collectionView).inset(16)
+            maker.height.equalTo(34)
         }
     }
 
     override func willDisplay(data: PlaceData!) {
         self.images = data.place.images
+        if self.images.isEmpty {
+            moreButton.isHidden = true
+        }
     }
 }
 

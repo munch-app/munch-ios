@@ -24,7 +24,7 @@ class RIPLocationCard: RIPCard {
     }()
     private let pinImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "RIP-PlaceMarker")
+        imageView.image = UIImage(named: "RIP-Card-PlacePin")
         return imageView
     }()
     private let addressLabel = AddressLabel()
@@ -90,7 +90,7 @@ class RIPLocationCard: RIPCard {
 
 class AddressLabel: SRCopyableView {
     private let lineOneLabel = UILabel(style: .regular)
-            .with(numberOfLines: 0)
+            .with(numberOfLines: 2)
     private let lineTwoLabel = UILabel(style: .regular)
             .with(numberOfLines: 1)
 

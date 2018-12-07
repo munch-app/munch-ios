@@ -7,6 +7,8 @@ import Foundation
 import UIKit
 import SnapKit
 
+import SafariServices
+
 class RIPArticleCard: RIPCard {
     private static let height: CGFloat = 354
 
@@ -82,8 +84,19 @@ extension RIPArticleCard: UICollectionViewDataSource, UICollectionViewDelegateFl
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let article = articles[indexPath.row]
+        guard let url = URL(string: article.url) else {
+            return
+        }
 
+        let safari = SFSafariViewController(url: url)
+        safari.delegate = self
+        self.controller.present(safari, animated: true, completion: nil)
     }
+}
+
+extension RIPArticleCard: SFSafariViewControllerDelegate {
+
 }
 
 fileprivate class RIPArticleCardCell: UICollectionViewCell {

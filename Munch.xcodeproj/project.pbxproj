@@ -30,7 +30,6 @@
 		B4B730982D68D10417555D23 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7307B2B6D5C94C6592905 /* Color.swift */; };
 		B4B730ED3E9216817A85CDEE /* SearchCardPlace.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7348322E099298BEB7546 /* SearchCardPlace.swift */; };
 		B4B7315086EE2F9687A565B6 /* FilterToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732DE1EA3B496C8EE6CB3 /* FilterToken.swift */; };
-		B4B7316A7CC5FD11A8091102 /* PlaceCardAbout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7305A5B27A41922ADEE57 /* PlaceCardAbout.swift */; };
 		B4B7317A88FBBF250ABABD73 /* LeftAlignedLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73937402D628B2405A1F0 /* LeftAlignedLayout.swift */; };
 		B4B731C9E8B9A21CE5BBDF35 /* SearchCardArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7319F863F7D75472073D8 /* SearchCardArea.swift */; };
 		B4B731E5D90A609A73841FDE /* MunchSearchTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B736C1DC599DBB26C5C9F9 /* MunchSearchTextField.swift */; };
@@ -44,7 +43,7 @@
 		B4B732CC1464F187F8931167 /* SearchCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B739624FB135D4B899356A /* SearchCard.swift */; };
 		B4B732D57D5E43FEEBCB4F30 /* FilterCellPrice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7329579F8E1B3F992EB18 /* FilterCellPrice.swift */; };
 		B4B732E70D293542B580ACC7 /* CollectionAddPlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732D2B0FB00E6302B1769 /* CollectionAddPlaceController.swift */; };
-		B4B733162CE1B0A62B893122 /* PlaceCardSuggest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B731D151BB6D9601680CD1 /* PlaceCardSuggest.swift */; };
+		B4B733162CE1B0A62B893122 /* RIPCardSuggest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B731D151BB6D9601680CD1 /* RIPCardSuggest.swift */; };
 		B4B7333D1DDE171204DBEAEE /* SearchTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73AD58260F2E709E78C41 /* SearchTableView.swift */; };
 		B4B733B083D8DF8F2DDFF66D /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73695F4F2693D0E750704 /* ViewExtensions.swift */; };
 		B4B733C48DCACF9F5A977BE1 /* ProfileTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738C639DA188BF1AFD8CE /* ProfileTabController.swift */; };
@@ -55,6 +54,7 @@
 		B4B734D22634645ACBFBF487 /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732ED64723C629C4B86F2 /* Authentication.swift */; };
 		B4B7352BE9A0840E05837D97 /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7340918113A3681701BD5 /* Button.swift */; };
 		B4B73562BD47A7DF8D9334FC /* RIPCardLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73FAD47BB85633497CC31 /* RIPCardLocation.swift */; };
+		B4B73576A3FFF617E76552B2 /* RIPCardAbout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73950D3228A4659361348 /* RIPCardAbout.swift */; };
 		B4B7358B55C3DB9F4EF818EC /* FilterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732495DE29798E2A46696 /* FilterController.swift */; };
 		B4B7368A7EDD60CFD8561D63 /* CopyableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73A013583B2C9902370B6 /* CopyableView.swift */; };
 		B4B736B47B12B57380C86E22 /* UserPlaceCollectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7335BABC0E6BF07362781 /* UserPlaceCollectionService.swift */; };
@@ -66,10 +66,10 @@
 		B4B737C25A3CDC08D03FC64E /* SearchCardLocal.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7340C343F684AB0020CEA /* SearchCardLocal.swift */; };
 		B4B7380CEE70044FE930F722 /* module.modulemap in Sources */ = {isa = PBXBuildFile; fileRef = B4B73D56D29ADB145295DB94 /* module.modulemap */; };
 		B4B7382A92E97651FFCA5A2E /* UserPlaceActivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73690A98B7622FC7BD1B4 /* UserPlaceActivityService.swift */; };
-		B4B7384B88D80A519B61487F /* PlaceCardAward.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73B2B2DAAB08F551868D7 /* PlaceCardAward.swift */; };
 		B4B7388AF9FD83F39F217600 /* CollectionPlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B734F5A092F3E9F0F16379 /* CollectionPlaceController.swift */; };
 		B4B738B028A98E69BD3403F5 /* MunchTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732B20AE677AF6243099A /* MunchTagView.swift */; };
 		B4B738EA83700A1713184B9B /* RIPCardImageBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73F90EE462A9E722D4F91 /* RIPCardImageBanner.swift */; };
+		B4B73915FD94C1B77DBD5D60 /* RIPCardAward.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B734BDB7C21C04F0DCF94C /* RIPCardAward.swift */; };
 		B4B7392B5A989633BADD192D /* FeedService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7340F0AD8271793C8BF1B /* FeedService.swift */; };
 		B4B73938651082208D57C2BA /* RIPFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73669E03801B1ECEDF138 /* RIPFooterView.swift */; };
 		B4B7393A474C78AE30F0B91A /* MunchUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7329A88030A09DC2A5187 /* MunchUser.swift */; };
@@ -92,7 +92,6 @@
 		B4B73BC804C766F147B36575 /* FileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73F4E5D6FC418C11071AC /* FileService.swift */; };
 		B4B73BDE7978BDF497D719E1 /* RIPImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73D5C8583684A369A780F /* RIPImageLoader.swift */; };
 		B4B73C3AB908951BEF2451FF /* CollectionPlaceLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73A8D9255EEE7A5009815 /* CollectionPlaceLoader.swift */; };
-		B4B73C41A4C3F3BA7EFF5AB4 /* PlaceCardBasic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7328A63C083C2FD99C847 /* PlaceCardBasic.swift */; };
 		B4B73C4483DFF7CD8C6813DC /* FoundationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732E7ED481C66B5E5C06F /* FoundationExtensions.swift */; };
 		B4B73C5283FA6454158B1B4B /* RIPCardLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73BC96A97609AEE2FB5D5 /* RIPCardLoading.swift */; };
 		B4B73C59D9E144CD476FA73F /* SuggestController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73BC576ED59153B1056A9 /* SuggestController.swift */; };
@@ -101,7 +100,8 @@
 		B4B73D148D0C4822FCADE869 /* RIPMapController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73874640BF8573F3D6DE2 /* RIPMapController.swift */; };
 		B4B73D25850A0104B2209E9D /* Shadow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73655642A73F406ABBFA7 /* Shadow.swift */; };
 		B4B73D4AEC1BB518A79670A1 /* FilterCellTiming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732F6C13FA997F61D35F0 /* FilterCellTiming.swift */; };
-		B4B73DB576F9692FA03D785F /* PlaceCardMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7312DBF1E812FF4C051CD /* PlaceCardMenu.swift */; };
+		B4B73D5F9F355089B7D4384C /* RIPCardHour.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737BF2D6F72BC43E48CDB /* RIPCardHour.swift */; };
+		B4B73DB576F9692FA03D785F /* RIPCardMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7312DBF1E812FF4C051CD /* RIPCardMenu.swift */; };
 		B4B73DC66585ACDED59D2A4E /* FilterHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73B3C572E241C11D57AE5 /* FilterHeaderView.swift */; };
 		B4B73E797C3DFA9A4EA2888C /* ShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7368204D2AD9856509B6D /* ShimmerView.swift */; };
 		B4B73E949693D12B57F4DF62 /* MunchLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73B8C080EA9D51F87FE13 /* MunchLocation.swift */; };
@@ -184,18 +184,16 @@
 		ACE953A82302FD876F98E058 /* Pods-MunchTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MunchTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MunchTests/Pods-MunchTests.release.xcconfig"; sourceTree = "<group>"; };
 		B4B7301088D63A05D3DCDB13 /* FilterManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterManager.swift; sourceTree = "<group>"; };
 		B4B7301D02577B5726215C8A /* MunchData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchData.swift; sourceTree = "<group>"; };
-		B4B7305A5B27A41922ADEE57 /* PlaceCardAbout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardAbout.swift; sourceTree = "<group>"; };
 		B4B73066E127D1CD297E680D /* RIPCardArticle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPCardArticle.swift; sourceTree = "<group>"; };
 		B4B7306D542D1854D216A57E /* SearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
 		B4B7307B2B6D5C94C6592905 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		B4B730F750D918BB79FAF597 /* PlaceCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCard.swift; sourceTree = "<group>"; };
-		B4B7312DBF1E812FF4C051CD /* PlaceCardMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardMenu.swift; sourceTree = "<group>"; };
+		B4B7312DBF1E812FF4C051CD /* RIPCardMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPCardMenu.swift; sourceTree = "<group>"; };
 		B4B7318107D8ECA3F9373589 /* ProfileController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileController.swift; sourceTree = "<group>"; };
 		B4B7319F863F7D75472073D8 /* SearchCardArea.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardArea.swift; sourceTree = "<group>"; };
 		B4B731B0D43AA7156FB0A368 /* SearchCardHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardHeader.swift; sourceTree = "<group>"; };
-		B4B731D151BB6D9601680CD1 /* PlaceCardSuggest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardSuggest.swift; sourceTree = "<group>"; };
+		B4B731D151BB6D9601680CD1 /* RIPCardSuggest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPCardSuggest.swift; sourceTree = "<group>"; };
 		B4B732495DE29798E2A46696 /* FilterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterController.swift; sourceTree = "<group>"; };
-		B4B7328A63C083C2FD99C847 /* PlaceCardBasic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardBasic.swift; sourceTree = "<group>"; };
 		B4B7329579F8E1B3F992EB18 /* FilterCellPrice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterCellPrice.swift; sourceTree = "<group>"; };
 		B4B7329A88030A09DC2A5187 /* MunchUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchUser.swift; sourceTree = "<group>"; };
 		B4B732B20AE677AF6243099A /* MunchTagView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchTagView.swift; sourceTree = "<group>"; };
@@ -215,6 +213,7 @@
 		B4B7340F0AD8271793C8BF1B /* FeedService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedService.swift; sourceTree = "<group>"; };
 		B4B7347AD60C415D1700F116 /* AccountBoardingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountBoardingController.swift; sourceTree = "<group>"; };
 		B4B7348322E099298BEB7546 /* SearchCardPlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardPlace.swift; sourceTree = "<group>"; };
+		B4B734BDB7C21C04F0DCF94C /* RIPCardAward.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPCardAward.swift; sourceTree = "<group>"; };
 		B4B734C84BE5379569DEC024 /* FilterControllerLocationSearch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterControllerLocationSearch.swift; sourceTree = "<group>"; };
 		B4B734D7C6E45CD6D4F8E8E8 /* MunchService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchService.swift; sourceTree = "<group>"; };
 		B4B734F5A092F3E9F0F16379 /* CollectionPlaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionPlaceController.swift; sourceTree = "<group>"; };
@@ -229,6 +228,7 @@
 		B4B736C1DC599DBB26C5C9F9 /* MunchSearchTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchSearchTextField.swift; sourceTree = "<group>"; };
 		B4B7375F54B00CC6DF37E159 /* MunchTagCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchTagCollectionView.swift; sourceTree = "<group>"; };
 		B4B737B877E6C0DDB8C12B56 /* FeedController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedController.swift; sourceTree = "<group>"; };
+		B4B737BF2D6F72BC43E48CDB /* RIPCardHour.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPCardHour.swift; sourceTree = "<group>"; };
 		B4B737E1E2482A53D7CB6F6B /* UICollectionView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Extension.swift"; sourceTree = "<group>"; };
 		B4B738679F9E169693DC1515 /* Label.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Label.swift; sourceTree = "<group>"; };
 		B4B73874640BF8573F3D6DE2 /* RIPMapController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPMapController.swift; sourceTree = "<group>"; };
@@ -239,6 +239,7 @@
 		B4B7391BA1D0CE49C5890B1C /* WaterfallLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaterfallLayout.swift; sourceTree = "<group>"; };
 		B4B73926525624E7FDC598A6 /* SuggestCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestCell.swift; sourceTree = "<group>"; };
 		B4B73937402D628B2405A1F0 /* LeftAlignedLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeftAlignedLayout.swift; sourceTree = "<group>"; };
+		B4B73950D3228A4659361348 /* RIPCardAbout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPCardAbout.swift; sourceTree = "<group>"; };
 		B4B739624FB135D4B899356A /* SearchCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCard.swift; sourceTree = "<group>"; };
 		B4B739BB97B1798D44BDECC2 /* SizeImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SizeImageView.swift; sourceTree = "<group>"; };
 		B4B739DCDCF47D235E36F976 /* RecentDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentDatabase.swift; sourceTree = "<group>"; };
@@ -251,7 +252,6 @@
 		B4B73AACCB0BC095B5C0D075 /* FeedManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedManager.swift; sourceTree = "<group>"; };
 		B4B73AD58260F2E709E78C41 /* SearchTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableView.swift; sourceTree = "<group>"; };
 		B4B73AE09F083ADA7BF427D9 /* UserPlaceCollectionDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPlaceCollectionDatabase.swift; sourceTree = "<group>"; };
-		B4B73B2B2DAAB08F551868D7 /* PlaceCardAward.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCardAward.swift; sourceTree = "<group>"; };
 		B4B73B3C572E241C11D57AE5 /* FilterHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterHeaderView.swift; sourceTree = "<group>"; };
 		B4B73B8C080EA9D51F87FE13 /* MunchLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchLocation.swift; sourceTree = "<group>"; };
 		B4B73BB2757D0BE5CC888EDA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.info; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -582,18 +582,18 @@
 		B4B73A631FEAF4A8430EA091 /* cards */ = {
 			isa = PBXGroup;
 			children = (
-				B4B7305A5B27A41922ADEE57 /* PlaceCardAbout.swift */,
 				B4B73FAD47BB85633497CC31 /* RIPCardLocation.swift */,
 				B4B73BC96A97609AEE2FB5D5 /* RIPCardLoading.swift */,
-				B4B7312DBF1E812FF4C051CD /* PlaceCardMenu.swift */,
-				B4B7328A63C083C2FD99C847 /* PlaceCardBasic.swift */,
-				B4B731D151BB6D9601680CD1 /* PlaceCardSuggest.swift */,
-				B4B73B2B2DAAB08F551868D7 /* PlaceCardAward.swift */,
+				B4B7312DBF1E812FF4C051CD /* RIPCardMenu.swift */,
+				B4B731D151BB6D9601680CD1 /* RIPCardSuggest.swift */,
 				B4B73D86A1832193FD128FC6 /* RIPCard.swift */,
 				B4B73F90EE462A9E722D4F91 /* RIPCardImageBanner.swift */,
 				B4B739E61B078D6FB36F0BAC /* RIPCardNameTag.swift */,
 				B4B736156BD2F8E724586960 /* RIPCardImageGallery.swift */,
 				B4B73066E127D1CD297E680D /* RIPCardArticle.swift */,
+				B4B73950D3228A4659361348 /* RIPCardAbout.swift */,
+				B4B737BF2D6F72BC43E48CDB /* RIPCardHour.swift */,
+				B4B734BDB7C21C04F0DCF94C /* RIPCardAward.swift */,
 			);
 			path = cards;
 			sourceTree = "<group>";
@@ -994,13 +994,10 @@
 				B4B73F6FC011092193C534CB /* FilterManager.swift in Sources */,
 				B4B73F16F3517C2E945BF368 /* SuggestCell.swift in Sources */,
 				B4B734CADB20622FE502984B /* SuggestManager.swift in Sources */,
-				B4B7316A7CC5FD11A8091102 /* PlaceCardAbout.swift in Sources */,
 				B4B73562BD47A7DF8D9334FC /* RIPCardLocation.swift in Sources */,
 				B4B73C5283FA6454158B1B4B /* RIPCardLoading.swift in Sources */,
-				B4B73DB576F9692FA03D785F /* PlaceCardMenu.swift in Sources */,
-				B4B73C41A4C3F3BA7EFF5AB4 /* PlaceCardBasic.swift in Sources */,
-				B4B733162CE1B0A62B893122 /* PlaceCardSuggest.swift in Sources */,
-				B4B7384B88D80A519B61487F /* PlaceCardAward.swift in Sources */,
+				B4B73DB576F9692FA03D785F /* RIPCardMenu.swift in Sources */,
+				B4B733162CE1B0A62B893122 /* RIPCardSuggest.swift in Sources */,
 				B4B73711AC311B37916A5C12 /* RIPCard.swift in Sources */,
 				B4B73EB2FE22EA5E8593B33E /* RIPController.swift in Sources */,
 				B4B73A27FF8C27B661FDE549 /* ReviewRatingUtils.swift in Sources */,
@@ -1054,6 +1051,9 @@
 				B4B73BDE7978BDF497D719E1 /* RIPImageLoader.swift in Sources */,
 				B4B73774FD6E37D1C5A646D5 /* RIPCardImageGallery.swift in Sources */,
 				B4B739ED33627977DE45A704 /* RIPCardArticle.swift in Sources */,
+				B4B73576A3FFF617E76552B2 /* RIPCardAbout.swift in Sources */,
+				B4B73D5F9F355089B7D4384C /* RIPCardHour.swift in Sources */,
+				B4B73915FD94C1B77DBD5D60 /* RIPCardAward.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

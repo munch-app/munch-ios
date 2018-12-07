@@ -160,7 +160,21 @@ extension RIPController {
         appendTo(type: RIPImageBannerCard.self)
         appendTo(type: RIPCardClosed.self)
         appendTo(type: RIPNameTagCard.self)
+
+        appendTo(type: RIPHourCard.self)
+        appendTo(type: RIPPriceCard.self)
+        appendTo(type: RIPPhoneCard.self)
+        appendTo(type: RIPWebsiteCard.self)
+        appendTo(type: RIPAboutFirstDividerCard.self)
+
+        appendTo(type: RIPDescriptionCard.self)
+        appendTo(type: RIPAwardCard.self)
+        appendTo(type: RIPMenuWebsiteCard.self)
+        appendTo(type: RIPAboutSecondDividerCard.self)
+
         appendTo(type: RIPLocationCard.self)
+        appendTo(type: RIPSuggestEditCard.self)
+
         appendTo(type: RIPArticleCard.self)
         appendTo(type: RIPGalleryHeaderCard.self)
         return types
@@ -188,7 +202,19 @@ extension RIPController: UICollectionViewDataSource, UICollectionViewDelegate {
         collectionView.register(type: RIPNameTagCard.self)
         collectionView.register(type: RIPCardClosed.self)
 
+        collectionView.register(type: RIPHourCard.self)
+        collectionView.register(type: RIPPriceCard.self)
+        collectionView.register(type: RIPPhoneCard.self)
+        collectionView.register(type: RIPMenuWebsiteCard.self)
+        collectionView.register(type: RIPAboutFirstDividerCard.self)
+
+        collectionView.register(type: RIPDescriptionCard.self)
+        collectionView.register(type: RIPAwardCard.self)
+        collectionView.register(type: RIPWebsiteCard.self)
+        collectionView.register(type: RIPAboutSecondDividerCard.self)
+
         collectionView.register(type: RIPLocationCard.self)
+        collectionView.register(type: RIPSuggestEditCard.self)
 
         collectionView.register(type: RIPArticleCard.self)
 

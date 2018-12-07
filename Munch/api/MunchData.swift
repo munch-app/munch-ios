@@ -243,6 +243,16 @@ struct Hour: Codable {
         case closed
         case closing
         case none
+
+        var text: String {
+            switch self {
+            case .open: return "Open Now"
+            case .opening: return "Opening Soon"
+            case .closed: return "Closed Now"
+            case .closing: return "Closing Soon"
+            case .none: return "Closed"
+            }
+        }
     }
 }
 
