@@ -39,6 +39,13 @@ class RIPCard: UICollectionViewCell {
     }
 
     /**
+     * Card did selected
+     */
+    func didSelect(data: PlaceData!, controller: RIPController) {
+
+    }
+
+    /**
      * Whether the data required for this cell is available
      */
     class func isAvailable(data: PlaceData) -> Bool {

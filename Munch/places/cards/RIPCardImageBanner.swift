@@ -45,7 +45,6 @@ class RIPImageBannerCard: RIPCard {
         button.setTitle("SHOW IMAGES", for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.titleLabel?.font = FontStyle.smallBold.font
-        button.isUserInteractionEnabled = false
 
         button.setImage(UIImage(named: "RIP-Card-Image-More"), for: .normal)
         button.tintColor = UIColor.black
@@ -61,12 +60,13 @@ class RIPImageBannerCard: RIPCard {
         self.addSubview(collectionView)
         self.addSubview(imageGradientView)
         self.addSubview(moreButton)
+        self.addTargets()
 
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
 
         collectionView.snp.makeConstraints { maker in
-            maker.height.equalTo(UIScreen.main.bounds.height * 0.30).priority(999)
+            maker.height.equalTo(UIScreen.main.bounds.height * 0.33).priority(999)
             maker.edges.equalTo(self).inset(UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0))
         }
 
@@ -80,6 +80,7 @@ class RIPImageBannerCard: RIPCard {
             maker.bottom.equalTo(collectionView).inset(16)
             maker.height.equalTo(34)
         }
+
     }
 
     override func willDisplay(data: PlaceData!) {
@@ -87,6 +88,20 @@ class RIPImageBannerCard: RIPCard {
         if self.images.isEmpty {
             moreButton.isHidden = true
         }
+    }
+}
+
+extension RIPImageBannerCard {
+    func addTargets() {
+        moreButton.addTarget(self, action: #selector(scrollTo(_:)), for: .touchUpInside)
+    }
+
+    func scrollTo(_ sender: Any) {
+        guard !self.images.isEmpty else {
+            return
+        }
+
+        controller.scrollTo(indexPath: [1, 0])
     }
 }
 

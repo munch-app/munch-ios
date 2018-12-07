@@ -290,7 +290,14 @@ extension RIPController: UICollectionViewDataSource, UICollectionViewDelegate {
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // TODO
+        switch (RIPSection(rawValue: indexPath.section)!, indexPath.row) {
+        case (.card, let row):
+            let cell = collectionView.cellForItem(at: indexPath) as! RIPCard
+            cell.didSelect(data: self.data, controller: self)
+
+        default:
+            break
+        }
     }
 }
 
@@ -377,6 +384,10 @@ extension RIPController: UIGestureRecognizerDelegate, SFSafariViewControllerDele
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
 
         self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
+    }
+
+    func scrollTo(indexPath: IndexPath) {
+        self.collectionView.scrollToItem(at: indexPath, at: .centeredVertically, animated: true)
     }
 
     func onDirection() {
