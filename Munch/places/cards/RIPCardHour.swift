@@ -150,6 +150,8 @@ fileprivate class RIPHourController: HalfModalController {
             }
             stackView.addArrangedSubview(view)
         }
+
+        self.layoutIfNeeded()
     }
 
     func getTexts(with grouped: Hour.Grouped) -> [NSAttributedString] {

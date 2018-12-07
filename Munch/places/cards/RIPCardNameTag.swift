@@ -71,6 +71,8 @@ class RIPNameTagCard: RIPCard {
             maker.top.equalTo(tagView.snp.bottom).inset(-24)
             maker.bottom.equalTo(self).inset(12)
         }
+
+        self.layoutIfNeeded()
     }
 }
 

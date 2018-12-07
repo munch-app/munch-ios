@@ -58,6 +58,8 @@ class RIPArticleCard: RIPCard {
             maker.top.equalTo(collectionView.snp.bottom).inset(-48)
             maker.bottom.equalTo(self).inset(12)
         }
+
+        self.layoutIfNeeded()
     }
 
     override class func isAvailable(data: PlaceData) -> Bool {

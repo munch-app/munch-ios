@@ -19,6 +19,8 @@ class RIPGalleryHeaderCard: RIPCard {
             maker.top.equalTo(self).inset(12)
             maker.bottom.equalTo(self).inset(24)
         }
+
+        self.layoutIfNeeded()
     }
 
     override class func isAvailable(data: PlaceData) -> Bool {

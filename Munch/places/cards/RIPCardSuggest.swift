@@ -58,6 +58,5 @@ extension RIPSuggestEditCard: SFSafariViewControllerDelegate {
                 return
             }
         }
-
     }
 }
