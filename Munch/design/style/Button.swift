@@ -22,7 +22,7 @@ extension MunchButtonStyle {
         case .borderSmall: fallthrough
         case .primarySmall: fallthrough
         case .secondarySmall:
-            return 16
+            return 18
 
         default:
             return 24
@@ -34,7 +34,7 @@ extension MunchButtonStyle {
         case .borderSmall: fallthrough
         case .primarySmall: fallthrough
         case .secondarySmall:
-            return 32
+            return 36
 
         default:
             return 40
@@ -84,7 +84,7 @@ extension MunchButtonStyle {
         case .borderSmall: fallthrough
         case .primarySmall: fallthrough
         case .secondarySmall:
-            return UIFont.systemFont(ofSize: 14, weight: .bold)
+            return UIFont.systemFont(ofSize: 15, weight: .bold)
 
         default:
             return UIFont.systemFont(ofSize: 16, weight: .bold)

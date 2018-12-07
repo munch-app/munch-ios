@@ -40,10 +40,6 @@ class FeedController: UIViewController {
         collectionView.alwaysBounceHorizontal = false
         collectionView.alwaysBounceVertical = true
         collectionView.backgroundColor = .white
-
-        collectionView.register(type: FeedCellHeader.self)
-        collectionView.register(type: FeedCellImage.self)
-        collectionView.register(type: FeedCellLoading.self)
         return collectionView
     }()
 
@@ -75,9 +71,7 @@ class FeedController: UIViewController {
             maker.top.equalTo(headerView)
         }
 
-        (collectionView.collectionViewLayout as! WaterfallLayout).delegate = self
-        collectionView.delegate = self
-        collectionView.dataSource = self
+        self.registerCells()
 
         self.manager.observe()
                 .catchError { (error: Error) in
@@ -101,6 +95,16 @@ class FeedController: UIViewController {
 }
 
 extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate {
+    func registerCells() {
+        (collectionView.collectionViewLayout as! WaterfallLayout).delegate = self
+        collectionView.delegate = self
+        collectionView.dataSource = self
+
+        collectionView.register(type: FeedCellHeader.self)
+        collectionView.register(type: FeedCellImage.self)
+        collectionView.register(type: FeedCellLoading.self)
+    }
+
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 3
     }

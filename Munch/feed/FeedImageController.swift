@@ -14,7 +14,11 @@ class FeedImageController: UIViewController, UIGestureRecognizerDelegate {
     private let provider = MunchProvider<FeedImageService>()
 
     private let headerView = FeedImageHeaderView()
-    private let scrollView = UIScrollView()
+    private let scrollView: UIScrollView = {
+        let view = UIScrollView()
+        view.contentInsetAdjustmentBehavior = .never
+        return view
+    }()
     private let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -30,6 +34,11 @@ class FeedImageController: UIViewController, UIGestureRecognizerDelegate {
         self.item = item
         self.places = places
         super.init(nibName: nil, bundle: nil)
+
+        guard let place = places.get(0) else {
+            return
+        }
+        self.headerView.titleView.text = place.name
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -119,6 +128,10 @@ class FeedImageHeaderView: UIView {
         return button
     }()
 
+    let titleView: UILabel = {
+        let titleView = UILabel(style: .navHeader)
+        return titleView
+    }()
     let backgroundView = UIView()
     let shadowView = UIView()
 
@@ -126,9 +139,11 @@ class FeedImageHeaderView: UIView {
         didSet {
             if isOpaque {
                 self.backButton.tintColor = .black
+                self.titleView.textColor = .black
                 self.backgroundView.backgroundColor = .white
                 self.shadowView.isHidden = false
             } else {
+                self.titleView.textColor = .white
                 self.backButton.tintColor = .white
                 self.backgroundView.backgroundColor = .clear
                 self.shadowView.isHidden = true
@@ -142,13 +157,20 @@ class FeedImageHeaderView: UIView {
         self.addSubview(shadowView)
         self.addSubview(backgroundView)
         self.addSubview(backButton)
+        self.addSubview(titleView)
 
         backButton.snp.makeConstraints { make in
             make.top.equalTo(self.safeArea.top)
             make.left.bottom.equalTo(self)
 
-            make.width.equalTo(56)
+            make.width.equalTo(52)
             make.height.equalTo(44)
+        }
+
+        titleView.snp.makeConstraints { maker in
+            maker.top.bottom.equalTo(self.backButton)
+            maker.left.equalTo(backButton.snp.right)
+            maker.right.equalTo(self).inset(24)
         }
 
         backgroundView.snp.makeConstraints { make in
@@ -269,6 +291,8 @@ fileprivate class FeedButtonGroup: UIView {
 }
 
 fileprivate class FeedContent: UIControl {
+    let topLine = SeparatorLine()
+    let botLine = SeparatorLine()
     let caption = UILabel(style: .subtext)
             .with(numberOfLines: 2)
     let username = UILabel(style: .h5)
@@ -276,6 +300,8 @@ fileprivate class FeedContent: UIControl {
 
     init(item: ImageFeedItem) {
         super.init(frame: .zero)
+        self.addSubview(topLine)
+        self.addSubview(botLine)
         self.addSubview(caption)
         self.addSubview(username)
 
@@ -289,14 +315,24 @@ fileprivate class FeedContent: UIControl {
         mutable.append(NSAttributedString(string: " on \(item.createdMillis.asMonthDayYear)"))
         username.attributedText = mutable
 
+        topLine.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self)
+            maker.top.equalTo(self)
+        }
+
         caption.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(24)
-            maker.top.equalTo(self)
+            maker.top.equalTo(topLine.snp.bottom).inset(-24)
         }
 
         username.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(24)
             maker.top.equalTo(caption.snp.bottom).inset(-8)
+            maker.bottom.equalTo(botLine.snp.top).inset(-24)
+        }
+
+        botLine.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self)
             maker.bottom.equalTo(self).inset(16)
         }
     }

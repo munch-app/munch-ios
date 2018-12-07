@@ -13,7 +13,7 @@ class SeparatorLine: UIView {
         self.backgroundColor = UIColor.ba10
 
         self.snp.makeConstraints { maker in
-            maker.height.equalTo(1.0 / UIScreen.main.scale)
+            maker.height.equalTo(1.0 / UIScreen.main.scale).priority(.high)
         }
     }
 
