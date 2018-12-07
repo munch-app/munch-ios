@@ -29,7 +29,7 @@ class RIPGalleryHeaderCard: RIPCard {
 class RIPGalleryImageCard: UICollectionViewCell {
     private let imageView: SizeImageView = {
         let width = (UIScreen.main.bounds.width - 24 - 24 - 16) / 2
-        let imageView = SizeImageView(points: width, height: 1)
+        let imageView = SizeShimmerImageView(points: width, height: 1)
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.masksToBounds = true

@@ -1,27 +1,4 @@
-////
-//// Created by Fuxing Loh on 20/1/18.
-//// Copyright (c) 2018 Munch Technologies. All rights reserved.
-////
-//
-//import Foundation
-//import UIKit
-//import MapKit
-//import Localize_Swift
-//
-//import SnapKit
-//import SwiftRichString
-//import SafariServices
-//
-//class PlaceHeaderAboutCard: PlaceTitleCardView {
-//    override func didLoad(card: PlaceCard) {
-//        self.title = "About".localized()
-//    }
-//
-//    override class var cardId: String? {
-//        return "header_About_20171112"
-//    }
-//}
-//
+
 //class PlaceBasicDescriptionCard: PlaceCardView {
 //    let descriptionLabel = UILabel()
 //

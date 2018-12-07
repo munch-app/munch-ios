@@ -1,15 +1,4 @@
-////
-//// Created by Fuxing Loh on 5/3/18.
-//// Copyright (c) 2018 Munch Technologies. All rights reserved.
-////
-//
-//import Foundation
-//import UIKit
-//
-//import SnapKit
-//import SwiftyJSON
-//import FirebaseAnalytics
-//
+
 //class PlaceExtendedPlaceAwardCard: PlaceCardView {
 //    private let collectionView: UICollectionView = {
 //        let layout = UICollectionViewFlowLayout()

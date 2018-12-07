@@ -104,7 +104,7 @@ class AddressLabel: SRCopyableView {
         }
 
         lineTwoLabel.snp.makeConstraints { make in
-            make.top.equalTo(lineOneLabel.snp.bottom)
+            make.top.equalTo(lineOneLabel.snp.bottom).priority(999)
             make.bottom.left.right.equalTo(self)
         }
     }
@@ -128,6 +128,7 @@ class AddressLabel: SRCopyableView {
         let attributedText = NSMutableAttributedString()
 
         if let distance = MunchLocation.distance(asMetric: latLng) {
+            // Lat Lng might not be given yet
             attributedText.append(NSAttributedString(string: distance))
         }
 
@@ -147,17 +148,18 @@ class AddressLabel: SRCopyableView {
     }
 
     class func height(location: Location) -> CGFloat {
-        let width = UIScreen.main.bounds.width - 48
-        guard let address = location.address else {
-            return 20
+        var count = 0
+
+        if let latLng = MunchLocation.lastLatLng {
+            count += 1
         }
 
-        let lines = UILabel.countLines(font: FontStyle.regular.font, text: address, width: width)
-        if lines <= 1 {
-            return 40
-        } else {
-            return 60
+        if let address = location.address {
+            let width = UIScreen.main.bounds.width - 48
+            let lines = UILabel.countLines(font: FontStyle.regular.font, text: address, width: width)
+            count += lines <= 2 ? lines : 2
         }
+        return CGFloat(count) * 20
     }
 
     required init?(coder aDecoder: NSCoder) {
