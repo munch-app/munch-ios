@@ -29,7 +29,8 @@ class HalfModalController: UIViewController, HalfModalPresentable {
         button.addTarget(self, action: #selector(onDismiss(_:)), for: .touchUpInside)
 
         button.snp.makeConstraints { maker in
-            maker.right.top.equalTo(self.view)
+            maker.top.equalTo(self.view.safeArea.top)
+            maker.right.equalTo(self.view.safeArea.right)
             maker.width.equalTo(24 + 28 + 24)
             maker.height.equalTo(16 + 28 + 16)
         }

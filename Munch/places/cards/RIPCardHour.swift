@@ -22,12 +22,7 @@ class RIPHourCard: RIPCard {
         $0.color = UIColor.black
         $0.font = UIFont.systemFont(ofSize: 16, weight: .regular)
     }
-    static let boldStyle = Style {
-        $0.color = UIColor.black
-        $0.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
-    }
 
-    let grid = UIView()
     fileprivate let indicator: UIButton = {
         let button = UIButton()
         button.tintColor = .black
@@ -42,21 +37,10 @@ class RIPHourCard: RIPCard {
         label.numberOfLines = 2
         return label
     }()
-    fileprivate let dayView = RIPDayView()
-
-    var openHeightConstraint: Constraint!
-    var dayHeightConstraint: Constraint!
 
     override func didLoad(data: PlaceData!) {
-        self.addSubview(grid)
-        grid.addSubview(indicator)
-        grid.addSubview(openLabel)
-        grid.addSubview(dayView)
-
-        grid.snp.makeConstraints { maker in
-            maker.left.right.equalTo(self).inset(24)
-            maker.top.bottom.equalTo(self).inset(12)
-        }
+        self.addSubview(indicator)
+        self.addSubview(openLabel)
 
         indicator.snp.makeConstraints { maker in
             maker.right.equalTo(self).inset(24)
@@ -65,16 +49,12 @@ class RIPHourCard: RIPCard {
         }
 
         openLabel.snp.makeConstraints { maker in
-            maker.top.bottom.equalTo(grid)
-            maker.left.equalTo(grid)
+            maker.top.bottom.equalTo(self).inset(24)
+            maker.left.equalTo(self).inset(24)
             maker.right.equalTo(indicator.snp.left)
         }
 
-
-        let hours = data.place.hours
-        let grouped = hours.grouped
-        dayView.render(hourGrouped: grouped)
-        dayView.isHidden = true
+        let grouped: Hour.Grouped = data.place.hours.grouped
 
         let attributedText = NSMutableAttributedString()
         switch grouped.isOpen() {
@@ -92,96 +72,124 @@ class RIPHourCard: RIPCard {
 
         }
 
-
         attributedText.append(grouped.todayDayTimeRange.set(style: RIPHourCard.hourStyle))
         openLabel.attributedText = attributedText
+    }
+
+    override func didSelect(data: PlaceData!, controller: RIPController) {
+        let destination = RIPHourController(place: data.place)
+
+        let delegate = HalfModalTransitioningDelegate(viewController: controller, presentingViewController: destination)
+        destination.modalPresentationStyle = .custom
+        destination.transitioningDelegate = delegate
+        controller.present(destination, animated: true)
     }
 
     override class func isAvailable(data: PlaceData) -> Bool {
         return !data.place.hours.isEmpty
     }
-
-//    override func didTap() {
-//        dayView.isHidden = !dayView.isHidden
-//        openLabel.isHidden = !openLabel.isHidden
-//        indicator.isHidden = !indicator.isHidden
-//
-//        if (openLabel.isHidden) {
-//            openLabel.snp.removeConstraints()
-//            dayView.snp.makeConstraints { (make) in
-//                make.top.bottom.equalTo(grid)
-//                make.left.right.equalTo(grid)
-//                make.height.equalTo(39 * 7).priority(999)
-//            }
-//        }
-//
-//        if (dayView.isHidden) {
-//            dayView.snp.removeConstraints()
-//            openLabel.snp.makeConstraints { (make) in
-//                make.top.bottom.equalTo(grid)
-//                make.left.equalTo(grid)
-//                make.right.equalTo(indicator.snp.left)
-//            }
-//        }
-//
-//        self.controller.apply(click: .hours)
-//    }
 }
 
-fileprivate class RIPDayView: UIView {
-    let dayLabels = [UILabel(), UILabel(), UILabel(), UILabel(), UILabel(), UILabel(), UILabel()]
+fileprivate class RIPHourController: HalfModalController {
+    private let scrollView: UIScrollView = {
+        let view = UIScrollView()
+        view.contentInsetAdjustmentBehavior = .never
+        view.alwaysBounceHorizontal = false
+        return view
+    }()
+    private let stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.distribution = .equalSpacing
+        return stackView
+    }()
+    private let header = UILabel(style: .h2)
+            .with(numberOfLines: 0)
+    private let grouped: Hour.Grouped
 
-    override init(frame: CGRect = CGRect.zero) {
-        super.init(frame: frame)
-        self.clipsToBounds = true
+    init(place: Place) {
+        self.grouped = place.hours.grouped
+        header.with(text: "\(place.name) Hours", lineSpacing: 1.3)
+        super.init()
+    }
 
-        for (index, label) in dayLabels.enumerated() {
-            label.font = UIFont.systemFont(ofSize: 14.0, weight: .regular)
-            label.numberOfLines = 2
-            self.addSubview(label)
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.view.addSubview(header)
+        self.view.addSubview(scrollView)
+        self.scrollView.addSubview(self.stackView)
 
-            label.snp.makeConstraints { make in
-                make.left.right.equalTo(self)
-                make.height.equalTo(42).priority(998)
+        header.snp.makeConstraints { maker in
+            maker.top.equalTo(self.view.safeArea.top).inset(24)
+            maker.left.right.equalTo(self.view).inset(24)
+        }
 
-                if index == 0 {
-                    make.top.equalTo(self)
-                } else {
-                    make.top.equalTo(dayLabels[index - 1].snp.bottom)
+        scrollView.snp.makeConstraints { maker in
+            maker.top.equalTo(header.snp.bottom).inset(-16)
+            maker.bottom.equalTo(self.view.safeArea.bottom)
+            maker.left.right.equalTo(self.view)
+        }
+
+        stackView.snp.makeConstraints { maker in
+            maker.edges.equalTo(scrollView)
+            maker.width.equalTo(scrollView.snp.width)
+        }
+
+        for attribute in getTexts(with: grouped) {
+            let label = UILabel(style: .regular)
+                    .with(numberOfLines: 2)
+            label.attributedText = attribute
+
+            let view = UIView()
+            view.addSubview(label)
+            label.snp.makeConstraints { maker in
+                maker.left.right.equalTo(view).inset(24)
+                maker.top.equalTo(view)
+                maker.bottom.equalTo(view).inset(12)
+            }
+            stackView.addArrangedSubview(view)
+        }
+    }
+
+    func getTexts(with grouped: Hour.Grouped) -> [NSAttributedString] {
+        func createLine(day: Hour.Day, dayText: String) -> NSAttributedString {
+            let line1 = dayText.set(style: Style {
+                $0.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+            })
+
+            if day.isToday {
+                switch grouped.isOpen() {
+                case .opening: fallthrough
+                case .closing: fallthrough
+                case .open:
+                    return line1 + "\n" + grouped[day].set(style: Style {
+                    $0.color = UIColor.open
+                })
+
+                case .closed: fallthrough
+                case .none:
+                    return line1 + "\n" + grouped[day].set(style: Style {
+                        $0.color = UIColor.close
+                    })
                 }
+            } else {
+                return line1 + "\n" + grouped[day]
             }
         }
+
+        return [
+            createLine(day: Hour.Day.mon, dayText: "Monday"),
+            createLine(day: Hour.Day.tue, dayText: "Tuesday"),
+            createLine(day: Hour.Day.wed, dayText: "Wednesday"),
+            createLine(day: Hour.Day.thu, dayText: "Thursday"),
+            createLine(day: Hour.Day.fri, dayText: "Friday"),
+            createLine(day: Hour.Day.sat, dayText: "Saturday"),
+            createLine(day: Hour.Day.sun, dayText: "Sunday")
+        ]
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    func render(hourGrouped: Hour.Grouped) {
-        func createLine(day: Hour.Day, dayText: String) -> NSAttributedString {
-            if day.isToday {
-                switch hourGrouped.isOpen() {
-                case .opening: fallthrough
-                case .closing: fallthrough
-                case .open:
-                    return dayText.set(style: RIPHourCard.boldStyle) + "\n"
-                            + hourGrouped[day].set(style: RIPHourCard.openStyle)
-                case .closed: fallthrough
-                case .none:
-                    return dayText.set(style: RIPHourCard.boldStyle) + "\n"
-                            + hourGrouped[day].set(style: RIPHourCard.closeStyle)
-                }
-            } else {
-                return NSAttributedString(string: "\(dayText)\n\(hourGrouped[day])")
-            }
-        }
-
-        dayLabels[0].attributedText = createLine(day: Hour.Day.mon, dayText: "Monday")
-        dayLabels[1].attributedText = createLine(day: Hour.Day.tue, dayText: "Tuesday")
-        dayLabels[2].attributedText = createLine(day: Hour.Day.wed, dayText: "Wednesday")
-        dayLabels[3].attributedText = createLine(day: Hour.Day.thu, dayText: "Thursday")
-        dayLabels[4].attributedText = createLine(day: Hour.Day.fri, dayText: "Friday")
-        dayLabels[5].attributedText = createLine(day: Hour.Day.sat, dayText: "Saturday")
-        dayLabels[6].attributedText = createLine(day: Hour.Day.sun, dayText: "Sunday")
     }
 }

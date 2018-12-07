@@ -21,14 +21,8 @@ class HalfModalTransitionAnimator: NSObject, UIViewControllerAnimatedTransitioni
         let from = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)
         
         UIView.animate(withDuration: transitionDuration(using: transitionContext), animations: { () -> Void in
-            
             from!.view.frame.origin.y = 800
-            
-            print("animating...")
-            
         }) { (completed) -> Void in
-            print("animate completed")
-            
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
     }
