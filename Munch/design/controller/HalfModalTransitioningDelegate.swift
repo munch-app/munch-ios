@@ -18,7 +18,7 @@ class HalfModalTransitioningDelegate: NSObject, UIViewControllerTransitioningDel
     init(viewController: UIViewController, presentingViewController: UIViewController) {
         self.viewController = viewController
         self.presentingViewController = presentingViewController
-        self.interactionController = HalfModalInteractiveTransition(viewController: self.viewController, withView: self.presentingViewController.view, presentingViewController: self.presentingViewController)
+        self.interactionController = HalfModalInteractiveTransition(viewController: viewController, withView: presentingViewController.view, presentingViewController: presentingViewController)
         super.init()
     }
 

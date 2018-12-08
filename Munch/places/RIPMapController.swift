@@ -309,7 +309,6 @@ fileprivate class LandmarkAnnotationView: MKAnnotationView {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
         self.canShowCallout = false
         self.addSubview(label)
-
         label.snp.makeConstraints { make in
             make.top.equalTo(self.snp.bottom).inset(-1)
             make.centerX.equalTo(self)

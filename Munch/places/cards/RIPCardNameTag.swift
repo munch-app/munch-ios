@@ -53,6 +53,7 @@ class RIPNameTagCard: RIPCard {
         nameLabel.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(24)
             maker.top.equalTo(self).inset(12)
+            maker.height.equalTo(42 * nameLabel.countLines(width: UIScreen.main.bounds.width - 48)).priority(.high)
         }
 
         locationLabel.snp.makeConstraints { maker in
@@ -71,8 +72,6 @@ class RIPNameTagCard: RIPCard {
             maker.top.equalTo(tagView.snp.bottom).inset(-24)
             maker.bottom.equalTo(self).inset(12)
         }
-
-        self.layoutIfNeeded()
     }
 }
 
@@ -103,7 +102,7 @@ fileprivate class RIPTagCollection: UIView {
         self.addSubview(collectionView)
         collectionView.snp.makeConstraints { maker in
             maker.edges.equalTo(self)
-            maker.height.equalTo(self.height(tags: self.tags)).priority(999)
+            maker.height.equalTo(self.height(tags: self.tags)).priority(.high)
         }
     }
 

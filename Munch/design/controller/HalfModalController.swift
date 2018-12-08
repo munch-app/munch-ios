@@ -8,7 +8,7 @@ import UIKit
 import SnapKit
 
 class HalfModalController: UIViewController, HalfModalPresentable {
-    private let button: UIButton = {
+    private let downButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "HalfModal-Down"), for: .normal)
         button.tintColor = .ba85
@@ -21,14 +21,14 @@ class HalfModalController: UIViewController, HalfModalPresentable {
 
     init() {
         super.init(nibName: nil, bundle: nil)
-
         self.view.backgroundColor = .white
         self.view.shadow(vertical: -2)
 
-        self.view.addSubview(button)
-        button.addTarget(self, action: #selector(onDismiss(_:)), for: .touchUpInside)
+        self.view.addSubview(downButton)
 
-        button.snp.makeConstraints { maker in
+        downButton.addTarget(self, action: #selector(onDismiss(_:)), for: .touchUpInside)
+
+        downButton.snp.makeConstraints { maker in
             maker.top.equalTo(self.view.safeArea.top)
             maker.right.equalTo(self.view.safeArea.right)
             maker.width.equalTo(24 + 28 + 24)

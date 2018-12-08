@@ -144,21 +144,7 @@ extension RIPHeaderView: SFSafariViewControllerDelegate {
     }
 
     @objc func onSuggestEdit() {
-        guard let place = self.place else {
-            return
-        }
-
-        Authentication.getToken { token in
-            let urlComponents = NSURLComponents(string: "https://www.munch.app/authenticate")!
-            urlComponents.queryItems = [
-                URLQueryItem(name: "token", value: token),
-                URLQueryItem(name: "redirect", value: "/places/suggest?placeId=\(place.placeId)"),
-            ]
-
-            let safari = SFSafariViewController(url: urlComponents.url!)
-            safari.delegate = self
-            self.controller.present(safari, animated: true, completion: nil)
-        }
+        RIPSuggestEditCard.onSuggestEdit(place: self.place, controller: self.controller, delegate: self)
     }
 
     @objc func onShare() {

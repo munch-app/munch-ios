@@ -54,24 +54,28 @@ extension RIPSuggestEditCard: SFSafariViewControllerDelegate {
         self.button.addTarget(self, action: #selector(onSuggestEdit), for: .touchUpInside)
     }
 
-    func onSuggestEdit() {
-        guard let place = self.place else {
+    @objc func onSuggestEdit() {
+        RIPSuggestEditCard.onSuggestEdit(place: self.place, controller: self.controller, delegate: self)
+    }
+
+    static func onSuggestEdit(place: Place?, controller: UIViewController, delegate: SFSafariViewControllerDelegate) {
+        guard let place = place else {
             return
         }
 
-        Authentication.requireAuthentication(controller: self.controller) { state in
+        Authentication.requireAuthentication(controller: controller) { state in
             switch state {
             case .loggedIn:
                 Authentication.getToken { token in
-                    let urlComponents = NSURLComponents(string: "https://www.munch.app/authenticate")!
+                    let urlComponents = NSURLComponents(string: "https://staging.munch.app/authenticate")!
                     urlComponents.queryItems = [
                         URLQueryItem(name: "token", value: token),
                         URLQueryItem(name: "redirect", value: "/places/suggest?placeId=\(place.placeId)"),
                     ]
 
                     let safari = SFSafariViewController(url: urlComponents.url!)
-                    safari.delegate = self
-                    self.controller.present(safari, animated: true, completion: nil)
+                    safari.delegate = delegate
+                    controller.present(safari, animated: true, completion: nil)
                 }
 
             default:
