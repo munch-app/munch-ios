@@ -116,6 +116,7 @@
 		B4B73EEE00F5EF39329D5847 /* FeedImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73BD07195645B79E5338E /* FeedImageCell.swift */; };
 		B4B73F0A2B82E0B3D5E35D0D /* SearchCardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73591F9EB2CF93F88F218 /* SearchCardManager.swift */; };
 		B4B73F16F3517C2E945BF368 /* SuggestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73926525624E7FDC598A6 /* SuggestCell.swift */; };
+		B4B73F19E7DDFA4B50E6ECAD /* AuthenticateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B736ABBC43A470FD04FBC9 /* AuthenticateService.swift */; };
 		B4B73F6FC011092193C534CB /* FilterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7301088D63A05D3DCDB13 /* FilterManager.swift */; };
 		B4B73F819FBBB004801AB472 /* MunchImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73AA1927908DE5CE73316 /* MunchImageView.swift */; };
 		B4B73F97796054975D42687E /* PlaceCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B730F750D918BB79FAF597 /* PlaceCard.swift */; };
@@ -238,6 +239,7 @@
 		B4B7368204D2AD9856509B6D /* ShimmerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShimmerView.swift; sourceTree = "<group>"; };
 		B4B73690A98B7622FC7BD1B4 /* UserPlaceActivityService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPlaceActivityService.swift; sourceTree = "<group>"; };
 		B4B73695F4F2693D0E750704 /* ViewExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
+		B4B736ABBC43A470FD04FBC9 /* AuthenticateService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticateService.swift; sourceTree = "<group>"; };
 		B4B736C1DC599DBB26C5C9F9 /* MunchSearchTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchSearchTextField.swift; sourceTree = "<group>"; };
 		B4B7375F54B00CC6DF37E159 /* MunchTagCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchTagCollectionView.swift; sourceTree = "<group>"; };
 		B4B737B877E6C0DDB8C12B56 /* FeedController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedController.swift; sourceTree = "<group>"; };
@@ -359,7 +361,7 @@
 				032F89041E82DFA300AD3818 /* LaunchScreen.storyboard */,
 				032F89071E82DFA300AD3818 /* Info.plist */,
 				B4B7378B383CC0C6448D2AB0 /* sources */,
-				B4B730682DB064058651EA33 /* profile */,
+				B4B730682DB064058651EA33 /* tastebud */,
 				B4B731FB6D67596B54B90179 /* places */,
 				B4B731BB2F1C718BE5806DF2 /* search */,
 				B4B734760A49D43FBEAB4C2C /* design */,
@@ -453,7 +455,7 @@
 			path = feed;
 			sourceTree = "<group>";
 		};
-		B4B730682DB064058651EA33 /* profile */ = {
+		B4B730682DB064058651EA33 /* tastebud */ = {
 			isa = PBXGroup;
 			children = (
 				B4B7329A88030A09DC2A5187 /* MunchUser.swift */,
@@ -462,7 +464,7 @@
 				B4B738C639DA188BF1AFD8CE /* ProfileTabController.swift */,
 				B4B737E2C968CB42E8AB7CE1 /* ProfileHeaderView.swift */,
 			);
-			path = profile;
+			path = tastebud;
 			sourceTree = "<group>";
 		};
 		B4B730A8C38B3F5EC15B6796 /* style */ = {
@@ -636,6 +638,7 @@
 				B4B738B688AE5A34954680EA /* SearchService.swift */,
 				B4B73320FAFE5D794A6CC576 /* UserService.swift */,
 				B4B73690A98B7622FC7BD1B4 /* UserPlaceActivityService.swift */,
+				B4B736ABBC43A470FD04FBC9 /* AuthenticateService.swift */,
 			);
 			path = api;
 			sourceTree = "<group>";
@@ -1090,6 +1093,7 @@
 				B4B73E32F832B4FDC1A77C22 /* UserDefaults+Key.swift in Sources */,
 				B4B734F85F11D0328B1514C0 /* HalfModalController.swift in Sources */,
 				B4B73BC0346592396104D035 /* ProfileHeaderView.swift in Sources */,
+				B4B73F19E7DDFA4B50E6ECAD /* AuthenticateService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -19,7 +19,16 @@ public enum AuthenticationState {
 }
 
 public class Authentication {
-    private static let provider = MunchProvider<UserService>()
+    private static let provider = MunchProvider<UserAuthenticateService>()
+
+    // Custom Token to sign in to the web
+    public class func getCustomToken() -> Single<String> {
+        return provider.rx.request(.getCustomToken)
+                .map { res throws -> String in
+                    try res.mapJSON(atDataKeyPath: "token") as! String
+                }
+
+    }
 
     public class func getToken(withCompletion: @escaping (_ token: String?) -> Void) {
         if let currentUser = Auth.auth().currentUser {
@@ -39,15 +48,6 @@ public class Authentication {
     }
 
     public class func isAuthenticated() -> Bool {
-        if let providers = Auth.auth().currentUser?.providerData {
-            for provider in providers {
-                if provider.providerID == "google.com" {
-                    Auth.auth().currentUser?.delete()
-                    self.logout()
-                    return false
-                }
-            }
-        }
         return UserProfile.instance != nil
     }
 
@@ -62,7 +62,7 @@ public class Authentication {
         }
     }
 
-    public class func login(facebook accessToken: String, withCompletion: @escaping(_ state: AuthenticationState) -> Void) {
+    public class func login(facebook accessToken: String, withCompletion: @escaping (_ state: AuthenticationState) -> Void) {
         let credential = FacebookAuthProvider.credential(withAccessToken: accessToken)
 
         Auth.auth().signIn(with: credential) { (user, error) in
@@ -78,7 +78,7 @@ public class Authentication {
     }
 
     // Temporary Method to authenticate user silently due to migration of version
-    class func authenticate(withCompletion: @escaping(_ state: AuthenticationState) -> Void) -> Disposable {
+    class func authenticate(withCompletion: @escaping (_ state: AuthenticationState) -> Void) -> Disposable {
         return provider.rx.request(.authenticate)
                 .map { response throws -> UserData in
                     try response.map(data: UserData.self)

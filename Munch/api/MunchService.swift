@@ -146,14 +146,6 @@ struct Meta: Codable {
 }
 
 extension Moya.Response {
-    func map<D: Decodable>(data type: D.Type, atKeyPath keyPath: String, failsOnEmptyData: Bool = true) throws -> D? {
-        if let json = try mapJSON(failsOnEmptyData: failsOnEmptyData) as? [String: Any], let data = json["data"] as? [String: Any], let path = data[keyPath] {
-            let data = try JSONSerialization.data(withJSONObject: path)
-            return try JSONDecoder().decode(type, from: data)
-        }
-        return nil
-    }
-
     func mapNext(failsOnEmptyData: Bool = true) throws -> [String: Any]? {
         if let json = try mapJSON(failsOnEmptyData: failsOnEmptyData) as? [String: Any], let next = json["next"] as? [String: Any] {
             return next

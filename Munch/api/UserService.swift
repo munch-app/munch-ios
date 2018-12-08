@@ -10,7 +10,6 @@ import RxSwift
 import Crashlytics
 
 enum UserService {
-    case authenticate
     case getProfile
     case getSetting
     case patchSetting(search: UserSetting.Search)
@@ -20,8 +19,6 @@ enum UserService {
 extension UserService: TargetType {
     var path: String {
         switch self {
-        case .authenticate:
-            return "/users/authenticate"
         case .getProfile:
             return "/users/profile"
         case .getSetting:
@@ -36,13 +33,11 @@ extension UserService: TargetType {
             return .patch
         case .getSetting, .getProfile:
             return .get
-        case .authenticate:
-            return .post
         }
     }
     var task: Task {
         switch self {
-        case .authenticate, .getProfile, .getSetting:
+        case .getProfile, .getSetting:
             return .requestPlain
         case .patchSetting(let search):
             return .requestJSONEncodable(search)
@@ -50,9 +45,20 @@ extension UserService: TargetType {
     }
 }
 
-struct UserData: Codable {
-    var profile: UserProfile
-    var setting: UserSetting
+struct UserProfile: Codable {
+    var userId: String?
+    var name: String?
+    var email: String?
+    var photoUrl: String?
+}
+
+struct UserSetting: Codable {
+    var mailings: [String: Bool]?
+    var search: Search
+
+    public struct Search: Codable {
+        var tags: [String]
+    }
 }
 
 extension UserProfile {
@@ -73,13 +79,6 @@ extension UserProfile {
     }
 }
 
-struct UserProfile: Codable {
-    var userId: String?
-    var name: String?
-    var email: String?
-    var photoUrl: String?
-}
-
 extension UserSetting {
     static var instance: UserSetting? {
         get {
@@ -96,7 +95,7 @@ extension UserSetting {
     /**
      Apply changes to UserSetting, closure will only be called if it exists
      */
-    static func apply(search editing: @escaping (UserSetting.Search) -> UserSetting.Search, onComplete: @escaping (SingleEvent<UserSetting>) -> Void) -> Disposable{
+    static func apply(search editing: @escaping (UserSetting.Search) -> UserSetting.Search, onComplete: @escaping (SingleEvent<UserSetting>) -> Void) -> Disposable {
         guard var editable = UserSetting.instance else {
             return Disposables.create()
         }
@@ -155,14 +154,5 @@ extension UserSetting {
         }
 
         return true
-    }
-}
-
-struct UserSetting: Codable {
-    var mailings: [String: Bool]?
-    var search: Search
-
-    public struct Search: Codable {
-        var tags: [String]
     }
 }

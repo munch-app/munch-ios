@@ -7,6 +7,7 @@ import Foundation
 import UIKit
 import SnapKit
 
+import RxSwift
 import SafariServices
 
 class RIPSuggestEditCard: RIPCard {
@@ -64,22 +65,26 @@ extension RIPSuggestEditCard: SFSafariViewControllerDelegate {
         }
 
         Authentication.requireAuthentication(controller: controller) { state in
-            switch state {
-            case .loggedIn:
-                Authentication.getToken { token in
-                    let urlComponents = NSURLComponents(string: "https://staging.munch.app/authenticate")!
-                    urlComponents.queryItems = [
+            guard case .loggedIn = state else {
+                return
+            }
+
+            Authentication.getCustomToken().subscribe { event in
+                switch event {
+                case let .success(token):
+                    let components = NSURLComponents(string: "https://www.munch.app/authenticate")!
+                    components.queryItems = [
                         URLQueryItem(name: "token", value: token),
                         URLQueryItem(name: "redirect", value: "/places/suggest?placeId=\(place.placeId)"),
                     ]
 
-                    let safari = SFSafariViewController(url: urlComponents.url!)
+                    let safari = SFSafariViewController(url: components.url!)
                     safari.delegate = delegate
                     controller.present(safari, animated: true, completion: nil)
-                }
 
-            default:
-                return
+                case let .error(error):
+                    controller.alert(error: error)
+                }
             }
         }
     }
