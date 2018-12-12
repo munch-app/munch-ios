@@ -15,7 +15,7 @@ class SearchCardPlaceCollection: UICollectionView {
     init() {
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
-        layout.itemSize = SearchCardPlaceCollectionCell.itemSize
+        layout.itemSize = SearchCardPlaceCollectionCell.size
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 24
         super.init(frame: .zero, collectionViewLayout: layout)
@@ -29,7 +29,7 @@ class SearchCardPlaceCollection: UICollectionView {
         self.dataSource = self
 
         self.snp.makeConstraints { maker in
-            maker.height.equalTo(SearchCardPlaceCollectionCell.itemSize.height).priority(.high)
+            maker.height.equalTo(SearchCardPlaceCollectionCell.size.height).priority(.high)
         }
     }
 
@@ -40,7 +40,7 @@ class SearchCardPlaceCollection: UICollectionView {
 
 extension SearchCardPlaceCollection: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return SearchCardPlaceCollectionCell.itemSize
+        return SearchCardPlaceCollectionCell.size
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -62,7 +62,7 @@ extension SearchCardPlaceCollection: UICollectionViewDataSource, UICollectionVie
 
 class SearchCardPlaceCollectionCell: UICollectionViewCell {
     public static let width = (UIScreen.main.bounds.width - 48) * 0.85
-    public static let itemSize = CGSize(width: width, height: PlaceCard.height(width: width))
+    public static let size = CGSize(width: width, height: PlaceCard.height(width: width))
 
     private let card = PlaceCard()
     var place: Place! {

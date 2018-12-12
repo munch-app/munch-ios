@@ -43,7 +43,7 @@ class SearchCardHomePopularPlace: SearchCardView {
 
         button.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(self.leftRight)
-            maker.bottom.equalTo(self).inset(self.topBottom)
+            maker.bottom.equalTo(self).inset(self.topBottom * 2)
         }
 
         collectionView.snp.makeConstraints { make in

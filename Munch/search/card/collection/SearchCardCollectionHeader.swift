@@ -10,11 +10,9 @@ import SnapKit
 class SearchCardCollectionHeader: SearchCardView {
 
     private let titleLabel = UILabel(style: .h2)
-            .with(text: "Popular Places in Singapore")
             .with(numberOfLines: 0)
 
     private let subLabel = UILabel(style: .h6)
-            .with(text: "Where the cool kids and food geeks go.")
             .with(numberOfLines: 0)
 
     private var subConstraint: Constraint!
