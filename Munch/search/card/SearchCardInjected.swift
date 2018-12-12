@@ -16,11 +16,15 @@ import FirebaseAnalytics
 
 class SearchNoLocationCard: SearchCardView {
     private let titleImage = UIImageView()
-    private let titleLabel = UILabel()
-    private let descriptionLabel = UILabel()
-    private let actionButton = UIButton()
+    private let titleLabel = UILabel(style: .h2)
+            .with(text: "No Location")
 
-    private var delegate: SearchTableViewDelegate!
+    private let descriptionLabel = UILabel(style: .regular)
+            .with(text: "You have turned off your location service. Turn it on for better suggestion?")
+            .with(numberOfLines: 0)
+    private let actionButton = MunchButton(style: .secondary)
+            .with(text: "Enable Location")
+
     private var disposeBag = DisposeBag()
 
     override func didLoad(card: SearchCard) {
@@ -29,39 +33,23 @@ class SearchNoLocationCard: SearchCardView {
         self.addSubview(descriptionLabel)
         self.addSubview(actionButton)
 
-        titleLabel.text = "No Location".localized()
-        titleLabel.font = UIFont.systemFont(ofSize: 22.0, weight: .semibold)
-        titleLabel.textColor = UIColor.black.withAlphaComponent(0.72)
-        titleLabel.backgroundColor = .white
         titleLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(self).inset(topBottom)
         }
 
-        descriptionLabel.text = "You have turned off your location service. Turn it on for better suggestion?".localized()
-        descriptionLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
-        descriptionLabel.textColor = UIColor.black.withAlphaComponent(0.8)
-        descriptionLabel.numberOfLines = 0
-        descriptionLabel.backgroundColor = .white
         descriptionLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self).inset(leftRight)
             make.top.equalTo(titleLabel.snp.bottom).inset(-20)
         }
 
-        actionButton.layer.cornerRadius = 3
-        actionButton.backgroundColor = .primary500
-        actionButton.setTitle("Enable Location".localized(), for: .normal)
-        actionButton.contentEdgeInsets.left = 32
-        actionButton.contentEdgeInsets.right = 32
-        actionButton.setTitleColor(.white, for: .normal)
-        actionButton.titleLabel!.font = UIFont.systemFont(ofSize: 18, weight: .medium)
+        actionButton.addTarget(self, action: #selector(enableLocation(button:)), for: .touchUpInside)
         actionButton.snp.makeConstraints { (make) in
             make.left.equalTo(self).inset(leftRight)
             make.top.equalTo(descriptionLabel.snp.bottom).inset(-26)
             make.height.equalTo(48)
             make.bottom.equalTo(self).inset(24)
         }
-        actionButton.addTarget(self, action: #selector(enableLocation(button:)), for: .touchUpInside)
     }
 
     @objc func enableLocation(button: UIButton) {

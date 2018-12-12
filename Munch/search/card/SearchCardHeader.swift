@@ -11,8 +11,7 @@ import UIKit
 import SnapKit
 
 class SearchHeaderCard: SearchCardView {
-    private let titleLabel = UILabel()
-            .with(style: .h2)
+    private let titleLabel = UILabel(style: .h2)
             .with(numberOfLines: 0)
 
     override func didLoad(card: SearchCard) {

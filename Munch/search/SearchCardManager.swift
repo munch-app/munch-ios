@@ -44,6 +44,7 @@ class SearchCardManager {
 
                     case .error:
                         self.cards = [SearchStaticErrorCard.create(type: .location)]
+                        // Location Pagination?
                         observer()
                     }
                 }

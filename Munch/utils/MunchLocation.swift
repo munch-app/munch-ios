@@ -77,7 +77,7 @@ public class MunchLocation {
                 single(.success(latLng))
                 return Disposables.create()
             } else {
-                let locating = Locator.currentPosition(accuracy: .city, timeout: .delayed(15), onSuccess: { (location) -> (Void) in
+                let locating = Locator.currentPosition(accuracy: .city, timeout: .delayed(5), onSuccess: { (location) -> (Void) in
                     let coord = location.coordinate
                     MunchLocation.locationExpiry = Date().addingTimeInterval(expiryIncrement)
                     MunchLocation.lastLatLng = "\(coord.latitude),\(coord.longitude)"

@@ -93,9 +93,6 @@ class SearchShimmerPlaceCard: SearchCardView {
         }
     }
 
-    func render(card: SearchCard, delegate: SearchTableViewDelegate) {
-    }
-
     override class var cardId: String {
         return "shimmer_DiscoverShimmerPlaceCard"
     }
@@ -124,17 +121,14 @@ class SearchStaticNoResultCard: SearchCardView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func render(card: SearchCard, delegate: SearchTableViewDelegate) {
-    }
-
     override class var cardId: String {
         return "static_SearchStaticNoResultCard"
     }
 }
 
 class SearchStaticErrorCard: SearchCardView {
-    private static let titleFont = UIFont.systemFont(ofSize: 26.0, weight: .semibold)
-    private static let messageFont = UIFont.systemFont(ofSize: 17.0, weight: .regular)
+    private static let titleFont = FontStyle.h2.font
+    private static let messageFont = FontStyle.regular.font
 
     private let titleImage = UIImageView()
     private let titleLabel = UILabel()

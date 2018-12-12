@@ -17,7 +17,7 @@ import SwiftyJSON
 class SearchAreaClusterListCard: SearchCardView {
     private let titleLabel = UILabel()
             .with(style: .h2)
-            .with(text: "Discover Locations".localized())
+            .with(text: "Discover Locations")
 
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -35,8 +35,6 @@ class SearchAreaClusterListCard: SearchCardView {
     }()
 
     private var areas = [Area]()
-    private var delegate: SearchTableViewDelegate!
-
     private var instanceId: String?
 
     override func didLoad(card: SearchCard) {
@@ -95,11 +93,9 @@ extension SearchAreaClusterListCard: UICollectionViewDataSource, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let area = areas[indexPath.row]
 
-        self.delegate.searchTableView { controller in
-            controller.push { query in
-                query.filter.location.type = .Where
-                query.filter.location.areas = [area]
-            }
+        self.controller.push { query in
+            query.filter.location.type = .Where
+            query.filter.location.areas = [area]
         }
     }
 
@@ -174,85 +170,57 @@ extension SearchAreaClusterListCard: UICollectionViewDataSource, UICollectionVie
 }
 
 class SearchAreaClusterHeaderCard: SearchCardView {
-    static let nameFont = UIFont.systemFont(ofSize: 21.0, weight: .medium)
-    static let descriptionFont = UIFont.systemFont(ofSize: 15.0, weight: .regular)
-    static let imageSize: CGSize = {
-        let imageWidth = width - leftRight - leftRight
-        return CGSize(width: imageWidth, height: imageWidth / 3.3)
-    }()
 
-    private let topImageView: SizeImageView = {
-        let imageView = SizeImageView.init(points: imageSize.width, height: imageSize.height)
+    private let titleLabel = UILabel(style: .h2)
+    private let descriptionLabel = UILabel(style: .regular)
+            .with(numberOfLines: 4)
+
+    private let spotLabel = UILabel(style: .h6)
+    private let streetLabel = UILabel(style: .regular)
+
+    private let imageBanner: SizeImageView = {
+        let imageView = SizeImageView(points: contentWidth, height: 100)
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         imageView.tintColor = .white
-
-        let overlay = UIView()
-        imageView.addSubview(overlay)
-        overlay.backgroundColor = UIColor.black.withAlphaComponent(0.33)
-        overlay.snp.makeConstraints { make in
-            make.edges.equalTo(imageView)
-        }
+        imageView.layer.cornerRadius = 3
         return imageView
     }()
-    private let nameLabel: UILabel = {
-        let label = UILabel()
-        label.font = nameFont
-        label.textColor = UIColor.white
-        label.numberOfLines = 0
-        return label
-    }()
-    private let descriptionLabel: UILabel = {
-        let label = UILabel()
-        label.font = descriptionFont
-        label.textColor = UIColor(hex: "434343")
-        label.numberOfLines = 0
-        return label
-    }()
-    private let addressLineView = AddressLineView()
-    private let hourLineView = HourLineView()
-    private let grid = UIView()
-
-    private var descriptionAddressConstraint: Constraint!
-    private var imageAddressConstraint: Constraint!
 
     override func didLoad(card: SearchCard) {
-        grid.addSubview(topImageView)
-        grid.addSubview(nameLabel)
-        grid.addSubview(descriptionLabel)
-        grid.addSubview(addressLineView)
-        grid.addSubview(hourLineView)
-        self.addSubview(grid)
+        self.addSubview(titleLabel)
+        self.addSubview(imageBanner)
+        self.addSubview(descriptionLabel)
+        self.addSubview(streetLabel)
+        self.addSubview(spotLabel)
 
-        grid.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(leftRight)
-            make.top.bottom.equalTo(self).inset(topBottom)
+        titleLabel.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self).inset(self.leftRight)
+            maker.top.equalTo(self).inset(self.topBottom)
         }
 
-        topImageView.snp.makeConstraints { make in
-            make.top.left.right.equalTo(grid)
-            make.height.equalTo(SearchAreaClusterHeaderCard.imageSize.height)
+        imageBanner.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self).inset(self.leftRight)
+            maker.top.equalTo(titleLabel.snp.bottom).inset(-16)
+            maker.height.equalTo(100).priority(.high)
         }
 
-        nameLabel.snp.makeConstraints { make in
-            make.left.right.equalTo(topImageView).inset(8)
-            make.bottom.equalTo(topImageView).inset(8)
+        descriptionLabel.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self).inset(self.leftRight)
+            maker.height.lessThanOrEqualTo(77).priority(.high)
+            maker.top.equalTo(imageBanner.snp.bottom).inset(-16)
         }
 
-        descriptionLabel.snp.makeConstraints { make in
-            make.left.right.equalTo(grid)
-            make.top.equalTo(topImageView.snp.bottom).inset(-8)
+        spotLabel.snp.makeConstraints { maker in
+            maker.left.equalTo(self).inset(self.leftRight)
+            maker.bottom.equalTo(self).inset(self.topBottom)
+            maker.height.equalTo(24).priority(.high)
         }
 
-        addressLineView.snp.makeConstraints { make in
-            make.left.right.equalTo(grid)
-            make.height.equalTo(AddressLineView.height).priority(999)
-            make.top.greaterThanOrEqualTo(topImageView.snp.bottom).inset(-8).priority(999)
-            self.descriptionAddressConstraint = make.top.equalTo(descriptionLabel.snp.bottom).inset(-8).priority(1000).constraint
-        }
-
-        hourLineView.snp.makeConstraints { make in
-            make.left.right.equalTo(grid)
-            make.height.equalTo(AddressLineView.height).priority(999)
-            make.bottom.equalTo(grid)
+        streetLabel.snp.makeConstraints { maker in
+            maker.left.equalTo(spotLabel.snp.right).inset(-self.leftRight)
+            maker.right.equalTo(self).inset(self.leftRight)
+            maker.top.bottom.equalTo(spotLabel)
         }
     }
 
@@ -261,225 +229,36 @@ class SearchAreaClusterHeaderCard: SearchCardView {
             return
         }
 
-        topImageView.render(image: area.images?.get(0))
-        nameLabel.text = area.name
-
-        if let description = area.description {
-            descriptionLabel.text = description
-            let lines = descriptionLabel.countLines(width: SearchAreaClusterHeaderCard.contentWidth)
-            descriptionLabel.numberOfLines = lines
-
-            descriptionAddressConstraint.activate()
-        } else {
-            descriptionAddressConstraint.deactivate()
-            descriptionLabel.text = nil
-        }
-
-        // Address Line
-        if let address = area.location?.address, let latLng = area.location?.latLng, let total = area.counts?.total {
-            self.addressLineView.address = address
-            self.addressLineView.latLng = latLng
-            self.addressLineView.count = total
-            self.addressLineView.isHidden = false
-        } else {
-            self.addressLineView.isHidden = true
-        }
-
-        // Hour Line
-        if let hours = area.hour, !hours.isEmpty {
-            self.hourLineView.hours = hours
-            self.hourLineView.isHidden = false
-        } else {
-            self.hourLineView.isHidden = true
-        }
+        imageBanner.render(image: area.images?.get(0))
+        titleLabel.text = area.name
+        spotLabel.text = "\(area.counts?.total ?? 0) food spots"
+        streetLabel.text = area.location?.street ?? area.location?.address ?? area.location?.neighbourhood
+        descriptionLabel.text = area.description
     }
 
     override class func height(card: SearchCard) -> CGFloat {
-        var height: CGFloat = topBottom + topBottom
-        let titleWidth = width - (leftRight + leftRight)
-
-        // Image
-        height += imageSize.height
-
         guard let area: Area = card.decode(name: "area", Area.self) else {
-            return height
+            return 1
         }
 
-        // Description
-        if let description = area.description {
-            let lines = UILabel.countLines(font: descriptionFont, text: description, width: titleWidth)
-            height += CGFloat(lines) * ceil(descriptionFont.lineHeight)
-            height += 8
-            height += 8
+        let min = self.topBottom
+                + FontStyle.h2.height(text: area.name, width: self.contentWidth)
+                + 16
+                + 100
+                + 16
+                + 24
+                + self.topBottom
+
+        guard let description = area.description else {
+            return min
         }
 
-        // Address Line
-        if area.location?.address != nil, area.location?.latLng != nil {
-            height += AddressLineView.height
-        }
-
-        // Hour Line
-        if let hours = area.hour, !hours.isEmpty, area.counts?.total != nil {
-            height += AddressLineView.height
-        }
-
-        return height
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        self.topImageView.layer.cornerRadius = 3
+        var height = FontStyle.regular.height(text: description, width: self.contentWidth)
+        height = height < 77 ? height : 77
+        return min + 16 + height
     }
 
     override class var cardId: String {
         return "AreaClusterHeader_2018-06-21"
-    }
-
-    fileprivate class AddressLineView: SRCopyableView {
-        static let headerStyle = Style {
-            $0.color = UIColor.black
-            $0.font = UIFont.systemFont(ofSize: 13.0, weight: .medium)
-        }
-        static let addressStyle = Style {
-            $0.color = UIColor.black
-            $0.font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
-        }
-        static let countStyle = Style {
-            $0.color = UIColor.black
-            $0.alignment = .center
-            $0.font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
-        }
-        static let placeStyle = Style {
-            $0.color = UIColor.black
-            $0.alignment = .center
-            $0.font = UIFont.systemFont(ofSize: 13.0, weight: .medium)
-        }
-
-        static let height: CGFloat = 52
-        static let rightWidth: CGFloat = 70
-        private let leftLabel: UILabel = {
-            let label = UILabel()
-            label.font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
-            label.numberOfLines = 0
-            return label
-        }()
-        private let rightLabel: UILabel = {
-            let label = UILabel()
-            label.numberOfLines = 0
-            label.textAlignment = .center
-            return label
-        }()
-
-        var address: String! {
-            didSet {
-                let attributedText = NSMutableAttributedString()
-                attributedText.append("\("Address".localized())\n".set(style: AddressLineView.headerStyle))
-                attributedText.append(address.set(style: AddressLineView.addressStyle))
-                self.leftLabel.attributedText = attributedText
-            }
-        }
-        var count: Int? {
-            didSet {
-                if let count = self.count {
-                    let attributedText = NSMutableAttributedString()
-                    attributedText.append("\(count)\n".set(style: AddressLineView.countStyle))
-                    attributedText.append("food spots".localized().set(style: AddressLineView.placeStyle))
-                    self.rightLabel.attributedText = attributedText
-                } else {
-                    self.rightLabel.text = nil
-                }
-            }
-        }
-        var latLng: String?
-
-        override var copyableText: String? {
-            return self.address
-        }
-
-        override init(frame: CGRect = .zero) {
-            super.init(frame: frame)
-            self.addSubview(leftLabel)
-            self.addSubview(rightLabel)
-
-            leftLabel.snp.makeConstraints { make in
-                make.left.top.bottom.equalTo(self)
-                make.right.equalTo(self.rightLabel.snp.left).inset(-18)
-            }
-
-            rightLabel.snp.makeConstraints { make in
-                make.right.top.bottom.equalTo(self)
-                make.height.equalTo(AddressLineView.height)
-                make.width.equalTo(AddressLineView.rightWidth)
-            }
-        }
-
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-    }
-
-    fileprivate class HourLineView: UIView {
-        static let openStyle = Style {
-            $0.color = UIColor.secondary500
-            $0.font = UIFont.systemFont(ofSize: 17.0, weight: .semibold)
-        }
-        static let closeStyle = Style {
-            $0.color = UIColor.primary500
-            $0.font = UIFont.systemFont(ofSize: 17.0, weight: .semibold)
-        }
-        static let hourStyle = Style {
-            $0.color = UIColor.black
-            $0.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        }
-        static let boldStyle = Style {
-            $0.color = UIColor.black
-            $0.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-        }
-
-        private let leftLabel: UILabel = {
-            let label = UILabel()
-            label.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
-            label.numberOfLines = 2
-            return label
-        }()
-
-        var hours: [Hour]? {
-            didSet {
-                guard let hours = self.hours else {
-                    self.leftLabel.text = nil
-                    return
-                }
-
-                // TODO
-                let attributedText = NSMutableAttributedString()
-//                switch hours.isOpen() {
-//                case .opening:
-//                    attributedText.append("\("Opening Soon".localized())\n".set(style: PlaceBasicBusinessHourCard.openStyle))
-//                case .open:
-//                    attributedText.append("\("Open Now".localized())\n".set(style: PlaceBasicBusinessHourCard.openStyle))
-//                case .closing:
-//                    attributedText.append("\("Closing Soon".localized())\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
-//                case .closed: fallthrough
-//                case .none:
-//                    attributedText.append("\("Closed Now".localized())\n".set(style: PlaceBasicBusinessHourCard.closeStyle))
-//                }
-
-//                attributedText.append(hours.grouped.todayDayTimeRange.set(style: PlaceBasicBusinessHourCard.hourStyle))
-                self.leftLabel.attributedText = attributedText
-            }
-        }
-
-        override init(frame: CGRect = .zero) {
-            super.init(frame: frame)
-            self.addSubview(leftLabel)
-
-            leftLabel.snp.makeConstraints { make in
-                make.left.right.top.bottom.equalTo(self)
-            }
-        }
-
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
     }
 }
