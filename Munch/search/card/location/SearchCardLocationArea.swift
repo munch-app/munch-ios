@@ -14,7 +14,6 @@ class SearchCardLocationArea: SearchCardView {
             .with(text: "Discover")
             .with(numberOfLines: 1)
 
-
     private let collectionView = SearchCardPlaceCollection()
 
     private let button = MunchButton(style: .secondaryOutline)

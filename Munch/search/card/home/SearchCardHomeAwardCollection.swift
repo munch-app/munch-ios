@@ -9,6 +9,7 @@ import SnapKit
 
 class SearchCardHomeAwardCollection: SearchCardView {
 
+
     override class var cardId: String {
         return "HomeAwardCollection_2018-12-10"
     }

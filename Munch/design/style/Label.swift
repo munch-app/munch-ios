@@ -21,6 +21,10 @@ enum FontStyle {
     case small
     case smallBold
 
+    func height(text: String, width: CGFloat) -> CGFloat {
+        return UILabel.textHeight(withWidth: width, font: self.font, text: text)
+    }
+
     var font: UIFont {
         switch self {
         case .h1:

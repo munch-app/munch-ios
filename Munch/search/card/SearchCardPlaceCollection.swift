@@ -61,7 +61,7 @@ extension SearchCardPlaceCollection: UICollectionViewDataSource, UICollectionVie
 }
 
 class SearchCardPlaceCollectionCell: UICollectionViewCell {
-    public static let width = (UIScreen.main.bounds.width - 48) * 0.8
+    public static let width = (UIScreen.main.bounds.width - 48) * 0.85
     public static let itemSize = CGSize(width: width, height: PlaceCard.height(width: width))
 
     private let card = PlaceCard()
