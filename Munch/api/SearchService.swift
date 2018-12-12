@@ -123,20 +123,20 @@ extension SearchFilterService: TargetType {
     }
 }
 
+struct FilterTag: Codable {
+    var tagId: String
+    var name: String
+    var type: String
+    var count: Int
+}
+
 struct FilterResult: Codable {
     var count: Int
     var tagGraph: TagGraph
     var priceGraph: PriceGraph?
 
     struct TagGraph: Codable {
-        var tags: [Tag]
-
-        struct Tag: Codable {
-            var tagId: String
-            var type: String
-            var name: String
-            var count: Int
-        }
+        var tags: [FilterTag]
     }
 
     struct PriceGraph: Codable {

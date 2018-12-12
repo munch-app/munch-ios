@@ -131,6 +131,10 @@ extension PlaceCard {
         for tag in place.tags.prefix(3) {
             self.tagView.add(text: tag.name, config: TagViewConfig())
         }
+
+        if place.tags.isEmpty {
+            self.tagView.add(text: Tag.restaurant.name, config: TagViewConfig())
+        }
     }
 
     fileprivate func render(location place: Place) {

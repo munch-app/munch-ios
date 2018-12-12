@@ -156,6 +156,10 @@ struct Landmark: ElasticObject, Codable {
     }
 }
 
+extension Tag {
+    static let restaurant = Tag(tagId: "216e7264-f4c9-40a4-86a2-d49793fb49c9", name: "Restaurant", type: .Establishment)
+}
+
 struct Tag: ElasticObject, Codable {
     var tagId: String
     var name: String

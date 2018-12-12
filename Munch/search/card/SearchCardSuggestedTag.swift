@@ -15,15 +15,13 @@ import SwiftRichString
 import SwiftyJSON
 
 class SearchTagSuggestion: SearchCardView {
-    private static let descriptionFont = UIFont.systemFont(ofSize: 16.0, weight: .regular)
     private let titleLabel = UILabel()
             .with(style: .h2)
             .with(color: .white)
-            .with(text: "Can’t decide?".localized())
+            .with(text: "Can't decide?")
             .with(numberOfLines: 1)
 
-    private let descriptionLabel = UILabel()
-            .with(font: descriptionFont)
+    private let descriptionLabel = UILabel(style: .h6)
             .with(color: .white)
             .with(numberOfLines: 0)
 
@@ -38,15 +36,15 @@ class SearchTagSuggestion: SearchCardView {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
-        collectionView.register(SearchCardTagCell.self, forCellWithReuseIdentifier: "SearchCardTagCell")
+        collectionView.register(type: SearchCardTagCell.self)
         collectionView.backgroundColor = .clear
         return collectionView
     }()
 
-    private var tags = [(String, Int)]()
+    private var tags = [FilterTag]()
 
     override func didLoad(card: SearchCard) {
-        self.backgroundColor = .primary300
+        self.backgroundColor = .primary500
         self.addSubview(titleLabel)
         self.addSubview(descriptionLabel)
         self.addSubview(collectionView)
@@ -80,29 +78,20 @@ class SearchTagSuggestion: SearchCardView {
             self.descriptionLabel.text = "Here are some suggestions of what’s good nearby.".localized()
         }
 
-        self.tags = (card["tags"] as? [[String: Any]])?.compactMap { dictionary in
-            if let name = dictionary["name"] as? String, let count = dictionary["count"] as? Int {
-                return (name, count)
-            }
-            return nil
-        } ?? []
-
+        self.tags = card.decode(name: "tags", [FilterTag].self) ?? []
         self.collectionView.setContentOffset(.zero, animated: false)
         self.collectionView.reloadData()
     }
 
     override class func height(card: SearchCard) -> CGFloat {
-        let height = tagSize.height + (topBottom * 4)
-                // For first label height
-                + 24.0
+        let height = tagSize.height + (topBottom * 4) + 24.0
 
-        let titleWidth = width - (leftRight + leftRight)
         if let locationName = card.string(name: "locationName") {
             let text = "Here are some suggestions of what’s good in".localized() + " \(locationName)."
-            return UILabel.textHeight(withWidth: titleWidth, font: descriptionFont, text: text) + height
+            return FontStyle.h6.height(text: text, width: contentWidth) + height
         } else {
             let text = "Here are some suggestions of what’s good nearby.".localized()
-            return UILabel.textHeight(withWidth: titleWidth, font: descriptionFont, text: text) + height
+            return FontStyle.h6.height(text: text, width: contentWidth) + height
         }
     }
 
@@ -117,24 +106,20 @@ extension SearchTagSuggestion: UICollectionViewDataSource, UICollectionViewDeleg
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let tag = tags[indexPath.row]
-
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchCardTagCell", for: indexPath) as! SearchCardTagCell
-        cell.render(name: tag.0, count: tag.1)
+        let cell = collectionView.dequeue(type: SearchCardTagCell.self, for: indexPath)
+        cell.filterTag = tags[indexPath.row]
         return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let tag = tags[indexPath.row]
+        let tag: FilterTag = tags[indexPath.row]
+        guard let type = Tag.TagType(rawValue: tag.type) else {
+            return
+        }
 
-        // TODO Editing
-//        controller.push { query in
-//
-//        }
-
-//        controller.search { query in
-//            query.filter.tag.positives.insert(tag.0)
-//        }
+        controller.push { query in
+            query.filter.tags.append(Tag(tagId: tag.tagId, name: tag.name, type: type))
+        }
     }
 
     fileprivate class SearchCardTagCell: UICollectionViewCell {
@@ -158,6 +143,13 @@ extension SearchTagSuggestion: UICollectionViewDataSource, UICollectionViewDeleg
             return label
         }()
 
+        var filterTag: FilterTag! {
+            didSet {
+                self.nameLabel.text = filterTag.name.capitalized
+                self.countLabel.text = "\(filterTag.count) " + "places".localized()
+            }
+        }
+
         override init(frame: CGRect = .zero) {
             super.init(frame: frame)
             self.addSubview(grid)
@@ -177,11 +169,6 @@ extension SearchTagSuggestion: UICollectionViewDataSource, UICollectionViewDeleg
                 make.left.right.equalTo(self).inset(2)
                 make.bottom.equalTo(self).inset(17)
             }
-        }
-
-        func render(name: String, count: Int) {
-            self.nameLabel.text = name.capitalized
-            self.countLabel.text = "\(count) " + "places".localized()
         }
 
         required init?(coder aDecoder: NSCoder) {
