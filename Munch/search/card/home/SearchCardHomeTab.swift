@@ -35,8 +35,7 @@ class SearchHomeTabCard: SearchCardView {
     let titleLabel = UILabel(style: .h2)
             .with(numberOfLines: 0)
     let createBtn: UIButton = {
-        let label = UILabel().with(font: UIFont.systemFont(ofSize: 16, weight: .medium))
-                .with(color: .ba75)
+        let label = UILabel(style: .h6)
                 .with(text: "(Not Samantha? Create an account here.)")
 
         let button = UIButton()
@@ -77,11 +76,6 @@ class SearchHomeTabCard: SearchCardView {
             maker.top.equalTo(self).inset(topBottom)
         }
 
-        createBtn.snp.makeConstraints { maker in
-            maker.left.right.equalTo(self).inset(leftRight)
-            maker.top.equalTo(titleLabel.snp.bottom).inset(-4)
-        }
-
         collectionView.snp.makeConstraints { maker in
             maker.left.right.equalTo(self)
             maker.bottom.equalTo(self).inset(topBottom)
@@ -92,18 +86,36 @@ class SearchHomeTabCard: SearchCardView {
         }
 
         createBtn.addTarget(self, action: #selector(onCreateAccount), for: .touchUpInside)
+        createBtn.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self).inset(leftRight)
+            maker.top.equalTo(titleLabel.snp.bottom).inset(-4)
+        }
     }
 
     override func willDisplay(card: SearchCard) {
-        self.titleLabel.text = "\(salutation), \(name). Find the perfect spot on Munch."
+        self.titleLabel.text = SearchHomeTabCard.title
 
-        if isLoggedIn {
+        if Authentication.isAuthenticated() {
             createBtn.isHidden = true
             loggedInConstraints.activate()
         } else {
             createBtn.isHidden = false
             loggedInConstraints.deactivate()
         }
+    }
+
+    override class func height(card: SearchCard) -> CGFloat {
+        let min = self.topBottom +
+                FontStyle.h2.height(text: SearchHomeTabCard.title, width: self.contentWidth) +
+                self.topBottom +
+                SearchHomeTabCell.size.height +
+                self.topBottom
+
+        if Authentication.isAuthenticated() {
+            return min
+        }
+
+        return min + 4 + FontStyle.h6.height(text: "(Not Samantha? Create an account here.)", width: self.contentWidth)
     }
 
     @objc func onCreateAccount() {
@@ -116,12 +128,15 @@ class SearchHomeTabCard: SearchCardView {
         }
     }
 
-
     override class var cardId: String {
         return "HomeTab_2018-11-29"
     }
 
-    var salutation: String {
+    class var title: String {
+        return "\(salutation), \(name). Find the perfect spot on Munch."
+    }
+
+    class var salutation: String {
         let date = Date()
         let hour = Calendar.current.component(.hour, from: date)
         let minute = Calendar.current.component(.minute, from: date)
@@ -136,12 +151,8 @@ class SearchHomeTabCard: SearchCardView {
         }
     }
 
-    var name: String {
+    class var name: String {
         return UserProfile.instance?.name ?? "Samantha"
-    }
-
-    var isLoggedIn: Bool {
-        return Authentication.isAuthenticated()
     }
 }
 

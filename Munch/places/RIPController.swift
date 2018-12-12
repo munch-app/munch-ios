@@ -44,6 +44,7 @@ class RIPController: UIViewController {
     private var galleryLoader = RIPGalleryLoader()
 
     private let provider = MunchProvider<PlaceService>()
+    private let recentService = MunchProvider<UserRecentPlaceService>()
     private let disposeBag = DisposeBag()
 
     init(placeId: String) {
@@ -70,6 +71,16 @@ class RIPController: UIViewController {
 
     func start(data: PlaceData) {
         RecentPlaceDatabase().add(id: self.placeId, data: data.place)
+        if Authentication.isAuthenticated() {
+            self.recentService.rx.request(.put(self.placeId)).subscribe { event in
+                switch event {
+                case .success: return
+
+                case .error(let error):
+                    self.alert(error: error)
+                }
+            }
+        }
 
         // Data Binding
         self.data = data

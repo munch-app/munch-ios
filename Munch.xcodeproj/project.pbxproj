@@ -72,7 +72,6 @@
 		B4B737860D03B00FCF941B40 /* SearchCardInjected.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73FF3714C69FD7C372D8C /* SearchCardInjected.swift */; };
 		B4B737C25A3CDC08D03FC64E /* SearchCardLocal.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7340C343F684AB0020CEA /* SearchCardLocal.swift */; };
 		B4B7380CEE70044FE930F722 /* module.modulemap in Sources */ = {isa = PBXBuildFile; fileRef = B4B73D56D29ADB145295DB94 /* module.modulemap */; };
-		B4B7382A92E97651FFCA5A2E /* UserPlaceActivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73690A98B7622FC7BD1B4 /* UserPlaceActivityService.swift */; };
 		B4B738564B264AD93071E3E0 /* SearchCardHomePopularPlace.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737F525D72B78432937A2 /* SearchCardHomePopularPlace.swift */; };
 		B4B7388AF9FD83F39F217600 /* CollectionPlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B734F5A092F3E9F0F16379 /* CollectionPlaceController.swift */; };
 		B4B738B028A98E69BD3403F5 /* MunchTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732B20AE677AF6243099A /* MunchTagView.swift */; };
@@ -114,6 +113,7 @@
 		B4B73D25850A0104B2209E9D /* Shadow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73655642A73F406ABBFA7 /* Shadow.swift */; };
 		B4B73D4AEC1BB518A79670A1 /* FilterCellTiming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732F6C13FA997F61D35F0 /* FilterCellTiming.swift */; };
 		B4B73D5F9F355089B7D4384C /* RIPCardHour.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737BF2D6F72BC43E48CDB /* RIPCardHour.swift */; };
+		B4B73D93C5C28CB6929611DA /* UserPlaceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B734A171C3B0156CEFCB2C /* UserPlaceService.swift */; };
 		B4B73DB2A0AAAE9192A75A0D /* SearchCardLocationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B739C23BEA04C04A0B70C7 /* SearchCardLocationBanner.swift */; };
 		B4B73DB576F9692FA03D785F /* RIPCardMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7312DBF1E812FF4C051CD /* RIPCardMenu.swift */; };
 		B4B73DC66585ACDED59D2A4E /* FilterHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73B3C572E241C11D57AE5 /* FilterHeaderView.swift */; };
@@ -237,6 +237,7 @@
 		B4B7340F0AD8271793C8BF1B /* FeedService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedService.swift; sourceTree = "<group>"; };
 		B4B7347AD60C415D1700F116 /* AccountBoardingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountBoardingController.swift; sourceTree = "<group>"; };
 		B4B7348322E099298BEB7546 /* SearchCardPlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardPlace.swift; sourceTree = "<group>"; };
+		B4B734A171C3B0156CEFCB2C /* UserPlaceService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPlaceService.swift; sourceTree = "<group>"; };
 		B4B734BDB7C21C04F0DCF94C /* RIPCardAward.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPCardAward.swift; sourceTree = "<group>"; };
 		B4B734C84BE5379569DEC024 /* FilterControllerLocationSearch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterControllerLocationSearch.swift; sourceTree = "<group>"; };
 		B4B734D7C6E45CD6D4F8E8E8 /* MunchService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchService.swift; sourceTree = "<group>"; };
@@ -248,7 +249,6 @@
 		B4B7365E3547A34AA671E144 /* SearchCardHomeRecentPlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardHomeRecentPlace.swift; sourceTree = "<group>"; };
 		B4B73669E03801B1ECEDF138 /* RIPFooterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPFooterView.swift; sourceTree = "<group>"; };
 		B4B7368204D2AD9856509B6D /* ShimmerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShimmerView.swift; sourceTree = "<group>"; };
-		B4B73690A98B7622FC7BD1B4 /* UserPlaceActivityService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPlaceActivityService.swift; sourceTree = "<group>"; };
 		B4B73695F4F2693D0E750704 /* ViewExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 		B4B736ABBC43A470FD04FBC9 /* AuthenticateService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticateService.swift; sourceTree = "<group>"; };
 		B4B736C1DC599DBB26C5C9F9 /* MunchSearchTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchSearchTextField.swift; sourceTree = "<group>"; };
@@ -685,8 +685,8 @@
 				B4B732F9B4B08AB071D146BA /* PlaceService.swift */,
 				B4B738B688AE5A34954680EA /* SearchService.swift */,
 				B4B73320FAFE5D794A6CC576 /* UserService.swift */,
-				B4B73690A98B7622FC7BD1B4 /* UserPlaceActivityService.swift */,
 				B4B736ABBC43A470FD04FBC9 /* AuthenticateService.swift */,
+				B4B734A171C3B0156CEFCB2C /* UserPlaceService.swift */,
 			);
 			path = api;
 			sourceTree = "<group>";
@@ -1096,7 +1096,6 @@
 				B4B73BB5EA282D04EAB6453A /* PlaceService.swift in Sources */,
 				B4B732A34ADA308FD9FB3F83 /* SearchService.swift in Sources */,
 				B4B7397DAC3EA7F58AB31DB8 /* UserService.swift in Sources */,
-				B4B7382A92E97651FFCA5A2E /* UserPlaceActivityService.swift in Sources */,
 				B4B734D22634645ACBFBF487 /* Authentication.swift in Sources */,
 				B4B73A4F99622AF0D943C712 /* AccountBoardingController.swift in Sources */,
 				B4B730982D68D10417555D23 /* Color.swift in Sources */,
@@ -1150,6 +1149,7 @@
 				B4B73CDCE6FD58E9F5EF7012 /* SearchCardLocationArea.swift in Sources */,
 				B4B73DB2A0AAAE9192A75A0D /* SearchCardLocationBanner.swift in Sources */,
 				B4B73C0BC8D94B78ACD8CB0F /* SearchCardPlaceCollection.swift in Sources */,
+				B4B73D93C5C28CB6929611DA /* UserPlaceService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
