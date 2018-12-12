@@ -194,8 +194,19 @@ struct AssumptionToken: Codable {
 struct SearchQuery: Codable {
     static let version = "2018-11-28"
 
+    var feature: Feature
+    var collection: Collection?
+
     var filter: Filter
     var sort: Sort
+
+    enum Feature: String, Codable {
+        case Home
+        case Search
+        case Location
+        case Collection
+        case Occasion
+    }
 
     struct Filter: Codable {
         var price: Price?
@@ -249,29 +260,43 @@ struct SearchQuery: Codable {
     struct Sort: Codable, Equatable {
         var type: String?
     }
+
+    struct Collection: Codable {
+        var name: String?
+        var collectionId: String
+    }
 }
 
 extension SearchQuery {
+    init(collection: SearchQuery.Collection) {
+        self.init(feature: .Collection, collection: collection, filter: SearchQuery.Filter(), sort: SearchQuery.Sort())
+    }
+
+    init(feature: SearchQuery.Feature) {
+        self.init(feature: feature, collection: nil, filter: SearchQuery.Filter(), sort: SearchQuery.Sort())
+    }
+
     init() {
-        self.init(filter: SearchQuery.Filter(), sort: SearchQuery.Sort())
+        self.init(feature: .Search, collection: nil, filter: SearchQuery.Filter(), sort: SearchQuery.Sort())
 
-        if let tags = UserSetting.instance?.search.tags {
-            if (tags.contains("halal")) {
-                filter.tags.append(Tag(
-                        tagId: "abb22d3d-7d23-4677-b4ef-a3e09f2f9ada",
-                        name: "Halal",
-                        type: .Amenities
-                ))
-            }
-
-            if (tags.contains("vegetarian options")) {
-                filter.tags.append(Tag(
-                        tagId: "fdf77b3b-8f90-419f-b711-dd25f97046fe",
-                        name: "Vegetarian Options",
-                        type: .Amenities
-                ))
-            }
-        }
+        // TODO UserSearchPreference
+//        if let tags = UserSetting.instance?.search.tags {
+//            if (tags.contains("halal")) {
+//                filter.tags.append(Tag(
+//                        tagId: "abb22d3d-7d23-4677-b4ef-a3e09f2f9ada",
+//                        name: "Halal",
+//                        type: .Amenities
+//                ))
+//            }
+//
+//            if (tags.contains("vegetarian options")) {
+//                filter.tags.append(Tag(
+//                        tagId: "fdf77b3b-8f90-419f-b711-dd25f97046fe",
+//                        name: "Vegetarian Options",
+//                        type: .Amenities
+//                ))
+//            }
+//        }
     }
 }
 
@@ -312,6 +337,7 @@ extension SearchQuery {
  Access json through the subscript
  */
 struct SearchCard {
+    public static let empty = SearchCard(cardId: "EmptyCard")
     private static let decoder = JSONDecoder()
 
     var cardId: String

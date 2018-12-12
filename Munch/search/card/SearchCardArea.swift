@@ -14,7 +14,7 @@ import SwiftRichString
 
 import SwiftyJSON
 
-class SearchAreaClusterListCard: UITableViewCell, SearchCardView {
+class SearchAreaClusterListCard: SearchCardView {
     private let titleLabel = UILabel()
             .with(style: .h2)
             .with(text: "Discover Locations".localized())
@@ -39,9 +39,7 @@ class SearchAreaClusterListCard: UITableViewCell, SearchCardView {
 
     private var instanceId: String?
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
+    override func didLoad(card: SearchCard) {
         self.addSubview(titleLabel)
         self.addSubview(collectionView)
 
@@ -61,9 +59,7 @@ class SearchAreaClusterListCard: UITableViewCell, SearchCardView {
         }
     }
 
-    func render(card: SearchCard, delegate: SearchTableViewDelegate) {
-        self.delegate = delegate
-
+    override func willDisplay(card: SearchCard) {
         if self.instanceId == card.instanceId {
             return
         }
@@ -79,11 +75,9 @@ class SearchAreaClusterListCard: UITableViewCell, SearchCardView {
         self.collectionView.reloadData()
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    override class var cardId: String {
+        return "AreaClusterList_2018-06-21"
     }
-
-    private(set) static var cardId: String = "injected_AreaClusterList_20180621"
 }
 
 extension SearchAreaClusterListCard: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -179,8 +173,7 @@ extension SearchAreaClusterListCard: UICollectionViewDataSource, UICollectionVie
     }
 }
 
-class SearchAreaClusterHeaderCard: UITableViewCell, SearchCardView {
-    static let contentWidth = width - (leftRight + leftRight)
+class SearchAreaClusterHeaderCard: SearchCardView {
     static let nameFont = UIFont.systemFont(ofSize: 21.0, weight: .medium)
     static let descriptionFont = UIFont.systemFont(ofSize: 15.0, weight: .regular)
     static let imageSize: CGSize = {
@@ -221,10 +214,7 @@ class SearchAreaClusterHeaderCard: UITableViewCell, SearchCardView {
     private var descriptionAddressConstraint: Constraint!
     private var imageAddressConstraint: Constraint!
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-
+    override func didLoad(card: SearchCard) {
         grid.addSubview(topImageView)
         grid.addSubview(nameLabel)
         grid.addSubview(descriptionLabel)
@@ -266,7 +256,7 @@ class SearchAreaClusterHeaderCard: UITableViewCell, SearchCardView {
         }
     }
 
-    func render(card: SearchCard, delegate: SearchTableViewDelegate) {
+    override func willDisplay(card: SearchCard) {
         guard let area: Area = card.decode(name: "area", Area.self) else {
             return
         }
@@ -304,7 +294,7 @@ class SearchAreaClusterHeaderCard: UITableViewCell, SearchCardView {
         }
     }
 
-    static func height(card: SearchCard) -> CGFloat {
+    override class func height(card: SearchCard) -> CGFloat {
         var height: CGFloat = topBottom + topBottom
         let titleWidth = width - (leftRight + leftRight)
 
@@ -336,16 +326,14 @@ class SearchAreaClusterHeaderCard: UITableViewCell, SearchCardView {
         return height
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func layoutSubviews() {
         super.layoutSubviews()
         self.topImageView.layer.cornerRadius = 3
     }
 
-    private(set) static var cardId: String = "injected_AreaClusterHeader_20180621"
+    override class var cardId: String {
+        return "AreaClusterHeader_2018-06-21"
+    }
 
     fileprivate class AddressLineView: SRCopyableView {
         static let headerStyle = Style {

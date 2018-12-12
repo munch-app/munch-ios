@@ -69,7 +69,30 @@ extension MunchSearchTextField {
         self.leftImageView.image = UIImage(named: icon.rawValue)
     }
 
-    func set(tokens: [FilterToken]) {
+    func set(searchQuery: SearchQuery) {
+        switch searchQuery.feature {
+        case .Home:
+            self.placeholder = "Home"
+
+        case .Collection:
+            if let name = searchQuery.collection?.name {
+                self.placeholder = name
+            } else {
+                self.placeholder = "Collection"
+            }
+
+        case .Location:
+            self.placeholder = "Locations"
+
+        case .Occasion:
+            self.placeholder = "Occasions"
+
+        case .Search:
+            self.set(tokens: FilterToken.getTokens(query: searchQuery))
+        }
+    }
+
+    private func set(tokens: [FilterToken]) {
         let attributed = NSMutableAttributedString()
 
         if let first = tokens.get(0)?.text {

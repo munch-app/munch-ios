@@ -12,13 +12,10 @@ import Localize_Swift
 
 import SnapKit
 
-class SearchPlaceCard: UITableViewCell, SearchCardView {
+class SearchPlaceCard: SearchCardView {
     let placeCard = PlaceCard()
-    var place: Place!
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
+    override func didLoad(card: SearchCard) {
         self.addSubview(placeCard)
 
         placeCard.snp.makeConstraints { maker in
@@ -27,18 +24,20 @@ class SearchPlaceCard: UITableViewCell, SearchCardView {
         }
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func render(card: SearchCard, delegate: SearchTableViewDelegate) {
+    override func willDisplay(card: SearchCard) {
         if let place = card.decode(name: "place", Place.self) {
-            self.place = place
             self.placeCard.place = place
         }
     }
 
-    static var cardId: String {
+    override func didSelect(card: SearchCard, controller: SearchController) {
+        if let place = card.decode(name: "place", Place.self) {
+            let controller = RIPController(placeId: place.placeId)
+            self.controller.navigationController!.pushViewController(controller, animated: true)
+        }
+    }
+
+    override class var cardId: String {
         return "Place_2018-12-29"
     }
 }

@@ -130,8 +130,6 @@ enum SettingCellType {
     case instagramConnect
     case feedback
     case logout
-
-    case preferenceTag(String)
 }
 
 extension ProfileSettingController: UITableViewDataSource, UITableViewDelegate {
@@ -143,17 +141,12 @@ extension ProfileSettingController: UITableViewDataSource, UITableViewDelegate {
         register(cellClass: SettingInstagramCell.self)
         register(cellClass: SettingLogoutCell.self)
         register(cellClass: SettingFeedbackCell.self)
-        register(cellClass: SettingPreferenceTagCell.self)
     }
 
     private var items: [(String?, [SettingCellType])] {
         return [
             ("CONTENT PARTNER".localized(), [
                 SettingCellType.instagramConnect
-            ]),
-            ("SEARCH PREFERENCE".localized(), [
-                SettingCellType.preferenceTag("Halal"),
-                SettingCellType.preferenceTag("Vegetarian Options"),
             ]),
             ("ACCOUNT".localized(), [
                 SettingCellType.feedback,
@@ -197,10 +190,6 @@ extension ProfileSettingController: UITableViewDataSource, UITableViewDelegate {
             return dequeue(cellClass: SettingLogoutCell.self)
         case .feedback:
             return dequeue(cellClass: SettingFeedbackCell.self)
-        case .preferenceTag(let text):
-            let cell = dequeue(cellClass: SettingPreferenceTagCell.self) as! SettingPreferenceTagCell
-            cell.render(tag: text, checked: setting?.search.tags.contains(text.lowercased()) ?? false)
-            return cell
         default:
             return UITableViewCell()
         }
@@ -220,48 +209,6 @@ extension ProfileSettingController: UITableViewDataSource, UITableViewDelegate {
         case .feedback:
             if let url = URL(string: "mailto:feedback@munch.app") {
                 UIApplication.shared.open(url)
-            }
-        case .preferenceTag(let text):
-            let tag = text.lowercased()
-
-            if let setting = self.setting {
-                if setting.search.tags.contains(tag) {
-                    let cell = tableView.cellForRow(at: indexPath) as! SettingPreferenceTagCell
-                    cell.checkButton.setOn(false, animated: true)
-
-                    UserSetting.apply(search: { search in
-                        var search = search
-                        if let index = search.tags.index(of: tag) {
-                            search.tags.remove(at: index)
-                        }
-                        return search
-                    }) { result in
-                        switch result {
-                        case .success(let setting):
-                            self.setting = setting
-                            self.view.makeToast("Removed '\(tag.capitalized)' from Search Preference.", image: UIImage(named: "RIP-Toast-Close"), style: DefaultToastStyle)
-                        case .error(let error):
-                            self.alert(error: error)
-                        }
-                    }
-                } else {
-                    let cell = tableView.cellForRow(at: indexPath) as! SettingPreferenceTagCell
-                    cell.checkButton.setOn(true, animated: true)
-
-                    UserSetting.apply(search: { search in
-                        var search = search
-                        search.tags.append(tag)
-                        return search
-                    }) { result in
-                        switch result {
-                        case .success(let setting):
-                            self.setting = setting
-                            self.view.makeToast("Added '\(tag.capitalized)' to Search Preference.", image: UIImage(named: "RIP-Toast-Checkmark"), style: DefaultToastStyle)
-                        case .error(let error):
-                            self.alert(error: error)
-                        }
-                    }
-                }
             }
         default:
             return
@@ -287,56 +234,6 @@ fileprivate class SettingInstagramCell: UITableViewCell {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-}
-
-fileprivate class SettingPreferenceTagCell: UITableViewCell {
-    private let titleView: UILabel = {
-        let titleView = UILabel()
-        titleView.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        titleView.textColor = .black
-        return titleView
-    }()
-
-    fileprivate let checkButton: BEMCheckBox = {
-        let checkButton = BEMCheckBox(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
-        checkButton.boxType = .circle
-        checkButton.lineWidth = 1.5
-        checkButton.tintColor = UIColor(hex: "444444")
-        checkButton.animationDuration = 0.25
-        checkButton.isEnabled = false
-
-        checkButton.onCheckColor = .white
-        checkButton.onTintColor = .primary500
-        checkButton.onFillColor = .primary500
-        return checkButton
-    }()
-
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.addSubview(titleView)
-        self.addSubview(checkButton)
-
-        titleView.snp.makeConstraints { make in
-            make.left.equalTo(self).inset(24)
-            make.right.equalTo(checkButton.snp.left).inset(-12)
-            make.top.bottom.equalTo(self).inset(10)
-        }
-
-        checkButton.snp.makeConstraints { make in
-            make.top.bottom.equalTo(self).inset(10)
-            make.right.equalTo(self).inset(18)
-        }
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func render(tag: String, checked: Bool) {
-        self.titleView.text = tag
-
-        checkButton.setOn(checked, animated: false)
     }
 }
 

@@ -23,7 +23,7 @@ class SearchHeaderView: UIView {
         didSet {
             if self.controller.histories.count > 1 {
                 self.textButton.field.set(icon: .back)
-                self.textButton.field.set(tokens: FilterToken.getTokens(query: self.searchQuery))
+                self.textButton.field.set(searchQuery: self.searchQuery)
                 self.backButton.isHidden = false
             } else {
                 self.textButton.field.placeholder = "Try \"Chinese\""

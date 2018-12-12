@@ -11,6 +11,20 @@ import UIKit
 
 import Localize_Swift
 
+enum TabBarItem {
+    case Discover
+    case Feed
+    case Profile
+
+    var index: Int {
+        switch self {
+        case .Discover: return 0
+        case .Feed: return 1
+        case .Profile: return 2
+        }
+    }
+}
+
 enum InitialViewProvider {
 
     /**
@@ -41,7 +55,14 @@ enum InitialViewProvider {
 
 // MARK: TabBar Selecting
 extension MunchTabBarController: UITabBarControllerDelegate {
+    override var selectedIndex: Int {
+        didSet {
+            self.previousController = self.viewControllers![selectedIndex]
+        }
+    }
+
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+
         switch viewController {
         case is ProfileRootController where Authentication.isAuthenticated():
             return true

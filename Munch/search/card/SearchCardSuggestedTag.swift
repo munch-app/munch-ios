@@ -14,7 +14,7 @@ import SwiftRichString
 
 import SwiftyJSON
 
-class SearchTagSuggestion: UITableViewCell, SearchCardView {
+class SearchTagSuggestion: SearchCardView {
     private static let descriptionFont = UIFont.systemFont(ofSize: 16.0, weight: .regular)
     private let titleLabel = UILabel()
             .with(style: .h2)
@@ -43,12 +43,9 @@ class SearchTagSuggestion: UITableViewCell, SearchCardView {
         return collectionView
     }()
 
-//    private var controller: SearchController!
     private var tags = [(String, Int)]()
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
+    override func didLoad(card: SearchCard) {
         self.backgroundColor = .primary300
         self.addSubview(titleLabel)
         self.addSubview(descriptionLabel)
@@ -76,7 +73,7 @@ class SearchTagSuggestion: UITableViewCell, SearchCardView {
         }
     }
 
-    func render(card: SearchCard, delegate: SearchTableViewDelegate) {
+    override func willDisplay(card: SearchCard) {
         if let locationName = card.string(name: "locationName") {
             self.descriptionLabel.text = "Here are some suggestions of what’s good in".localized() + " \(locationName)."
         } else {
@@ -94,7 +91,7 @@ class SearchTagSuggestion: UITableViewCell, SearchCardView {
         self.collectionView.reloadData()
     }
 
-    class func height(card: SearchCard) -> CGFloat {
+    override class func height(card: SearchCard) -> CGFloat {
         let height = tagSize.height + (topBottom * 4)
                 // For first label height
                 + 24.0
@@ -109,11 +106,9 @@ class SearchTagSuggestion: UITableViewCell, SearchCardView {
         }
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    override class var cardId: String {
+        return "SuggestedTag_2018-05-11"
     }
-
-    private(set) static var cardId: String = "injected_SuggestedTag_20180511"
 }
 
 extension SearchTagSuggestion: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -133,6 +128,10 @@ extension SearchTagSuggestion: UICollectionViewDataSource, UICollectionViewDeleg
         let tag = tags[indexPath.row]
 
         // TODO Editing
+//        controller.push { query in
+//
+//        }
+
 //        controller.search { query in
 //            query.filter.tag.positives.insert(tag.0)
 //        }

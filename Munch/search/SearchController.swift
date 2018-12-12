@@ -38,6 +38,7 @@ class SearchRootController: UINavigationController, UINavigationControllerDelega
 
 class SearchController: UIViewController {
     static let inset = UIEdgeInsets(top: SearchHeaderView.height, left: 0, bottom: 0, right: 0)
+
     private let headerView = SearchHeaderView()
     private let recent = RecentSearchQueryDatabase()
     private let searchTableView = SearchTableView(screen: .search, inset: inset)
@@ -63,10 +64,11 @@ class SearchController: UIViewController {
             maker.edges.equalTo(self.view)
         }
 
+        self.searchTableView.controller = self
         self.searchTableView.cardDelegate = self
         self.headerView.controller = self
 
-        self.push(searchQuery: SearchQuery())
+        self.push(searchQuery: SearchQuery(feature: .Home))
     }
 
     var histories = [SearchQuery]()
@@ -98,7 +100,7 @@ class SearchController: UIViewController {
 
     func reset() {
         histories.removeAll()
-        push(searchQuery: SearchQuery())
+        push(searchQuery: SearchQuery(feature: .Home))
     }
 }
 

@@ -16,7 +16,7 @@ import SwiftyJSON
 import Shimmer
 import NVActivityIndicatorView
 
-class SearchShimmerPlaceCard: UITableViewCell, SearchCardView {
+class SearchShimmerPlaceCard: SearchCardView {
 
     let topView = ShimmerView()
     let bottomView = BottomView()
@@ -96,12 +96,12 @@ class SearchShimmerPlaceCard: UITableViewCell, SearchCardView {
     func render(card: SearchCard, delegate: SearchTableViewDelegate) {
     }
 
-    static var cardId: String {
+    override class var cardId: String {
         return "shimmer_DiscoverShimmerPlaceCard"
     }
 }
 
-class SearchStaticNoResultCard: UITableViewCell, SearchCardView {
+class SearchStaticNoResultCard: SearchCardView {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
@@ -127,12 +127,12 @@ class SearchStaticNoResultCard: UITableViewCell, SearchCardView {
     func render(card: SearchCard, delegate: SearchTableViewDelegate) {
     }
 
-    static var cardId: String {
+    override class var cardId: String {
         return "static_SearchStaticNoResultCard"
     }
 }
 
-class SearchStaticErrorCard: UITableViewCell, SearchCardView {
+class SearchStaticErrorCard: SearchCardView {
     private static let titleFont = UIFont.systemFont(ofSize: 26.0, weight: .semibold)
     private static let messageFont = UIFont.systemFont(ofSize: 17.0, weight: .regular)
 
@@ -141,9 +141,7 @@ class SearchStaticErrorCard: UITableViewCell, SearchCardView {
     private let descriptionLabel = UILabel()
     private let actionButton = UIButton()
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
+    override func didLoad(card: SearchCard) {
         self.addSubview(titleImage)
         self.addSubview(titleLabel)
         self.addSubview(descriptionLabel)
@@ -166,16 +164,12 @@ class SearchStaticErrorCard: UITableViewCell, SearchCardView {
         }
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func render(card: SearchCard, delegate: SearchTableViewDelegate) {
+    override func willDisplay(card: SearchCard) {
         self.titleLabel.text = card.string(name: "title")
         self.descriptionLabel.text = card.string(name: "message")
     }
 
-    static func height(card: SearchCard) -> CGFloat {
+    override class func height(card: SearchCard) -> CGFloat {
         var height: CGFloat = topBottom + 20 + 24
 
         if let title = card.string(name: "title") {
@@ -213,20 +207,18 @@ class SearchStaticErrorCard: UITableViewCell, SearchCardView {
         case location
     }
 
-    static var cardId: String {
+    override class var cardId: String {
         return "static_SearchStaticErrorCard"
     }
 }
 
-class SearchStaticUnsupportedCard: UITableViewCell, SearchCardView {
+class SearchStaticUnsupportedCard: SearchCardView {
     private let titleImage = UIImageView()
     private let titleLabel = UILabel()
     private let descriptionLabel = UILabel()
     private let actionButton = UIButton()
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
+    override func didLoad(card: SearchCard) {
         self.addSubview(titleImage)
         self.addSubview(titleLabel)
         self.addSubview(descriptionLabel)
@@ -273,42 +265,23 @@ class SearchStaticUnsupportedCard: UITableViewCell, SearchCardView {
         }
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func render(card: SearchCard, delegate: SearchTableViewDelegate) {
-    }
-
-    static var cardId: String {
+    override class var cardId: String {
         return "SearchStaticUnsupportedCard"
     }
 }
 
-class SearchStaticLoadingCard: UITableViewCell, SearchCardView {
-    private var indicator: NVActivityIndicatorView!
+class SearchStaticLoadingCard: SearchCardView {
+    private var indicator = NVActivityIndicatorView(frame: .zero, type: .ballBeat, color: .primary700, padding: 10)
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-
-        let frame = CGRect(origin: CGPoint.zero, size: CGSize(width: UIScreen.main.bounds.width, height: 50))
-        self.indicator = NVActivityIndicatorView(frame: frame, type: .ballBeat, color: .primary700, padding: 10)
-        indicator.startAnimating()
+    override func didLoad(card: SearchCard) {
         self.addSubview(indicator)
 
-        indicator.snp.makeConstraints { make in
-            make.height.equalTo(50)
-            make.left.right.top.equalTo(self)
-            make.bottom.equalTo(self).inset(10)
+        indicator.startAnimating()
+        indicator.snp.makeConstraints { maker in
+            maker.height.equalTo(50).priority(.high)
+            maker.left.right.top.equalTo(self)
+            maker.bottom.equalTo(self).inset(10)
         }
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func render(card: SearchCard, delegate: SearchTableViewDelegate) {
     }
 
     func startAnimating() {
@@ -319,16 +292,33 @@ class SearchStaticLoadingCard: UITableViewCell, SearchCardView {
         self.indicator.stopAnimating()
     }
 
-    static var cardId: String {
+    override class var cardId: String {
         return "static_SearchStaticLoadingCard"
     }
 }
 
-class SearchStaticEmptyCard: UITableViewCell, SearchCardView {
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+class SearchStaticTopCard: SearchCardView {
+    override func didLoad(card: SearchCard) {
+        self.backgroundColor = .clear
+
+        let view = UIView()
+        view.backgroundColor = .clear
+        self.addSubview(view)
+        view.snp.makeConstraints { maker in
+            maker.height.equalTo(self.topBottom).priority(999)
+            maker.edges.equalTo(self)
+        }
+    }
+
+    override class var cardId: String {
+        return "static_SearchStaticTopCard"
+    }
+}
+
+class SearchStaticEmptyCard: SearchCardView {
+    override init(style: CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
-        self.backgroundColor = .white
 
         let view = UIView()
         self.addSubview(view)
@@ -339,39 +329,10 @@ class SearchStaticEmptyCard: UITableViewCell, SearchCardView {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
     }
 
-    func render(card: SearchCard, delegate: SearchTableViewDelegate) {
-    }
-
-    static var cardId: String {
+    override class var cardId: String {
         return "static_SearchStaticEmptyCard"
-    }
-}
-
-class SearchStaticTopCard: UITableViewCell, SearchCardView {
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-        self.backgroundColor = .white
-
-        let view = UIView()
-        self.addSubview(view)
-        view.snp.makeConstraints { make in
-            make.height.equalTo(self.topBottom).priority(999)
-            make.edges.equalTo(self)
-        }
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func render(card: SearchCard, delegate: SearchTableViewDelegate) {
-    }
-
-    static var cardId: String {
-        return "static_SearchStaticHeight16Card"
     }
 }

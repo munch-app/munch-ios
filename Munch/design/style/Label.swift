@@ -26,11 +26,11 @@ enum FontStyle {
         case .h1:
             return UIFont.systemFont(ofSize: 32, weight: .semibold)
         case .h2:
-            return UIFont.systemFont(ofSize: 24, weight: .semibold)
+            return UIFont.systemFont(ofSize: 23, weight: .semibold)
         case .h3:
-            return UIFont.systemFont(ofSize: 20, weight: .semibold)
+            return UIFont.systemFont(ofSize: 21, weight: .semibold)
         case .h4:
-            return UIFont.systemFont(ofSize: 18, weight: .semibold)
+            return UIFont.systemFont(ofSize: 19, weight: .semibold)
         case .h5:
             return UIFont.systemFont(ofSize: 17, weight: .semibold)
         case .h6:

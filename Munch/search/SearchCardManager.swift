@@ -38,6 +38,7 @@ class SearchCardManager {
                 .subscribe { event in
                     switch event {
                     case .success:
+                        self.cards = []
                         self.search(observer)
                                 .disposed(by: self.disposeBag)
 
@@ -53,14 +54,6 @@ class SearchCardManager {
         self.search(observer)
                 .disposed(by: disposeBag)
     }
-
-//    public func replace(query: SearchQuery, _ observer: @escaping () -> ()) {
-//        self.searchQuery = query
-//        self.more = true
-//        self.from = 0
-//        self.search(observer)
-//                .disposed(by: disposeBag)
-//    }
 
     private func search(_ observer: @escaping () -> ()) -> Disposable {
         if self.loading || !self.more {

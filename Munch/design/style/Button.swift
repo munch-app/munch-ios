@@ -10,10 +10,14 @@ import SnapKit
 enum MunchButtonStyle {
     case border
     case borderSmall
+
     case primary
     case primarySmall
+    case primaryOutline
+
     case secondary
     case secondarySmall
+    case secondaryOutline
 }
 
 extension MunchButtonStyle {
@@ -44,7 +48,9 @@ extension MunchButtonStyle {
     var borderWidth: CGFloat {
         switch self {
         case .border: fallthrough
-        case .borderSmall:
+        case .borderSmall: fallthrough
+        case .secondaryOutline: fallthrough
+        case .primaryOutline:
             return 1
 
         default:
@@ -52,8 +58,29 @@ extension MunchButtonStyle {
         }
     }
 
+    var borderColor: CGColor {
+        switch self {
+        case .border: fallthrough
+        case .borderSmall:
+            return UIColor.ba15.cgColor
+
+        case .secondaryOutline:
+            return UIColor.secondary500.cgColor
+
+        case .primaryOutline:
+            return UIColor.primary500.cgColor
+
+        default:
+            return UIColor.clear.cgColor
+        }
+    }
+
     var background: UIColor {
         switch self {
+        case .secondaryOutline: fallthrough
+        case .primaryOutline:
+            return .white
+
         case .border: fallthrough
         case .borderSmall:
             return UIColor(hex: "FCFCFC")
@@ -73,6 +100,12 @@ extension MunchButtonStyle {
         case .border: fallthrough
         case .borderSmall:
             return .black
+
+        case .secondaryOutline:
+            return .secondary500
+
+        case .primaryOutline:
+            return .primary500
 
         default:
             return .white
@@ -103,7 +136,7 @@ class MunchButton: UIButton {
 
         self.backgroundColor = style.background
         self.layer.borderWidth = style.borderWidth
-        self.layer.borderColor = UIColor.ba15.cgColor
+        self.layer.borderColor = style.borderColor
         self.nameLabel.textColor = style.color
         self.nameLabel.font = style.font
 
@@ -130,6 +163,11 @@ class MunchButton: UIButton {
 extension MunchButton {
     func with(text: String?) -> MunchButton {
         self.nameLabel.text = text
+        return self
+    }
+
+    func with(color: UIColor) -> MunchButton {
+        self.nameLabel.textColor = color
         return self
     }
 }

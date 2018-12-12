@@ -6,24 +6,60 @@
 import Foundation
 import UIKit
 
-protocol SearchCardView {
-    func render(card: SearchCard, delegate: SearchTableViewDelegate)
+class SearchCardView: UITableViewCell {
 
-    // The these CGFloat methods are used to help SearchCard calculate it's height & width
+    var controller: SearchController!
 
-    var leftRight: CGFloat { get }
-    var topBottom: CGFloat { get }
+    func register(card: SearchCard, controller: SearchController) {
+        if self.controller == nil {
+            self.selectionStyle = .none
+            self.controller = controller
+            self.didLoad(card: card)
+        }
+    }
 
-    static var leftRight: CGFloat { get }
-    static var topBottom: CGFloat { get }
+    func didLoad(card: SearchCard) {
 
-    static var width: CGFloat { get }
-    static var contentWidth: CGFloat { get }
+    }
 
-    static func height(card: SearchCard) -> CGFloat
+    func willDisplay(card: SearchCard) {
 
-    static var cardId: String { get }
+    }
+
+    /**
+     * Card did selected
+     */
+    func didSelect(card: SearchCard, controller: SearchController) {
+
+    }
+
+    class func height(card: SearchCard) -> CGFloat {
+        return UITableViewAutomaticDimension
+    }
+
+    class var cardId: String {
+        return ""
+    }
 }
+
+//protocol SearchCardView {
+//    func render(card: SearchCard, delegate: SearchTableViewDelegate)
+//
+//    // The these CGFloat methods are used to help SearchCard calculate it's height & width
+//
+//    var leftRight: CGFloat { get }
+//    var topBottom: CGFloat { get }
+//
+//    static var leftRight: CGFloat { get }
+//    static var topBottom: CGFloat { get }
+//
+//    static var width: CGFloat { get }
+//    static var contentWidth: CGFloat { get }
+//
+//    static func height(card: SearchCard) -> CGFloat
+//
+//    static var cardId: String { get }
+//}
 
 extension SearchCardView {
     var leftRight: CGFloat {
@@ -48,11 +84,6 @@ extension SearchCardView {
 
     static var contentWidth: CGFloat {
         return width - (leftRight * 2)
-    }
-
-    // Default: Autosizing
-    static func height(card: SearchCard) -> CGFloat {
-        return UITableViewAutomaticDimension
     }
 
     /**

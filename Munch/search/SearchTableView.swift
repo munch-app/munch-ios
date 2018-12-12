@@ -14,6 +14,7 @@ import FirebaseAnalytics
 class SearchTableView: UITableView {
     var cardManager: SearchCardManager
     var cardDelegate: SearchTableViewDelegate!
+    var controller: SearchController!
 
     var cardTypes = [String: SearchCardView.Type]()
     var cards: [SearchCard] {
@@ -74,9 +75,17 @@ class SearchTableView: UITableView {
 
         register(SearchNoLocationCard.self)
         register(SearchNoResultCard.self)
-        register(SearchNoResultLocationCard.self)
+
+        register(SearchCardCollectionHeader.self)
 
         register(SearchHomeTabCard.self)
+        register(SearchHomeNearbyCard.self)
+        register(SearchCardHomeRecentPlace.self)
+        register(SearchCardHomePopularPlace.self)
+        register(SearchCardHomeAwardCollection.self)
+
+        register(SearchCardLocationBanner.self)
+        register(SearchCardLocationArea.self)
 
         register(SearchHeaderCard.self)
         register(SearchPlaceCard.self)
@@ -148,28 +157,31 @@ extension SearchTableView: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        func dequeue(card: SearchCard) -> SearchCardView {
+            if let cardView = dequeueReusableCell(withIdentifier: card.cardId) as? SearchCardView {
+                cardView.register(card: card, controller: self.controller)
+                return cardView
+            }
+
+            os_log("Required Card: %@ Not Found, SearchStaticEmptyCard is used instead", type: .info, card.cardId)
+            let cardView = dequeueReusableCell(withIdentifier: SearchStaticEmptyCard.cardId) as! SearchCardView
+            cardView.register(card: card, controller: self.controller)
+            return cardView
+        }
+
         switch indexPath.section {
         case 0:
-            return dequeueReusableCell(withIdentifier: SearchStaticTopCard.cardId)!
+            return dequeue(card: SearchStaticTopCard.card)
 
         case 1:
-            if let card = cards.get(indexPath.row) {
-                if let cardView = dequeueReusableCell(withIdentifier: card.cardId) {
-                    return cardView
-                }
-
-                os_log("Required Card: %@ Not Found, SearchStaticEmptyCard is used instead", type: .info, card.cardId)
-            }
+            return dequeue(card: cards[indexPath.row])
 
         case 2:
             return self.loadingCard
 
         default:
-            break
+            return dequeue(card: SearchStaticEmptyCard.card)
         }
-
-        // Else Static Empty CardView
-        return dequeueReusableCell(withIdentifier: SearchStaticEmptyCard.cardId)!
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -188,10 +200,12 @@ extension SearchTableView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         switch indexPath.section {
         case 1:
-            if let card = cards.get(indexPath.row) {
-                if let cardView = cell as? SearchCardView {
-                    cardView.render(card: card, delegate: self.cardDelegate)
-                }
+            guard let card = cards.get(indexPath.row) else {
+                return
+            }
+
+            if let cardView = cell as? SearchCardView {
+                cardView.willDisplay(card: card)
             }
 
         case 2:
@@ -206,11 +220,15 @@ extension SearchTableView: UITableViewDelegate, UITableViewDataSource {
         guard indexPath.section == 1 else {
             return
         }
+        guard let card = cards.get(indexPath.row) else {
+            return
+        }
 
-        if let card = cards.get(indexPath.row) {
-            cardDelegate?.searchTableView(didSelectCardAt: card)
+        if let cardView = tableView.cellForRow(at: indexPath) as? SearchCardView {
+            cardView.didSelect(card: card, controller: self.controller)
         }
     }
+
 }
 
 // MARK: Lazy Append Loading

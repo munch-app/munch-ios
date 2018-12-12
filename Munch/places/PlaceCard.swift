@@ -84,6 +84,13 @@ class PlaceCard: UIView {
 }
 
 extension PlaceCard {
+    class func height(width: CGFloat) -> CGFloat {
+        let fixed: CGFloat = 28 + 8 + 24 + 4 + 19 + 4
+        return ceil((width * 0.6) + fixed)
+    }
+}
+
+extension PlaceCard {
     static let period = " • ".set(style: Style {
         $0.font = UIFont.systemFont(ofSize: 15, weight: .ultraLight)
     })
