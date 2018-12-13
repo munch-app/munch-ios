@@ -52,30 +52,21 @@ class RIPFooterView: UIView {
 }
 
 class AddPlaceButton: UIButton {
-    private let nameLabel = UILabel()
-            .with(alignment: .center)
-            .with(numberOfLines: 1)
-            .with(text: "Add Place")
-
+    private let heartBtn = PlaceHeartButton()
     private var controller: UIViewController!
     private var place: Place!
     private let disposeBag = DisposeBag()
 
     required init() {
         super.init(frame: .zero)
-        self.addSubview(nameLabel)
-
+        self.addSubview(heartBtn)
         self.backgroundColor = .secondary500
-        self.nameLabel.textColor = .white
-        self.nameLabel.font = UIFont.systemFont(ofSize: 15, weight: .bold)
 
-        snp.makeConstraints { maker in
-            maker.height.equalTo(36)
-        }
-
-        nameLabel.snp.makeConstraints { maker in
-            maker.centerY.equalTo(self)
-            maker.left.right.equalTo(self).inset(18)
+        heartBtn.isUserInteractionEnabled = false
+        heartBtn.isHidden = false
+        heartBtn.snp.makeConstraints { maker in
+            maker.top.bottom.equalTo(self)
+            maker.left.right.equalTo(self).inset(8)
         }
     }
 
@@ -85,6 +76,8 @@ class AddPlaceButton: UIButton {
     }
 
     func register(place: Place, controller: UIViewController) {
+        self.heartBtn.refresh(placeId: place.placeId)
+
         self.place = place
         self.controller = controller
         self.addTarget(self, action: #selector(onAddPlace), for: .touchUpInside)
@@ -104,6 +97,7 @@ class AddPlaceButton: UIButton {
 
                 switch event {
                 case .success(let added):
+                    self.heartBtn.isSelected = added
                     generator.impactOccurred()
                     if added {
                         view.makeToast("Added '\(place.name)' to your places.")

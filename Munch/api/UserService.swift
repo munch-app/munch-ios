@@ -142,13 +142,17 @@ extension UserSearchPreference {
             return true
         }
 
-        return place.tags.contains(where: { tag in
-            if tags.contains(where: { $0.tagId == tag.tagId }) {
+        if tags.isEmpty {
+            return true
+        }
+
+        for item in place.tags {
+            if tags.contains(where: { $0.tagId == item.tagId }) {
                 return true
             }
+        }
 
-            return false
-        })
+        return false
     }
 
     static func allow(remove tag: Tag) -> Bool {

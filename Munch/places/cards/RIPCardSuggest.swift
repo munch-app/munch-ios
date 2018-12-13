@@ -17,7 +17,6 @@ class RIPSuggestEditCard: RIPCard {
         button.setTitle("Suggest Edits", for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.titleLabel?.font = FontStyle.regular.font
-        button.isUserInteractionEnabled = false
 
         button.setImage(UIImage(named: "RIP-Card-Edit"), for: .normal)
         button.tintColor = UIColor.black
