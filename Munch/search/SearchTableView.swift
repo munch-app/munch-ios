@@ -13,7 +13,7 @@ import FirebaseAnalytics
 
 class SearchTableView: UITableView {
     var cardManager: SearchCardManager
-    var cardDelegate: SearchTableViewDelegate!
+    var cardDelegate: SearchTableViewDelegate?
     var controller: SearchController!
 
     var cardTypes = [String: SearchCardView.Type]()
@@ -87,6 +87,8 @@ class SearchTableView: UITableView {
         register(SearchCardLocationBanner.self)
         register(SearchCardLocationArea.self)
 
+        register(SearchCardBetweenHeader.self)
+
         register(SearchHeaderCard.self)
         register(SearchPlaceCard.self)
 
@@ -101,10 +103,6 @@ class SearchTableView: UITableView {
 }
 
 protocol SearchTableViewDelegate {
-    func searchTableView(didSelectCardAt card: SearchCard)
-
-    func searchTableView(requireController: @escaping (SearchController) -> Void)
-
     func searchTableView(didScroll searchTableView: SearchTableView)
 
     func searchTableView(didScrollFinish searchTableView: SearchTableView)
@@ -128,8 +126,16 @@ extension SearchTableView {
         }
     }
 
-    func scrollsToTop(animated: Bool = true) {
+    func scrollToTop(animated: Bool = true) {
         self.scrollToRow(at: .init(row: 0, section: 0), at: .top, animated: animated)
+    }
+
+    func scrollTo(uniqueId: String, animated: Bool = true) {
+        guard let row = cards.firstIndex(where: { $0.uniqueId == uniqueId }) else {
+            return
+        }
+
+        self.scrollToRow(at: .init(row: row, section: 1), at: .top, animated: animated)
     }
 
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
@@ -257,16 +263,16 @@ extension SearchTableView {
 
 extension SearchTableView {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.cardDelegate.searchTableView(didScroll: self)
+        self.cardDelegate?.searchTableView(didScroll: self)
     }
 
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if (!decelerate) {
-            self.cardDelegate.searchTableView(didScrollFinish: self)
+            self.cardDelegate?.searchTableView(didScrollFinish: self)
         }
     }
 
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        self.cardDelegate.searchTableView(didScrollFinish: self)
+        self.cardDelegate?.searchTableView(didScrollFinish: self)
     }
 }

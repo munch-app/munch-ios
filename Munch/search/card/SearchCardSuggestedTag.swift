@@ -180,5 +180,4 @@ extension SearchTagSuggestion: UICollectionViewDataSource, UICollectionViewDeleg
             self.grid.layer.cornerRadius = 3
         }
     }
-
 }

@@ -31,7 +31,7 @@ class SearchHeaderCard: SearchCardView {
     override class func height(card: SearchCard) -> CGFloat {
         let min = topBottom + 6
         if let text = card.string(name: "title") {
-            return min + UILabel.textHeight(withWidth: width, font: FontStyle.h2.font, text: text)
+            return min + UILabel.textHeight(withWidth: contentWidth, font: FontStyle.h2.font, text: text)
         }
         return min
     }

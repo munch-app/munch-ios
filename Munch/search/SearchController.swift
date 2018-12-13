@@ -41,7 +41,7 @@ class SearchController: UIViewController {
 
     private let headerView = SearchHeaderView()
     private let recent = RecentSearchQueryDatabase()
-    private let searchTableView = SearchTableView(screen: .search, inset: inset)
+    public let searchTableView = SearchTableView(screen: .search, inset: inset)
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -65,13 +65,16 @@ class SearchController: UIViewController {
         }
 
         self.searchTableView.controller = self
-        self.searchTableView.cardDelegate = self
         self.headerView.controller = self
 
         self.push(searchQuery: SearchQuery(feature: .Home))
     }
 
     var histories = [SearchQuery]()
+
+    var searchQuery: SearchQuery {
+        return histories.last!
+    }
 
     func push(searchQuery: SearchQuery) {
         histories.append(searchQuery)
@@ -80,7 +83,7 @@ class SearchController: UIViewController {
         }
 
         self.searchTableView.search(query: searchQuery, screen: .search)
-        self.searchTableView.scrollsToTop()
+        self.searchTableView.scrollToTop()
         self.headerView.searchQuery = searchQuery
     }
 
@@ -93,7 +96,7 @@ class SearchController: UIViewController {
     func pop() {
         if histories.popLast() != nil, let searchQuery = histories.last {
             self.searchTableView.search(query: searchQuery, screen: .search)
-            self.searchTableView.scrollsToTop()
+            self.searchTableView.scrollToTop()
             self.headerView.searchQuery = searchQuery
         }
     }
@@ -128,25 +131,6 @@ extension SearchController {
                 self.reset()
             }
         }
-    }
-}
-
-extension SearchController: SearchTableViewDelegate {
-    func searchTableView(didSelectCardAt card: SearchCard) {
-        switch card.cardId {
-        case SearchPlaceCard.cardId:
-            if let place = card.decode(name: "place", Place.self) {
-                let controller = RIPController(placeId: place.placeId)
-                self.navigationController!.pushViewController(controller, animated: true)
-            }
-
-        default:
-            return
-        }
-    }
-
-    func searchTableView(requireController: @escaping (SearchController) -> Void) {
-        requireController(self)
     }
 }
 
