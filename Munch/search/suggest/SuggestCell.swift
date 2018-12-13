@@ -126,7 +126,7 @@ class SuggestCellPlace: UITableViewCell {
 
         locationLabel.snp.makeConstraints { maker in
             maker.left.equalTo(iconView.snp.right).inset(-16)
-            maker.top.equalTo(nameLabel.snp_bottom).inset(-2)
+            maker.top.equalTo(nameLabel.snp.bottom).inset(-2)
             maker.bottom.equalTo(self).inset(12)
             maker.height.equalTo(16)
         }

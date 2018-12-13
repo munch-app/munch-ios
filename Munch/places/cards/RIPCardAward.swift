@@ -62,7 +62,7 @@ extension RIPAwardCard: UICollectionViewDataSource, UICollectionViewDelegate {
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // TODO Collection Controller
+        // Implement if someone asked
     }
 }
 

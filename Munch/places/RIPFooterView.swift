@@ -6,6 +6,7 @@
 import Foundation
 import UIKit
 import SnapKit
+import RxSwift
 
 import Toast_Swift
 
@@ -58,6 +59,7 @@ class AddPlaceButton: UIButton {
 
     private var controller: UIViewController!
     private var place: Place!
+    private let disposeBag = DisposeBag()
 
     required init() {
         super.init(frame: .zero)
@@ -89,11 +91,30 @@ class AddPlaceButton: UIButton {
     }
 
     @objc private func onAddPlace() {
-        Authentication.requireAuthentication(controller: self.controller) { state in
-            if case .loggedIn = state {
-                self.controller.view.makeToast("Added '\(self.place.name)'")
-                // TODO
-            }
+        guard let place = self.place else {
+            return
+        }
+        guard let view = self.controller.view else {
+            return
+        }
+
+        Authentication.requireAuthentication(controller: controller) { state in
+            PlaceSavedDatabase.shared.toggle(placeId: place.placeId).subscribe { (event: SingleEvent<Bool>) in
+                let generator = UINotificationFeedbackGenerator()
+                switch event {
+                case .success(let added):
+                    generator.notificationOccurred(.success)
+                    if added {
+                        view.makeToast("Added '\(place.name)' to your places.")
+                    } else {
+                        view.makeToast("Removed '\(place.name)' from your places.")
+                    }
+
+                case .error(let error):
+                    generator.notificationOccurred(.error)
+                    self.controller.alert(error: error)
+                }
+            }.disposed(by: self.disposeBag)
         }
     }
 

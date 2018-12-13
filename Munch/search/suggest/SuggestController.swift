@@ -76,7 +76,7 @@ class SuggestController: UIViewController {
         }
 
         self.tableView.snp.makeConstraints { make in
-            make.top.equalTo(headerView.snp_bottom)
+            make.top.equalTo(headerView.snp.bottom)
             make.bottom.left.right.equalTo(self.view)
         }
     }

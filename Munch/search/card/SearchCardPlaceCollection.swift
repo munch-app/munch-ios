@@ -49,7 +49,8 @@ extension SearchCardPlaceCollection: UICollectionViewDataSource, UICollectionVie
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeue(type: SearchCardPlaceCollectionCell.self, for: indexPath)
-        cell.place = places[indexPath.row]
+        cell.card.place = places[indexPath.row]
+        cell.card.controller = self.controller
         return cell
     }
 
@@ -64,12 +65,7 @@ class SearchCardPlaceCollectionCell: UICollectionViewCell {
     public static let width = (UIScreen.main.bounds.width - 48) * 0.85
     public static let size = CGSize(width: width, height: PlaceCard.height(width: width))
 
-    private let card = PlaceCard()
-    var place: Place! {
-        didSet {
-            self.card.place = self.place
-        }
-    }
+    fileprivate let card = PlaceCard()
 
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)

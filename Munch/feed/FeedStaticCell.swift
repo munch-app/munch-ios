@@ -10,7 +10,7 @@ import SnapKit
 import NVActivityIndicatorView
 
 class FeedCellHeader: UICollectionViewCell {
-    static let text = "Feast your eyes with fresh out the oven food shots by your favorite Instagrammers."
+    static let text = "Add places to your Tastebud to savour them later."
     private let title = UILabel(style: .h1)
             .with(text: "Feed")
 

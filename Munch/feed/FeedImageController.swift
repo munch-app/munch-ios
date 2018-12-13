@@ -93,7 +93,7 @@ extension FeedImageController {
         self.stackView.addArrangedSubview(FeedImage(item: self.item))
         self.stackView.addArrangedSubview(FeedContent(item: self.item))
         if let place = self.place {
-            self.stackView.addArrangedSubview(FeedPlace(place: place))
+            self.stackView.addArrangedSubview(FeedPlace(place: place, controller: self))
         }
     }
 }
@@ -355,12 +355,12 @@ fileprivate class FeedContent: UIControl {
 fileprivate class FeedPlace: UIControl {
     let label = UILabel(style: .h2)
             .with(text: "Place Mentioned")
-    let placeCard = PlaceCard()
+    let card = PlaceCard()
 
-    init(place: Place) {
+    init(place: Place, controller: UIViewController) {
         super.init(frame: .zero)
         self.addSubview(label)
-        self.addSubview(placeCard)
+        self.addSubview(card)
 
         label.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(24)
@@ -368,8 +368,9 @@ fileprivate class FeedPlace: UIControl {
             maker.height.equalTo(32)
         }
 
-        placeCard.place = place
-        placeCard.snp.makeConstraints { maker in
+        card.place = place
+        card.controller = controller
+        card.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(24)
             maker.bottom.equalTo(self).inset(120)
             maker.top.equalTo(label.snp.bottom).inset(-24)

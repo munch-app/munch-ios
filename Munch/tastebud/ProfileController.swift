@@ -46,10 +46,10 @@ class ProfileController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.headerView.render()
+        self.headerView.update()
 
         if Authentication.isAuthenticated() {
-            self.headerView.render()
+            self.headerView.update()
         } else {
             self.tabBarController?.selectedIndex = 0
         }
@@ -61,24 +61,13 @@ class ProfileController: UIViewController {
         self.view.addSubview(headerView)
         self.addTargets()
 
-        headerView.snp.makeConstraints { make in
-            make.top.left.right.equalTo(self.view)
+        headerView.snp.makeConstraints { maker in
+            maker.top.left.right.equalTo(self.view)
         }
 
-        scrollView.snp.makeConstraints { make in
-            make.edges.equalTo(self.view)
-        }
-
-        // TODO: Remove Temp Delegate
-        scrollView.delegate = self
-        let view = UIView()
-        view.backgroundColor = .peach100
-        scrollView.addSubview(view)
-        view.snp.makeConstraints { maker in
-            maker.left.right.equalTo(self.view)
-            maker.height.equalTo(10000).priority(999)
-            maker.top.equalTo(self.scrollView)
-            maker.bottom.equalTo(self.scrollView)
+        scrollView.snp.makeConstraints { maker in
+            maker.top.equalTo(headerView.snp.bottom)
+            maker.left.bottom.right.equalTo(self.view)
         }
     }
 }
@@ -88,9 +77,9 @@ extension ProfileController {
     func addTargets() {
         self.headerView.settingButton.addTarget(self, action: #selector(onActionSetting(_:)), for: .touchUpInside)
 
-        for tabButton in self.headerView.tabButtons {
-            tabButton.addTarget(self, action: #selector(onTab(selected:)), for: .touchUpInside)
-        }
+//        for tabButton in self.headerView.tabButtons {
+//            tabButton.addTarget(self, action: #selector(onTab(selected:)), for: .touchUpInside)
+//        }
     }
 
     @objc func onActionSetting(_ sender: Any) {
@@ -100,30 +89,5 @@ extension ProfileController {
 
     @objc fileprivate func onTab(selected: ProfileTabButton) {
         // TODO
-    }
-}
-
-// MARK: Scroll Delegate
-extension ProfileController: UIScrollViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.headerView.contentDidScroll(scrollView: scrollView)
-    }
-
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if (!decelerate) {
-            scrollViewDidFinish(scrollView)
-        }
-    }
-
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        scrollViewDidFinish(scrollView)
-    }
-
-    func scrollViewDidFinish(_ scrollView: UIScrollView) {
-        // Check nearest locate and move to it
-        if let y = self.headerView.contentShouldMove(scrollView: scrollView) {
-            let point = CGPoint(x: 0, y: y)
-            scrollView.setContentOffset(point, animated: true)
-        }
     }
 }

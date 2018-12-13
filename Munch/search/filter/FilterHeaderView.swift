@@ -111,12 +111,12 @@ class FilterHeaderTagView: UIView {
         }
 
         second.snp.makeConstraints { maker in
-            maker.left.equalTo(first.snp_right).inset(-10)
+            maker.left.equalTo(first.snp.right).inset(-10)
             maker.top.bottom.equalTo(self)
         }
 
         third.snp.makeConstraints { maker in
-            maker.left.equalTo(second.snp_right).inset(-10)
+            maker.left.equalTo(second.snp.right).inset(-10)
             maker.top.bottom.equalTo(self)
         }
     }

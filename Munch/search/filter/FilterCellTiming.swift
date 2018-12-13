@@ -54,7 +54,7 @@ class FilterItemCellTiming: UITableViewCell {
         }
 
         collectionView.snp.makeConstraints { maker in
-            maker.top.equalTo(label.snp_bottom).inset(-16)
+            maker.top.equalTo(label.snp.bottom).inset(-16)
             maker.left.right.equalTo(self)
             maker.height.equalTo(40).priority(999)
             maker.bottom.equalTo(self).inset(16)

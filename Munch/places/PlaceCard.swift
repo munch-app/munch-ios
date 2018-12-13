@@ -6,41 +6,77 @@
 import Foundation
 import UIKit
 import SnapKit
+import RxSwift
 
 import Toast_Swift
 import SwiftRichString
 
+class PlaceHeartButton: UIControl {
+    private let imageView = UIImageView()
+
+    init() {
+        super.init(frame: .zero)
+        self.tintColor = .white
+        self.addSubview(imageView)
+        self.isHidden = true
+
+        imageView.image = UIImage(named: "RIP-Heart")
+        imageView.snp.makeConstraints { maker in
+            maker.edges.equalTo(self).inset(8)
+        }
+    }
+
+    override var isSelected: Bool {
+        didSet {
+            if isSelected {
+                self.imageView.image = UIImage(named: "RIP-Heart-Filled")
+            } else {
+                self.imageView.image = UIImage(named: "RIP-Heart")
+            }
+        }
+    }
+
+    func refresh(placeId: String) {
+        self.isSelected = PlaceSavedDatabase.shared.isSaved(placeId: placeId)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 class PlaceCard: UIView {
+    fileprivate let disposeBag = DisposeBag()
+
+    private let heartBtn = PlaceHeartButton()
     private let imageView: SizeShimmerImageView = {
         let width = UIScreen.main.bounds.width
         let imageView = SizeShimmerImageView(points: width, height: width)
         imageView.layer.cornerRadius = 3
         return imageView
     }()
-    private let nameLabel: UILabel = {
-        let nameLabel = UILabel()
-                .with(font: UIFont.systemFont(ofSize: 20, weight: .semibold))
-                .with(color: .ba75)
-        return nameLabel
-    }()
-    private let tagView: MunchTagView = {
-        let tagView = MunchTagView()
-        return tagView
-    }()
-    private let locationLabel: UILabel = {
-        let locationLabel = UILabel()
-                .with(font: UIFont.systemFont(ofSize: 13, weight: .regular))
-                .with(color: .ba75)
-        return locationLabel
-    }()
+    private let tagView = MunchTagView()
+    private let nameLabel = UILabel()
+            .with(font: UIFont.systemFont(ofSize: 20, weight: .semibold))
+            .with(color: .ba75)
+    private let locationLabel = UILabel()
+            .with(font: UIFont.systemFont(ofSize: 13, weight: .regular))
+            .with(color: .ba75)
 
-    var controller: UIViewController!
+    // By setting controller, heartBtn will be available
+    var controller: UIViewController! {
+        didSet {
+            self.heartBtn.isHidden = controller == nil
+        }
+    }
     var place: Place! {
         didSet {
             self.render(image: self.place)
             self.render(name: self.place)
             self.render(tag: self.place)
             self.render(location: self.place)
+
+            self.heartBtn.refresh(placeId: self.place.placeId)
         }
     }
 
@@ -50,8 +86,12 @@ class PlaceCard: UIView {
         self.addSubview(nameLabel)
         self.addSubview(tagView)
         self.addSubview(locationLabel)
+        self.addSubview(heartBtn)
 
-        self.isUserInteractionEnabled = false
+
+        heartBtn.snp.makeConstraints { maker in
+            maker.top.right.equalTo(imageView)
+        }
 
         imageView.snp.makeConstraints { maker in
             maker.top.left.right.equalTo(self)
@@ -74,12 +114,49 @@ class PlaceCard: UIView {
             maker.bottom.left.right.equalTo(self)
             maker.height.equalTo(19)
             maker.top.equalTo(tagView.snp.bottom).inset(-4)
-
         }
+
+        self.addTargets()
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension PlaceCard {
+    func addTargets() {
+        self.heartBtn.addTarget(self, action: #selector(onHeart), for: .touchUpInside)
+    }
+
+    @objc func onHeart() {
+        guard let place = self.place else {
+            return
+        }
+        guard let view = self.controller.view else {
+            return
+        }
+
+        Authentication.requireAuthentication(controller: controller) { state in
+            PlaceSavedDatabase.shared.toggle(placeId: place.placeId).subscribe { (event: SingleEvent<Bool>) in
+                let generator = UINotificationFeedbackGenerator()
+                switch event {
+                case .success(let added):
+                    self.heartBtn.isSelected = added
+                    generator.notificationOccurred(.success)
+
+                    if added {
+                        view.makeToast("Added '\(place.name)' to your places.")
+                    } else {
+                        view.makeToast("Removed '\(place.name)' from your places.")
+                    }
+
+                case .error(let error):
+                    generator.notificationOccurred(.error)
+                    self.controller.alert(error: error)
+                }
+            }.disposed(by: self.disposeBag)
+        }
     }
 }
 
@@ -168,66 +245,6 @@ extension PlaceCard {
             break
         }
         self.locationLabel.attributedText = line
-    }
-}
-
-class PlaceAddButton: UIButton {
-    private let toastStyle: ToastStyle = {
-        var style = ToastStyle()
-        style.backgroundColor = UIColor.whisper100
-        style.cornerRadius = 5
-        style.imageSize = CGSize(width: 20, height: 20)
-        style.fadeDuration = 6.0
-        style.messageColor = UIColor.black.withAlphaComponent(0.85)
-        style.messageFont = UIFont.systemFont(ofSize: 15, weight: .regular)
-        style.messageNumberOfLines = 2
-        style.messageAlignment = .left
-
-        return style
-    }()
-
-    override init(frame: CGRect = .zero) {
-        super.init(frame: frame)
-        self.setImage(UIImage(named: "RIP-??"), for: .normal)
-        self.tintColor = .white
-
-        self.addTarget(self, action: #selector(onButton(_:)), for: .touchUpInside)
-    }
-
-    var controller: UIViewController?
-    var place: Place?
-
-    @objc func onButton(_ button: Any) {
-        guard let controller = self.controller, let place = self.place else {
-            return
-        }
-
-        Authentication.requireAuthentication(controller: controller) { state in
-            switch state {
-            case .loggedIn:
-                UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                let controller = CollectionAddPlaceController(place: place) { action in
-                    switch action {
-                    case .add(let collection):
-                        self.controller?.makeToast("Added to \(collection.name)", image: .checkmark)
-
-                    case .remove(let collection):
-                        self.controller?.makeToast("Removed from \(collection.name)", image: .checkmark)
-
-                    default:
-                        return
-                    }
-
-                }
-                self.controller?.present(controller, animated: true)
-            default:
-                return
-            }
-        }
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 

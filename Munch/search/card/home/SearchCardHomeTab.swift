@@ -14,9 +14,9 @@ fileprivate enum HomeTab {
 
     var text: String {
         switch self {
-        case .Between: return "Dining with Friends"
-        case .Feed: return "Food Inspiration"
-        case .Location: return "Discover by Neighbourhood"
+        case .Between: return "EatBetween"
+        case .Feed: return "Inspiration"
+        case .Location: return "Neighbourhoods"
         }
     }
 
@@ -133,7 +133,7 @@ class SearchHomeTabCard: SearchCardView {
     }
 
     class var title: String {
-        return "\(salutation), \(name). Find the perfect spot on Munch."
+        return "\(salutation), \(name). Feeling hungry?"
     }
 
     class var salutation: String {
@@ -181,7 +181,7 @@ extension SearchHomeTabCard: UICollectionViewDataSource, UICollectionViewDelegat
             self.controller.present(controller, animated: true)
 
         case .Feed:
-            self.controller.tabBarController?.selectedIndex = TabBarItem.Feed.index
+            self.controller.tabBarController?.selectedIndex = MunchTabBarItem.Feed.index
 
         case .Location:
             self.controller.push(searchQuery: SearchQuery(feature: .Location))

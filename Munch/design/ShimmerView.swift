@@ -32,23 +32,6 @@ struct ShimmerIndicator: Indicator {
     }
 }
 
-class ShimmerImageView: MunchImageView {
-    private let indicator = ShimmerIndicator()
-
-    override init(frame: CGRect = CGRect()) {
-        super.init(frame: frame)
-        self.kf.indicatorType = .custom(indicator: indicator)
-
-        self.contentMode = .scaleAspectFill
-        self.clipsToBounds = true
-        self.backgroundColor = UIColor.whisper100
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
 class ShimmerView: FBShimmeringView {
     init(color: UIColor = .whisper100) {
         super.init(frame: .zero)

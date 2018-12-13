@@ -13,10 +13,11 @@ import Localize_Swift
 import SnapKit
 
 class SearchPlaceCard: SearchCardView {
-    let placeCard = PlaceCard()
+    private let placeCard = PlaceCard()
 
     override func didLoad(card: SearchCard) {
         self.addSubview(placeCard)
+        self.placeCard.controller = self.controller
 
         placeCard.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(leftRight)

@@ -11,7 +11,7 @@ import UIKit
 
 import Localize_Swift
 
-enum TabBarItem {
+enum MunchTabBarItem {
     case Discover
     case Feed
     case Profile
@@ -22,6 +22,28 @@ enum TabBarItem {
         case .Feed: return 1
         case .Profile: return 2
         }
+    }
+
+    var name: String {
+        switch self {
+        case .Discover: return "Discover"
+        case .Feed: return "Feed"
+        case .Profile: return "Tastebud"
+        }
+    }
+
+    var image: String {
+        switch self {
+        case .Discover: return "TabBar_Discover"
+        case .Feed: return "TabBar_Feed"
+        case .Profile: return "TabBar_Profile"
+        }
+    }
+}
+
+extension MunchTabBarItem {
+    fileprivate var ui: UITabBarItem {
+        return UITabBarItem(title: self.name, image: UIImage(named: self.image), tag: 0)
     }
 }
 
@@ -36,19 +58,19 @@ enum InitialViewProvider {
 
     fileprivate static func discover() -> SearchRootController {
         let controller = SearchRootController()
-        controller.tabBarItem = UITabBarItem(title: "Discover".localized(), image: UIImage(named: "TabBar_Discover"), tag: 0)
+        controller.tabBarItem = MunchTabBarItem.Discover.ui
         return controller
     }
 
     fileprivate static func feed() -> FeedRootController {
         let controller = FeedRootController()
-        controller.tabBarItem = UITabBarItem(title: "Feed".localized(), image: UIImage(named: "TabBar_Feed"), tag: 0)
+        controller.tabBarItem = MunchTabBarItem.Feed.ui
         return controller
     }
 
     fileprivate static func profile() -> ProfileRootController {
         let controller = ProfileRootController()
-        controller.tabBarItem = UITabBarItem(title: "Profile".localized(), image: UIImage(named: "TabBar_Profile"), tag: 0)
+        controller.tabBarItem = MunchTabBarItem.Profile.ui
         return controller
     }
 }
