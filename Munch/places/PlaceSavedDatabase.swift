@@ -62,6 +62,7 @@ class PlaceSavedDatabase {
     func observe() -> Observable<[UserSavedPlace]> {
         return Observable.create { (observer: AnyObserver<[UserSavedPlace]>) in
             self.observers.append(observer)
+            self.notifyObservers()
             return Disposables.create()
         }
     }
@@ -95,17 +96,7 @@ class PlaceSavedDatabase {
                             }
                         }
 
-                        var items = [UserSavedPlace]()
-                        realm.objects(PlaceSavedData.self)
-                                .sorted(byKeyPath: "createdMillis", ascending: false)
-                                .forEach { data in
-                                    items.append(data.to())
-                                }
-
-
-                        self.observers.forEach { observer in
-                            observer.on(.next(items))
-                        }
+                        self.notifyObservers()
 
                         if let next = next {
                             self.load(next: next)
@@ -114,6 +105,22 @@ class PlaceSavedDatabase {
                         return
                     }
                 }.addDisposableTo(disposeBag)
+    }
+
+    private func notifyObservers() {
+        let realm = try! Realm()
+
+        var items = [UserSavedPlace]()
+        realm.objects(PlaceSavedData.self)
+                .sorted(byKeyPath: "createdMillis", ascending: false)
+                .forEach { data in
+                    items.append(data.to())
+                }
+
+
+        self.observers.forEach { observer in
+            observer.on(.next(items))
+        }
     }
 
     func isSaved(placeId: String) -> Bool {
