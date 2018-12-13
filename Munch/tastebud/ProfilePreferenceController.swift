@@ -216,7 +216,7 @@ class ProfilePreferenceHeader: UITableViewCell {
 
         label.snp.makeConstraints { maker in
             maker.left.right.equalTo(container).inset(24)
-            maker.top.equalTo(container).inset(16).priority(.high)
+            maker.top.equalTo(container).inset(24).priority(.high)
         }
 
         subLabel.snp.makeConstraints { maker in
