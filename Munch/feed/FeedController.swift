@@ -76,7 +76,7 @@ class FeedController: UIViewController {
 
         collectionView.snp.makeConstraints { maker in
             maker.left.right.bottom.equalTo(self.view)
-            maker.top.equalTo(headerView)
+            maker.top.equalTo(headerView.snp.bottom)
         }
 
         self.registerCells()
@@ -265,15 +265,31 @@ extension FeedController: WaterfallLayoutDelegate {
     }
 }
 
+// MARK: Scroll delegate
+extension FeedController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        self.headerView.shadow.isHidden = scrollView.contentOffset.y < 30
+    }
+}
+
 class FeedHeaderView: UIView {
+    let shadow = UIView()
+
     required init() {
         super.init(frame: .zero)
         self.backgroundColor = .white
+        self.addSubview(shadow)
+
+        shadow.isHidden = true
+        shadow.backgroundColor = .white
+        shadow.snp.makeConstraints { maker in
+            maker.edges.equalTo(self)
+        }
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.shadow(vertical: 1)
+        shadow.shadow(vertical: 2)
     }
 
     required init?(coder aDecoder: NSCoder) {

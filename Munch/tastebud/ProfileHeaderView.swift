@@ -11,24 +11,80 @@ enum ProfileHeaderTab {
     case places
     case preferences
 
-    var title: String {
+    var name: String {
         switch self {
         case .places:
-            return "Your Places"
+            return "Places"
 
         case .preferences:
             return "Preferences"
         }
     }
+}
 
-    var icon: String {
-        return ""
+class ProfileTabButton: UIControl {
+    private let nameLabel: UILabel = {
+        let nameLabel = UILabel(style: .navHeader)
+        nameLabel.textAlignment = .left
+        return nameLabel
+    }()
+    private let indicator: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        return view
+    }()
+
+    let tab: ProfileHeaderTab
+
+    init(tab: ProfileHeaderTab) {
+        self.tab = tab
+        self.nameLabel.text = tab.name
+        super.init(frame: .zero)
+
+        self.addSubview(nameLabel)
+        nameLabel.snp.makeConstraints { maker in
+            maker.edges.equalTo(self)
+        }
+
+        self.addSubview(indicator)
+        indicator.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self)
+            maker.height.equalTo(2)
+            maker.bottom.equalTo(self).inset(8)
+        }
+
+        self.isSelected = false
+    }
+
+    override var isSelected: Bool {
+        didSet {
+            if isSelected {
+                self.nameLabel.with(color: UIColor.black)
+                self.indicator.isHidden = false
+            } else {
+                self.nameLabel.with(color: UIColor.black.withAlphaComponent(0.7))
+                self.indicator.isHidden = true
+            }
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
 class ProfileHeaderView: UIView {
+    let munchIcon: UIImageView = {
+        let view = UIImageView()
+        view.contentMode = .scaleAspectFit
+        view.image = UIImage(named: "Tastebud-Munch-Logo")
+        return view
+    }()
 
-    let settingButton: UIButton = {
+    let placeBtn = ProfileTabButton(tab: .places)
+    let preferenceBtn = ProfileTabButton(tab: .preferences)
+
+    let settingBtn: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "NavigationBar-Setting"), for: .normal)
         button.tintColor = .black
@@ -37,30 +93,16 @@ class ProfileHeaderView: UIView {
         return button
     }()
 
-    let nameLabel = UILabel(style: .navHeader)
-            .with(numberOfLines: 1)
-
-//    let tabButtons = [
-//        ProfileTabButton(type: .places),
-//        ProfileTabButton(type: .preferences),
-//    ]
-//    fileprivate var selectedType: ProfileHeaderTab {
-//        for button in tabButtons {
-//            if button.isSelected {
-//                return button.type
-//            }
-//        }
-//        return ProfileHeaderTab.places
-//    }
-
     override init(frame: CGRect = CGRect.zero) {
         super.init(frame: frame)
         self.backgroundColor = .white
-        self.addSubview(nameLabel)
-        self.addSubview(settingButton)
-//        tabButtons.forEach({ self.addSubview($0) })
 
-        settingButton.snp.makeConstraints { maker in
+        self.addSubview(munchIcon)
+        self.addSubview(placeBtn)
+        self.addSubview(preferenceBtn)
+        self.addSubview(settingBtn)
+
+        settingBtn.snp.makeConstraints { maker in
             maker.top.equalTo(self.safeArea.top)
             maker.bottom.equalTo(self)
             maker.right.equalTo(self)
@@ -68,32 +110,35 @@ class ProfileHeaderView: UIView {
             maker.height.equalTo(44)
         }
 
-        nameLabel.snp.makeConstraints { maker in
-            maker.top.bottom.equalTo(settingButton)
+        munchIcon.snp.makeConstraints { maker in
+            maker.top.bottom.equalTo(settingBtn)
             maker.left.equalTo(self).inset(24)
-            maker.right.equalTo(settingButton.snp.left).inset(-16)
         }
 
-//        tabButtons[0].isSelected = true
-//        for tab in tabButtons {
-//            tab.addTarget(self, action: #selector(onSelectTab(selected:)), for: .touchUpInside)
-//        }
+        placeBtn.snp.makeConstraints { maker in
+            maker.top.bottom.equalTo(settingBtn)
+            maker.left.equalTo(munchIcon.snp.right).inset(-24)
+        }
+
+        preferenceBtn.snp.makeConstraints { maker in
+            maker.top.bottom.equalTo(settingBtn)
+            maker.left.equalTo(placeBtn.snp.right).inset(-24)
+        }
+
+        placeBtn.isSelected = true
+        placeBtn.addTarget(self, action: #selector(onTab(_:)), for: .touchUpInside)
+        preferenceBtn.addTarget(self, action: #selector(onTab(_:)), for: .touchUpInside)
     }
 
-    func update() {
-        let profile = UserProfile.instance
-        self.nameLabel.text = profile?.name
+    @objc func onTab(_ sender: ProfileTabButton) {
+        if sender === self.placeBtn {
+            placeBtn.isSelected = true
+            preferenceBtn.isSelected = false
+        } else if sender === self.preferenceBtn {
+            preferenceBtn.isSelected = true
+            placeBtn.isSelected = false
+        }
     }
-
-//    @objc fileprivate func onSelectTab(selected: ProfileTabButton) {
-//        for tabButton in tabButtons {
-//            if tabButton == selected {
-//                tabButton.isSelected = true
-//            } else {
-//                tabButton.isSelected = false
-//            }
-//        }
-//    }
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -103,58 +148,4 @@ class ProfileHeaderView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
-
-class ProfileTabButton: UIButton {
-//    private let nameLabel: UILabel = {
-//        let nameLabel = UILabel()
-//        nameLabel.font = UIFont.systemFont(ofSize: 20.0, weight: .semibold)
-//        nameLabel.textColor = .ba75
-//
-//        nameLabel.numberOfLines = 1
-//        nameLabel.isUserInteractionEnabled = false
-//        nameLabel.textAlignment = .left
-//        return nameLabel
-//    }()
-//    private let indicatorView: UIView = {
-//        let view = UIView()
-//        view.backgroundColor = .primary500
-//        return view
-//    }()
-//
-//    let type: ProfileHeaderTab
-//
-//    init(type: ProfileHeaderTab) {
-//        self.type = type
-//        super.init(frame: .zero)
-//
-//        self.addSubview(nameLabel)
-//        self.addSubview(indicatorView)
-//
-//        nameLabel.text = type.title
-//        nameLabel.snp.makeConstraints { make in
-//            make.left.right.equalTo(self)
-//            make.top.equalTo(self).inset(13)
-//        }
-//
-//        indicatorView.snp.makeConstraints { make in
-//            make.left.right.equalTo(self)
-//            make.bottom.equalTo(self)
-//            make.height.equalTo(2)
-//        }
-//    }
-//
-//    override var isSelected: Bool {
-//        get {
-//            return !self.indicatorView.isHidden
-//        }
-//
-//        set(value) {
-//            self.indicatorView.isHidden = !value
-//        }
-//    }
-//
-//    required init?(coder aDecoder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
 }

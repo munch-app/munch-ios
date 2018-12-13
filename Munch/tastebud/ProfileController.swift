@@ -32,7 +32,11 @@ class ProfileRootController: UINavigationController, UINavigationControllerDeleg
 
 class ProfileController: UIViewController {
     let headerView = ProfileHeaderView()
-    let scrollView = UIScrollView()
+    let containment = UIView()
+
+    let savedPlaceController = ProfileSavedPlaceController()
+    let preferenceController = ProfilePreferenceController()
+    var currentController: UIViewController?
 
     let disposeBag = DisposeBag()
 
@@ -46,18 +50,15 @@ class ProfileController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.headerView.update()
 
-        if Authentication.isAuthenticated() {
-            self.headerView.update()
-        } else {
+        if !Authentication.isAuthenticated() {
             self.tabBarController?.selectedIndex = 0
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.addSubview(scrollView)
+        self.view.addSubview(containment)
         self.view.addSubview(headerView)
         self.addTargets()
 
@@ -65,21 +66,23 @@ class ProfileController: UIViewController {
             maker.top.left.right.equalTo(self.view)
         }
 
-        scrollView.snp.makeConstraints { maker in
+        containment.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self.view)
             maker.top.equalTo(headerView.snp.bottom)
-            maker.left.bottom.right.equalTo(self.view)
+            maker.bottom.equalTo(self.view)
         }
+
+        self.replace(replacing: savedPlaceController)
     }
 }
 
 // MARK: Add Targets
 extension ProfileController {
     func addTargets() {
-        self.headerView.settingButton.addTarget(self, action: #selector(onActionSetting(_:)), for: .touchUpInside)
+        self.headerView.settingBtn.addTarget(self, action: #selector(onActionSetting(_:)), for: .touchUpInside)
 
-//        for tabButton in self.headerView.tabButtons {
-//            tabButton.addTarget(self, action: #selector(onTab(selected:)), for: .touchUpInside)
-//        }
+        self.headerView.placeBtn.addTarget(self, action: #selector(onTab(selected:)), for: .touchUpInside)
+        self.headerView.preferenceBtn.addTarget(self, action: #selector(onTab(selected:)), for: .touchUpInside)
     }
 
     @objc func onActionSetting(_ sender: Any) {
@@ -88,6 +91,32 @@ extension ProfileController {
     }
 
     @objc fileprivate func onTab(selected: ProfileTabButton) {
-        // TODO
+        switch selected.tab {
+        case .places:
+            replace(replacing: savedPlaceController)
+
+        case .preferences:
+            replace(replacing: preferenceController)
+        }
+    }
+
+    func replace(replacing: UIViewController) {
+        if let currentController = currentController {
+            if currentController == replacing {
+                return
+            }
+
+            currentController.willMove(toParentViewController: nil)
+            currentController.view.removeFromSuperview()
+            currentController.removeFromParentViewController()
+        }
+
+
+        self.addChildViewController(replacing)
+        self.containment.addSubview(replacing.view)
+        replacing.view.snp.makeConstraints { maker in
+            maker.edges.equalTo(self.containment)
+        }
+        replacing.didMove(toParentViewController: parent)
     }
 }

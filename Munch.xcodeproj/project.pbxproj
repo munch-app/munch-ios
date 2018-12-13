@@ -51,7 +51,7 @@
 		B4B7333D1DDE171204DBEAEE /* SearchTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73AD58260F2E709E78C41 /* SearchTableView.swift */; };
 		B4B7338441928B0C9386ECBC /* SearchCardHomeAwardCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73F084D5F0E1B0F800F8B /* SearchCardHomeAwardCollection.swift */; };
 		B4B733B083D8DF8F2DDFF66D /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73695F4F2693D0E750704 /* ViewExtensions.swift */; };
-		B4B733C48DCACF9F5A977BE1 /* ProfileTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738C639DA188BF1AFD8CE /* ProfileTabController.swift */; };
+		B4B733C48DCACF9F5A977BE1 /* ProfileSavedPlaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738C639DA188BF1AFD8CE /* ProfileSavedPlaceController.swift */; };
 		B4B733C8BC2504C159A2106C /* FeedImageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B739E25A063368B337CB55 /* FeedImageController.swift */; };
 		B4B7343D95A94208BB3733D8 /* FilterCellTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73F008A9EAFCE407879A2 /* FilterCellTag.swift */; };
 		B4B73487CEAE343636DE6A74 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B4B73BB2757D0BE5CC888EDA /* GoogleService-Info.plist */; };
@@ -67,6 +67,7 @@
 		B4B736B47B12B57380C86E22 /* UserPlaceCollectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7335BABC0E6BF07362781 /* UserPlaceCollectionService.swift */; };
 		B4B736E204197450B24C1CB7 /* FeedManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73AACCB0BC095B5C0D075 /* FeedManager.swift */; };
 		B4B73711AC311B37916A5C12 /* RIPCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73D86A1832193FD128FC6 /* RIPCard.swift */; };
+		B4B7376234726CC2C09E4223 /* ProfilePreferenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73485F1D20BDC6B08630A /* ProfilePreferenceController.swift */; };
 		B4B73774FD6E37D1C5A646D5 /* RIPCardImageGallery.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B736156BD2F8E724586960 /* RIPCardImageGallery.swift */; };
 		B4B7377C14988AD9E9420777 /* MunchData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7301D02577B5726215C8A /* MunchData.swift */; };
 		B4B73780E8139F92D60BA2E5 /* SearchCardHomeTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73CA83A1B699543FD1BE7 /* SearchCardHomeTab.swift */; };
@@ -239,6 +240,7 @@
 		B4B7340F0AD8271793C8BF1B /* FeedService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedService.swift; sourceTree = "<group>"; };
 		B4B7347AD60C415D1700F116 /* AccountBoardingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountBoardingController.swift; sourceTree = "<group>"; };
 		B4B7348322E099298BEB7546 /* SearchCardPlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardPlace.swift; sourceTree = "<group>"; };
+		B4B73485F1D20BDC6B08630A /* ProfilePreferenceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfilePreferenceController.swift; sourceTree = "<group>"; };
 		B4B734A171C3B0156CEFCB2C /* UserPlaceService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPlaceService.swift; sourceTree = "<group>"; };
 		B4B734BDB7C21C04F0DCF94C /* RIPCardAward.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPCardAward.swift; sourceTree = "<group>"; };
 		B4B734C84BE5379569DEC024 /* FilterControllerLocationSearch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterControllerLocationSearch.swift; sourceTree = "<group>"; };
@@ -266,7 +268,7 @@
 		B4B73874640BF8573F3D6DE2 /* RIPMapController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPMapController.swift; sourceTree = "<group>"; };
 		B4B738ACBC179DBD4A72FC01 /* FilterCellLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterCellLocation.swift; sourceTree = "<group>"; };
 		B4B738B688AE5A34954680EA /* SearchService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchService.swift; sourceTree = "<group>"; };
-		B4B738C639DA188BF1AFD8CE /* ProfileTabController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileTabController.swift; sourceTree = "<group>"; };
+		B4B738C639DA188BF1AFD8CE /* ProfileSavedPlaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileSavedPlaceController.swift; sourceTree = "<group>"; };
 		B4B738FF32F231E9768CD5F5 /* RIPController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPController.swift; sourceTree = "<group>"; };
 		B4B7391BA1D0CE49C5890B1C /* WaterfallLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaterfallLayout.swift; sourceTree = "<group>"; };
 		B4B73926525624E7FDC598A6 /* SuggestCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestCell.swift; sourceTree = "<group>"; };
@@ -479,8 +481,9 @@
 				B4B7329A88030A09DC2A5187 /* MunchUser.swift */,
 				B4B7318107D8ECA3F9373589 /* ProfileController.swift */,
 				B4B73BF6B8D464037F4FC986 /* ProfileSettingController.swift */,
-				B4B738C639DA188BF1AFD8CE /* ProfileTabController.swift */,
+				B4B738C639DA188BF1AFD8CE /* ProfileSavedPlaceController.swift */,
 				B4B737E2C968CB42E8AB7CE1 /* ProfileHeaderView.swift */,
+				B4B73485F1D20BDC6B08630A /* ProfilePreferenceController.swift */,
 			);
 			path = tastebud;
 			sourceTree = "<group>";
@@ -1063,7 +1066,7 @@
 				B4B73BBC419593C4FD7A7F0A /* MunchTagCollectionView.swift in Sources */,
 				B4B739A826B911E094D4A616 /* ProfileSettingController.swift in Sources */,
 				032270B821BA850D00FA733C /* HalfModalTransitionAnimator.swift in Sources */,
-				B4B733C48DCACF9F5A977BE1 /* ProfileTabController.swift in Sources */,
+				B4B733C48DCACF9F5A977BE1 /* ProfileSavedPlaceController.swift in Sources */,
 				B4B7397B4A29B5FF71D35382 /* SearchCardSuggestedTag.swift in Sources */,
 				B4B731C9E8B9A21CE5BBDF35 /* SearchCardArea.swift in Sources */,
 				B4B73C6C2D398F219E5637D7 /* SearchHeaderView.swift in Sources */,
@@ -1154,6 +1157,7 @@
 				B4B73D93C5C28CB6929611DA /* UserPlaceService.swift in Sources */,
 				B4B73FB032678139939E7BA1 /* PlaceSavedDatabase.swift in Sources */,
 				B4B73600289388E9655E43C4 /* SearchCardBetweenHeader.swift in Sources */,
+				B4B7376234726CC2C09E4223 /* ProfilePreferenceController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
