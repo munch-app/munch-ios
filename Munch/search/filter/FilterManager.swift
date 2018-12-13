@@ -42,6 +42,7 @@ class FilterManager {
 
     init(searchQuery: SearchQuery) {
         self.searchQuery = searchQuery
+        self.searchQuery.feature = .Search
     }
 
     func observe() -> Observable<[FilterItem]> {

@@ -7,7 +7,10 @@ import Foundation
 import UIKit
 import SnapKit
 
+import RxSwift
+
 class SearchHomeNearbyCard: SearchCardView {
+    private let disposeBag = DisposeBag()
     let title = UILabel(style: .h2)
             .with(text: "Discover Nearby")
 
@@ -69,9 +72,15 @@ class SearchHomeNearbyCard: SearchCardView {
     }
 
     override func didSelect(card: SearchCard, controller: SearchController) {
-        var query = SearchQuery(feature: .Search)
-        query.filter.location.type = .Nearby
-        self.controller.push(searchQuery: query)
+        MunchLocation.requestLocation().subscribe { event in
+            guard case let .success(ll) = event, let latLng = ll else {
+                return
+            }
+
+            var query = SearchQuery(feature: .Search)
+            query.filter.location.type = .Nearby
+            self.controller.push(searchQuery: query)
+        }.disposed(by: disposeBag)
     }
 
     override func layoutSubviews() {

@@ -147,7 +147,7 @@ class ProfileSavedPlaceEmptyHeaderCell: UITableViewCell {
         container.addSubview(label)
         container.addSubview(subLabel)
 
-        container.backgroundColor = .saltpan200
+        container.backgroundColor = .whisper100
         container.layer.cornerRadius = 3
 
         container.snp.makeConstraints { maker in

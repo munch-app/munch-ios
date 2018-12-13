@@ -88,6 +88,7 @@ public class Authentication {
                     case let .success(userData):
                         UserProfile.instance = userData.profile
                         UserSetting.instance = userData.setting
+                        UserSearchPreference.instance  = userData.searchPreference
                         withCompletion(.loggedIn)
 
                     case let .error(error):

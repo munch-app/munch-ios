@@ -14,7 +14,6 @@ enum UserService {
     case getSetting
 }
 
-// MARK: - UserService Protocol Implementation
 extension UserService: TargetType {
     var path: String {
         switch self {
@@ -38,6 +37,38 @@ extension UserService: TargetType {
     }
 }
 
+
+enum UserSearchPreferenceService {
+    case put(UserSearchPreference)
+    case get
+}
+
+
+extension UserSearchPreferenceService: TargetType {
+    var path: String {
+        return "/users/search/preference"
+    }
+
+    var method: Moya.Method {
+        switch self {
+        case .get:
+            return .get
+        case .put:
+            return .put
+        }
+    }
+    var task: Task {
+        switch self {
+        case .get:
+            return .requestPlain
+
+        case .put(let preference):
+            return .requestJSONEncodable(preference)
+        }
+    }
+}
+
+
 struct UserProfile: Codable {
     var userId: String?
     var name: String?
@@ -47,6 +78,11 @@ struct UserProfile: Codable {
 
 struct UserSetting: Codable {
     var mailings: [String: Bool]?
+}
+
+struct UserSearchPreference: Codable {
+    var requirements: [Tag]
+    var updatedMillis: Int
 }
 
 extension UserProfile {
@@ -79,68 +115,38 @@ extension UserSetting {
             UserDefaults.standard.set(try? PropertyListEncoder().encode(value), forKey: "UserSetting")
         }
     }
+}
 
-    /**
-     Apply changes to UserSetting, closure will only be called if it exists
-     */
-//    static func apply(search editing: @escaping (UserSetting.Search) -> UserSetting.Search, onComplete: @escaping (SingleEvent<UserSetting>) -> Void) -> Disposable {
-//        guard var editable = UserSetting.instance else {
-//            return Disposables.create()
-//        }
-//        let changed = editing(editable.search)
-//        editable.search = changed
-//        UserSetting.instance = editable
-//
-//        let provider = MunchProvider<UserService>()
-//        return provider.rx.request(.patchSetting(search: changed))
-//                .map { response throws -> UserSetting in
-//                    try response.map(data: UserSetting.self)
-//                }
-//                .subscribe(onComplete)
-//    }
+extension UserSearchPreference {
+    static let provider = MunchProvider<UserSearchPreferenceService>()
+    static var instance: UserSearchPreference? {
+        get {
+            if let data = UserDefaults.standard.value(forKey: "UserSearchPreference") as? Data {
+                return try? PropertyListDecoder().decode(UserSearchPreference.self, from: data)
+            }
+            return nil
+        }
+        set(value) {
+            UserDefaults.standard.set(try? PropertyListEncoder().encode(value), forKey: "UserSearchPreference")
+        }
+    }
 
-//    static let managed = ["halal", "vegetarian options"]
+    static func isSelected(tag: Tag) -> Bool {
+        return self.instance?.requirements.contains(where: { $0.tagId == tag.tagId }) ?? false
+    }
+}
 
-//    static func request(toPerm searchQuery: SearchQuery) -> String? {
-//        for tag in searchQuery.filter.tag.positives {
-//            if request(toPerm: tag) {
-//                return tag
-//            }
-//        }
-//        return nil
-//    }
+extension UserSearchPreference {
+    static func allow(remove tag: Tag, controller: UIViewController) -> Bool {
+        guard let tags = UserSearchPreference.instance?.requirements else {
+            return true
+        }
 
-//    static func request(toPerm tag: String) -> Bool {
-//        let tag = tag.lowercased()
-//        if let setting = UserSetting.instance {
-//            if setting.search.tags.contains(tag) {
-//                return false
-//            }
-//
-//            if managed.contains(tag) {
-//                let count = UserDefaults.standard.integer(forKey: "SearchQueryManager.\(tag)") + 1
-//                UserDefaults.standard.set(count, forKey: "SearchQueryManager.\(tag)")
-//
-//                if count == 3 {
-//                    return true
-//                }
-//            }
-//        }
-//
-//        return false
-//    }
+        if tags.contains(where: { $0.tagId == tag.tagId }) {
+            controller.alert(title: "Search Preference", message: "You have set this as a permanent filter from your profile page. Please remove it from your user profile if you wish to discontinue this permanent filter.")
+            return false
+        }
 
-    /**
-     Check if action is allowed
-     */
-//    static func allow(remove tag: String, controller: UIViewController) -> Bool {
-//        if let tags = UserSetting.instance?.search.tags {
-//            if tags.contains(tag.lowercased()) {
-//                controller.alert(title: "Search Preference", message: "You have set this as a permanent filter from your profile page. Please remove it from your user profile if you wish to discontinue this permanent filter.")
-//                return false
-//            }
-//        }
-//
-//        return true
-//    }
+        return true
+    }
 }

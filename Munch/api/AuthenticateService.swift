@@ -37,4 +37,5 @@ extension UserAuthenticateService: TargetType {
 struct UserData: Codable {
     var profile: UserProfile
     var setting: UserSetting
+    var searchPreference: UserSearchPreference
 }

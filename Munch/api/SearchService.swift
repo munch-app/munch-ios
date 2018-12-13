@@ -209,6 +209,12 @@ struct SearchQuery: Codable {
     }
 
     struct Filter: Codable {
+        init() {
+            UserSearchPreference.instance?.requirements.forEach { tag in
+                tags.append(tag)
+            }
+        }
+
         var price: Price?
         var hour: Hour?
 
@@ -278,25 +284,6 @@ extension SearchQuery {
 
     init() {
         self.init(feature: .Search, collection: nil, filter: SearchQuery.Filter(), sort: SearchQuery.Sort())
-
-        // TODO UserSearchPreference
-//        if let tags = UserSetting.instance?.search.tags {
-//            if (tags.contains("halal")) {
-//                filter.tags.append(Tag(
-//                        tagId: "abb22d3d-7d23-4677-b4ef-a3e09f2f9ada",
-//                        name: "Halal",
-//                        type: .Amenities
-//                ))
-//            }
-//
-//            if (tags.contains("vegetarian options")) {
-//                filter.tags.append(Tag(
-//                        tagId: "fdf77b3b-8f90-419f-b711-dd25f97046fe",
-//                        name: "Vegetarian Options",
-//                        type: .Amenities
-//                ))
-//            }
-//        }
     }
 }
 

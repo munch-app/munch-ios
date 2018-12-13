@@ -241,10 +241,9 @@ extension FilterController: UITableViewDataSource, UITableViewDelegate {
 
         switch items[indexPath.row] {
         case let .tag(count, tag):
-            // TODO
-//            guard UserSetting.allow(remove: tag.name, controller: self) else {
-//                return
-//            }
+            guard UserSearchPreference.allow(remove: tag, controller: self) else {
+                return
+            }
             self.manager.select(tag: tag)
 
         case let .tagMore(type):
