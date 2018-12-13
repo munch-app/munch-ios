@@ -100,10 +100,11 @@ class AddPlaceButton: UIButton {
 
         Authentication.requireAuthentication(controller: controller) { state in
             PlaceSavedDatabase.shared.toggle(placeId: place.placeId).subscribe { (event: SingleEvent<Bool>) in
-                let generator = UINotificationFeedbackGenerator()
+                let generator = UIImpactFeedbackGenerator()
+
                 switch event {
                 case .success(let added):
-                    generator.notificationOccurred(.success)
+                    generator.impactOccurred()
                     if added {
                         view.makeToast("Added '\(place.name)' to your places.")
                     } else {
@@ -111,7 +112,7 @@ class AddPlaceButton: UIButton {
                     }
 
                 case .error(let error):
-                    generator.notificationOccurred(.error)
+                    generator.impactOccurred()
                     self.controller.alert(error: error)
                 }
             }.disposed(by: self.disposeBag)

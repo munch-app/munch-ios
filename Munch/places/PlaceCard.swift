@@ -88,7 +88,6 @@ class PlaceCard: UIView {
         self.addSubview(locationLabel)
         self.addSubview(heartBtn)
 
-
         heartBtn.snp.makeConstraints { maker in
             maker.top.right.equalTo(imageView)
         }
@@ -139,11 +138,12 @@ extension PlaceCard {
 
         Authentication.requireAuthentication(controller: controller) { state in
             PlaceSavedDatabase.shared.toggle(placeId: place.placeId).subscribe { (event: SingleEvent<Bool>) in
-                let generator = UINotificationFeedbackGenerator()
+                let generator = UIImpactFeedbackGenerator()
+
                 switch event {
                 case .success(let added):
                     self.heartBtn.isSelected = added
-                    generator.notificationOccurred(.success)
+                    generator.impactOccurred()
 
                     if added {
                         view.makeToast("Added '\(place.name)' to your places.")
@@ -152,7 +152,7 @@ extension PlaceCard {
                     }
 
                 case .error(let error):
-                    generator.notificationOccurred(.error)
+                    generator.impactOccurred()
                     self.controller.alert(error: error)
                 }
             }.disposed(by: self.disposeBag)
