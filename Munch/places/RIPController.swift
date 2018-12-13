@@ -82,6 +82,10 @@ class RIPController: UIViewController {
             }
         }
 
+        if !UserSearchPreference.allow(place: data.place) {
+            self.alert(title: "Tastebud Preference", message: "You have set a perm filter as a requirement in your Tastebud profile. This place does not seems to fit your requirement.")
+        }
+
         // Data Binding
         self.data = data
         self.headerView.place = data.place

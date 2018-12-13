@@ -137,13 +137,26 @@ extension UserSearchPreference {
 }
 
 extension UserSearchPreference {
-    static func allow(remove tag: Tag, controller: UIViewController) -> Bool {
+    static func allow(place: Place) -> Bool {
+        guard let tags = UserSearchPreference.instance?.requirements else {
+            return true
+        }
+
+        return place.tags.contains(where: { tag in
+            if tags.contains(where: { $0.tagId == tag.tagId }) {
+                return true
+            }
+
+            return false
+        })
+    }
+
+    static func allow(remove tag: Tag) -> Bool {
         guard let tags = UserSearchPreference.instance?.requirements else {
             return true
         }
 
         if tags.contains(where: { $0.tagId == tag.tagId }) {
-            controller.alert(title: "Search Preference", message: "You have set this as a permanent filter from your profile page. Please remove it from your user profile if you wish to discontinue this permanent filter.")
             return false
         }
 

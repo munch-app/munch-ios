@@ -241,7 +241,8 @@ extension FilterController: UITableViewDataSource, UITableViewDelegate {
 
         switch items[indexPath.row] {
         case let .tag(count, tag):
-            guard UserSearchPreference.allow(remove: tag, controller: self) else {
+            guard UserSearchPreference.allow(remove: tag) else {
+                self.alert(title: "Tastebud Preference", message: "You have set this filter as a requirement in your profile page. Please remove it from your Tastebud if you wish to select this filter.")
                 return
             }
             self.manager.select(tag: tag)

@@ -79,7 +79,9 @@ extension ProfileSavedPlaceController: UITableViewDataSource, UITableViewDelegat
             return tableView.dequeue(type: ProfileSavedPlaceHeaderCell.self)
 
         case .headerEmpty:
-            return tableView.dequeue(type: ProfileSavedPlaceEmptyHeaderCell.self)
+            let cell = tableView.dequeue(type: ProfileSavedPlaceEmptyHeaderCell.self)
+            cell.controller = self
+            return cell
 
         case .savedPlace(let savedPlace):
             guard let place = savedPlace.place else {
@@ -134,18 +136,20 @@ class ProfileSavedPlaceHeaderCell: UITableViewCell {
 }
 
 class ProfileSavedPlaceEmptyHeaderCell: UITableViewCell {
-    let label = UILabel(style: .h2)
-            .with(text: "Your Places")
-    let subLabel = UILabel(style: .h6)
-            .with(text: "Start saving places.")
+    let subLabel = UILabel(style: .h5)
+            .with(text: "Add places you discover to your Tastebud so you won't forget them!")
+            .with(numberOfLines: 0)
+    let discoverBtn = MunchButton(style: .secondary)
+            .with(text: "Discover")
     let container = UIView()
+    var controller: UIViewController!
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         self.addSubview(container)
-        container.addSubview(label)
         container.addSubview(subLabel)
+        container.addSubview(discoverBtn)
 
         container.backgroundColor = .whisper100
         container.layer.cornerRadius = 3
@@ -154,16 +158,22 @@ class ProfileSavedPlaceEmptyHeaderCell: UITableViewCell {
             maker.edges.equalTo(self).inset(24)
         }
 
-        label.snp.makeConstraints { maker in
-            maker.left.right.equalTo(container).inset(24)
-            maker.top.equalTo(container).inset(16).priority(.high)
-        }
-
         subLabel.snp.makeConstraints { maker in
             maker.left.right.equalTo(container).inset(24)
-            maker.top.equalTo(label.snp.bottom).inset(-8).priority(.high)
-            maker.bottom.equalTo(container).inset(24).priority(.high)
+            maker.top.equalTo(container).inset(24).priority(.high)
         }
+
+        discoverBtn.snp.makeConstraints { maker in
+            maker.right.equalTo(container).inset(24)
+            maker.bottom.equalTo(container).inset(24).priority(.high)
+            maker.top.equalTo(subLabel.snp.bottom).inset(-16).priority(.high)
+        }
+
+        discoverBtn.addTarget(self, action: #selector(onDiscover), for: .touchUpInside)
+    }
+
+    @objc func onDiscover() {
+        self.controller.tabBarController?.selectedIndex = MunchTabBarItem.Feed.index
     }
 
     required init?(coder aDecoder: NSCoder) {
