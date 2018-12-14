@@ -137,6 +137,11 @@ extension UserSearchPreference {
 }
 
 extension UserSearchPreference {
+    static let requirements = [
+        Tag(tagId: "abb22d3d-7d23-4677-b4ef-a3e09f2f9ada", name: "Halal", type: .Amenities),
+        Tag(tagId: "fdf77b3b-8f90-419f-b711-dd25f97046fe", name: "Vegetarian Options", type: .Amenities),
+    ]
+
     static func allow(place: Place) -> Bool {
         guard let tags = UserSearchPreference.instance?.requirements else {
             return true
@@ -165,5 +170,16 @@ extension UserSearchPreference {
         }
 
         return true
+    }
+
+    static func prompt(tag: Tag) -> Bool {
+        guard UserSearchPreference.requirements.contains(where: { $0.tagId == tag.tagId }) else {
+            return false
+        }
+
+        let count = UserDefaults.standard.integer(forKey: "UserSearchPreference.prompt.\(tag.tagId)") + 1
+        UserDefaults.standard.set(count, forKey: "UserSearchPreference.prompt.\(tag.tagId)")
+
+        return count < 2
     }
 }

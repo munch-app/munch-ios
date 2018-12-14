@@ -25,12 +25,13 @@ enum ProfileHeaderTab {
 class ProfileTabButton: UIControl {
     private let nameLabel: UILabel = {
         let nameLabel = UILabel(style: .navHeader)
+        .with(font: UIFont.systemFont(ofSize: 17, weight: .semibold))
         nameLabel.textAlignment = .left
         return nameLabel
     }()
     private let indicator: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.75)
         return view
     }()
 

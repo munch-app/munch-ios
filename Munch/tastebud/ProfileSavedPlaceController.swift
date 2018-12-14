@@ -16,7 +16,7 @@ class ProfileSavedPlaceController: UIViewController {
         tableView.estimatedRowHeight = 50
 
         tableView.tableFooterView = UIView(frame: .zero)
-        tableView.contentInset.bottom = 16
+        tableView.contentInset.bottom = 64
         tableView.separatorStyle = .none
         return tableView
     }()

@@ -245,7 +245,13 @@ extension FilterController: UITableViewDataSource, UITableViewDelegate {
                 self.alert(title: "Tastebud Preference", message: "You have set this filter as a requirement in your profile page. Please remove it from your Tastebud if you wish to select this filter.")
                 return
             }
+
             self.manager.select(tag: tag)
+
+            if UserSearchPreference.prompt(tag: tag) {
+                self.alert(title: "Tastebud Preference", message: "Hi, we noticed you require \(tag.name). You can permanently enable this requirement in your profile.")
+            }
+
 
         case let .tagMore(type):
             return

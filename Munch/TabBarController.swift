@@ -56,7 +56,7 @@ enum InitialViewProvider {
         return MunchTabBarController()
     }
 
-    fileprivate static func discover() -> SearchRootController {
+    fileprivate static func search() -> SearchRootController {
         let controller = SearchRootController()
         controller.tabBarItem = MunchTabBarItem.Discover.ui
         return controller
@@ -121,7 +121,7 @@ extension MunchTabBarController: UITabBarControllerDelegate {
 class MunchTabBarController: UITabBarController {
     var previousController: UIViewController!
 
-    private let discover = InitialViewProvider.discover()
+    private let search = InitialViewProvider.search()
     private let feed = InitialViewProvider.feed()
     private let profile = InitialViewProvider.profile()
 
@@ -136,8 +136,15 @@ class MunchTabBarController: UITabBarController {
         tabBar.unselectedItemTintColor = UIColor.black.withAlphaComponent(0.7)
 
         self.delegate = self
-        self.viewControllers = [discover, feed, profile]
+        self.viewControllers = [search, feed, profile]
         self.previousController = self.viewControllers![0]
+    }
+
+    /**
+     * Allows you to reset all tabs due to major state change.
+     */
+    func reset() {
+        search.controller.reset()
     }
 
     required init?(coder aDecoder: NSCoder) {

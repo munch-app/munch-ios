@@ -28,10 +28,9 @@ class ProfilePreferenceController: UIViewController {
 
     private var items: [(String?, [ProfilePreferenceType])] = [
         (nil, [.header]),
-        ("Requirements", [
-            .requirement(Tag(tagId: "abb22d3d-7d23-4677-b4ef-a3e09f2f9ada", name: "Halal", type: .Amenities)),
-            .requirement(Tag(tagId: "fdf77b3b-8f90-419f-b711-dd25f97046fe", name: "Vegetarian Options", type: .Amenities))
-        ])
+        ("Requirements",
+                UserSearchPreference.requirements.map({ ProfilePreferenceType.requirement($0) })
+        )
     ]
 
     override func viewDidLoad() {
@@ -70,7 +69,7 @@ extension ProfilePreferenceController: UITableViewDataSource, UITableViewDelegat
 
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let text = items[section].0 else {
-            return nil
+            return UIView()
         }
         return ProfilePreferenceCellHeader(text: text)
     }
@@ -114,6 +113,9 @@ extension ProfilePreferenceController: UITableViewDataSource, UITableViewDelegat
                 case .success:
                     self.view.makeToast("Search Preference Updated")
                     self.tableView.reloadData()
+                    if let controller = self.tabBarController as? MunchTabBarController {
+                        controller.reset()
+                    }
 
                 case .error(let error):
                     self.alert(error: error)

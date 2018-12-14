@@ -173,7 +173,7 @@ fileprivate class RIPArticleCardCell: UICollectionViewCell {
                 maker.right.lessThanOrEqualTo(moreBtn.snp.left).inset(-16)
 
                 brand.snp.makeConstraints { maker in
-                    maker.left.top.equalTo(domain)
+                    maker.right.left.top.equalTo(domain)
                     maker.bottom.equalTo(date.snp.top)
                 }
 
