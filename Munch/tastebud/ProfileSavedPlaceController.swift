@@ -116,7 +116,7 @@ extension ProfileSavedPlaceController: UITableViewDataSource, UITableViewDelegat
 
 class ProfileSavedPlaceHeaderCell: UITableViewCell {
     let label = UILabel(style: .h2)
-            .with(text: "Your Places")
+            .with(text: "Saved Places")
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -137,7 +137,7 @@ class ProfileSavedPlaceHeaderCell: UITableViewCell {
 
 class ProfileSavedPlaceEmptyHeaderCell: UITableViewCell {
     let subLabel = UILabel(style: .h5)
-            .with(text: "Add places you discover to your Tastebud so you won't forget them!")
+            .with(text: "Places you add to your Tastebud will be saved here.")
             .with(numberOfLines: 0)
     let discoverBtn = MunchButton(style: .secondary)
             .with(text: "Discover")

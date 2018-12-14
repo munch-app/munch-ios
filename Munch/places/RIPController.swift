@@ -82,10 +82,6 @@ class RIPController: UIViewController {
             }
         }
 
-        if !UserSearchPreference.allow(place: data.place) {
-            self.alert(title: "Tastebud Preference", message: "You have set a perm filter as a requirement in your Tastebud profile. This place does not seems to fit your requirement.")
-        }
-
         // Data Binding
         self.data = data
         self.headerView.place = data.place
@@ -185,6 +181,7 @@ extension RIPController {
 
         appendTo(type: RIPImageBannerCard.self)
         appendTo(type: RIPCardClosed.self)
+        appendTo(type: RIPCardPreference.self)
         appendTo(type: RIPNameTagCard.self)
 
         appendTo(type: RIPHourCard.self)
@@ -226,6 +223,7 @@ extension RIPController: UICollectionViewDataSource, UICollectionViewDelegate {
 
         collectionView.register(type: RIPImageBannerCard.self)
         collectionView.register(type: RIPNameTagCard.self)
+        collectionView.register(type: RIPCardPreference.self)
         collectionView.register(type: RIPCardClosed.self)
 
         collectionView.register(type: RIPHourCard.self)

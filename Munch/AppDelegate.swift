@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Select initial view provider to use
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.window?.tintColor = .primary500
+        self.window?.tintColor = .secondary500
         self.window?.rootViewController = InitialViewProvider.main()
         self.window?.makeKeyAndVisible()
 

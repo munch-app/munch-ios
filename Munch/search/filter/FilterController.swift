@@ -242,14 +242,18 @@ extension FilterController: UITableViewDataSource, UITableViewDelegate {
         switch items[indexPath.row] {
         case let .tag(count, tag):
             guard UserSearchPreference.allow(remove: tag) else {
-                self.alert(title: "Tastebud Preference", message: "You have set this filter as a requirement in your profile page. Please remove it from your Tastebud if you wish to select this filter.")
+                let alert = UIAlertController(title: "Tastebud Preference Note", message: "You have permanently enabled this filter. Please remove the filter from your Tastebud Preferences.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Okay", style: .cancel, handler: nil))
+                present(alert, animated: true)
                 return
             }
 
             self.manager.select(tag: tag)
 
             if UserSearchPreference.prompt(tag: tag) {
-                self.alert(title: "Tastebud Preference", message: "Hi, we noticed you require \(tag.name). You can permanently enable this requirement in your profile.")
+                let alert = UIAlertController(title: "Tastebud Preference Note", message: "We noticed you require \(tag.name) as a dietary requirement. Would you like to apply this to all future searches?", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Okay", style: .cancel, handler: nil))
+                present(alert, animated: true)
             }
 
 

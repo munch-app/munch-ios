@@ -130,7 +130,7 @@ extension ProfilePreferenceController: UITableViewDataSource, UITableViewDelegat
 
 class ProfilePreferenceCellHeader: UIView {
     let label = UILabel(style: .h2)
-            .with(text: "Requirements")
+            .with(text: "Permanent Requirements")
             .with(numberOfLines: 0)
 
     init(text: String) {
@@ -195,9 +195,9 @@ class ProfilePreferenceCellRequirement: UITableViewCell {
 
 class ProfilePreferenceHeader: UITableViewCell {
     let label = UILabel(style: .h2)
-            .with(text: "Your Preference")
+            .with(text: "Tastebud Preference")
     let subLabel = UILabel(style: .h6)
-            .with(text: "Customise your Search experience on Munch.")
+            .with(text: "Customise your Tastebud on Munch for a better experience.")
             .with(numberOfLines: 0)
     let container = UIView()
 
