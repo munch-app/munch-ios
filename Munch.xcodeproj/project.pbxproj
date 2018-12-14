@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		032270B221AFC67A00FA733C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B4B73BB2757D0BE5CC888EDA /* GoogleService-Info.plist */; };
-		032270B421BA84FD00FA733C /* HalfModalPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032270B321BA84FD00FA733C /* HalfModalPresentationController.swift */; };
 		032270B821BA850D00FA733C /* HalfModalTransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032270B521BA850C00FA733C /* HalfModalTransitionAnimator.swift */; };
 		032270B921BA850D00FA733C /* HalfModalInteractiveTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032270B621BA850D00FA733C /* HalfModalInteractiveTransition.swift */; };
 		032270BA21BA850D00FA733C /* HalfModalTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032270B721BA850D00FA733C /* HalfModalTransitioningDelegate.swift */; };
@@ -94,6 +93,7 @@
 		B4B739ED33627977DE45A704 /* RIPCardArticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73066E127D1CD297E680D /* RIPCardArticle.swift */; };
 		B4B73A27FF8C27B661FDE549 /* ReviewRatingUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732F3E55F3E605210CE9D /* ReviewRatingUtils.swift */; };
 		B4B73A4F99622AF0D943C712 /* AccountBoardingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7347AD60C415D1700F116 /* AccountBoardingController.swift */; };
+		B4B73ACEF8E7C6916823DAEF /* HalfModalPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73C290056297BBE0E128E /* HalfModalPresentationController.swift */; };
 		B4B73B10F58C84E27D808EF5 /* FeedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737B877E6C0DDB8C12B56 /* FeedController.swift */; };
 		B4B73B64ED85D15DB8E2AEEE /* UITableView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73A6F579638D5F835DDBE /* UITableView+Extension.swift */; };
 		B4B73B82338C1565A7F94BD5 /* FeedStaticCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73C4A5FD7240D7F5A8EB9 /* FeedStaticCell.swift */; };
@@ -159,7 +159,6 @@
 		031C2F411E9AADDB0022F0AF /* NYTPhotoViewerCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NYTPhotoViewerCore.framework; path = Carthage/Build/iOS/NYTPhotoViewerCore.framework; sourceTree = "<group>"; };
 		031C2F431E9AEFC10022F0AF /* FLAnimatedImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLAnimatedImage.framework; path = Carthage/Build/iOS/FLAnimatedImage.framework; sourceTree = "<group>"; };
 		031C2F451E9CAE170022F0AF /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
-		032270B321BA84FD00FA733C /* HalfModalPresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HalfModalPresentationController.swift; path = "../../../../../Downloads/HalfModalPresentationController-master/HalfModalPresentationController/Presentation/HalfModalPresentationController.swift"; sourceTree = "<group>"; };
 		032270B521BA850C00FA733C /* HalfModalTransitionAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HalfModalTransitionAnimator.swift; sourceTree = "<group>"; };
 		032270B621BA850D00FA733C /* HalfModalInteractiveTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HalfModalInteractiveTransition.swift; sourceTree = "<group>"; };
 		032270B721BA850D00FA733C /* HalfModalTransitioningDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HalfModalTransitioningDelegate.swift; sourceTree = "<group>"; };
@@ -298,6 +297,7 @@
 		B4B73BD07195645B79E5338E /* FeedImageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedImageCell.swift; sourceTree = "<group>"; };
 		B4B73BF6B8D464037F4FC986 /* ProfileSettingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileSettingController.swift; sourceTree = "<group>"; };
 		B4B73C034C4EE0BD8BF93F68 /* Seperator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Seperator.swift; sourceTree = "<group>"; };
+		B4B73C290056297BBE0E128E /* HalfModalPresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HalfModalPresentationController.swift; sourceTree = "<group>"; };
 		B4B73C4A5FD7240D7F5A8EB9 /* FeedStaticCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedStaticCell.swift; sourceTree = "<group>"; };
 		B4B73CA83A1B699543FD1BE7 /* SearchCardHomeTab.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardHomeTab.swift; sourceTree = "<group>"; };
 		B4B73D378A46D9D36E031331 /* SearchHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchHeaderView.swift; sourceTree = "<group>"; };
@@ -719,8 +719,8 @@
 				032270B621BA850D00FA733C /* HalfModalInteractiveTransition.swift */,
 				032270B521BA850C00FA733C /* HalfModalTransitionAnimator.swift */,
 				032270B721BA850D00FA733C /* HalfModalTransitioningDelegate.swift */,
-				032270B321BA84FD00FA733C /* HalfModalPresentationController.swift */,
 				B4B7338D1D99FBE8C7AB1C8C /* HalfModalController.swift */,
+				B4B73C290056297BBE0E128E /* HalfModalPresentationController.swift */,
 			);
 			path = controller;
 			sourceTree = "<group>";
@@ -1092,7 +1092,6 @@
 				B4B733162CE1B0A62B893122 /* RIPCardSuggest.swift in Sources */,
 				B4B73711AC311B37916A5C12 /* RIPCard.swift in Sources */,
 				B4B73EB2FE22EA5E8593B33E /* RIPController.swift in Sources */,
-				032270B421BA84FD00FA733C /* HalfModalPresentationController.swift in Sources */,
 				B4B73A27FF8C27B661FDE549 /* ReviewRatingUtils.swift in Sources */,
 				B4B73D148D0C4822FCADE869 /* RIPMapController.swift in Sources */,
 				B4B7388AF9FD83F39F217600 /* CollectionPlaceController.swift in Sources */,
@@ -1166,6 +1165,7 @@
 				B4B7376234726CC2C09E4223 /* ProfilePreferenceController.swift in Sources */,
 				B4B73E61E0D95B4E47C1084A /* FeedImageControllerView.swift in Sources */,
 				B4B73766F2F3F10BB2B74B71 /* RIPCardPreference.swift in Sources */,
+				B4B73ACEF8E7C6916823DAEF /* HalfModalPresentationController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
