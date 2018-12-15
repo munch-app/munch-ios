@@ -138,8 +138,8 @@ extension UserSearchPreference {
 
 extension UserSearchPreference {
     static let requirements = [
-        Tag(tagId: "abb22d3d-7d23-4677-b4ef-a3e09f2f9ada", name: "Halal", type: .Amenities),
-        Tag(tagId: "fdf77b3b-8f90-419f-b711-dd25f97046fe", name: "Vegetarian Options", type: .Amenities),
+        Tag(tagId: "abb22d3d-7d23-4677-b4ef-a3e09f2f9ada", name: "Halal", type: .Requirement),
+        Tag(tagId: "fdf77b3b-8f90-419f-b711-dd25f97046fe", name: "Vegetarian Options", type: .Requirement),
     ]
 
     static func allow(place: Place) -> Bool {

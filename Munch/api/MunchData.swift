@@ -171,6 +171,7 @@ struct Tag: ElasticObject, Codable {
         case Establishment
         case Amenities
         case Timing
+        case Requirement
         case Other
 
         /// Defensive Decoding
@@ -181,6 +182,7 @@ struct Tag: ElasticObject, Codable {
             case "Establishment": self = .Establishment
             case "Amenities": self = .Amenities
             case "Timing": self = .Timing
+            case "Requirement": self = .Requirement
             default: self = .Other
             }
         }

@@ -85,6 +85,7 @@ class FilterManager {
         list.append(.rowTiming)
 
         list.append(contentsOf: collect(tag: .Cuisine))
+        list.append(contentsOf: collect(tag: .Requirement))
         list.append(contentsOf: collect(tag: .Amenities))
         list.append(contentsOf: collect(tag: .Establishment))
         return list
