@@ -82,6 +82,7 @@ class PlaceCard: UIView {
 
     init() {
         super.init(frame: .zero)
+        self.clipsToBounds = true
         self.addSubview(imageView)
         self.addSubview(nameLabel)
         self.addSubview(tagView)

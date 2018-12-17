@@ -78,6 +78,8 @@ class SearchTableView: UITableView {
 
         register(SearchCardCollectionHeader.self)
 
+        register(SearchCardHomeDTJE.self)
+
         register(SearchHomeTabCard.self)
         register(SearchHomeNearbyCard.self)
         register(SearchCardHomeRecentPlace.self)

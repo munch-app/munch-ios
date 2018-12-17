@@ -44,3 +44,50 @@ class HalfModalController: UIViewController, HalfModalPresentable {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+class HalfModalTextController: HalfModalController {
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.alwaysBounceHorizontal = false
+        return scrollView
+    }()
+    private let headerLabel = UILabel(style: .h2)
+            .with(numberOfLines: 0)
+    private let textLabel = UILabel(style: .regular)
+            .with(numberOfLines: 0)
+
+    init(header: String?, text: String) {
+        headerLabel.text = header
+        textLabel.with(text: text, lineSpacing: 1.5)
+        super.init()
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        scrollView.addSubview(headerLabel)
+        scrollView.addSubview(textLabel)
+        self.view.addSubview(scrollView)
+
+        scrollView.snp.makeConstraints { maker in
+            maker.top.equalTo(self.view.safeArea.top)
+            maker.bottom.equalTo(self.view.safeArea.bottom)
+            maker.left.right.equalTo(self.view)
+        }
+
+        headerLabel.snp.makeConstraints { maker in
+            maker.top.equalTo(scrollView).inset(24)
+            maker.left.right.equalTo(self.view).inset(24)
+        }
+
+        textLabel.snp.makeConstraints { maker in
+            maker.top.equalTo(headerLabel.snp.bottom).inset(-16)
+            maker.bottom.equalTo(scrollView).inset(24)
+            maker.left.right.equalTo(self.view).inset(24)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}

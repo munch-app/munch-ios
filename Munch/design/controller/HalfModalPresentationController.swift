@@ -26,20 +26,8 @@ class HalfModalPresentationController : UIPresentationController {
         }
         
         let view = UIView(frame: CGRect(x: 0, y: 0, width: containerView!.bounds.width, height: containerView!.bounds.height))
-        
-        // Blur Effect
-        let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.dark)
-        let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.frame = view.bounds
-        view.addSubview(blurEffectView)
-        
-        // Vibrancy Effect
-        let vibrancyEffect = UIVibrancyEffect(blurEffect: blurEffect)
-        let vibrancyEffectView = UIVisualEffectView(effect: vibrancyEffect)
-        vibrancyEffectView.frame = view.bounds
-        
-        // Add the vibrancy view to the blur view
-        blurEffectView.contentView.addSubview(vibrancyEffectView)
+
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         
         _dimmingView = view
         
@@ -53,7 +41,7 @@ class HalfModalPresentationController : UIPresentationController {
         presentedViewController.view.addGestureRecognizer(panGestureRecognizer)
     }
     
-    func onPan(pan: UIPanGestureRecognizer) -> Void {
+    @objc func onPan(pan: UIPanGestureRecognizer) -> Void {
         let endPoint = pan.translation(in: pan.view?.superview)
         
         switch pan.state {
@@ -61,7 +49,6 @@ class HalfModalPresentationController : UIPresentationController {
             presentedView!.frame.size.height = containerView!.frame.height
         case .changed:
             let velocity = pan.velocity(in: pan.view?.superview)
-            print(velocity.y)
             switch state {
             case .normal:
                 presentedView!.frame.origin.y = endPoint.y + containerView!.frame.height / 2
@@ -82,8 +69,6 @@ class HalfModalPresentationController : UIPresentationController {
                 }
             }
             
-            print("finished transition")
-            
             break
         default:
             break
@@ -92,7 +77,7 @@ class HalfModalPresentationController : UIPresentationController {
     
     func changeScale(to state: ModalScaleState) {
         if let presentedView = presentedView, let containerView = self.containerView {
-            UIView.animate(withDuration: 0.8, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseInOut, animations: { () -> Void in
+            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.95, initialSpringVelocity: 0.5, options: .curveEaseIn, animations: { () -> Void in
                 presentedView.frame = containerView.frame
                 let containerFrame = containerView.frame
                 let halfFrame = CGRect(origin: CGPoint(x: 0, y: containerFrame.height / 2),
@@ -131,7 +116,6 @@ class HalfModalPresentationController : UIPresentationController {
             
             coordinator.animate(alongsideTransition: { (context) -> Void in
                 dimmedView.alpha = 1
-                self.presentingViewController.view.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
             }, completion: nil)
         }
     }
@@ -143,15 +127,12 @@ class HalfModalPresentationController : UIPresentationController {
                 self.dimmingView.alpha = 0
                 self.presentingViewController.view.transform = CGAffineTransform.identity
             }, completion: { (completed) -> Void in
-                print("done dismiss animation")
             })
             
         }
     }
     
     override func dismissalTransitionDidEnd(_ completed: Bool) {
-        print("dismissal did end: \(completed)")
-        
         if completed {
             dimmingView.removeFromSuperview()
             _dimmingView = nil

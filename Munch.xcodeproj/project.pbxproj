@@ -93,6 +93,7 @@
 		B4B739ED33627977DE45A704 /* RIPCardArticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73066E127D1CD297E680D /* RIPCardArticle.swift */; };
 		B4B73A27FF8C27B661FDE549 /* ReviewRatingUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732F3E55F3E605210CE9D /* ReviewRatingUtils.swift */; };
 		B4B73A4F99622AF0D943C712 /* AccountBoardingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7347AD60C415D1700F116 /* AccountBoardingController.swift */; };
+		B4B73A970F91F8D21B893ABF /* SearchCardHomeDTJE.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73A69C1720900C43F6E42 /* SearchCardHomeDTJE.swift */; };
 		B4B73ACEF8E7C6916823DAEF /* HalfModalPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73C290056297BBE0E128E /* HalfModalPresentationController.swift */; };
 		B4B73B10F58C84E27D808EF5 /* FeedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737B877E6C0DDB8C12B56 /* FeedController.swift */; };
 		B4B73B64ED85D15DB8E2AEEE /* UITableView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73A6F579638D5F835DDBE /* UITableView+Extension.swift */; };
@@ -284,6 +285,7 @@
 		B4B739E61B078D6FB36F0BAC /* RIPCardNameTag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPCardNameTag.swift; sourceTree = "<group>"; };
 		B4B73A013583B2C9902370B6 /* CopyableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CopyableView.swift; sourceTree = "<group>"; };
 		B4B73A3FDCD408C57DE0CC56 /* FeedImageControllerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedImageControllerView.swift; sourceTree = "<group>"; };
+		B4B73A69C1720900C43F6E42 /* SearchCardHomeDTJE.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardHomeDTJE.swift; sourceTree = "<group>"; };
 		B4B73A6F579638D5F835DDBE /* UITableView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableView+Extension.swift"; sourceTree = "<group>"; };
 		B4B73A8D9255EEE7A5009815 /* CollectionPlaceLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionPlaceLoader.swift; sourceTree = "<group>"; };
 		B4B73AACCB0BC095B5C0D075 /* FeedManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedManager.swift; sourceTree = "<group>"; };
@@ -579,6 +581,7 @@
 				B4B737F525D72B78432937A2 /* SearchCardHomePopularPlace.swift */,
 				B4B73F084D5F0E1B0F800F8B /* SearchCardHomeAwardCollection.swift */,
 				B4B7365E3547A34AA671E144 /* SearchCardHomeRecentPlace.swift */,
+				B4B73A69C1720900C43F6E42 /* SearchCardHomeDTJE.swift */,
 			);
 			path = home;
 			sourceTree = "<group>";
@@ -1166,6 +1169,7 @@
 				B4B73E61E0D95B4E47C1084A /* FeedImageControllerView.swift in Sources */,
 				B4B73766F2F3F10BB2B74B71 /* RIPCardPreference.swift in Sources */,
 				B4B73ACEF8E7C6916823DAEF /* HalfModalPresentationController.swift in Sources */,
+				B4B73A970F91F8D21B893ABF /* SearchCardHomeDTJE.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

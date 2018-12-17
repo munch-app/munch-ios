@@ -103,6 +103,7 @@ extension UILabel {
         return self
     }
 
+    @discardableResult
     func with(text: String?, lineSpacing: CGFloat) -> UILabel {
         self.text = text
         

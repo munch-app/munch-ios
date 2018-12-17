@@ -133,6 +133,7 @@ class MunchTabBarController: UITabBarController {
         tabBar.backgroundImage = UIImage()
         tabBar.shadow(vertical: -2)
 
+        tabBar.tintColor = UIColor.primary600
         tabBar.unselectedItemTintColor = UIColor.black.withAlphaComponent(0.7)
 
         self.delegate = self

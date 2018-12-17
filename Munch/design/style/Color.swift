@@ -82,7 +82,7 @@ extension UIColor {
     static let peach100 = UIColor(hex: "faf0f0")
     static let peach200 = UIColor(hex: "f0e0e0")
 
-    static let saltpan100 = UIColor(hex: "F1F8F1")
+    static let saltpan100 = UIColor(hex: "F1F9F1")
     static let saltpan200 = UIColor(hex: "E0F0E0")
 
     static let whisper050 = UIColor(hex: "f9f9fd")

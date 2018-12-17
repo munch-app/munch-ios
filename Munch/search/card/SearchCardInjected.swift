@@ -61,7 +61,7 @@ class SearchNoLocationCard: SearchCardView {
                     .subscribe { event in
                         switch event {
                         case .success:
-                            self.actionButton.setTitle("Refresh Search", for: .normal)
+                            self.actionButton.with(text: "Refresh Search")
                             self.actionButton.backgroundColor = .secondary500
 
                         case .error(let error):

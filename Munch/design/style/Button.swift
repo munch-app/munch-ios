@@ -125,7 +125,7 @@ extension MunchButtonStyle {
     }
 }
 
-class MunchButton: UIButton {
+class MunchButton: UIControl {
     private let nameLabel = UILabel()
             .with(alignment: .center)
             .with(numberOfLines: 1)
@@ -133,7 +133,43 @@ class MunchButton: UIButton {
     required init(style: MunchButtonStyle) {
         super.init(frame: .zero)
         self.addSubview(nameLabel)
+        self.with(style: style)
+    }
 
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.layer.cornerRadius = 3.0
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension MunchButton {
+    var text: String? {
+        set(text) {
+            self.nameLabel.text = text
+        }
+        get {
+            return self.nameLabel.text
+        }
+    }
+
+    @discardableResult
+    func with(text: String?) -> MunchButton {
+        self.nameLabel.text = text
+        return self
+    }
+
+    @discardableResult
+    func with(color: UIColor) -> MunchButton {
+        self.nameLabel.textColor = color
+        return self
+    }
+
+    @discardableResult
+    func with(style: MunchButtonStyle) -> MunchButton {
         self.backgroundColor = style.background
         self.layer.borderWidth = style.borderWidth
         self.layer.borderColor = style.borderColor
@@ -148,26 +184,6 @@ class MunchButton: UIButton {
             maker.centerY.equalTo(self)
             maker.left.right.equalTo(self).inset(style.padding)
         }
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        self.layer.cornerRadius = 3.0
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-extension MunchButton {
-    func with(text: String?) -> MunchButton {
-        self.nameLabel.text = text
-        return self
-    }
-
-    func with(color: UIColor) -> MunchButton {
-        self.nameLabel.textColor = color
         return self
     }
 }

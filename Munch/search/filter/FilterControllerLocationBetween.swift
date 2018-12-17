@@ -221,7 +221,7 @@ extension FilterLocationBetweenController: UITableViewDataSource, UITableViewDel
 
 fileprivate class FilterLocationBetweenHeaderCell: UITableViewCell {
     private let titleLabel = UILabel(style: .regular)
-            .with(text: "Simply enter everyone's location & we will find the most ideal spot for a meal together.")
+            .with(text: "Enter everyone’s location to find the most convenient spot for everyone.")
             .with(numberOfLines: 0)
 
 
