@@ -12,7 +12,7 @@ import UserNotifications
 class SearchCardHomeDTJE: SearchCardView {
     let titleLabel = UILabel(style: .h2)
             .with(numberOfLines: 1)
-            .with(text: "Don't Think Just Eat")
+            .with(text: "Don't think, just eat")
 
     let subLabel = UILabel(style: .h6)
             .with(numberOfLines: 1)
@@ -194,7 +194,7 @@ extension SearchCardHomeDTJE {
 
     class func subscribe(notification: Notification) {
         let content = UNMutableNotificationContent()
-        content.title = "Don't Think Just Eat"
+        content.title = "Don't think, just eat"
         content.body = notification.body
 
         // Create the trigger as a repeating event.
@@ -359,7 +359,7 @@ fileprivate class SearchDTJESubscribeButton: UIView {
 
     @objc func onSubscribe() {
         if self.subscribeButton.text == "Subscribed" {
-            let alert = UIAlertController(title: nil, message: "Unsubscribe from don't think just eat?", preferredStyle: .alert)
+            let alert = UIAlertController(title: nil, message: "Unsubscribe from 'don't think, just eat'?", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Confirm", style: .destructive) { action in
                 SearchCardHomeDTJE.unsubscribe(notification: .lunch)
                 SearchCardHomeDTJE.unsubscribe(notification: .dinner)
