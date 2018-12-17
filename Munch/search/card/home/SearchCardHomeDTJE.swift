@@ -396,7 +396,7 @@ fileprivate class SearchDTJESubscribeButton: UIView {
     }
 }
 
-fileprivate class SearchDTJEInfoController: HalfModalController {
+class SearchDTJEInfoController: HalfModalController {
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.alwaysBounceHorizontal = false

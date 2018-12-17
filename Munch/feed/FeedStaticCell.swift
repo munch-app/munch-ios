@@ -34,6 +34,9 @@ class FeedCellHeader: UICollectionViewCell {
             maker.left.right.equalTo(self)
 
             maker.top.equalTo(title.snp.bottom).inset(-12)
+
+            let height = FontStyle.regular.height(text: FeedCellHeader.text, width: UIScreen.main.bounds.width - 48)
+            maker.height.equalTo(height).priority(.high)
             maker.bottom.equalTo(self)
         }
     }

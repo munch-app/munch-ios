@@ -14,9 +14,22 @@ import Moya
 import BEMCheckBox
 import SnapKit
 
-class ProfileSettingController: UIViewController, UIGestureRecognizerDelegate, SFSafariViewControllerDelegate {
-    private let headerView = HeaderView()
-    private let tableView = UITableView()
+class ProfileSettingController: UIViewController, UIGestureRecognizerDelegate {
+    private let headerView = ProfileSettingHeaderView()
+    private let tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.separatorStyle = .none
+        tableView.separatorInset.left = 24
+        tableView.allowsSelection = true
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.sectionHeaderHeight = 44
+        tableView.estimatedRowHeight = 50
+
+        tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 12))
+        tableView.backgroundColor = .whisper050
+        return tableView
+    }()
     private var setting = UserSetting.instance
 
     override func viewWillAppear(_ animated: Bool) {
@@ -27,33 +40,21 @@ class ProfileSettingController: UIViewController, UIGestureRecognizerDelegate, S
         navigationController?.navigationBar.shadowImage = UIImage()
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.initViews()
-        self.registerCell()
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
 
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
-
-        self.tableView.delegate = self
-        self.tableView.dataSource = self
-
-        self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
     }
 
-    private func initViews() {
+    override func viewDidLoad() {
+        super.viewDidLoad()
         self.view.addSubview(tableView)
         self.view.addSubview(headerView)
 
-        tableView.separatorStyle = .none
-        tableView.separatorInset.left = 24
-        tableView.allowsSelection = true
-        tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.sectionHeaderHeight = 44
-        tableView.estimatedRowHeight = 50
+        self.registerCell()
+        self.addTargets()
 
-        tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 12))
         tableView.snp.makeConstraints { make in
             make.top.equalTo(headerView.snp.bottom)
             make.bottom.left.right.equalTo(self.view)
@@ -62,6 +63,57 @@ class ProfileSettingController: UIViewController, UIGestureRecognizerDelegate, S
         headerView.snp.makeConstraints { make in
             make.top.left.right.equalTo(self.view)
         }
+    }
+}
+
+fileprivate class ProfileSettingHeaderView: UIView {
+    let backButton = UIButton()
+    let titleView = UILabel(style: .navHeader)
+            .with(text: "Setting")
+            .with(alignment: .center)
+
+    override init(frame: CGRect = CGRect.zero) {
+        super.init(frame: frame)
+        self.initViews()
+    }
+
+    private func initViews() {
+        self.backgroundColor = .white
+        self.addSubview(titleView)
+        self.addSubview(backButton)
+
+        titleView.snp.makeConstraints { make in
+            make.centerX.equalTo(self)
+            make.top.equalTo(self.safeArea.top)
+            make.bottom.equalTo(self)
+            make.height.equalTo(44)
+        }
+
+        backButton.setImage(UIImage(named: "NavigationBar-Back"), for: .normal)
+        backButton.tintColor = .black
+        backButton.imageEdgeInsets.left = 18
+        backButton.contentHorizontalAlignment = .left
+        backButton.snp.makeConstraints { make in
+            make.top.equalTo(self.safeArea.top)
+            make.left.equalTo(self)
+            make.bottom.equalTo(self)
+            make.width.equalTo(64)
+        }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.hairlineShadow(height: 1.0)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension ProfileSettingController: SFSafariViewControllerDelegate {
+    func addTargets() {
+        self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
     }
 
     private func logout() {
@@ -76,159 +128,105 @@ class ProfileSettingController: UIViewController, UIGestureRecognizerDelegate, S
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
-
-    private class HeaderView: UIView {
-        let backButton = UIButton()
-        let titleView = UILabel()
-
-        override init(frame: CGRect = CGRect.zero) {
-            super.init(frame: frame)
-            self.initViews()
-        }
-
-        private func initViews() {
-            self.backgroundColor = .white
-            self.addSubview(titleView)
-            self.addSubview(backButton)
-
-            titleView.text = "Setting".localized()
-            titleView.font = .systemFont(ofSize: 17, weight: .regular)
-            titleView.textAlignment = .center
-            titleView.snp.makeConstraints { make in
-                make.centerX.equalTo(self)
-                make.top.equalTo(self.safeArea.top)
-                make.bottom.equalTo(self)
-                make.height.equalTo(44)
-            }
-
-            backButton.setImage(UIImage(named: "NavigationBar-Back"), for: .normal)
-            backButton.tintColor = .black
-            backButton.imageEdgeInsets.left = 18
-            backButton.contentHorizontalAlignment = .left
-            backButton.snp.makeConstraints { make in
-                make.top.equalTo(self.safeArea.top)
-                make.left.equalTo(self)
-                make.bottom.equalTo(self)
-                make.width.equalTo(64)
-            }
-        }
-
-        override func layoutSubviews() {
-            super.layoutSubviews()
-            self.hairlineShadow(height: 1.0)
-        }
-
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-    }
 }
 
 enum SettingCellType {
-    // Profile: Images, Person Name
-    case loading
-    case instagramConnect
+    case separator
+    case instagram
     case feedback
+    case dtje
     case logout
 }
 
 extension ProfileSettingController: UITableViewDataSource, UITableViewDelegate {
     func registerCell() {
-        func register(cellClass: UITableViewCell.Type) {
-            tableView.register(cellClass, forCellReuseIdentifier: String(describing: cellClass))
-        }
+        tableView.register(type: SettingSeparatorCell.self)
+        tableView.register(type: SettingTextCell.self)
 
-        register(cellClass: SettingInstagramCell.self)
-        register(cellClass: SettingLogoutCell.self)
-        register(cellClass: SettingFeedbackCell.self)
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
     }
 
-    private var items: [(String?, [SettingCellType])] {
+    private var items: [SettingCellType] {
         return [
-            ("CONTENT PARTNER".localized(), [
-                SettingCellType.instagramConnect
-            ]),
-            ("ACCOUNT".localized(), [
-                SettingCellType.feedback,
-                SettingCellType.logout,
-            ]),
+            SettingCellType.separator,
+            SettingCellType.instagram,
+            SettingCellType.feedback,
+            SettingCellType.separator,
+            SettingCellType.dtje,
+            SettingCellType.separator,
+            SettingCellType.logout,
+            SettingCellType.separator
         ]
     }
 
-    func numberOfSections(in tableView: UITableView) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
     }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items[section].1.count
-    }
-
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return items[section].0
-    }
-
-    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        let header = view as! UITableViewHeaderFooterView
-        header.tintColor = .white
-        header.textLabel!.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-        header.textLabel!.textColor = UIColor.black
-        header.backgroundView?.backgroundColor = .whisper100
-    }
-
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        func dequeue(cellClass: UITableViewCell.Type) -> UITableViewCell {
-            let identifier = String(describing: cellClass)
-            return tableView.dequeueReusableCell(withIdentifier: identifier)!
-        }
+        switch items[indexPath.row] {
+        case .separator:
+            return tableView.dequeue(type: SettingSeparatorCell.self)
 
-        let item = items[indexPath.section].1[indexPath.row]
+        case .instagram:
+            return tableView.dequeue(type: SettingTextCell.self)
+                    .render(text: "Instagram Partner")
+                    .render(separator: true, top: true, bot: false)
 
-        switch item {
-        case .instagramConnect:
-            return dequeue(cellClass: SettingInstagramCell.self)
         case .logout:
-            return dequeue(cellClass: SettingLogoutCell.self)
+            return tableView.dequeue(type: SettingTextCell.self)
+                    .render(text: "Logout")
+                    .render(separator: false, top: true, bot: true)
+
         case .feedback:
-            return dequeue(cellClass: SettingFeedbackCell.self)
-        default:
-            return UITableViewCell()
+            return tableView.dequeue(type: SettingTextCell.self)
+                    .render(text: "Send Feedback")
+                    .render(separator: false, top: false, bot: true)
+
+        case .dtje:
+            return tableView.dequeue(type: SettingTextCell.self)
+                    .render(text: "Notification: Don't Think, Just Eat")
+                    .render(separator: false, top: true, bot: true)
         }
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        let item = items[indexPath.section].1[indexPath.row]
-        switch item {
+        switch items[indexPath.row] {
         case .logout:
             self.logout()
-        case .instagramConnect:
+
+        case .instagram:
             let safari = SFSafariViewController(url: URL(string: "https://partner.munch.app")!)
             safari.delegate = self
             present(safari, animated: true, completion: nil)
+
         case .feedback:
             if let url = URL(string: "mailto:feedback@munch.app") {
                 UIApplication.shared.open(url)
             }
+
+        case .dtje:
+            let modal = SearchDTJEInfoController()
+            let delegate = HalfModalTransitioningDelegate(viewController: self, presentingViewController: modal)
+            modal.modalPresentationStyle = .custom
+            modal.transitioningDelegate = delegate
+            self.present(modal, animated: true)
         default:
             return
         }
     }
 }
 
-fileprivate class SettingInstagramCell: UITableViewCell {
-    let titleView = UILabel()
-
+fileprivate class SettingSeparatorCell: UITableViewCell {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.addSubview(titleView)
+        self.backgroundColor = .whisper050
 
-        titleView.text = "Manage Instagram Partner".localized()
-        titleView.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        titleView.textColor = .black
-        titleView.snp.makeConstraints { make in
-            make.left.equalTo(self).inset(24)
-            make.top.bottom.equalTo(self).inset(12)
+        snp.makeConstraints { maker in
+            maker.height.equalTo(32).priority(.high)
         }
     }
 
@@ -237,41 +235,50 @@ fileprivate class SettingInstagramCell: UITableViewCell {
     }
 }
 
-fileprivate class SettingFeedbackCell: UITableViewCell {
-    let titleView = UILabel()
+fileprivate class SettingTextCell: UITableViewCell {
+    let titleView = UILabel(style: .regular)
+
+    private let topLine = SeparatorLine()
+    private let botLine = SeparatorLine()
+    private let separatorLine = SeparatorLine()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.addSubview(titleView)
 
-        titleView.text = "Send Feedback".localized()
-        titleView.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        titleView.textColor = .black
+        self.addSubview(separatorLine)
+        self.addSubview(topLine)
+        self.addSubview(botLine)
+
         titleView.snp.makeConstraints { make in
             make.left.equalTo(self).inset(24)
-            make.top.bottom.equalTo(self).inset(12)
+            make.top.bottom.equalTo(self).inset(16)
+        }
+
+        separatorLine.snp.makeConstraints { maker in
+            maker.bottom.right.equalTo(self)
+            maker.left.equalTo(self).inset(24)
+        }
+
+        topLine.snp.makeConstraints { maker in
+            maker.top.left.right.equalTo(self)
+        }
+
+        botLine.snp.makeConstraints { maker in
+            maker.bottom.left.right.equalTo(self)
         }
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func render(text: String) -> SettingTextCell {
+        titleView.text = text
+        return self
     }
-}
 
-fileprivate class SettingLogoutCell: UITableViewCell {
-    let titleView = UILabel()
-
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.addSubview(titleView)
-
-        titleView.text = "Logout".localized()
-        titleView.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        titleView.textColor = .black
-        titleView.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(24)
-            make.top.bottom.equalTo(self).inset(12)
-        }
+    func render(separator: Bool, top: Bool, bot: Bool) -> SettingTextCell {
+        separatorLine.isHidden = !separator
+        topLine.isHidden = !top
+        botLine.isHidden = !bot
+        return self
     }
 
     required init?(coder aDecoder: NSCoder) {
