@@ -265,16 +265,17 @@ class SearchStaticUnsupportedCard: SearchCardView {
 }
 
 class SearchStaticLoadingCard: SearchCardView {
-    private var indicator = NVActivityIndicatorView(frame: .zero, type: .ballBeat, color: .primary700, padding: 10)
+    private var indicator = NVActivityIndicatorView(frame: .zero, type: .ballBeat, color: .secondary500)
 
-    override func didLoad(card: SearchCard) {
+    override init(style: CellStyle = .default, reuseIdentifier: String? = nil) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.addSubview(indicator)
-
         indicator.startAnimating()
+
         indicator.snp.makeConstraints { maker in
-            maker.height.equalTo(50).priority(.high)
+            maker.height.equalTo(40).priority(.high)
             maker.left.right.top.equalTo(self)
-            maker.bottom.equalTo(self).inset(10)
+            maker.bottom.equalTo(self).inset(48)
         }
     }
 
@@ -288,6 +289,10 @@ class SearchStaticLoadingCard: SearchCardView {
 
     override class var cardId: String {
         return "static_SearchStaticLoadingCard"
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -306,27 +311,5 @@ class SearchStaticTopCard: SearchCardView {
 
     override class var cardId: String {
         return "static_SearchStaticTopCard"
-    }
-}
-
-class SearchStaticEmptyCard: SearchCardView {
-    override init(style: CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-
-        let view = UIView()
-        self.addSubview(view)
-        view.snp.makeConstraints { make in
-            make.height.equalTo(1).priority(999)
-            make.edges.equalTo(self)
-        }
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-
-    override class var cardId: String {
-        return "static_SearchStaticEmptyCard"
     }
 }

@@ -16,18 +16,8 @@ class SearchTableView: UITableView {
     var cardDelegate: SearchTableViewDelegate?
     var controller: SearchController!
 
-    var cardTypes = [String: SearchCardView.Type]()
-    var cards: [SearchCard] {
-        if self.cardManager.cards.isEmpty {
-            return [
-                SearchShimmerPlaceCard.card,
-                SearchShimmerPlaceCard.card,
-                SearchShimmerPlaceCard.card,
-            ]
-        }
-
-        return self.cardManager.cards
-    }
+    var cardIds = [String: SearchCardView.Type]()
+    var cards = [SearchCard]()
 
     private let refreshView: UIRefreshControl = {
         let control = UIRefreshControl()
@@ -61,11 +51,10 @@ class SearchTableView: UITableView {
     private func registerAll() {
         func register(_ cellClass: SearchCardView.Type) {
             self.register(cellClass as? Swift.AnyClass, forCellReuseIdentifier: cellClass.cardId)
-            cardTypes[cellClass.cardId] = cellClass
+            cardIds[cellClass.cardId] = cellClass
         }
 
         // Register Local Cards
-        register(SearchStaticEmptyCard.self)
         register(SearchStaticTopCard.self)
         register(SearchStaticNoResultCard.self)
         register(SearchStaticLoadingCard.self)
@@ -121,11 +110,21 @@ extension SearchTableViewDelegate {
 extension SearchTableView {
     func search(query: SearchQuery, screen: SearchScreen, animated: Bool = true) {
         self.cardManager = SearchCardManager(query: query, screen: screen)
-        self.reloadData()
-
         self.cardManager.start {
-            self.reloadData()
+            self.reloadData(manager: self.cardManager)
         }
+    }
+
+    func reloadData(manager: SearchCardManager) {
+        self.cards = self.cardManager.cards.filter { (card: SearchCard) -> Bool in
+            if self.cardIds[card.cardId] != nil {
+                return true
+            }
+
+            os_log("Required Card: %@ Not Found, SearchStaticEmptyCard is used instead", type: .info, card.cardId)
+            return false
+        }
+        self.reloadData()
     }
 
     func scrollToTop(animated: Bool = true) {
@@ -166,13 +165,7 @@ extension SearchTableView: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         func dequeue(card: SearchCard) -> SearchCardView {
-            if let cardView = dequeueReusableCell(withIdentifier: card.cardId) as? SearchCardView {
-                cardView.register(card: card, controller: self.controller)
-                return cardView
-            }
-
-            os_log("Required Card: %@ Not Found, SearchStaticEmptyCard is used instead", type: .info, card.cardId)
-            let cardView = dequeueReusableCell(withIdentifier: SearchStaticEmptyCard.cardId) as! SearchCardView
+            let cardView = dequeueReusableCell(withIdentifier: card.cardId) as! SearchCardView
             cardView.register(card: card, controller: self.controller)
             return cardView
         }
@@ -188,14 +181,14 @@ extension SearchTableView: UITableViewDelegate, UITableViewDataSource {
             return self.loadingCard
 
         default:
-            return dequeue(card: SearchStaticEmptyCard.card)
+            return UITableViewCell()
         }
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
         case 1:
-            if let card = cards.get(indexPath.row), let type = cardTypes[card.cardId] {
+            if let card = cards.get(indexPath.row), let type = cardIds[card.cardId] {
                 return type.height(card: card)
             }
 
@@ -247,18 +240,19 @@ extension SearchTableView {
     }
 
     private func appendLoad() {
-        if cardManager.more {
-            cardManager.append {
-                self.reloadData()
+        guard cardManager.more else {
+            self.loadingCard.stopAnimating()
+            return
+        }
 
-                // Must call class to get instance in-case of concurrently mutated away
-                if self.cardManager.more {
-                    return
-                }
+        self.loadingCard.startAnimating()
+
+        cardManager.append {
+            self.reloadData(manager: self.cardManager)
+
+            if !self.cardManager.more {
                 self.loadingCard.stopAnimating()
             }
-        } else {
-            self.loadingCard.stopAnimating()
         }
     }
 }

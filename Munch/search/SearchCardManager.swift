@@ -21,7 +21,11 @@ class SearchCardManager {
 
     let startDate = Date()
 
-    fileprivate(set) var cards: [SearchCard] = []
+    fileprivate(set) var cards: [SearchCard] = [
+        SearchShimmerPlaceCard.card,
+        SearchShimmerPlaceCard.card,
+        SearchShimmerPlaceCard.card,
+    ]
     // Whether this card manager is currently loading more content
     fileprivate(set) var loading = false
     // Whether this card manager still contains more content to be loaded
@@ -33,6 +37,8 @@ class SearchCardManager {
     }
 
     public func start(_ observer: @escaping () -> ()) {
+        observer()
+
         // Check if Location is Enabled, Inject Location
         MunchLocation.request()
                 .subscribe { event in
