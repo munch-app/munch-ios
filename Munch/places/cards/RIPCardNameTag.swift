@@ -43,7 +43,12 @@ class RIPNameTagCard: RIPCard {
     override func didLoad(data: PlaceData!) {
         self.nameLabel.text = data.place.name
         self.locationLabel.text = data.place.location.neighbourhood ?? data.place.location.street ?? data.place.location.address
-        self.tagView = RIPTagCollection(tags: data.place.tags.map({ $0.name }))
+
+        var tags = data.place.tags.filter({ (tag: Tag) in tag.type != .Timing })
+        if tags.isEmpty {
+            tags.append(Tag.restaurant)
+        }
+        self.tagView = RIPTagCollection(tags: tags.map({ $0.name }))
 
         self.addSubview(nameLabel)
         self.addSubview(locationLabel)

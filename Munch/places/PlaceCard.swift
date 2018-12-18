@@ -206,7 +206,7 @@ extension PlaceCard {
         }
 
         // Count is Controlled by View
-        for tag in place.tags.prefix(3) {
+        for tag in place.tags.filter({ $0.type != .Timing }).prefix(3) {
             self.tagView.add(text: tag.name, config: TagViewConfig())
         }
 
