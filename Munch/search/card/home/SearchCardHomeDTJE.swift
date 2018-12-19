@@ -265,11 +265,15 @@ fileprivate class SearchDTJEListView: UIView {
                 return
             }
             for (index, item) in list.enumerated() {
+                self.items[index].textLabel.isHidden = true
                 self.items[index].textLabel.text = item
             }
         }
 
         func render(wait time: String) {
+            self.items.forEach { item in
+                item.textLabel.isHidden = true
+            }
             overlay.isHidden = false
             overlay.text = "Suggestions will be out at \(time).\n\nSubscribe to receive a notification when the suggestions are out!"
         }

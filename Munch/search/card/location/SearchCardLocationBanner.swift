@@ -72,7 +72,7 @@ class SearchCardLocationBanner: SearchCardView {
         button.addTarget(self, action: #selector(onEnterLocation), for: .touchUpInside)
     }
 
-    func onEnterLocation() {
+    @objc func onEnterLocation() {
         let controller = FilterLocationSearchController(searchQuery: SearchQuery()) { query in
             if let query = query {
                 self.controller.push(searchQuery: query)

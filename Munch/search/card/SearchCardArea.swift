@@ -241,13 +241,15 @@ class SearchAreaClusterHeaderCard: SearchCardView {
             return 1
         }
 
-        let min = self.topBottom
+        var min = self.topBottom
                 + FontStyle.h2.height(text: area.name, width: self.contentWidth)
-                + 16
-                + 100
                 + 16
                 + 24
                 + self.topBottom
+
+        if let images = area.images, images.isEmpty {
+            min = min + 16 + 100
+        }
 
         guard let description = area.description else {
             return min

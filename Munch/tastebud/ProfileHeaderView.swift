@@ -14,7 +14,7 @@ enum ProfileHeaderTab {
     var name: String {
         switch self {
         case .places:
-            return "Places"
+            return "Your Places"
 
         case .preferences:
             return "Preferences"
