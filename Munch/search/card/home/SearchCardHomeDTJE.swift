@@ -265,7 +265,7 @@ fileprivate class SearchDTJEListView: UIView {
                 return
             }
             for (index, item) in list.enumerated() {
-                self.items[index].textLabel.isHidden = true
+                self.items[index].textLabel.isHidden = false
                 self.items[index].textLabel.text = item
             }
         }
