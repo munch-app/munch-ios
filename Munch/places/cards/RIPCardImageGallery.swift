@@ -51,6 +51,7 @@ class RIPGalleryImageCard: UICollectionViewCell {
         }
     }
 
+    @discardableResult
     func render(with image: PlaceImage) -> RIPGalleryImageCard {
         imageView.render(sizes: image.sizes)
         return self

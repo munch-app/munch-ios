@@ -27,7 +27,7 @@ class ProfileSettingController: UIViewController, UIGestureRecognizerDelegate {
 
         tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 12))
-        tableView.backgroundColor = .whisper050
+        tableView.backgroundColor = .void
         return tableView
     }()
     private var setting = UserSetting.instance
@@ -223,7 +223,7 @@ extension ProfileSettingController: UITableViewDataSource, UITableViewDelegate {
 fileprivate class SettingSeparatorCell: UITableViewCell {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.backgroundColor = .whisper050
+        self.backgroundColor = .void
 
         snp.makeConstraints { maker in
             maker.height.equalTo(32).priority(.high)

@@ -197,7 +197,6 @@ fileprivate class FilterLocationSearchCell: UITableViewCell {
         }
     }
 
-
     @discardableResult
     func render(with area: Area) -> FilterLocationSearchCell {
         titleLabel.text = area.name

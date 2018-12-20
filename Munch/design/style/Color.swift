@@ -42,6 +42,8 @@ extension UIColor {
 }
 
 extension UIColor {
+    static let void = UIColor(hex: "F0F0F0")
+
     static let ba10 = UIColor.black.withAlphaComponent(0.10)
     static let ba15 = UIColor.black.withAlphaComponent(0.15)
     static let ba40 = UIColor.black.withAlphaComponent(0.40)

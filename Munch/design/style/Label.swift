@@ -98,6 +98,7 @@ extension UILabel {
         self.with(size: size, weight: weight, color: color)
     }
 
+    @discardableResult
     func with(text: String) -> UILabel {
         self.text = text
         return self

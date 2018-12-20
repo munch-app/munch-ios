@@ -7,17 +7,17 @@ import Foundation
 import Moya
 import RxSwift
 
-enum RIPGalleryItem {
+enum RIPImageItem {
     case image(PlaceImage)
 }
 
-class RIPGalleryLoader {
+class RIPImageLoader {
     private let provider = MunchProvider<PlaceService>()
 
     fileprivate(set) var loading = false
-    fileprivate(set) var items = [RIPGalleryItem]()
+    fileprivate(set) var items = [RIPImageItem]()
 
-    private var observer: AnyObserver<[RIPGalleryItem]>?
+    private var observer: AnyObserver<[RIPImageItem]>?
     private let disposeBag = DisposeBag()
 
     private var placeId: String!
@@ -33,8 +33,8 @@ class RIPGalleryLoader {
         self.append(images: images)
     }
 
-    func observe() -> Observable<[RIPGalleryItem]> {
-        return Observable.create { (observer: AnyObserver<[RIPGalleryItem]>) in
+    func observe() -> Observable<[RIPImageItem]> {
+        return Observable.create { (observer: AnyObserver<[RIPImageItem]>) in
             self.observer = observer
             return Disposables.create()
         }

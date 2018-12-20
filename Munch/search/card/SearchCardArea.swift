@@ -30,7 +30,7 @@ class SearchAreaClusterListCard: SearchCardView {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.backgroundColor = UIColor.clear
-        collectionView.register(SearchAreaClusterListCardCell.self, forCellWithReuseIdentifier: "SearchAreaClusterListCardCell")
+        collectionView.register(type: SearchAreaClusterListCardCell.self)
         return collectionView
     }()
 
@@ -84,9 +84,8 @@ extension SearchAreaClusterListCard: UICollectionViewDataSource, UICollectionVie
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let area = areas[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchAreaClusterListCardCell", for: indexPath) as! SearchAreaClusterListCardCell
-        cell.render(area: area)
+        let cell = collectionView.dequeue(type: SearchAreaClusterListCardCell.self, for: indexPath)
+        cell.render(area: areas[indexPath.row])
         return cell
     }
 

@@ -34,6 +34,7 @@ target 'Munch' do
   pod 'NVActivityIndicatorView', '~> 4.0'
   pod 'BEMCheckBox', '~> 1.4'
   pod 'RangeSeekSlider', '~> 1.7'
+  pod 'PullToDismiss', '~> 2.1'
 
   # Deprecation:
   pod 'Alamofire', '~> 4.5'

@@ -39,9 +39,9 @@ class RIPController: UIViewController {
         return collectionView
     }()
     fileprivate var cardTypes: [RIPCard.Type] = [RIPLoadingImageCard.self, RIPLoadingNameCard.self]
-    fileprivate var galleryItems = [RIPGalleryItem]()
+    fileprivate var galleryItems = [RIPImageItem]()
 
-    private var galleryLoader = RIPGalleryLoader()
+    private var imageLoader = RIPImageLoader()
 
     private let provider = MunchProvider<PlaceService>()
     private let recentService = MunchProvider<UserRecentPlaceService>()
@@ -90,17 +90,17 @@ class RIPController: UIViewController {
         self.footerView.place = data.place
         self.footerView.addButton.register(place: data.place, controller: self)
 
-        galleryLoader.start(placeId: data.place.placeId, images: data.images)
+        imageLoader.start(placeId: data.place.placeId, images: data.images)
 
         // Collection View
         self.cardTypes = self.collectionView(cellsForData: data)
-        self.galleryItems = galleryLoader.items
+        self.galleryItems = imageLoader.items
 
         self.collectionView.isScrollEnabled = true
         self.collectionView.reloadData()
         self.scrollViewDidScroll(self.collectionView)
 
-        galleryLoader.observe().subscribe { event in
+        imageLoader.observe().subscribe { event in
             switch event {
             case .next(let items):
                 self.galleryItems = items
@@ -266,29 +266,24 @@ extension RIPController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch (RIPSection(rawValue: indexPath.section)!, indexPath.row) {
         case (.card, let row):
-            let cell = collectionView.dequeue(type: cardTypes[row], for: indexPath) as! RIPCard
+            let cell = collectionView.dequeue(type: cardTypes[row], for: indexPath)
             cell.register(data: self.data, controller: self)
             return cell
 
         case (.gallery, let row):
             switch galleryItems[row] {
-            case .image(let image):
+            case .image:
                 return collectionView.dequeue(type: RIPGalleryImageCard.self, for: indexPath)
             }
 
-        case (.loader, let row):
+        case (.loader, _):
             return collectionView.dequeue(type: RIPLoadingGalleryCard.self, for: indexPath)
-
-        default:
-            break
         }
-
-        return UICollectionViewCell()
     }
 
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         switch (RIPSection(rawValue: indexPath.section)!, indexPath.row) {
-        case (.card, let row):
+        case (.card, _):
             let cell = cell as! RIPCard
             cell.willDisplay(data: self.data)
 
@@ -300,24 +295,26 @@ extension RIPController: UICollectionViewDataSource, UICollectionViewDelegate {
 
             }
 
-        case (.loader, let row):
+        case (.loader, _):
             let cell = cell as! RIPLoadingGalleryCard
-            if galleryLoader.more {
-                galleryLoader.append()
+            if imageLoader.more {
+                imageLoader.append()
             } else {
                 cell.indicator.stopAnimating()
             }
-
-        default:
-            break
         }
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch (RIPSection(rawValue: indexPath.section)!, indexPath.row) {
-        case (.card, let row):
+        case (.card, _):
             let cell = collectionView.cellForItem(at: indexPath) as! RIPCard
             cell.didSelect(data: self.data, controller: self)
+
+        case (.gallery, let row):
+            let controller = RIPImageController(index: row, loader: self.imageLoader, place: self.data.place)
+            controller.modalPresentationStyle = .overCurrentContext
+            self.present(controller, animated: true)
 
         default:
             break

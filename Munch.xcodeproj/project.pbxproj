@@ -86,6 +86,7 @@
 		B4B7395FCD466A8BB5C47BAA /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B738679F9E169693DC1515 /* Label.swift */; };
 		B4B7397B4A29B5FF71D35382 /* SearchCardSuggestedTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B735C5E94EBF93921BAB82 /* SearchCardSuggestedTag.swift */; };
 		B4B7397DAC3EA7F58AB31DB8 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73320FAFE5D794A6CC576 /* UserService.swift */; };
+		B4B739819F55BA2916799C83 /* RIPImageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73E0402DD242EC3195219 /* RIPImageController.swift */; };
 		B4B739958180490BDD7B47B8 /* MunchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B734D7C6E45CD6D4F8E8E8 /* MunchService.swift */; };
 		B4B7399F3FF79673F9F8089F /* RIPCardNameTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B739E61B078D6FB36F0BAC /* RIPCardNameTag.swift */; };
 		B4B739A826B911E094D4A616 /* ProfileSettingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73BF6B8D464037F4FC986 /* ProfileSettingController.swift */; };
@@ -307,6 +308,7 @@
 		B4B73D5C8583684A369A780F /* RIPImageLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPImageLoader.swift; sourceTree = "<group>"; };
 		B4B73D86A1832193FD128FC6 /* RIPCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPCard.swift; sourceTree = "<group>"; };
 		B4B73DC7DEBA985360DC4267 /* RIPHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPHeaderView.swift; sourceTree = "<group>"; };
+		B4B73E0402DD242EC3195219 /* RIPImageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPImageController.swift; sourceTree = "<group>"; };
 		B4B73E7240B432332BE604C0 /* PlaceSavedDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceSavedDatabase.swift; sourceTree = "<group>"; };
 		B4B73E853230C2F199B5FC38 /* FilterControllerLocationBetween.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterControllerLocationBetween.swift; sourceTree = "<group>"; };
 		B4B73F008A9EAFCE407879A2 /* FilterCellTag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterCellTag.swift; sourceTree = "<group>"; };
@@ -532,6 +534,7 @@
 				B4B73669E03801B1ECEDF138 /* RIPFooterView.swift */,
 				B4B73D5C8583684A369A780F /* RIPImageLoader.swift */,
 				B4B73E7240B432332BE604C0 /* PlaceSavedDatabase.swift */,
+				B4B73E0402DD242EC3195219 /* RIPImageController.swift */,
 			);
 			path = places;
 			sourceTree = "<group>";
@@ -978,6 +981,7 @@
 				"${BUILT_PRODUCTS_DIR}/Moya/Moya.framework",
 				"${BUILT_PRODUCTS_DIR}/NVActivityIndicatorView/NVActivityIndicatorView.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
+				"${BUILT_PRODUCTS_DIR}/PullToDismiss/PullToDismiss.framework",
 				"${BUILT_PRODUCTS_DIR}/RangeSeekSlider/RangeSeekSlider.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
@@ -1010,6 +1014,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Moya.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NVActivityIndicatorView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PullToDismiss.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RangeSeekSlider.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
@@ -1170,6 +1175,7 @@
 				B4B73766F2F3F10BB2B74B71 /* RIPCardPreference.swift in Sources */,
 				B4B73ACEF8E7C6916823DAEF /* HalfModalPresentationController.swift in Sources */,
 				B4B73A970F91F8D21B893ABF /* SearchCardHomeDTJE.swift in Sources */,
+				B4B739819F55BA2916799C83 /* RIPImageController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
