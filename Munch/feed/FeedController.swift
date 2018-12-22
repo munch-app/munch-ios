@@ -137,7 +137,7 @@ extension FeedController {
                 object: nil)
     }
 
-    func applicationWillEnterForeground(_ notification: NSNotification) {
+    @objc func applicationWillEnterForeground(_ notification: NSNotification) {
         if let date = UserDefaults.standard.object(forKey: UserDefaults.Key.globalResignActiveDate) as? Date {
             if Date().millis - date.millis > 1000 * 60 * 60 {
                 self.reset()
