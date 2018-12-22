@@ -269,6 +269,7 @@ class SearchStaticLoadingCard: SearchCardView {
 
     override init(style: CellStyle = .default, reuseIdentifier: String? = nil) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
         self.addSubview(indicator)
         indicator.startAnimating()
 
