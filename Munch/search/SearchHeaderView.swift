@@ -26,7 +26,7 @@ class SearchHeaderView: UIView {
                 self.textButton.field.set(searchQuery: self.searchQuery)
                 self.backButton.isHidden = false
             } else {
-                self.textButton.field.placeholder = "Try \"Chinese\""
+                self.textButton.field.placeholder = "Search \"Chinese\""
                 self.textButton.field.set(icon: .glass)
                 self.backButton.isHidden = true
             }

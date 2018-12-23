@@ -227,7 +227,7 @@ extension SuggestController: UITableViewDataSource, UITableViewDelegate {
 fileprivate class SuggestHeaderView: UIView {
     fileprivate let textField: MunchSearchTextField = {
         let textField = MunchSearchTextField()
-        textField.placeholder = "Try \"Italian\""
+        textField.placeholder = "Search \"Italian\""
         return textField
     }()
     fileprivate let cancelButton: UIButton = {
