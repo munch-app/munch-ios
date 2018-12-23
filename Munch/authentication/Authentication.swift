@@ -27,7 +27,6 @@ public class Authentication {
                 .map { res throws -> String in
                     try res.mapJSON(atDataKeyPath: "token") as! String
                 }
-
     }
 
     public class func getToken(withCompletion: @escaping (_ token: String?) -> Void) {
@@ -47,8 +46,9 @@ public class Authentication {
         }
     }
 
+    // Checks that the user is logged in
     public class func isAuthenticated() -> Bool {
-        return UserProfile.instance != nil
+        return UserProfile.instance != nil && Auth.auth().currentUser != nil
     }
 
     public class func requireAuthentication(controller: UIViewController, withCompletion: @escaping (_ state: AuthenticationState) -> Void) {
@@ -65,7 +65,8 @@ public class Authentication {
     public class func login(facebook accessToken: String, withCompletion: @escaping (_ state: AuthenticationState) -> Void) {
         let credential = FacebookAuthProvider.credential(withAccessToken: accessToken)
 
-        Auth.auth().signIn(with: credential) { (user, error) in
+        // signInAndRetrieveDataWithCredential
+        Auth.auth().signInAndRetrieveData(with: credential) { result, error in
             if let error = error {
                 Crashlytics.sharedInstance().recordError(error)
                 withCompletion(.fail(error))
@@ -77,8 +78,8 @@ public class Authentication {
         }
     }
 
-    // Temporary Method to authenticate user silently due to migration of version
-    class func authenticate(withCompletion: @escaping (_ state: AuthenticationState) -> Void) -> Disposable {
+    // Authenticates, will register user to api.munch.app
+    private class func authenticate(withCompletion: @escaping (_ state: AuthenticationState) -> Void) -> Disposable {
         return provider.rx.request(.authenticate)
                 .map { response throws -> UserData in
                     try response.map(data: UserData.self)
@@ -88,7 +89,7 @@ public class Authentication {
                     case let .success(userData):
                         UserProfile.instance = userData.profile
                         UserSetting.instance = userData.setting
-                        UserSearchPreference.instance  = userData.searchPreference
+                        UserSearchPreference.instance = userData.searchPreference
                         withCompletion(.loggedIn)
 
                     case let .error(error):
@@ -100,6 +101,7 @@ public class Authentication {
     public class func logout() {
         UserProfile.instance = nil
         UserSetting.instance = nil
+        UserSearchPreference.instance = nil
 
         do {
             try Auth.auth().signOut()

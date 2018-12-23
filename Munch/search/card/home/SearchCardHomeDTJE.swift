@@ -374,12 +374,13 @@ fileprivate class SearchDTJESubscribeButton: UIView {
         }
 
         let notificationCenter = UNUserNotificationCenter.current()
-        notificationCenter.requestAuthorization { b, error in
+        notificationCenter.requestAuthorization(options: [.alert]) { granted, error in
             if let error = error {
                 self.controller.alert(error: error)
             }
 
-            guard b else {
+            guard granted else {
+                self.controller.alert(title: "Error", message: "Unable to setup notification, you might have it disabled.")
                 return
             }
 
