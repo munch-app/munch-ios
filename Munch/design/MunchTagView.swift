@@ -17,6 +17,10 @@ class MunchTagView: UIView {
     private var spacing: CGFloat
     private var extends: Bool
 
+    var isEmpty: Bool {
+        return cells.isEmpty || cells[0].isHidden
+    }
+
     init(count: Int = 6, spacing: CGFloat = 8, extends: Bool = false) {
         self.spacing = spacing
         self.extends = extends

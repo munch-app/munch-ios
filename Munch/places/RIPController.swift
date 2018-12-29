@@ -405,7 +405,7 @@ extension RIPController: UIGestureRecognizerDelegate, SFSafariViewControllerDele
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
 
-        self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
+        self.headerView.backControl.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
     }
 
     func scrollTo(indexPath: IndexPath) {

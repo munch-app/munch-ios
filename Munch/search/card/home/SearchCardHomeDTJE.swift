@@ -7,6 +7,7 @@ import Foundation
 import UIKit
 import SnapKit
 
+import FirebaseAnalytics
 import UserNotifications
 
 class SearchCardHomeDTJE: SearchCardView {
@@ -365,6 +366,7 @@ fileprivate class SearchDTJESubscribeButton: UIView {
         if self.subscribeButton.text == "Subscribed" {
             let alert = UIAlertController(title: nil, message: "Unsubscribe from 'don't think, just eat'?", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Confirm", style: .destructive) { action in
+                Analytics.logEvent("dtje_unsubscribe", parameters: [:])
                 SearchCardHomeDTJE.unsubscribe(notification: .lunch)
                 SearchCardHomeDTJE.unsubscribe(notification: .dinner)
             })
@@ -388,6 +390,7 @@ fileprivate class SearchDTJESubscribeButton: UIView {
             SearchCardHomeDTJE.subscribe(notification: .dinner)
 
             DispatchQueue.main.async {
+                Analytics.logEvent("dtje_subscribe", parameters: [:])
                 self.controller.alert(title: "Subscribed!", message: "You will receive a notification when the suggestions are out.")
 
                 self.subscribeButton.with(text: "Subscribed")

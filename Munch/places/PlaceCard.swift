@@ -107,13 +107,13 @@ class PlaceCard: UIView {
         tagView.snp.makeConstraints { maker in
             maker.left.right.equalTo(self)
             maker.height.equalTo(24)
-            maker.top.equalTo(nameLabel.snp.bottom).inset(-4)
+            maker.top.equalTo(nameLabel.snp.bottom).inset(-6)
         }
 
         locationLabel.snp.makeConstraints { maker in
             maker.bottom.left.right.equalTo(self)
             maker.height.equalTo(19)
-            maker.top.equalTo(tagView.snp.bottom).inset(-4)
+            maker.top.equalTo(tagView.snp.bottom).inset(-6)
         }
 
         self.addTargets()
@@ -163,7 +163,7 @@ extension PlaceCard {
 
 extension PlaceCard {
     class func height(width: CGFloat) -> CGFloat {
-        let fixed: CGFloat = 28 + 8 + 24 + 4 + 19 + 4
+        let fixed: CGFloat = 28 + 8 + 24 + 6 + 19 + 6
         return ceil((width * 0.6) + fixed)
     }
 }
@@ -210,7 +210,7 @@ extension PlaceCard {
             self.tagView.add(text: tag.name, config: TagViewConfig())
         }
 
-        if place.tags.isEmpty {
+        if self.tagView.isEmpty {
             self.tagView.add(text: Tag.restaurant.name, config: TagViewConfig())
         }
     }

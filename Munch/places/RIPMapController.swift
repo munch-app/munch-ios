@@ -95,7 +95,7 @@ class RIPMapController: UIViewController, UIGestureRecognizerDelegate, MKMapView
         self.controller = controller
         super.init(nibName: nil, bundle: nil)
 
-        self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
+        self.headerView.backControl.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
         self.headerView.backgroundView.isHidden = true
         self.headerView.shadowView.isHidden = true
     }

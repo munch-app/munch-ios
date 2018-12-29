@@ -10,14 +10,16 @@ import SnapKit
 import SafariServices
 
 class RIPHeaderView: UIView {
-    let backButton: UIButton = {
+    private let backButton: UIButton = {
         let button = UIButton()
+        button.isUserInteractionEnabled = false
         button.setImage(UIImage(named: "NavigationBar-Back"), for: .normal)
         button.tintColor = .white
         button.imageEdgeInsets.left = 18
         button.contentHorizontalAlignment = .left
         return button
     }()
+    let backControl = UIControl()
     let moreBtn: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "RIP-Header-More"), for: .normal)
@@ -70,28 +72,35 @@ class RIPHeaderView: UIView {
 
         self.addSubview(shadowView)
         self.addSubview(backgroundView)
-        self.addSubview(backButton)
-        self.addSubview(titleView)
         self.addSubview(moreBtn)
 
-        backButton.snp.makeConstraints { maker in
+        backControl.addSubview(backButton)
+        backControl.addSubview(titleView)
+        self.addSubview(backControl)
+
+        backControl.snp.makeConstraints { maker in
             maker.top.equalTo(self.safeArea.top)
             maker.left.bottom.equalTo(self)
+            maker.right.lessThanOrEqualTo(moreBtn.snp.left).inset(-16)
 
-            maker.width.equalTo(52)
-            maker.height.equalTo(44)
+            backButton.snp.makeConstraints { maker in
+                maker.top.left.bottom.equalTo(backControl)
+
+                maker.width.equalTo(52)
+                maker.height.equalTo(44)
+            }
+
+            titleView.snp.makeConstraints { maker in
+                maker.top.bottom.equalTo(backControl)
+                maker.left.equalTo(backButton.snp.right)
+                maker.right.equalTo(backControl)
+            }
         }
 
         moreBtn.snp.makeConstraints { maker in
             maker.right.equalTo(self)
             maker.top.bottom.equalTo(backButton)
             maker.width.equalTo(56)
-        }
-
-        titleView.snp.makeConstraints { maker in
-            maker.top.bottom.equalTo(self.backButton)
-            maker.left.equalTo(backButton.snp.right)
-            maker.right.equalTo(moreBtn.snp.left).inset(-16)
         }
 
         backgroundView.snp.makeConstraints { maker in
