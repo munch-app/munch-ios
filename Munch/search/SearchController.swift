@@ -41,7 +41,7 @@ class SearchController: UIViewController {
 
     private let headerView = SearchHeaderView()
     private let recent = RecentSearchQueryDatabase()
-    public let searchTableView = SearchTableView(screen: .search, inset: inset)
+    public let searchTableView = SearchTableView(inset: inset)
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -82,7 +82,7 @@ class SearchController: UIViewController {
             recent.add(id: String(arc4random()), data: searchQuery)
         }
 
-        self.searchTableView.search(query: searchQuery, screen: .search)
+        self.searchTableView.search(query: searchQuery)
         self.searchTableView.scrollToTop()
         self.headerView.searchQuery = searchQuery
     }
@@ -95,7 +95,7 @@ class SearchController: UIViewController {
 
     func pop() {
         if histories.popLast() != nil, let searchQuery = histories.last {
-            self.searchTableView.search(query: searchQuery, screen: .search)
+            self.searchTableView.search(query: searchQuery)
             self.searchTableView.scrollToTop()
             self.headerView.searchQuery = searchQuery
         }
@@ -125,7 +125,7 @@ extension SearchController {
                 object: nil)
     }
 
-    func applicationWillEnterForeground(_ notification: NSNotification) {
+    @objc func applicationWillEnterForeground(_ notification: NSNotification) {
         if let date = UserDefaults.standard.object(forKey: UserDefaults.Key.globalResignActiveDate) as? Date {
             if Date().millis - date.millis > 1000 * 60 * 60 {
                 self.reset()

@@ -11,16 +11,8 @@ import RealmSwift
 
 import Crashlytics
 
-enum SearchScreen: String {
-    case search
-    case home
-    case location
-    case award
-    case collection
-}
-
 enum SearchService {
-    case search(SearchQuery, SearchScreen, Int)
+    case search(SearchQuery, Int)
 
     case qid(String)
 
@@ -60,8 +52,8 @@ extension SearchService: TargetType {
     }
     var task: Task {
         switch self {
-        case let .search(searchQuery, screen, page):
-            return requestJSONQueryString(searchQuery, parameters: ["page": page, "screen": screen])
+        case let .search(searchQuery, page):
+            return requestJSONQueryString(searchQuery, parameters: ["page": page])
         default:
             return .requestPlain
         }
@@ -324,7 +316,6 @@ extension SearchQuery {
  Access json through the subscript
  */
 struct SearchCard {
-    public static let empty = SearchCard(cardId: "EmptyCard")
     private static let decoder = JSONDecoder()
 
     var cardId: String

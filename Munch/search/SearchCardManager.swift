@@ -14,61 +14,57 @@ import Crashlytics
 class SearchCardManager {
     private let provider = MunchProvider<SearchService>()
     private let disposeBag = DisposeBag()
+    private var observer: AnyObserver<[SearchCard]>?
 
     var searchQuery: SearchQuery
-    var searchScreen: SearchScreen
     var page: Int = 0
 
     let startDate = Date()
 
-    fileprivate(set) var cards: [SearchCard] = [
-        SearchShimmerPlaceCard.card,
-        SearchShimmerPlaceCard.card,
-        SearchShimmerPlaceCard.card,
-    ]
+    fileprivate(set) var cards: [SearchCard] = []
     // Whether this card manager is currently loading more content
     fileprivate(set) var loading = false
     // Whether this card manager still contains more content to be loaded
     fileprivate(set) var more = true
 
-    init(query: SearchQuery, screen: SearchScreen) {
+    init(query: SearchQuery) {
         self.searchQuery = query
-        self.searchScreen = screen
     }
 
-    public func start(_ observer: @escaping () -> ()) {
-        observer()
+    public func start() -> Observable<[SearchCard]> {
+        return Observable.create { (observer: AnyObserver<[SearchCard]>) in
+            self.observer = observer
+            self.observer?.on(.next([
+                SearchShimmerPlaceCard.card,
+                SearchShimmerPlaceCard.card,
+                SearchShimmerPlaceCard.card,
+            ]))
 
-        // Check if Location is Enabled, Inject Location
-        MunchLocation.request()
-                .subscribe { event in
-                    switch event {
-                    case .success:
-                        self.cards = []
-                        self.search(observer)
-                                .disposed(by: self.disposeBag)
+            // Check if Location is Enabled, Inject Location
+            return MunchLocation.request()
+                    .subscribe { event in
+                        switch event {
+                        case .success:
+                            self.search().disposed(by: self.disposeBag)
 
-                    case .error:
-                        self.cards = [SearchStaticErrorCard.create(type: .location)]
-                        // Location Pagination?
-                        observer()
+                        case .error:
+                            self.cards = [SearchStaticErrorCard.create(type: .location)]
+                        }
                     }
-                }
-                .disposed(by: disposeBag)
+        }
     }
 
-    public func append(_ observer: @escaping () -> ()) {
-        self.search(observer)
-                .disposed(by: disposeBag)
+    public func append() {
+        self.search().disposed(by: disposeBag)
     }
 
-    private func search(_ observer: @escaping () -> ()) -> Disposable {
+    private func search() -> Disposable {
         if self.loading || !self.more {
             return Disposables.create()
         }
 
         self.loading = true
-        return provider.rx.request(.search(searchQuery, searchScreen, page))
+        return provider.rx.request(.search(searchQuery, page))
                 .map { res throws -> [SearchCard] in
                     if let error = res.meta.error, let type = error.type {
                         if type == "UnsupportedException" {
@@ -108,7 +104,11 @@ class SearchCardManager {
                     }
 
                     self.loading = false
-                    observer()
+                    self.observer?.on(.next(self.cards))
+
+                    if (!self.more) {
+                        self.observer?.on(.completed)
+                    }
                 })
     }
 

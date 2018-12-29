@@ -22,6 +22,7 @@ class ProfileSavedPlaceController: UIViewController {
     }()
 
     private var items = [ProfileSavedPlaceType]()
+    private let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,6 +33,8 @@ class ProfileSavedPlaceController: UIViewController {
             maker.edges.equalTo(self.view)
         }
 
+
+        // TODO: Reload when account change?
         PlaceSavedDatabase.shared.observe().subscribe { event in
             switch event {
             case .next(let items):
@@ -47,7 +50,8 @@ class ProfileSavedPlaceController: UIViewController {
             case .completed:
                 return
             }
-        }
+        }.disposed(by: disposeBag)
+        // Need to validate that it doesn't crash
     }
 }
 

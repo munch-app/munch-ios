@@ -8,10 +8,13 @@ import os.log
 import Foundation
 import UIKit
 import SnapKit
+import RxSwift
 
 import FirebaseAnalytics
 
 class SearchTableView: UITableView {
+    private let disposeBag = DisposeBag()
+
     var cardManager: SearchCardManager
     var cardDelegate: SearchTableViewDelegate?
     var controller: SearchController!
@@ -25,8 +28,8 @@ class SearchTableView: UITableView {
         return control
     }()
 
-    required init(query: SearchQuery = SearchQuery(), screen: SearchScreen, inset: UIEdgeInsets = .zero) {
-        self.cardManager = SearchCardManager(query: query, screen: screen)
+    required init(query: SearchQuery = SearchQuery(), inset: UIEdgeInsets = .zero) {
+        self.cardManager = SearchCardManager(query: query)
         super.init(frame: .zero, style: .plain)
 
         self.contentInset = inset
@@ -108,15 +111,24 @@ extension SearchTableViewDelegate {
 }
 
 extension SearchTableView {
-    func search(query: SearchQuery, screen: SearchScreen, animated: Bool = true) {
-        self.cardManager = SearchCardManager(query: query, screen: screen)
-        self.cardManager.start {
-            self.reloadData(manager: self.cardManager)
-        }
+    func search(query: SearchQuery, animated: Bool = true) {
+        self.cardManager = SearchCardManager(query: query)
+        self.cardManager.start()
+                .subscribe { event in
+                    switch event {
+                    case .next(let cards):
+                        self.reloadData(cards: cards)
+
+                    case .error:    fallthrough
+                    case .completed:
+                        self.loadingCard.stopAnimating()
+                    }
+                }
+                .disposed(by: disposeBag)
     }
 
-    func reloadData(manager: SearchCardManager) {
-        self.cards = self.cardManager.cards.filter { (card: SearchCard) -> Bool in
+    func reloadData(cards: [SearchCard]) {
+        self.cards = cards.filter { (card: SearchCard) -> Bool in
             if self.cardIds[card.cardId] != nil {
                 return true
             }
@@ -140,7 +152,7 @@ extension SearchTableView {
     }
 
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
-        self.search(query: self.cardManager.searchQuery, screen: self.cardManager.searchScreen)
+        self.search(query: self.cardManager.searchQuery)
         refreshControl.endRefreshing()
     }
 }
@@ -246,14 +258,7 @@ extension SearchTableView {
         }
 
         self.loadingCard.startAnimating()
-
-        cardManager.append {
-            self.reloadData(manager: self.cardManager)
-
-            if !self.cardManager.more {
-                self.loadingCard.stopAnimating()
-            }
-        }
+        cardManager.append()
     }
 }
 

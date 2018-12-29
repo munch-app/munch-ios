@@ -246,7 +246,7 @@ class SearchAreaClusterHeaderCard: SearchCardView {
                 + 24
                 + self.topBottom
 
-        if let images = area.images, images.isEmpty {
+        if let images = area.images, !images.isEmpty {
             min = min + 16 + 100
         }
 

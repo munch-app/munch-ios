@@ -13,7 +13,7 @@ class SearchCardHomeAwardCollection: SearchCardView {
             .with(text: "Award Winning Places")
             .with(numberOfLines: 0)
     private let subLabel = UILabel(style: .h6)
-            .with(text: "If trophies were edible, you'd have em' at theses joints.")
+            .with(text: "If trophies were edible, you'd have em' at these joints.")
             .with(numberOfLines: 0)
 
     private let collectionView: UICollectionView = {
