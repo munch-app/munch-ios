@@ -39,6 +39,9 @@ class SearchRootController: UINavigationController, UINavigationControllerDelega
 class SearchController: UIViewController {
     static let inset = UIEdgeInsets(top: SearchHeaderView.height, left: 0, bottom: 0, right: 0)
 
+    private let edgeBackGesture = UIScreenEdgePanGestureRecognizer()
+    private var edgeCrossed = false
+
     private let headerView = SearchHeaderView()
     private let recent = RecentSearchQueryDatabase()
     public let searchTableView = SearchTableView(inset: inset)
@@ -64,6 +67,7 @@ class SearchController: UIViewController {
             maker.edges.equalTo(self.view)
         }
 
+        self.addGesture()
         self.searchTableView.controller = self
         self.headerView.controller = self
 
@@ -104,6 +108,69 @@ class SearchController: UIViewController {
     func reset() {
         histories.removeAll()
         push(searchQuery: SearchQuery(feature: .Home))
+    }
+}
+
+extension SearchController: UIGestureRecognizerDelegate {
+    func addGesture() {
+        edgeBackGesture.edges = .left
+        edgeBackGesture.delegate = self
+        edgeBackGesture.addTarget(self, action: #selector(panEdge(sender:)))
+
+        self.view.addGestureRecognizer(edgeBackGesture)
+        self.view.backgroundColor = .white
+
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "NavigationBar-Back")
+        imageView.tintColor = .black
+
+        self.view.addSubview(imageView)
+        self.view.sendSubview(toBack: imageView)
+        imageView.snp.makeConstraints { maker in
+            maker.width.height.equalTo(32)
+            maker.left.equalTo(self.view).inset(24)
+            maker.centerY.equalTo(self.view)
+        }
+    }
+
+    @objc func panEdge(sender: UIScreenEdgePanGestureRecognizer) {
+        let translation = sender.translation(in: sender.view!)
+
+        print(translation)
+
+        switch (sender.state) {
+        case .possible: fallthrough
+        case .began:
+            edgeCrossed = false
+
+        case .changed:
+            self.searchTableView.frame.origin.x = translation.x
+
+            if (!edgeCrossed) {
+                if (translation.x >= 80) {
+                    edgeCrossed = true
+                    UIImpactFeedbackGenerator().impactOccurred()
+                }
+            } else {
+                if (translation.x < 80) {
+                    edgeCrossed = false
+                    UIImpactFeedbackGenerator().impactOccurred()
+                }
+            }
+
+        case .ended:
+            self.searchTableView.frame.origin.x = 0
+            self.pop()
+            // Apply
+
+        case .failed: fallthrough
+        case .cancelled:
+            self.searchTableView.frame.origin.x = 0
+        }
+    }
+
+    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return self.histories.count > 1
     }
 }
 
