@@ -112,7 +112,7 @@ class SuggestManager {
                     case .completed:
                         self.observer?.on(.completed)
                     }
-                }
+                }.disposed(by: disposeBag)
     }
 
     private func suggest(text: String) -> Observable<[SuggestType]> {

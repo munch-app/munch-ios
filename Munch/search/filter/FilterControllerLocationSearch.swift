@@ -98,7 +98,7 @@ class FilterLocationSearchController: UIViewController {
                         self.alert(error: error)
                         Crashlytics.sharedInstance().recordError(error)
                     }
-                }
+                }.disposed(by: disposeBag)
     }
 
     required init?(coder aDecoder: NSCoder) {

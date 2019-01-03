@@ -169,6 +169,12 @@ extension MunchButton {
     }
 
     @discardableResult
+    func with(_ closure: (MunchButton) -> Void) -> MunchButton {
+        closure(self)
+        return self
+    }
+
+    @discardableResult
     func with(style: MunchButtonStyle) -> MunchButton {
         self.backgroundColor = style.background
         self.layer.borderWidth = style.borderWidth

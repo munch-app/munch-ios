@@ -120,6 +120,7 @@ fileprivate class RIPArticleCardCell: UICollectionViewCell {
             .with(numberOfLines: 1)
 
     private let moreBtn = MunchButton(style: .borderSmall)
+            .with({ button in button.isUserInteractionEnabled = false })
             .with(text: "Read More")
 
     override init(frame: CGRect = .zero) {
