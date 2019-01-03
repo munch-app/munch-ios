@@ -159,8 +159,10 @@ extension SearchController: UIGestureRecognizerDelegate {
             }
 
         case .ended:
+            if (edgeCrossed) {
+                self.pop()
+            }
             self.searchTableView.frame.origin.x = 0
-            self.pop()
             // Apply
 
         case .failed: fallthrough
