@@ -49,7 +49,7 @@ class RIPHourCard: RIPCard {
         }
 
         openLabel.snp.makeConstraints { maker in
-            maker.top.bottom.equalTo(self).inset(24)
+            maker.top.bottom.equalTo(self).inset(12)
             maker.left.equalTo(self).inset(24)
             maker.right.equalTo(indicator.snp.left)
         }

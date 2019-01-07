@@ -366,6 +366,9 @@ fileprivate class SearchDTJESubscribeButton: UIView {
         if self.subscribeButton.text == "Subscribed" {
             let alert = UIAlertController(title: nil, message: "Unsubscribe from 'don't think, just eat'?", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Confirm", style: .destructive) { action in
+                self.subscribeButton.text = "Subscribe"
+                self.subscribeButton.with(style: .secondary)
+
                 Analytics.logEvent("dtje_unsubscribe", parameters: [:])
                 SearchCardHomeDTJE.unsubscribe(notification: .lunch)
                 SearchCardHomeDTJE.unsubscribe(notification: .dinner)

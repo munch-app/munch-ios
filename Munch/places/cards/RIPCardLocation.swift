@@ -155,7 +155,7 @@ class AddressLabel: SRCopyableView {
     class func height(location: Location) -> CGFloat {
         var count = 0
 
-        if let latLng = MunchLocation.lastLatLng {
+        if MunchLocation.lastLatLng != nil {
             count += 1
         }
 

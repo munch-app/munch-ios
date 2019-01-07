@@ -45,39 +45,6 @@ class RIPMapController: UIViewController, UIGestureRecognizerDelegate, MKMapView
         button.layer.rasterizationScale = UIScreen.main.scale
         return button
     }()
-    private let appleButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "RIP-Map-Apple"), for: .normal)
-        button.tintColor = .black
-        button.backgroundColor = .white
-
-        button.layer.cornerRadius = 25
-        button.layer.masksToBounds = false
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.2
-        button.layer.shadowOffset = CGSize(width: 4, height: 4)
-        button.layer.shadowRadius = 25
-        button.layer.shouldRasterize = true
-        button.layer.rasterizationScale = UIScreen.main.scale
-        return button
-    }()
-
-    private let googleButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "RIP-Map-Google"), for: .normal)
-        button.tintColor = .black
-        button.backgroundColor = .white
-
-        button.layer.cornerRadius = 25
-        button.layer.masksToBounds = false
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.2
-        button.layer.shadowOffset = CGSize(width: 4, height: 4)
-        button.layer.shadowRadius = 25
-        button.layer.shouldRasterize = true
-        button.layer.rasterizationScale = UIScreen.main.scale
-        return button
-    }()
 
     private let locationManager: CLLocationManager = {
         let manager = CLLocationManager()
@@ -118,9 +85,6 @@ class RIPMapController: UIViewController, UIGestureRecognizerDelegate, MKMapView
 
         self.mapView.delegate = self
         self.headingButton.addTarget(self, action: #selector(onShowHeading(_:)), for: .touchUpInside)
-        self.appleButton.addTarget(self, action: #selector(onOpenMap(_:)), for: .touchUpInside)
-        self.googleButton.addTarget(self, action: #selector(onOpenMap(_:)), for: .touchUpInside)
-
         self.render()
 
         locationManager.delegate = self
@@ -131,8 +95,6 @@ class RIPMapController: UIViewController, UIGestureRecognizerDelegate, MKMapView
         self.view.addSubview(headerView)
         self.view.addSubview(bottomView)
         self.view.addSubview(headingButton)
-        self.view.addSubview(appleButton)
-        self.view.addSubview(googleButton)
 
         headerView.snp.makeConstraints { make in
             make.top.left.right.equalTo(self.view)
@@ -151,18 +113,6 @@ class RIPMapController: UIViewController, UIGestureRecognizerDelegate, MKMapView
             make.right.equalTo(self.view).inset(24)
             make.bottom.equalTo(bottomView.snp.top).inset(-16)
             make.width.height.equalTo(50)
-        }
-
-        appleButton.snp.makeConstraints { make in
-            make.right.equalTo(self.view).inset(24)
-            make.width.height.equalTo(50)
-            make.bottom.equalTo(headingButton.snp.top).inset(-12)
-        }
-
-        googleButton.snp.makeConstraints { make in
-            make.right.equalTo(self.view).inset(24)
-            make.width.height.equalTo(50)
-            make.bottom.equalTo(appleButton.snp.top).inset(-12)
         }
     }
 
@@ -240,19 +190,6 @@ class RIPMapController: UIViewController, UIGestureRecognizerDelegate, MKMapView
         }
 
         return nil
-    }
-
-    @objc func onOpenMap(_ sender: UIButton) {
-        let address = place.location.address?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
-        if sender == self.appleButton {
-            UIApplication.shared.open(URL(string: "http://maps.apple.com/?daddr=\(address)")!)
-        } else if sender == self.googleButton {
-            if UIApplication.shared.canOpenURL(URL(string: "comgooglemaps://")!) {
-                UIApplication.shared.open(URL(string: "comgooglemaps://?daddr=\(address)")!)
-            } else {
-                UIApplication.shared.open(URL(string: "https://www.google.com/maps/?daddr=\(address)")!)
-            }
-        }
     }
 
     @objc func onShowHeading(_ sender: Any) {
@@ -333,6 +270,8 @@ fileprivate class LandmarkAnnotationView: MKAnnotationView {
 fileprivate class RIPMapViewBottom: UIView {
     private let addressLabel = UILabel(style: .regular)
             .with(numberOfLines: 0)
+    private let mapButton = MunchButton(style: .secondaryOutline)
+            .with(text: "Open Map")
     var place: Place? {
         didSet {
             self.addressLabel.text = place?.location.address
@@ -343,11 +282,29 @@ fileprivate class RIPMapViewBottom: UIView {
         super.init(frame: frame)
         self.backgroundColor = .white
         self.addSubview(addressLabel)
+        self.addSubview(mapButton)
 
-        addressLabel.snp.makeConstraints { make in
-            make.left.right.equalTo(self).inset(24)
-            make.top.equalTo(self).inset(16)
-            make.bottom.equalTo(self.safeArea.bottom).inset(16)
+        addressLabel.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self).inset(24)
+            maker.top.equalTo(self).inset(24)
+
+        }
+
+        mapButton.addTarget(self, action: #selector(onMap(_:)), for: .touchUpInside)
+        mapButton.snp.makeConstraints { maker in
+            maker.left.equalTo(self).inset(24)
+            maker.top.equalTo(addressLabel.snp.bottom).inset(-16)
+            maker.bottom.equalTo(self.safeArea.bottom).inset(24)
+        }
+    }
+
+    @objc func onMap(_ sender: Any) {
+        let address = place?.location.address?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
+
+        if UIApplication.shared.canOpenURL(URL(string: "comgooglemaps://")!) {
+            UIApplication.shared.open(URL(string: "comgooglemaps://?daddr=\(address)")!)
+        } else {
+            UIApplication.shared.open(URL(string: "http://maps.apple.com/?daddr=\(address)")!)
         }
     }
 

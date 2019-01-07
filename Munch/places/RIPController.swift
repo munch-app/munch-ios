@@ -79,7 +79,7 @@ class RIPController: UIViewController {
                 case .error(let error):
                     self.alert(error: error)
                 }
-            }
+            }.disposed(by: disposeBag)
         }
 
         // Data Binding

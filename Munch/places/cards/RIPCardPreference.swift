@@ -17,10 +17,12 @@ class RIPCardPreference: RIPCard {
     private let sub = UILabel(style: .regular)
             .with(text: "We thought you should know, this place does not fit the requirements of your permanent filter.")
             .with(numberOfLines: 0)
+    private let separatorLine = RIPSeparatorLine()
 
     override func didLoad(data: PlaceData!) {
         self.addSubview(label)
         self.addSubview(sub)
+        self.addSubview(separatorLine)
 
         label.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(24)
@@ -30,6 +32,12 @@ class RIPCardPreference: RIPCard {
         sub.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(24)
             maker.top.equalTo(label.snp.bottom).inset(-12)
+        }
+
+        separatorLine.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self)
+
+            maker.top.equalTo(sub.snp.bottom).inset(-24)
             maker.bottom.equalTo(self).inset(12)
         }
         self.layoutIfNeeded()
