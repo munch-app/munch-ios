@@ -11,8 +11,6 @@ import Moya
 import RxSwift
 import RxCocoa
 
-import FirebaseAnalytics
-
 class SuggestRootController: UINavigationController, UINavigationControllerDelegate {
     init(searchQuery: SearchQuery, onDismiss: @escaping ((SearchQuery?) -> Void)) {
         super.init(nibName: nil, bundle: nil)

@@ -8,8 +8,6 @@ import UIKit
 import SnapKit
 import SwiftRichString
 
-import FirebaseAnalytics
-
 class SuggestCellAssumption: UITableViewCell {
     private let tagTokenConfig = TagTokenConfig()
     private let textTokenConfig = TextTokenConfig()

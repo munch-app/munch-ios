@@ -15,7 +15,7 @@ class RIPFooterView: UIView {
 
     var place: Place? {
         didSet {
-            if let place = place {
+            if place != nil {
                 self.setHidden(isHidden: false)
             } else {
                 self.setHidden(isHidden: true)
@@ -31,9 +31,9 @@ class RIPFooterView: UIView {
         self.addSubview(addButton)
 
         addButton.snp.makeConstraints { maker in
-            maker.right.equalTo(self).inset(24)
-            maker.top.equalTo(self).inset(10)
-            maker.bottom.equalTo(self.safeArea.bottom).inset(10)
+            maker.right.equalTo(self).inset(16)
+            maker.top.equalTo(self).inset(4)
+            maker.bottom.equalTo(self.safeArea.bottom).inset(4)
         }
     }
 
@@ -60,13 +60,12 @@ class AddPlaceButton: UIButton {
     required init() {
         super.init(frame: .zero)
         self.addSubview(heartBtn)
-        self.backgroundColor = .secondary500
 
         heartBtn.isUserInteractionEnabled = false
+        heartBtn.tintColor = UIColor.black
         heartBtn.isHidden = false
         heartBtn.snp.makeConstraints { maker in
-            maker.top.bottom.equalTo(self)
-            maker.left.right.equalTo(self).inset(8)
+            maker.edges.equalTo(self)
         }
     }
 
@@ -75,8 +74,8 @@ class AddPlaceButton: UIButton {
         self.layer.cornerRadius = 3.0
     }
 
-    func register(place: Place, controller: UIViewController) {
-        self.heartBtn.refresh(placeId: place.placeId)
+    func register(place: Place, savedPlace: UserSavedPlace?, controller: UIViewController) {
+        self.heartBtn.isSelected = savedPlace != nil
 
         self.place = place
         self.controller = controller
@@ -92,24 +91,37 @@ class AddPlaceButton: UIButton {
         }
 
         Authentication.requireAuthentication(controller: controller) { state in
-            PlaceSavedDatabase.shared.toggle(placeId: place.placeId).subscribe { (event: SingleEvent<Bool>) in
-                let generator = UIImpactFeedbackGenerator()
+            guard case .loggedIn = state else {
+                return
+            }
 
-                switch event {
-                case .success(let added):
-                    self.heartBtn.isSelected = added
-                    generator.impactOccurred()
-                    if added {
-                        view.makeToast("Added '\(place.name)' to your places.")
-                    } else {
+            let generator = UIImpactFeedbackGenerator()
+
+            if self.heartBtn.isSelected {
+                PlaceSavedDatabase.shared.delete(placeId: place.placeId).subscribe { (event: SingleEvent<Bool>) in
+                    switch event {
+                    case .success:
+                        self.heartBtn.isSelected = false
+                        generator.impactOccurred()
                         view.makeToast("Removed '\(place.name)' from your places.")
-                    }
 
-                case .error(let error):
-                    generator.impactOccurred()
-                    self.controller.alert(error: error)
-                }
-            }.disposed(by: self.disposeBag)
+                    case .error(let error):
+                        self.controller.alert(error: error)
+                    }
+                }.disposed(by: self.disposeBag)
+            } else {
+                PlaceSavedDatabase.shared.put(placeId: place.placeId).subscribe { (event: SingleEvent<Bool>) in
+                    switch event {
+                    case .success:
+                        self.heartBtn.isSelected = true
+                        generator.impactOccurred()
+                        view.makeToast("Added '\(place.name)' to your places.")
+
+                    case .error(let error):
+                        self.controller.alert(error: error)
+                    }
+                }.disposed(by: self.disposeBag)
+            }
         }
     }
 

@@ -257,7 +257,7 @@ extension FilterController: UITableViewDataSource, UITableViewDelegate {
             }
 
 
-        case let .tagMore:
+        case .tagMore:
             return
         default:
             return

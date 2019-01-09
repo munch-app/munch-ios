@@ -36,10 +36,6 @@ class PlaceHeartButton: UIControl {
         }
     }
 
-    func refresh(placeId: String) {
-        self.isSelected = PlaceSavedDatabase.shared.isSaved(placeId: placeId)
-    }
-
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -48,7 +44,7 @@ class PlaceHeartButton: UIControl {
 class PlaceCard: UIView {
     fileprivate let disposeBag = DisposeBag()
 
-    private let heartBtn = PlaceHeartButton()
+    public let heartBtn = PlaceHeartButton()
     private let imageView: SizeShimmerImageView = {
         let width = UIScreen.main.bounds.width
         let imageView = SizeShimmerImageView(points: width, height: width)
@@ -75,8 +71,6 @@ class PlaceCard: UIView {
             self.render(name: self.place)
             self.render(tag: self.place)
             self.render(location: self.place)
-
-            self.heartBtn.refresh(placeId: self.place.placeId)
         }
     }
 

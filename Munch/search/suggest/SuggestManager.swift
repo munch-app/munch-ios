@@ -93,7 +93,7 @@ class SuggestManager {
         textField.rx.text
                 .debounce(0.3, scheduler: MainScheduler.instance)
                 .distinctUntilChanged()
-                .flatMapFirst { s -> Observable<[SuggestType]> in
+                .flatMapLatest { s -> Observable<[SuggestType]> in
                     guard let text = s?.lowercased(), text.count > 2 else {
                         return Observable.just(self.saves)
                     }

@@ -8,7 +8,6 @@ import UIKit
 import MapKit
 import Localize_Swift
 
-import FirebaseAnalytics
 import SnapKit
 import SwiftRichString
 

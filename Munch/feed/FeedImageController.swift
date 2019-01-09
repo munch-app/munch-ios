@@ -14,7 +14,6 @@ class FeedImageController: UIViewController, UIGestureRecognizerDelegate {
     private let provider = MunchProvider<FeedImageService>()
 
     private let headerView = FeedImageHeaderView()
-    private let footerView = FeedImageFooterView()
 
     private let scrollView: UIScrollView = {
         let view = UIScrollView()
@@ -56,7 +55,6 @@ class FeedImageController: UIViewController, UIGestureRecognizerDelegate {
         self.view.backgroundColor = .white
         self.view.addSubview(scrollView)
         self.view.addSubview(headerView)
-        self.view.addSubview(footerView)
 
         self.scrollView.addSubview(self.stackView)
 
@@ -67,14 +65,10 @@ class FeedImageController: UIViewController, UIGestureRecognizerDelegate {
             maker.top.left.right.equalTo(self.view)
         }
 
-        footerView.snp.makeConstraints { make in
-            make.bottom.left.right.equalTo(self.view)
-        }
-
         scrollView.snp.makeConstraints { maker in
             maker.top.equalTo(self.view)
             maker.left.right.equalTo(self.view)
-            maker.bottom.equalTo(self.footerView.snp.top)
+            maker.bottom.equalTo(self.view)
         }
 
         stackView.snp.makeConstraints { maker in
@@ -109,7 +103,6 @@ extension FeedImageController: SFSafariViewControllerDelegate {
         self.headerView.backButton.addTarget(self, action: #selector(onBackButton(_:)), for: .touchUpInside)
 
         if let place = place {
-            self.footerView.addButton.register(place: place, controller: self)
             self.headerView.titleView.text = place.name
         }
 

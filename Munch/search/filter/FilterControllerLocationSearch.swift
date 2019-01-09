@@ -113,7 +113,7 @@ extension FilterLocationSearchController {
 
         self.headerView.field.rx.text
                 .debounce(0.3, scheduler: MainScheduler.instance)
-                .flatMapFirst { s -> Observable<[(String, [Area])]> in
+                .flatMapLatest { s -> Observable<[(String, [Area])]> in
                     guard let text = s?.lowercased(), text.count > 2 else {
                         return Observable.just(self.areas.mapOrdered())
                     }

@@ -17,7 +17,6 @@ class SearchPlaceCard: SearchCardView {
 
     override func didLoad(card: SearchCard) {
         self.addSubview(placeCard)
-        self.placeCard.controller = self.controller
 
         placeCard.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(leftRight)

@@ -10,8 +10,6 @@ import UIKit
 import SnapKit
 import RxSwift
 
-import FirebaseAnalytics
-
 class SearchTableView: UITableView {
     private let disposeBag = DisposeBag()
 

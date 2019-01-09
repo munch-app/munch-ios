@@ -50,7 +50,6 @@ extension SearchCardPlaceCollection: UICollectionViewDataSource, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeue(type: SearchCardPlaceCollectionCell.self, for: indexPath)
         cell.card.place = places[indexPath.row]
-        cell.card.controller = self.controller
         return cell
     }
 

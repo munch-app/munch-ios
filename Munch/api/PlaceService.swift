@@ -47,6 +47,11 @@ struct PlaceData: Codable {
     var awards: [UserPlaceCollection.Item]
     var articles: [Article]
     var images: [PlaceImage]
+    var user: User?
+
+    struct User: Codable {
+        var savedPlace: UserSavedPlace?
+    }
 }
 
 struct Article: Codable {

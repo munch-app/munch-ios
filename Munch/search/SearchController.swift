@@ -12,7 +12,6 @@ import Moya
 import RxSwift
 import RxCocoa
 
-import FirebaseAnalytics
 import Kingfisher
 import FirebaseAuth
 import Toast_Swift

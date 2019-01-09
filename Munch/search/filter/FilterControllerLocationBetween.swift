@@ -526,7 +526,7 @@ extension FilterLocationBetweenSearchController {
         self.headerView.field.rx.text
                 .debounce(0.3, scheduler: MainScheduler.instance)
                 .distinctUntilChanged()
-                .flatMapFirst { s -> Observable<[SearchQuery.Filter.Location.Point]> in
+                .flatMapLatest { s -> Observable<[SearchQuery.Filter.Location.Point]> in
                     guard let text = s?.lowercased(), text.count > 2 else {
                         return Observable.just([])
                     }

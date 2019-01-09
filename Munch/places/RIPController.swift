@@ -88,7 +88,7 @@ class RIPController: UIViewController {
         self.headerView.addTargets(controller: self)
 
         self.footerView.place = data.place
-        self.footerView.addButton.register(place: data.place, controller: self)
+        self.footerView.addButton.register(place: data.place, savedPlace: data.user?.savedPlace, controller: self)
 
         imageLoader.start(placeId: data.place.placeId, images: data.images)
 

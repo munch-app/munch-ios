@@ -33,7 +33,6 @@ class ProfileSavedPlaceController: UIViewController {
             maker.edges.equalTo(self.view)
         }
 
-
         // TODO: Reload when account change?
         PlaceSavedDatabase.shared.observe().subscribe { event in
             switch event {
@@ -96,6 +95,7 @@ extension ProfileSavedPlaceController: UITableViewDataSource, UITableViewDelegat
 
             let cell = tableView.dequeue(type: ProfileSavedPlaceCell.self)
             cell.placeCard.place = place
+            cell.placeCard.heartBtn.isSelected = true
             cell.placeCard.controller = self
             return cell
         }
