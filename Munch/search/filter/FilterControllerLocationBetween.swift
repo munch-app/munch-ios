@@ -355,7 +355,6 @@ fileprivate class FilterLocationBetweenHeaderView: UIView {
     }
 }
 
-
 fileprivate class FilterLocationBetweenBottomView: UIView {
     fileprivate let applyButton: UIButton = {
         let button = UIButton()

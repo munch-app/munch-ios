@@ -148,7 +148,7 @@ class RIPMapController: UIViewController, UIGestureRecognizerDelegate, MKMapView
         }
 
         // Check for Location Services
-        if CLLocationManager.locationServicesEnabled() {
+        if MunchLocation.isEnabled {
             MunchLocation.requestLocation()
                     .subscribe()
                     .disposed(by: disposeBag)

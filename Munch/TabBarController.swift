@@ -104,7 +104,9 @@ extension MunchTabBarController: UITabBarControllerDelegate {
                 return true
             }
 
-            controller.reset()
+            if (controller.searchTableView.scrollToTop()) {
+                controller.reset()
+            }
             return true
 
         default:
