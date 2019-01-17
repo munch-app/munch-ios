@@ -1,10 +1,11 @@
 //
-// Created by Fuxing Loh on 22/6/18.
-// Copyright (c) 2018 Munch Technologies. All rights reserved.
+// Created by Fuxing Loh on 2019-01-17.
+// Copyright (c) 2019 Munch Technologies. All rights reserved.
 //
 
 import Foundation
 import UIKit
+import MapKit
 import SnapKit
 
 import Moya
@@ -12,19 +13,17 @@ import RxSwift
 import RxCocoa
 
 import NVActivityIndicatorView
-import Crashlytics
 
-class FilterLocationSearchController: UIViewController {
-    private let onDismiss: ((SearchQuery?) -> Void)
-    private let searchQuery: SearchQuery
+class FilterLocationBetweenSearchController: UIViewController {
+    private let onDismiss: ((SearchQuery.Filter.Location.Point?) -> Void)
+    private let point: SearchQuery.Filter.Location.Point?
 
     private let provider = MunchProvider<SearchFilterService>()
     private let disposeBag = DisposeBag()
 
-    private var areas: [Area] = []
-    private var items: [(String, [Area])] = []
+    private var points: [SearchQuery.Filter.Location.Point] = []
 
-    fileprivate let headerView = FilterLocationSearchHeaderView()
+    fileprivate let headerView = FilterLocationBetweenSearchHeader()
     fileprivate let indicator: NVActivityIndicatorView = {
         let indicator = NVActivityIndicatorView(frame: .zero, type: .ballTrianglePath, color: .secondary500, padding: 0)
         indicator.startAnimating()
@@ -39,12 +38,18 @@ class FilterLocationSearchController: UIViewController {
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.separatorStyle = .none
         tableView.separatorInset.left = 24
+        tableView.contentInset.top = 8
         return tableView
     }()
 
-    init(searchQuery: SearchQuery, onDismiss: @escaping ((SearchQuery?) -> Void)) {
+    /**
+     * You pass in a point on init,
+     * When you edited a point you return with the new point
+     * When you cancel you pass back the same point
+     */
+    init(point: SearchQuery.Filter.Location.Point?, onDismiss: @escaping ((SearchQuery.Filter.Location.Point?) -> Void)) {
         self.onDismiss = onDismiss
-        self.searchQuery = searchQuery
+        self.point = point
         super.init(nibName: nil, bundle: nil)
 
         self.registerCells()
@@ -58,6 +63,8 @@ class FilterLocationSearchController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
+
+        headerView.field.becomeFirstResponder()
     }
 
     override func viewDidLoad() {
@@ -81,24 +88,6 @@ class FilterLocationSearchController: UIViewController {
             maker.center.equalTo(tableView)
             maker.width.height.equalTo(40)
         }
-
-        self.provider.rx.request(.areas)
-                .map { response -> [Area] in
-                    return try response.map(data: [Area].self)
-                }
-                .subscribe { result in
-                    switch result {
-                    case .success(let areas):
-                        self.indicator.isHidden = true
-                        self.areas = areas
-                        self.items = areas.mapOrdered()
-                        self.tableView.reloadData()
-
-                    case .error(let error):
-                        self.alert(error: error)
-                        Crashlytics.sharedInstance().recordError(error)
-                    }
-                }.disposed(by: disposeBag)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -107,23 +96,31 @@ class FilterLocationSearchController: UIViewController {
 }
 
 // MARK: Register Actions
-extension FilterLocationSearchController {
+extension FilterLocationBetweenSearchController {
     func addTargets() {
         self.headerView.closeButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
 
+        self.indicator.isHidden = true
         self.headerView.field.rx.text
                 .debounce(0.3, scheduler: MainScheduler.instance)
-                .flatMapLatest { s -> Observable<[(String, [Area])]> in
+                .distinctUntilChanged()
+                .flatMapLatest { s -> Observable<[SearchQuery.Filter.Location.Point]> in
                     guard let text = s?.lowercased(), text.count > 1 else {
-                        return Observable.just(self.areas.mapOrdered())
+                        return Observable.just([])
                     }
 
-                    return Observable.just(self.areas.search(text: text).mapOrdered())
+                    self.indicator.isHidden = false
+                    return self.provider.rx.request(.betweenSearch(text))
+                            .map { res throws -> [SearchQuery.Filter.Location.Point] in
+                                try res.map(data: [SearchQuery.Filter.Location.Point].self)
+                            }
+                            .asObservable()
                 }
                 .subscribe { event in
                     switch event {
-                    case .next(let items):
-                        self.items = items
+                    case .next(let points):
+                        self.points = points
+                        self.indicator.isHidden = true
                         self.tableView.reloadData()
 
                     case .error(let error):
@@ -136,52 +133,39 @@ extension FilterLocationSearchController {
     }
 
     @objc func actionCancel(_ sender: Any) {
-        self.onDismiss(nil)
+        self.onDismiss(self.point)
         self.dismiss(animated: true)
     }
 }
 
 // MARK: TableView Cells
-extension FilterLocationSearchController: UITableViewDataSource, UITableViewDelegate {
+extension FilterLocationBetweenSearchController: UITableViewDataSource, UITableViewDelegate {
     func registerCells() {
         tableView.delegate = self
         tableView.dataSource = self
 
-        tableView.register(type: FilterLocationSearchCell.self)
-    }
-
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return items.count
-    }
-
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return items[section].0
+        tableView.register(type: FilterLocationBetweenSearchCell.self)
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items[section].1.count
+        return points.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeue(type: FilterLocationSearchCell.self)
-        cell.render(with: items[indexPath.section].1[indexPath.row])
+        let cell = tableView.dequeue(type: FilterLocationBetweenSearchCell.self)
+        cell.render(with: points[indexPath.row])
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        var searchQuery = self.searchQuery
-        searchQuery.filter.location.type = .Where
-        searchQuery.filter.location.areas = [items[indexPath.section].1[indexPath.row]]
-        searchQuery.filter.location.points = []
-
-        self.onDismiss(searchQuery)
+        self.onDismiss(points[indexPath.row])
         self.dismiss(animated: true)
     }
 }
 
-fileprivate class FilterLocationSearchCell: UITableViewCell {
+fileprivate class FilterLocationBetweenSearchCell: UITableViewCell {
     private let titleLabel = UILabel(style: .regular)
             .with(numberOfLines: 1)
 
@@ -197,9 +181,8 @@ fileprivate class FilterLocationSearchCell: UITableViewCell {
         }
     }
 
-    @discardableResult
-    func render(with area: Area) -> FilterLocationSearchCell {
-        titleLabel.text = area.name
+    func render(with point: SearchQuery.Filter.Location.Point) -> FilterLocationBetweenSearchCell {
+        titleLabel.text = point.name
         return self
     }
 
@@ -208,7 +191,7 @@ fileprivate class FilterLocationSearchCell: UITableViewCell {
     }
 }
 
-fileprivate class FilterLocationSearchHeaderView: UIView {
+fileprivate class FilterLocationBetweenSearchHeader: UIView {
     let field: MunchSearchTextField = {
         let field = MunchSearchTextField()
         field.placeholder = "Search"
@@ -253,41 +236,5 @@ fileprivate class FilterLocationSearchHeaderView: UIView {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-}
-
-extension Array where Element == Area {
-    fileprivate static let alpha: [String] = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "#"]
-
-    func search(text: String) -> [Area] {
-        return self.filter { area in
-            area.name.lowercased().contains(text.lowercased())
-        }
-    }
-
-    func mapOrdered() -> [(String, [Area])] {
-        var mapping = [String: [Area]]()
-        Array.alpha.forEach { s in
-            mapping[s] = []
-        }
-
-        self.forEach { (area: Area) in
-            guard let first = area.name.lowercased()[0] else {
-                return
-            }
-            let char = String(first)
-
-            if mapping[char] != nil {
-                mapping[char]!.append(area)
-            } else {
-                mapping["#"]!.append(area)
-            }
-        }
-
-        return Array.alpha.map { s -> (String, [Area]) in
-            return (s.uppercased(), mapping[s]!)
-        }.filter { (s: String, areas: [Area]) -> Bool in
-            return !areas.isEmpty
-        }
     }
 }

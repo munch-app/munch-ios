@@ -5,6 +5,7 @@
 
 import Foundation
 import UIKit
+import MapKit
 import SnapKit
 
 import Moya
@@ -16,10 +17,8 @@ import NVActivityIndicatorView
 class FilterLocationBetweenController: UIViewController {
     private let onDismiss: ((SearchQuery?) -> Void)
     private let searchQuery: SearchQuery
-    private var points: [SearchQuery.Filter.Location.Point?]
-    private var compactPoints: [SearchQuery.Filter.Location.Point] {
-        return self.points.compactMap({ $0 })
-    }
+
+    private var points = [SearchQuery.Filter.Location.Point]()
 
     private let manager: FilterManager
     private let disposeBag = DisposeBag()
@@ -27,16 +26,13 @@ class FilterLocationBetweenController: UIViewController {
     fileprivate let headerView = FilterLocationBetweenHeaderView()
     fileprivate let bottomView = FilterLocationBetweenBottomView()
 
-    private let tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.estimatedRowHeight = 80
-
-        tableView.tableFooterView = UIView(frame: .zero)
-        tableView.separatorStyle = .none
-        tableView.separatorInset.left = 24
-        tableView.contentInset.bottom = 24
-        return tableView
+    private let mapView: MKMapView = {
+        let mapView = MKMapView()
+        mapView.showsPointsOfInterest = false
+        mapView.showsCompass = false
+        mapView.isUserInteractionEnabled = false
+        mapView.register(BetweenAnnotationView.self, forAnnotationViewWithReuseIdentifier: "BetweenAnnotationView")
+        return mapView
     }()
 
     init(searchQuery: SearchQuery, onDismiss: @escaping ((SearchQuery?) -> Void)) {
@@ -45,9 +41,6 @@ class FilterLocationBetweenController: UIViewController {
         self.points = searchQuery.filter.location.points
         self.manager = FilterManager(searchQuery: searchQuery)
         super.init(nibName: nil, bundle: nil)
-
-        self.fixPoints()
-        self.registerCells()
         self.addTargets()
     }
 
@@ -62,7 +55,7 @@ class FilterLocationBetweenController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.addSubview(tableView)
+        self.view.addSubview(mapView)
         self.view.addSubview(headerView)
         self.view.addSubview(bottomView)
 
@@ -76,27 +69,17 @@ class FilterLocationBetweenController: UIViewController {
             make.left.right.equalTo(self.view)
         }
 
-        tableView.snp.makeConstraints { make in
+        mapView.snp.makeConstraints { make in
             make.left.right.equalTo(self.view)
             make.top.equalTo(self.headerView.snp.bottom)
             make.bottom.equalTo(self.bottomView.snp.top)
         }
+
+        self.mapView.delegate = self
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    private func fixPoints() {
-        self.points = self.points.filter { point -> Bool in
-            return point != nil
-        }
-
-        if self.points.count >= 10 {
-            return
-        }
-
-        self.points.append(nil)
     }
 }
 
@@ -104,7 +87,13 @@ class FilterLocationBetweenController: UIViewController {
 extension FilterLocationBetweenController {
     func addTargets() {
         self.headerView.closeButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
+        self.bottomView.addButton.addTarget(self, action: #selector(actionAdd(_:)), for: .touchUpInside)
         self.bottomView.applyButton.addTarget(self, action: #selector(actionApply(_:)), for: .touchUpInside)
+
+        bottomView.pointBar.onRemove = { i in
+            self.points.remove(at: i)
+            self.dispatch()
+        }
 
         self.manager.observe()
                 .catchError { (error: Error) in
@@ -118,7 +107,7 @@ extension FilterLocationBetweenController {
                             self.bottomView.state = .loading
                         } else if let count = self.manager.result?.count {
                             if count > 0 {
-                                self.bottomView.state = .count(count)
+                                self.bottomView.state = .count(count, self.points.count)
                             } else {
                                 self.bottomView.state = .noResult
                             }
@@ -135,15 +124,14 @@ extension FilterLocationBetweenController {
     }
 
     func dispatch() {
-        self.fixPoints()
-        let points = self.compactPoints
+        self.bottomView.pointBar.points = self.points
+        self.updateMap()
 
         if points.count < 2 {
             self.bottomView.state = .require2
         } else {
             self.manager.select(location: SearchQuery.Filter.Location(type: .Between, areas: [], points: points))
         }
-        self.tableView.reloadData()
     }
 
     @objc func actionCancel(_ sender: Any) {
@@ -152,158 +140,87 @@ extension FilterLocationBetweenController {
     }
 
     @objc func actionApply(_ sender: Any) {
-        guard let count = manager.result?.count, count > 0, self.compactPoints.count >= 2 else {
+        guard let count = manager.result?.count, count > 0, points.count >= 2 else {
             return
         }
 
         var searchQuery = self.searchQuery
         searchQuery.filter.location.type = .Between
-        searchQuery.filter.location.points = self.compactPoints
+        searchQuery.filter.location.points = points
         self.dismiss(animated: true)
         self.onDismiss(searchQuery)
     }
-}
 
-// MARK: TableView Cells
-extension FilterLocationBetweenController: UITableViewDataSource, UITableViewDelegate {
-    func registerCells() {
-        tableView.delegate = self
-        tableView.dataSource = self
-
-        tableView.register(type: FilterLocationBetweenHeaderCell.self)
-        tableView.register(type: FilterLocationBetweenPointCell.self)
-        tableView.register(type: FilterLocationBetweenPointEmptyCell.self)
-    }
-
-    public func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard section == 1 else {
-            return 1
-        }
-        return points.count
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard indexPath.section == 1 else {
-            return tableView.dequeue(type: FilterLocationBetweenHeaderCell.self)
-        }
-
-        if let point = points[indexPath.row] {
-            return tableView.dequeue(type: FilterLocationBetweenPointCell.self)
-                    .render(with: (indexPath, point))
-        } else {
-            return tableView.dequeue(type: FilterLocationBetweenPointEmptyCell.self)
-        }
-    }
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-
-        guard indexPath.section == 1 else {
+    @objc func actionAdd(_ sender: Any) {
+        guard points.count < 10 else {
             return
         }
 
-        if let point = points[indexPath.row] {
-            self.points[indexPath.row] = nil
-            self.dispatch()
-        } else {
-            let controller = FilterLocationBetweenSearchController(point: nil) { point in
-                self.points[indexPath.row] = point
+        let controller = FilterLocationBetweenSearchController(point: nil) { point in
+            if let point = point {
+                self.points.append(point)
                 self.dispatch()
             }
-            self.present(controller, animated: true)
         }
+        self.present(controller, animated: true)
     }
 }
 
-fileprivate class FilterLocationBetweenHeaderCell: UITableViewCell {
-    private let titleLabel = UILabel(style: .regular)
-            .with(text: "Enter everyone’s location to find the most convenient spot.")
-            .with(numberOfLines: 0)
-
-
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-        self.addSubview(titleLabel)
-
-        titleLabel.snp.makeConstraints { maker in
-            maker.top.equalTo(self).inset(24)
-            maker.bottom.equalTo(self).inset(16)
-            maker.left.right.equalTo(self).inset(24)
+extension FilterLocationBetweenController: MKMapViewDelegate {
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        if annotation is MKUserLocation {
+            return nil
         }
+
+        if annotation is BetweenAnnotation {
+            return mapView.dequeueReusableAnnotationView(withIdentifier: "BetweenAnnotationView")
+        }
+
+        return nil
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func updateMap() {
+        mapView.removeAnnotations(mapView.annotations)
+        self.points.forEach { point in
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = CLLocation(latLng: point.latLng)!.coordinate
+            annotation.title = point.name
+            mapView.addAnnotation(annotation)
+        }
+        let locations = self.points.compactMap { point -> CLLocation? in
+            return CLLocation(latLng: point.latLng)
+        }
+
+        if locations.count > 1 {
+            self.mapView.addAnnotation(BetweenAnnotation(coordinate: locations.centroid.coordinate))
+        }
+
+        self.mapView.showAnnotations(self.mapView.annotations, animated: true)
     }
 }
 
-fileprivate class FilterLocationBetweenPointCell: UITableViewCell {
-    private let titleLabel = UILabel(style: .h5)
-            .with(numberOfLines: 1)
-    private let cancelView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "Search-Filter-Location-Cancel")
-        imageView.tintColor = .ba85
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
+fileprivate class BetweenAnnotation: NSObject, MKAnnotation {
+    public let coordinate: CLLocationCoordinate2D
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-        self.addSubview(titleLabel)
-        self.addSubview(cancelView)
-
-        titleLabel.snp.makeConstraints { maker in
-            maker.top.bottom.equalTo(self).inset(8)
-            maker.height.equalTo(26)
-
-            maker.left.equalTo(self).inset(24)
-            maker.right.equalTo(cancelView.snp.left).inset(-24)
-
-        }
-
-        cancelView.snp.makeConstraints { maker in
-            maker.right.equalTo(self).inset(24)
-            maker.top.bottom.equalTo(self).inset(8)
-        }
+    init(coordinate: CLLocationCoordinate2D) {
+        self.coordinate = coordinate
     }
 
-
-    @discardableResult
-    func render(with: (indexPath: IndexPath, point: SearchQuery.Filter.Location.Point)) -> FilterLocationBetweenPointCell {
-        titleLabel.text = "\(with.indexPath.row + 1). \(with.point.name)"
-        return self
+    public var title: String? {
+        return "Between"
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    public var subtitle: String? {
+        return "Between"
     }
 }
 
-fileprivate class FilterLocationBetweenPointEmptyCell: UITableViewCell {
-    let field: MunchSearchTextField = {
-        let field = MunchSearchTextField()
-        field.placeholder = "Add Location"
-        field.isUserInteractionEnabled = false
-        return field
-    }()
+fileprivate class BetweenAnnotationView: MKAnnotationView {
+    override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
+        super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
+        self.canShowCallout = false
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-        self.addSubview(field)
-
-        field.snp.makeConstraints { maker in
-            maker.top.bottom.equalTo(self).inset(12)
-            maker.height.equalTo(40)
-            maker.left.right.equalTo(self).inset(24)
-        }
+        self.image = UIImage(named: "RIP-Map-Centroid")
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -356,6 +273,23 @@ fileprivate class FilterLocationBetweenHeaderView: UIView {
 }
 
 fileprivate class FilterLocationBetweenBottomView: UIView {
+    private let titleLabel = UILabel(style: .regular)
+            .with(text: "Enter everyone’s location and we’ll find the most ideal spot for a meal together.")
+            .with(numberOfLines: 0)
+    fileprivate let pointBar = FilterLocationBetweenBottomBar()
+
+    fileprivate let addButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("+ Location", for: .normal)
+        button.layer.cornerRadius = 3
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.secondary500.cgColor
+        button.backgroundColor = .white
+        button.setTitleColor(.secondary500, for: .normal)
+        button.titleLabel!.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        return button
+    }()
+
     fileprivate let applyButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 3
@@ -374,7 +308,7 @@ fileprivate class FilterLocationBetweenBottomView: UIView {
         case loading
         case noResult
         case require2
-        case count(Int)
+        case count(Int, Int)
     }
 
     var state: State = State.loading {
@@ -393,15 +327,20 @@ fileprivate class FilterLocationBetweenBottomView: UIView {
                 self.applyButton.setTitleColor(.secondary700, for: .normal)
 
             case .require2:
-                self.applyButton.setTitle("Require 2 Locations", for: .normal)
+                self.applyButton.setTitle("Requires 2 Locations", for: .normal)
                 self.applyButton.backgroundColor = .secondary050
                 self.applyButton.setTitleColor(.secondary700, for: .normal)
 
-            case .count(let count):
-                self.applyButton.setTitle(FilterManager.countTitle(count: count), for: .normal)
+            case let .count(count, points):
+                self.applyButton.setTitle(FilterManager.countTitle(count: count, postfix: "Places"), for: .normal)
                 self.applyButton.backgroundColor = .secondary500
                 self.applyButton.setTitleColor(.white, for: .normal)
 
+                if points < 10 {
+                    self.addButton.setTitle("+ Location", for: .normal)
+                } else {
+                    self.addButton.setTitle("Max 10", for: .normal)
+                }
             }
         }
     }
@@ -409,19 +348,41 @@ fileprivate class FilterLocationBetweenBottomView: UIView {
     override init(frame: CGRect = CGRect.zero) {
         super.init(frame: frame)
         self.backgroundColor = .white
+        self.addSubview(titleLabel)
+        self.addSubview(addButton)
         self.addSubview(applyButton)
         self.addSubview(indicator)
+        self.addSubview(pointBar)
         self.state = .loading
 
-        applyButton.snp.makeConstraints { (make) in
-            make.top.equalTo(self).inset(12)
-            make.bottom.equalTo(self.safeArea.bottom).inset(12)
-            make.right.left.equalTo(self).inset(24)
-            make.height.equalTo(46)
+        titleLabel.snp.makeConstraints { maker in
+            maker.top.equalTo(self).inset(16)
+            maker.right.left.equalTo(self).inset(24)
         }
 
-        indicator.snp.makeConstraints { make in
-            make.edges.equalTo(applyButton)
+        pointBar.snp.makeConstraints { maker in
+            maker.top.equalTo(titleLabel.snp.bottom).inset(-16)
+            maker.height.equalTo(32)
+            maker.right.left.equalTo(self)
+        }
+
+        addButton.snp.makeConstraints { maker in
+            maker.top.equalTo(pointBar.snp.bottom).inset(-16)
+            maker.left.equalTo(self).inset(24)
+            maker.bottom.equalTo(self.safeArea.bottom).inset(16)
+            maker.height.equalTo(40)
+            maker.width.equalTo(112)
+        }
+
+        applyButton.snp.makeConstraints { maker in
+            maker.top.bottom.equalTo(addButton)
+
+            maker.right.equalTo(self).inset(24)
+            maker.left.equalTo(addButton.snp.right).inset(-16)
+        }
+
+        indicator.snp.makeConstraints { maker in
+            maker.edges.equalTo(applyButton)
         }
     }
 
@@ -435,79 +396,48 @@ fileprivate class FilterLocationBetweenBottomView: UIView {
     }
 }
 
-class FilterLocationBetweenSearchController: UIViewController {
-    private let onDismiss: ((SearchQuery.Filter.Location.Point?) -> Void)
-    private let point: SearchQuery.Filter.Location.Point?
+fileprivate class FilterLocationBetweenBottomBar: UIView {
+    private let titleLabel = UILabel(style: .regular)
+            .with(text: "Requires 2 Locations")
+            .with(numberOfLines: 0)
 
-    private let provider = MunchProvider<SearchFilterService>()
-    private let disposeBag = DisposeBag()
+    private let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+        layout.itemSize = CGSize(width: 80, height: 32)
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 16
 
-    private var points: [SearchQuery.Filter.Location.Point] = []
-
-    fileprivate let headerView = FilterLocationBetweenSearchHeader()
-    fileprivate let indicator: NVActivityIndicatorView = {
-        let indicator = NVActivityIndicatorView(frame: .zero, type: .ballTrianglePath, color: .secondary500, padding: 0)
-        indicator.startAnimating()
-        return indicator
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.backgroundColor = UIColor.clear
+        collectionView.register(type: FilterLocationBetweenPointCell.self)
+        return collectionView
     }()
 
-    private let tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.estimatedRowHeight = 50
-
-        tableView.tableFooterView = UIView(frame: .zero)
-        tableView.separatorStyle = .none
-        tableView.separatorInset.left = 24
-        tableView.contentInset.top = 8
-        return tableView
-    }()
-
-    /**
-     * You pass in a point on init,
-     * When you edited a point you return with the new point
-     * When you cancel you pass back the same point
-     */
-    init(point: SearchQuery.Filter.Location.Point?, onDismiss: @escaping ((SearchQuery.Filter.Location.Point?) -> Void)) {
-        self.onDismiss = onDismiss
-        self.point = point
-        super.init(nibName: nil, bundle: nil)
-
-        self.registerCells()
-        self.addTargets()
+    fileprivate var onRemove: ((Int) -> Void)?
+    fileprivate var points = [SearchQuery.Filter.Location.Point]() {
+        didSet {
+            titleLabel.isHidden = !points.isEmpty
+            self.collectionView.reloadData()
+        }
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override init(frame: CGRect = CGRect.zero) {
+        super.init(frame: frame)
+        self.addSubview(titleLabel)
+        self.addSubview(collectionView)
+        collectionView.delegate = self
+        collectionView.dataSource = self
 
-        // Make navigation bar transparent, bar must be hidden
-        navigationController?.setNavigationBarHidden(true, animated: false)
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController?.navigationBar.shadowImage = UIImage()
-
-        headerView.field.becomeFirstResponder()
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.view.addSubview(tableView)
-        self.view.addSubview(headerView)
-        self.view.addSubview(indicator)
-
-        headerView.snp.makeConstraints { make in
-            make.top.equalTo(self.view)
-            make.left.right.equalTo(self.view)
+        titleLabel.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self).inset(24)
+            maker.top.bottom.equalTo(self)
         }
 
-        tableView.snp.makeConstraints { make in
-            make.left.right.equalTo(self.view)
-            make.top.equalTo(self.headerView.snp.bottom)
-            make.bottom.equalTo(self.view)
-        }
-
-        indicator.snp.makeConstraints { maker in
-            maker.center.equalTo(tableView)
-            maker.width.height.equalTo(40)
+        collectionView.snp.makeConstraints { maker in
+            maker.edges.equalTo(self)
         }
     }
 
@@ -516,146 +446,70 @@ class FilterLocationBetweenSearchController: UIViewController {
     }
 }
 
-// MARK: Register Actions
-extension FilterLocationBetweenSearchController {
-    func addTargets() {
-        self.headerView.closeButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
-
-        self.indicator.isHidden = true
-        self.headerView.field.rx.text
-                .debounce(0.3, scheduler: MainScheduler.instance)
-                .distinctUntilChanged()
-                .flatMapLatest { s -> Observable<[SearchQuery.Filter.Location.Point]> in
-                    guard let text = s?.lowercased(), text.count > 2 else {
-                        return Observable.just([])
-                    }
-
-                    self.indicator.isHidden = false
-                    return self.provider.rx.request(.betweenSearch(text))
-                            .map { res throws -> [SearchQuery.Filter.Location.Point] in
-                                try res.map(data: [SearchQuery.Filter.Location.Point].self)
-                            }
-                            .asObservable()
-                }
-                .subscribe { event in
-                    switch event {
-                    case .next(let points):
-                        self.points = points
-                        self.indicator.isHidden = true
-                        self.tableView.reloadData()
-
-                    case .error(let error):
-                        self.alert(error: error)
-
-                    case .completed: return
-                    }
-                }
-                .disposed(by: disposeBag)
-    }
-
-    @objc func actionCancel(_ sender: Any) {
-        self.onDismiss(self.point)
-        self.dismiss(animated: true)
-    }
-}
-
-// MARK: TableView Cells
-extension FilterLocationBetweenSearchController: UITableViewDataSource, UITableViewDelegate {
-    func registerCells() {
-        tableView.delegate = self
-        tableView.dataSource = self
-
-        tableView.register(type: FilterLocationBetweenSearchCell.self)
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+extension FilterLocationBetweenBottomBar: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return points.count
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeue(type: FilterLocationBetweenSearchCell.self)
-        cell.render(with: points[indexPath.row])
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeue(type: FilterLocationBetweenPointCell.self, for: indexPath)
+        cell.render(with: (indexPath: indexPath, point: points[indexPath.row]))
         return cell
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        onRemove?(indexPath.row)
+    }
 
-        self.onDismiss(points[indexPath.row])
-        self.dismiss(animated: true)
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return FilterLocationBetweenPointCell.size(with: (indexPath: indexPath, point: points[indexPath.row]))
+    }
+
+    fileprivate class FilterLocationBetweenPointCell: UICollectionViewCell {
+        private let titleLabel = UILabel(style: .h6)
+                .with(numberOfLines: 1)
+
+        private let cancelView: UIImageView = {
+            let imageView = UIImageView()
+            imageView.image = UIImage(named: "Search-Filter-Location-Cancel")
+            imageView.tintColor = .ba75
+            imageView.contentMode = .scaleAspectFit
+            return imageView
+        }()
+
+        override init(frame: CGRect = .zero) {
+            super.init(frame: frame)
+            self.addSubview(titleLabel)
+            self.addSubview(cancelView)
+
+            self.backgroundColor = .whisper100
+            self.layer.cornerRadius = 3.0
+
+            titleLabel.snp.makeConstraints { maker in
+                maker.top.bottom.equalTo(self)
+                maker.left.equalTo(self).inset(8)
+            }
+
+            cancelView.snp.makeConstraints { maker in
+                maker.top.bottom.right.equalTo(self).inset(6)
+            }
+        }
+
+        @discardableResult
+        func render(with: (indexPath: IndexPath, point: SearchQuery.Filter.Location.Point)) -> FilterLocationBetweenPointCell {
+            titleLabel.text = "\(with.indexPath.row + 1). \(with.point.name)"
+            return self
+        }
+
+        static func size(with: (indexPath: IndexPath, point: SearchQuery.Filter.Location.Point)) -> CGSize {
+            let text = "\(with.indexPath.row + 1). \(with.point.name)"
+            let width = 8 + FontStyle.h6.width(text: text) + 4 + 24 + 6
+            return CGSize(width: width, height: 32)
+        }
+
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
     }
 }
 
-fileprivate class FilterLocationBetweenSearchCell: UITableViewCell {
-    private let titleLabel = UILabel(style: .regular)
-            .with(numberOfLines: 1)
-
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
-        self.addSubview(titleLabel)
-
-        titleLabel.snp.makeConstraints { (make) in
-            make.top.bottom.equalTo(self).inset(8)
-            make.left.equalTo(self).inset(24)
-            make.right.equalTo(self).inset(24)
-        }
-    }
-
-    func render(with point: SearchQuery.Filter.Location.Point) -> FilterLocationBetweenSearchCell {
-        titleLabel.text = point.name
-        return self
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-fileprivate class FilterLocationBetweenSearchHeader: UIView {
-    let field: MunchSearchTextField = {
-        let field = MunchSearchTextField()
-        field.placeholder = "Search"
-        return field
-    }()
-    let closeButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "Search-Header-Close"), for: .normal)
-        button.tintColor = .black
-        button.imageEdgeInsets.right = 24
-        button.contentHorizontalAlignment = .right
-        return button
-    }()
-
-    override init(frame: CGRect = .zero) {
-        super.init(frame: frame)
-        self.backgroundColor = .white
-
-        self.addSubview(field)
-        self.addSubview(closeButton)
-
-        field.snp.makeConstraints { maker in
-            maker.top.equalTo(self.safeArea.top).inset(12)
-            maker.bottom.equalTo(self).inset(12)
-            maker.height.equalTo(36)
-            maker.left.equalTo(self).inset(24)
-            maker.right.equalTo(closeButton.snp.left).inset(-16)
-        }
-
-        closeButton.snp.makeConstraints { maker in
-            maker.top.bottom.equalTo(field)
-
-            maker.right.equalTo(self)
-            maker.width.equalTo(24 + 24)
-        }
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        self.shadow(vertical: 2)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}

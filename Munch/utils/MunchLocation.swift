@@ -159,3 +159,16 @@ extension CLLocation {
         return nil
     }
 }
+
+extension Array where Element == CLLocation {
+    var centroid: CLLocation {
+        var cLat = 0.0, cLng = 0.0
+
+        self.forEach { (v: CLLocation) in
+            cLat += v.coordinate.latitude
+            cLng += v.coordinate.longitude
+        }
+
+        return CLLocation(latitude: cLat / Double(self.count), longitude: cLng / Double(self.count))
+    }
+}

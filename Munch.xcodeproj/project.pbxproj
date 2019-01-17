@@ -94,6 +94,7 @@
 		B4B739A826B911E094D4A616 /* ProfileSettingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73BF6B8D464037F4FC986 /* ProfileSettingController.swift */; };
 		B4B739E6B1A00BA895618F79 /* FilterControllerLocationBetween.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73E853230C2F199B5FC38 /* FilterControllerLocationBetween.swift */; };
 		B4B739ED33627977DE45A704 /* RIPCardArticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73066E127D1CD297E680D /* RIPCardArticle.swift */; };
+		B4B73A268C16DF2C89556C00 /* FilterControllerLocationBetweenSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73B2DC4944BD965A5CA64 /* FilterControllerLocationBetweenSearch.swift */; };
 		B4B73A27FF8C27B661FDE549 /* ReviewRatingUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732F3E55F3E605210CE9D /* ReviewRatingUtils.swift */; };
 		B4B73A4F99622AF0D943C712 /* AccountBoardingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7347AD60C415D1700F116 /* AccountBoardingController.swift */; };
 		B4B73A970F91F8D21B893ABF /* SearchCardHomeDTJE.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73A69C1720900C43F6E42 /* SearchCardHomeDTJE.swift */; };
@@ -297,6 +298,7 @@
 		B4B73AACCB0BC095B5C0D075 /* FeedManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedManager.swift; sourceTree = "<group>"; };
 		B4B73AD58260F2E709E78C41 /* SearchTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableView.swift; sourceTree = "<group>"; };
 		B4B73AE09F083ADA7BF427D9 /* UserPlaceCollectionDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPlaceCollectionDatabase.swift; sourceTree = "<group>"; };
+		B4B73B2DC4944BD965A5CA64 /* FilterControllerLocationBetweenSearch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterControllerLocationBetweenSearch.swift; sourceTree = "<group>"; };
 		B4B73B3C572E241C11D57AE5 /* FilterHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterHeaderView.swift; sourceTree = "<group>"; };
 		B4B73B8C080EA9D51F87FE13 /* MunchLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchLocation.swift; sourceTree = "<group>"; };
 		B4B73BB2757D0BE5CC888EDA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.info; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -561,6 +563,7 @@
 				B4B738ACBC179DBD4A72FC01 /* FilterCellLocation.swift */,
 				B4B732DE1EA3B496C8EE6CB3 /* FilterToken.swift */,
 				B4B73E853230C2F199B5FC38 /* FilterControllerLocationBetween.swift */,
+				B4B73B2DC4944BD965A5CA64 /* FilterControllerLocationBetweenSearch.swift */,
 			);
 			path = filter;
 			sourceTree = "<group>";
@@ -1196,6 +1199,7 @@
 				B4B73E1D3DB7E64FC7554B7E /* SearchMapController.swift in Sources */,
 				B4B735F60468BE3C55EEEFB2 /* NavigationController.swift in Sources */,
 				B4B735319372CA7B773ABE45 /* SearchMapAnnotation.swift in Sources */,
+				B4B73A268C16DF2C89556C00 /* FilterControllerLocationBetweenSearch.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
