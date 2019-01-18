@@ -45,21 +45,3 @@ class RIPLoadingNameCard: RIPCard {
         }
     }
 }
-
-class RIPLoadingGalleryCard: RIPCard {
-    let indicator: NVActivityIndicatorView = {
-        let indicator = NVActivityIndicatorView(frame: .zero, type: .ballBeat, color: .secondary500, padding: 0)
-        return indicator
-    }()
-
-    override func didLoad(data: PlaceData!) {
-        self.backgroundColor = .white
-        self.addSubview(indicator)
-
-        indicator.startAnimating()
-        indicator.snp.makeConstraints { maker in
-            maker.height.equalTo(36).priority(.high)
-            maker.edges.equalTo(self).inset(24)
-        }
-    }
-}

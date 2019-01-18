@@ -7,6 +7,8 @@ import Foundation
 import UIKit
 import SnapKit
 
+import NVActivityIndicatorView
+
 class RIPGalleryHeaderCard: RIPCard {
     private let label = UILabel(style: .h2)
 
@@ -66,5 +68,59 @@ class RIPGalleryImageCard: UICollectionViewCell {
             return CGSize(width: size.width, height: size.height)
         }
         return CGSize(width: 10000, height: 10000)
+    }
+}
+
+class RIPGalleryFooterCard: RIPCard {
+    let indicator: NVActivityIndicatorView = {
+        let indicator = NVActivityIndicatorView(frame: .zero, type: .ballBeat, color: .secondary500, padding: 0)
+        return indicator
+    }()
+
+    let label = UILabel(style: .h5)
+            .with(alignment: .center)
+            .with(text: "Show your images")
+
+    let button: MunchButton = {
+        let button = MunchButton(style: .secondaryOutline)
+        button.with(text: "Connect")
+        return button
+    }()
+
+    var loading: Bool = true {
+        didSet {
+
+            if loading {
+                indicator.startAnimating()
+            } else {
+                indicator.stopAnimating()
+            }
+        }
+    }
+
+    override func didLoad(data: PlaceData!) {
+        self.addSubview(indicator)
+        self.addSubview(label)
+        self.addSubview(button)
+
+        self.loading = true
+
+        // TODO Work in progress 0.19.0
+        label.isHidden = true
+        button.isHidden = true
+
+        indicator.snp.makeConstraints { maker in
+            maker.height.equalTo(36).priority(.high)
+            maker.edges.equalTo(self).inset(24)
+        }
+
+        label.snp.makeConstraints { maker in
+            maker.top.left.right.equalTo(self).inset(24)
+        }
+
+        button.snp.makeConstraints { maker in
+            maker.top.equalTo(label.snp.bottom).inset(-24)
+            maker.centerX.equalTo(self)
+        }
     }
 }

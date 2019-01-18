@@ -219,7 +219,7 @@ extension RIPController: UICollectionViewDataSource, UICollectionViewDelegate {
 
         collectionView.register(type: RIPLoadingImageCard.self)
         collectionView.register(type: RIPLoadingNameCard.self)
-        collectionView.register(type: RIPLoadingGalleryCard.self)
+        collectionView.register(type: RIPGalleryFooterCard.self)
 
         collectionView.register(type: RIPImageBannerCard.self)
         collectionView.register(type: RIPNameTagCard.self)
@@ -259,7 +259,7 @@ extension RIPController: UICollectionViewDataSource, UICollectionViewDelegate {
             return galleryItems.count
 
         case .loader:
-            return 1
+            return galleryItems.count > 0 ? 1 : 0
         }
     }
 
@@ -277,7 +277,9 @@ extension RIPController: UICollectionViewDataSource, UICollectionViewDelegate {
             }
 
         case (.loader, _):
-            return collectionView.dequeue(type: RIPLoadingGalleryCard.self, for: indexPath)
+            let cell = collectionView.dequeue(type: RIPGalleryFooterCard.self, for: indexPath)
+            cell.register(data: self.data, controller: self)
+            return cell
         }
     }
 
@@ -296,11 +298,11 @@ extension RIPController: UICollectionViewDataSource, UICollectionViewDelegate {
             }
 
         case (.loader, _):
-            let cell = cell as! RIPLoadingGalleryCard
+            let cell = cell as! RIPGalleryFooterCard
             if imageLoader.more {
                 imageLoader.append()
             } else {
-                cell.indicator.stopAnimating()
+                cell.loading = false
             }
         }
     }
