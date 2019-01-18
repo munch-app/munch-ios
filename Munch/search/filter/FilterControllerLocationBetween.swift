@@ -145,6 +145,7 @@ extension FilterLocationBetweenController {
         }
 
         var searchQuery = self.searchQuery
+        searchQuery.feature = .Search
         searchQuery.filter.location.type = .Between
         searchQuery.filter.location.points = points
         self.dismiss(animated: true)

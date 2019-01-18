@@ -191,7 +191,6 @@ extension SearchController: UIGestureRecognizerDelegate {
 
 extension SearchController: SearchTableViewDelegate {
     func searchTableView(didScroll searchTableView: SearchTableView) {
-        // More Than 270
         guard case .Home = searchQuery.feature else {
             return
         }
