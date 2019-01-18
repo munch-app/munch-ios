@@ -66,6 +66,7 @@ class SearchController: UIViewController {
 
         self.addGesture()
         self.searchTableView.controller = self
+        self.searchTableView.cardDelegate = self
         self.headerView.controller = self
 
         self.push(searchQuery: SearchQuery(feature: .Home))
@@ -104,12 +105,13 @@ class SearchController: UIViewController {
 
     private func search(searchQuery: SearchQuery) {
         if case .Home = searchQuery.feature {
-            headerView.isHidden = true
+            headerView.mode = .hidden
             searchTableView.contentInset = .zero
-        }  else {
-            headerView.isHidden = false
+        } else {
+            headerView.mode = .full
             searchTableView.contentInset = UIEdgeInsets(top: SearchHeaderView.height, left: 0, bottom: 0, right: 0)
         }
+        self.setNeedsStatusBarAppearanceUpdate()
 
         self.searchTableView.search(query: searchQuery)
         self.searchTableView.scrollToTop()
@@ -174,7 +176,7 @@ extension SearchController: UIGestureRecognizerDelegate {
                 self.pop()
             }
             self.searchTableView.frame.origin.x = 0
-            // Apply
+                // Apply
 
         case .failed: fallthrough
         case .cancelled:
@@ -184,6 +186,41 @@ extension SearchController: UIGestureRecognizerDelegate {
 
     public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return self.histories.count > 1
+    }
+}
+
+extension SearchController: SearchTableViewDelegate {
+    func searchTableView(didScroll searchTableView: SearchTableView) {
+        // More Than 270
+        guard case .Home = searchQuery.feature else {
+            return
+        }
+
+        if (searchTableView.contentOffset.y > 270) {
+            if case .top = headerView.mode {
+                return
+            }
+            headerView.mode = .top
+
+        } else {
+            if case .hidden = headerView.mode {
+                return
+            }
+            headerView.mode = .hidden
+        }
+        self.setNeedsStatusBarAppearanceUpdate()
+    }
+
+    override open var preferredStatusBarStyle: UIStatusBarStyle {
+        guard case .Home = searchQuery.feature else {
+            return .default
+        }
+
+        if (searchTableView.contentOffset.y > 270) {
+            return .default
+        } else {
+            return .lightContent
+        }
     }
 }
 

@@ -7,6 +7,13 @@ import Foundation
 import UIKit
 import SnapKit
 
+
+enum HeaderMode {
+    case full
+    case top
+    case hidden
+}
+
 /**
  SearchHeader controls data managements query, update refresh
  SearchController only controls rendering of the data
@@ -17,6 +24,17 @@ class SearchHeaderView: UIView {
     let backButton = SearchBackButton()
     let textButton = SearchTextButton()
     let filterButton = SearchFilterButton()
+
+    let stripView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }()
+    let filterView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }()
 
     var controller: SearchController!
     var searchQuery: SearchQuery! {
@@ -33,12 +51,33 @@ class SearchHeaderView: UIView {
         }
     }
 
+    var mode: HeaderMode = .full {
+        didSet {
+            switch mode {
+            case .full:
+                self.isHidden = false
+                self.filterView.isHidden = false
+                self.stripView.isHidden = true
+
+            case .top:
+                self.isHidden = false
+                self.filterView.isHidden = true
+                self.stripView.isHidden = false
+
+            case .hidden:
+                self.isHidden = true
+            }
+        }
+    }
+
     required init() {
         super.init(frame: .zero)
-        self.backgroundColor = .white
-        self.addSubview(textButton)
-        self.addSubview(backButton)
-        self.addSubview(filterButton)
+        self.addSubview(filterView)
+
+        filterView.addSubview(textButton)
+        filterView.addSubview(backButton)
+        filterView.addSubview(filterButton)
+        self.addSubview(stripView)
 
         self.addTargets()
 
@@ -66,11 +105,21 @@ class SearchHeaderView: UIView {
             make.width.equalTo(48 + 24)
             make.right.equalTo(self)
         }
+
+        stripView.snp.makeConstraints { maker in
+            maker.top.left.right.equalTo(self)
+            maker.bottom.equalTo(self.safeArea.top)
+        }
+
+        filterView.snp.makeConstraints { maker in
+            maker.edges.equalTo(self)
+        }
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.shadow(vertical: 3)
+        filterView.shadow(vertical: 2)
+        stripView.shadow(vertical: 2)
     }
 
     required init?(coder aDecoder: NSCoder) {
