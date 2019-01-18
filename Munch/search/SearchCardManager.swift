@@ -27,6 +27,8 @@ class SearchCardManager {
     // Whether this card manager still contains more content to be loaded
     fileprivate(set) var more = true
 
+    fileprivate(set) var qid: String?
+
     init(query: SearchQuery) {
         self.searchQuery = query
     }
@@ -72,6 +74,10 @@ class SearchCardManager {
                         } else {
                             return [SearchStaticErrorCard.create(type: .message(type, error.message))]
                         }
+                    }
+
+                    if self.page == 0 {
+                        self.qid = try res.mapString(atKeyPath: "qid")
                     }
 
                     if let cards = try res.mapJSON(atKeyPath: "data") as? [[String: Any]] {

@@ -15,8 +15,17 @@ struct SearchBetweenAnchor: Codable {
 class SearchCardBetweenHeader: SearchCardView {
     private let titleLabel = UILabel(style: .h2)
             .with(numberOfLines: 0)
-    private let editBtn = MunchButton(style: .borderSmall)
-            .with(text: "EDIT")
+    private let shareBtn = MunchButton(style: .borderSmall)
+            .with(text: "SHARE")
+
+    private let editControl = UIControl()
+    private let editLabel = UILabel(style: .regular)
+    private let editIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "RIP-Card-Edit")
+        imageView.tintColor = .ba75
+        return imageView
+    }()
 
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -36,28 +45,49 @@ class SearchCardBetweenHeader: SearchCardView {
     private var anchors = [SearchBetweenAnchor]()
 
     override func didLoad(card: SearchCard) {
-        self.addSubview(editBtn)
+        self.addSubview(shareBtn)
         self.addSubview(titleLabel)
         self.addSubview(collectionView)
+        self.addSubview(editControl)
+
+        editControl.addSubview(editLabel)
+        editControl.addSubview(editIcon)
 
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
-        self.editBtn.addTarget(self, action: #selector(onEdit), for: .touchUpInside)
+        self.shareBtn.addTarget(self, action: #selector(onShare), for: .touchUpInside)
+        self.editControl.addTarget(self, action: #selector(onEdit), for: .touchUpInside)
 
-        editBtn.snp.makeConstraints { maker in
+        shareBtn.snp.makeConstraints { maker in
             maker.right.equalTo(self).inset(leftRight)
             maker.top.equalTo(self).inset(topBottom)
         }
 
         titleLabel.snp.makeConstraints { maker in
             maker.left.equalTo(self).inset(leftRight)
-            maker.right.equalTo(editBtn.snp.left).inset(-16)
+            maker.right.equalTo(shareBtn.snp.left).inset(-16)
             maker.top.equalTo(self).inset(topBottom)
+        }
+
+        editControl.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self).inset(leftRight)
+            maker.top.equalTo(titleLabel.snp.bottom).inset(-8)
+
+            editIcon.snp.makeConstraints { maker in
+                maker.width.height.equalTo(16)
+                maker.left.equalTo(editControl)
+                maker.centerY.equalTo(editControl)
+            }
+
+            editLabel.snp.makeConstraints { maker in
+                maker.left.equalTo(editIcon.snp.right).inset(-8)
+                maker.right.bottom.top.equalTo(self).inset(leftRight)
+            }
         }
 
         collectionView.snp.makeConstraints { make in
             make.left.right.equalTo(self)
-            make.top.equalTo(titleLabel.snp.bottom).inset(-16)
+            make.top.equalTo(editControl.snp.bottom).inset(-16)
             make.bottom.equalTo(self).inset(topBottom)
             make.height.equalTo(48)
         }
@@ -69,6 +99,9 @@ class SearchCardBetweenHeader: SearchCardView {
 
         self.collectionView.setContentOffset(.zero, animated: false)
         self.collectionView.reloadData()
+
+        let count = self.controller.searchQuery.filter.location.points.count
+        editLabel.text = "Between \(count) Locations"
     }
 
     @objc func onEdit() {
@@ -80,8 +113,20 @@ class SearchCardBetweenHeader: SearchCardView {
         self.controller.present(controller, animated: true)
     }
 
+    @objc func onShare() {
+        guard let qid = self.controller.qid else {
+            return
+        }
+
+        if let url = URL(string: "https://www.munch.app/search?qid=\(qid)&g=GB10") {
+            let controller = UIActivityViewController(activityItems: ["EatBetween", url], applicationActivities: nil)
+            controller.excludedActivityTypes = [.airDrop, .addToReadingList, UIActivity.ActivityType.openInIBooks]
+            self.controller.present(controller, animated: true)
+        }
+    }
+
     override class func height(card: SearchCard) -> CGFloat {
-        let min = topBottom + topBottom + 16 + 48
+        let min = topBottom + topBottom + 16 + 48 + 8 + 16
         if let text = card.string(name: "title") {
             let width = contentWidth - 16 - 72 // Button and it's left margin
             return min + UILabel.textHeight(withWidth: width, font: FontStyle.h2.font, text: text)

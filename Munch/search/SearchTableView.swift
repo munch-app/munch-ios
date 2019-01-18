@@ -137,6 +137,7 @@ extension SearchTableView {
         self.reloadData()
     }
 
+    @discardableResult
     func scrollToTop(animated: Bool = true) -> Bool {
         let top = self.contentOffset.y < 0
         self.scrollToRow(at: .init(row: 0, section: 0), at: .top, animated: animated)

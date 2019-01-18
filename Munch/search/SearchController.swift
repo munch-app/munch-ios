@@ -79,6 +79,10 @@ class SearchController: UIViewController {
         return histories.last!
     }
 
+    var qid: String? {
+        return self.searchTableView.cardManager.qid
+    }
+
     func push(searchQuery: SearchQuery) {
         histories.append(searchQuery)
         if !searchQuery.isSimple() {
