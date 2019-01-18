@@ -46,6 +46,7 @@ extension UIColor {
 
     static let ba10 = UIColor.black.withAlphaComponent(0.10)
     static let ba15 = UIColor.black.withAlphaComponent(0.15)
+    static let ba20 = UIColor.black.withAlphaComponent(0.20)
     static let ba40 = UIColor.black.withAlphaComponent(0.40)
     static let ba50 = UIColor.black.withAlphaComponent(0.50)
     static let ba75 = UIColor.black.withAlphaComponent(0.75)

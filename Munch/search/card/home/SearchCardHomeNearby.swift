@@ -11,8 +11,6 @@ import RxSwift
 
 class SearchHomeNearbyCard: SearchCardView {
     private let disposeBag = DisposeBag()
-    let title = UILabel(style: .h2)
-            .with(text: "Discover Nearby")
 
     let imgView: UIImageView = {
         let imageView = UIImageView()
@@ -25,16 +23,15 @@ class SearchHomeNearbyCard: SearchCardView {
     let titleLabel = UILabel()
             .with(style: .h4)
             .with(numberOfLines: 0)
-            .with(text: "Discover Places Near You")
+            .with(text: "Explore places around you")
             .with(color: .white)
-            .with(alignment: .right)
+            .with(alignment: .center)
 
     let button = MunchButton(style: .border)
-            .with(text: "Discover")
+            .with(text: "Discover Nearby")
             .with(color: .secondary700)
 
     override func didLoad(card: SearchCard) {
-        self.addSubview(title)
         self.addSubview(imgView)
         self.addSubview(titleLabel)
         self.addSubview(button)
@@ -48,16 +45,11 @@ class SearchHomeNearbyCard: SearchCardView {
             maker.edges.equalTo(imgView)
         }
 
-        title.snp.makeConstraints { maker in
-            maker.left.right.equalTo(self).inset(leftRight)
-            maker.top.equalTo(self).inset(topBottom)
-        }
-
         imgView.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(leftRight)
-            maker.top.equalTo(title.snp.bottom).inset(-topBottom)
+            maker.top.equalTo(self).inset(topBottom)
             maker.bottom.equalTo(self).inset(topBottom)
-            maker.height.equalTo(imgView.snp.width).multipliedBy(0.4).priority(.high)
+            maker.height.equalTo(imgView.snp.width).multipliedBy(0.45).priority(.high)
         }
 
         titleLabel.snp.makeConstraints { maker in
@@ -67,13 +59,14 @@ class SearchHomeNearbyCard: SearchCardView {
         }
 
         button.snp.makeConstraints { maker in
-            maker.bottom.right.equalTo(imgView).inset(24)
+            maker.bottom.equalTo(imgView).inset(24)
+            maker.centerX.equalTo(imgView)
         }
     }
 
     override func didSelect(card: SearchCard, controller: SearchController) {
         MunchLocation.requestLocation().subscribe { event in
-            guard case let .success(ll) = event, let latLng = ll else {
+            guard case let .success(ll) = event, let _ = ll else {
                 return
             }
 

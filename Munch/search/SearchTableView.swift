@@ -26,11 +26,11 @@ class SearchTableView: UITableView {
         return control
     }()
 
-    required init(query: SearchQuery = SearchQuery(), inset: UIEdgeInsets = .zero) {
+    required init(query: SearchQuery = SearchQuery()) {
         self.cardManager = SearchCardManager(query: query)
         super.init(frame: .zero, style: .plain)
 
-        self.contentInset = inset
+        self.contentInset = .zero
         self.delegate = self
         self.dataSource = self
 

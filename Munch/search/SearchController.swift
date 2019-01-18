@@ -36,14 +36,12 @@ class SearchRootController: UINavigationController, UINavigationControllerDelega
 }
 
 class SearchController: UIViewController {
-    static let inset = UIEdgeInsets(top: SearchHeaderView.height, left: 0, bottom: 0, right: 0)
-
     private let edgeBackGesture = UIScreenEdgePanGestureRecognizer()
     private var edgeCrossed = false
 
     private let headerView = SearchHeaderView()
     private let recent = RecentSearchQueryDatabase()
-    public let searchTableView = SearchTableView(inset: inset)
+    public let searchTableView = SearchTableView()
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -89,9 +87,7 @@ class SearchController: UIViewController {
             recent.add(id: String(arc4random()), data: searchQuery)
         }
 
-        self.searchTableView.search(query: searchQuery)
-        self.searchTableView.scrollToTop()
-        self.headerView.searchQuery = searchQuery
+        search(searchQuery: searchQuery)
     }
 
     func push(edit: @escaping (inout SearchQuery) -> Void) {
@@ -102,10 +98,22 @@ class SearchController: UIViewController {
 
     func pop() {
         if histories.popLast() != nil, let searchQuery = histories.last {
-            self.searchTableView.search(query: searchQuery)
-            self.searchTableView.scrollToTop()
-            self.headerView.searchQuery = searchQuery
+            search(searchQuery: searchQuery)
         }
+    }
+
+    private func search(searchQuery: SearchQuery) {
+        if case .Home = searchQuery.feature {
+            headerView.isHidden = true
+            searchTableView.contentInset = .zero
+        }  else {
+            headerView.isHidden = false
+            searchTableView.contentInset = UIEdgeInsets(top: SearchHeaderView.height, left: 0, bottom: 0, right: 0)
+        }
+
+        self.searchTableView.search(query: searchQuery)
+        self.searchTableView.scrollToTop()
+        self.headerView.searchQuery = searchQuery
     }
 
     func reset() {
