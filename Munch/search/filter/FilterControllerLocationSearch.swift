@@ -172,6 +172,7 @@ extension FilterLocationSearchController: UITableViewDataSource, UITableViewDele
         tableView.deselectRow(at: indexPath, animated: true)
 
         var searchQuery = self.searchQuery
+        searchQuery.feature = .Search
         searchQuery.filter.location.type = .Where
         searchQuery.filter.location.areas = [items[indexPath.section].1[indexPath.row]]
         searchQuery.filter.location.points = []

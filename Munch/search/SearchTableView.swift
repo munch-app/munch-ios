@@ -95,12 +95,17 @@ class SearchTableView: UITableView {
 }
 
 protocol SearchTableViewDelegate {
+    func searchTableView(didReload searchTableView: SearchTableView)
+
     func searchTableView(didScroll searchTableView: SearchTableView)
 
     func searchTableView(didScrollFinish searchTableView: SearchTableView)
 }
 
 extension SearchTableViewDelegate {
+    func searchTableView(didReload searchTableView: SearchTableView) {
+    }
+
     func searchTableView(didScroll searchTableView: SearchTableView) {
     }
 
@@ -109,12 +114,21 @@ extension SearchTableViewDelegate {
 }
 
 extension SearchTableView {
+    var started: Bool {
+        return self.cardManager.started
+    }
+
     func search(query: SearchQuery, animated: Bool = true) {
+        self.isScrollEnabled = false
+        self.scrollToTop(animated: false)
+
         self.cardManager = SearchCardManager(query: query)
         self.cardManager.start()
                 .subscribe { event in
                     switch event {
                     case .next(let cards):
+                        self.cardDelegate?.searchTableView(didReload: self)
+                        self.isScrollEnabled = true
                         self.reloadData(cards: cards)
 
                     case .error:    fallthrough

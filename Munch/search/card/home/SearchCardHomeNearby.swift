@@ -49,7 +49,7 @@ class SearchHomeNearbyCard: SearchCardView {
             maker.left.right.equalTo(self).inset(leftRight)
             maker.top.equalTo(self).inset(topBottom)
             maker.bottom.equalTo(self).inset(topBottom)
-            maker.height.equalTo(imgView.snp.width).multipliedBy(0.5).priority(.high)
+            maker.height.equalTo(imgView.snp.width).multipliedBy(0.44).priority(.high)
         }
 
         titleLabel.snp.makeConstraints { maker in

@@ -27,6 +27,8 @@ class SearchCardManager {
     // Whether this card manager still contains more content to be loaded
     fileprivate(set) var more = true
 
+    fileprivate(set) var started = false
+
     fileprivate(set) var qid: String?
 
     init(query: SearchQuery) {
@@ -88,6 +90,8 @@ class SearchCardManager {
                 .subscribe({ result in
                     switch result {
                     case .success(let cards):
+                        self.started = true
+
                         self.append(contents: cards)
                         self.more = !cards.isEmpty
                         self.page += 1

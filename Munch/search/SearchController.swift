@@ -114,7 +114,6 @@ class SearchController: UIViewController {
         self.setNeedsStatusBarAppearanceUpdate()
 
         self.searchTableView.search(query: searchQuery)
-        self.searchTableView.scrollToTop()
         self.headerView.searchQuery = searchQuery
     }
 
@@ -190,17 +189,25 @@ extension SearchController: UIGestureRecognizerDelegate {
 }
 
 extension SearchController: SearchTableViewDelegate {
+    func searchTableView(didReload searchTableView: SearchTableView) {
+        self.setNeedsStatusBarAppearanceUpdate()
+    }
+
     func searchTableView(didScroll searchTableView: SearchTableView) {
         guard case .Home = searchQuery.feature else {
             return
         }
 
-        if (searchTableView.contentOffset.y > 270) {
+        guard searchTableView.started else {
+            return
+        }
+
+        let y = searchTableView.contentOffset.y
+        if (y > 260 || y < -80) {
             if case .top = headerView.mode {
                 return
             }
             headerView.mode = .top
-
         } else {
             if case .hidden = headerView.mode {
                 return
@@ -215,7 +222,12 @@ extension SearchController: SearchTableViewDelegate {
             return .default
         }
 
-        if (searchTableView.contentOffset.y > 270) {
+        guard searchTableView.started else {
+            return .default
+        }
+
+        let y = searchTableView.contentOffset.y
+        if (y > 260 || y < -80) {
             return .default
         } else {
             return .lightContent
