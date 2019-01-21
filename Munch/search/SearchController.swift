@@ -104,6 +104,8 @@ class SearchController: UIViewController {
     }
 
     private func search(searchQuery: SearchQuery) {
+        self.searchTableView.scrollToTop(animated: false)
+
         if case .Home = searchQuery.feature {
             headerView.mode = .hidden
             searchTableView.contentInset = .zero
