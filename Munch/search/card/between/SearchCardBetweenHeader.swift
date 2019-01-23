@@ -81,7 +81,8 @@ class SearchCardBetweenHeader: SearchCardView {
 
             editLabel.snp.makeConstraints { maker in
                 maker.left.equalTo(editIcon.snp.right).inset(-8)
-                maker.right.bottom.top.equalTo(self).inset(leftRight)
+                maker.right.equalTo(self).inset(leftRight)
+                maker.bottom.top.equalTo(editControl)
             }
         }
 
@@ -94,7 +95,7 @@ class SearchCardBetweenHeader: SearchCardView {
     }
 
     override func willDisplay(card: SearchCard) {
-        self.titleLabel.text = card.string(name: "title")
+        self.titleLabel.text = "Ideal Locations"
         self.anchors = card.decode(name: "anchors", [SearchBetweenAnchor].self) ?? []
 
         self.collectionView.setContentOffset(.zero, animated: false)
@@ -127,11 +128,9 @@ class SearchCardBetweenHeader: SearchCardView {
 
     override class func height(card: SearchCard) -> CGFloat {
         let min = topBottom + topBottom + 16 + 48 + 8 + 16
-        if let text = card.string(name: "title") {
-            let width = contentWidth - 16 - 72 // Button and it's left margin
-            return min + UILabel.textHeight(withWidth: width, font: FontStyle.h2.font, text: text)
-        }
-        return min
+        let text = "Ideal Locations"
+        let width = contentWidth - 16 - 72 // Button and it's left margin
+        return min + UILabel.textHeight(withWidth: width, font: FontStyle.h2.font, text: text)
     }
 
     override class var cardId: String {
