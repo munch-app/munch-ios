@@ -90,6 +90,11 @@ class FilterLocationBetweenSearchController: UIViewController {
         }
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        MunchAnalytic.setScreen("/search/filter/between/search")
+    }
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

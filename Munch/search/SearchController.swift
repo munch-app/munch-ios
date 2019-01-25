@@ -117,6 +117,8 @@ class SearchController: UIViewController {
 
         self.searchTableView.search(query: searchQuery)
         self.headerView.searchQuery = searchQuery
+
+        MunchAnalytic.logSearchQuery(searchQuery: searchQuery)
     }
 
     func reset() {
@@ -240,6 +242,8 @@ extension SearchController: SearchTableViewDelegate {
 extension SearchController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        MunchAnalytic.setScreen("/search")
+
         let center = NotificationCenter.default
         center.addObserver(self,
                 selector: #selector(applicationWillEnterForeground(_:)),

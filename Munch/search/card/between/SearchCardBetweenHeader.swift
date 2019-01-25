@@ -122,6 +122,8 @@ class SearchCardBetweenHeader: SearchCardView {
         if let url = URL(string: "https://www.munch.app/search?qid=\(qid)&g=GB10") {
             let controller = UIActivityViewController(activityItems: ["EatBetween", url], applicationActivities: nil)
             controller.excludedActivityTypes = [.airDrop, .addToReadingList, UIActivity.ActivityType.openInIBooks]
+
+            MunchAnalytic.logSearchQueryShare(searchQuery: self.controller.searchQuery, trigger: "search_card_between_header")
             self.controller.present(controller, animated: true)
         }
     }

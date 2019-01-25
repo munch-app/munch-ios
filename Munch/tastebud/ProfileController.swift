@@ -53,7 +53,10 @@ class ProfileController: UIViewController {
 
         if !Authentication.isAuthenticated() {
             self.tabBarController?.selectedIndex = 0
+            return
         }
+
+        MunchAnalytic.setScreen("/profile")
     }
 
     override func viewDidLoad() {

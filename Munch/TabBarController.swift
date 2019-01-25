@@ -28,7 +28,7 @@ enum MunchTabBarItem {
         switch self {
         case .Discover: return "Discover"
         case .Feed: return "Feed"
-        case .Profile: return "Tastebud"
+        case .Profile: return "Profile"
         }
     }
 

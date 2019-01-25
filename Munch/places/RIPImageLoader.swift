@@ -65,6 +65,9 @@ class RIPImageLoader {
                         self.append(images: images)
                         self.observer?.on(.next(self.items))
 
+                        MunchAnalytic.logEvent("rip_image_query", parameters: [
+                            "count" : self.items.count as NSObject
+                        ])
                     case .error(let error):
                         self.observer?.on(.error(error))
                     }

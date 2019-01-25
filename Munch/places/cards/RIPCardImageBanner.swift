@@ -96,11 +96,12 @@ extension RIPImageBannerCard {
         moreButton.addTarget(self, action: #selector(scrollTo(_:)), for: .touchUpInside)
     }
 
-    func scrollTo(_ sender: Any) {
+    @objc func scrollTo(_ sender: Any) {
         guard !self.images.isEmpty else {
             return
         }
 
+        MunchAnalytic.logEvent("rip_click_show_images")
         controller.scrollTo(indexPath: [1, 0])
     }
 }

@@ -233,6 +233,9 @@ extension SearchTableView: UITableViewDelegate, UITableViewDataSource {
             }
 
             if let cardView = cell as? SearchCardView {
+                MunchAnalytic.logEvent("search_card_view", parameters: [
+                    "id": card.cardId
+                ])
                 cardView.willDisplay(card: card)
             }
 
@@ -253,6 +256,9 @@ extension SearchTableView: UITableViewDelegate, UITableViewDataSource {
         }
 
         if let cardView = tableView.cellForRow(at: indexPath) as? SearchCardView {
+            MunchAnalytic.logEvent("search_card_click", parameters: [
+                "id": card.cardId
+            ])
             cardView.didSelect(card: card, controller: self.controller)
         }
     }

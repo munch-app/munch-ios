@@ -122,6 +122,8 @@ extension FeedController {
 extension FeedController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        MunchAnalytic.setScreen("/feed")
+
         let center = NotificationCenter.default
         center.addObserver(self,
                 selector: #selector(applicationWillEnterForeground(_:)),

@@ -48,7 +48,13 @@ public class Authentication {
 
     // Checks that the user is logged in
     public class func isAuthenticated() -> Bool {
-        return UserProfile.instance != nil && Auth.auth().currentUser != nil
+        if UserProfile.instance != nil && Auth.auth().currentUser != nil {
+            return true
+        }
+
+        // Auto remove
+        MunchAnalytic.setUserId(userId: nil)
+        return false
     }
 
     public class func requireAuthentication(controller: UIViewController, withCompletion: @escaping (_ state: AuthenticationState) -> Void) {

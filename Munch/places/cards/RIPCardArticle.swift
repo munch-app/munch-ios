@@ -94,6 +94,7 @@ extension RIPArticleCard: UICollectionViewDataSource, UICollectionViewDelegateFl
 
         let safari = SFSafariViewController(url: url)
         safari.delegate = self
+        MunchAnalytic.logEvent("rip_click_article")
         self.controller.present(safari, animated: true, completion: nil)
     }
 }

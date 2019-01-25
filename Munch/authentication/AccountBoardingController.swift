@@ -16,7 +16,6 @@ import FBSDKCoreKit
 import FBSDKLoginKit
 
 import Crashlytics
-import FirebaseAnalytics
 import UserNotifications
 
 fileprivate struct OnboardingData {
@@ -138,6 +137,12 @@ class AccountBoardingController: UIViewController {
         bottomView.guestButton.addTarget(self, action: #selector(action(_:)), for: .touchUpInside)
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        MunchAnalytic.setScreen("/profile/on-boarding")
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -227,9 +232,9 @@ class AccountBoardingController: UIViewController {
 
                     if let token = FBSDKAccessToken.current()?.tokenString {
                         Authentication.login(facebook: token) { state in
-                            Analytics.logEvent(AnalyticsEventSignUp, parameters: [
-                                AnalyticsParameterSignUpMethod: "facebook" as NSObject
-                            ])
+                            if case .loggedIn = state {
+                                MunchAnalytic.logEvent("profile_login")
+                            }
                             self.dismiss(state: state)
                         }
                     } else {
@@ -450,7 +455,7 @@ fileprivate class BoardingCardCell: UICollectionViewCell {
         return label
     }()
 
-    static let boldStyle = Style{
+    static let boldStyle = Style {
         $0.alignment = .center
         $0.font = UIFont.systemFont(ofSize: 17, weight: .bold)
     }

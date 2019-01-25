@@ -45,6 +45,7 @@ class ProfileSettingController: UIViewController, UIGestureRecognizerDelegate {
 
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        MunchAnalytic.setScreen("/profile/setting")
     }
 
     override func viewDidLoad() {

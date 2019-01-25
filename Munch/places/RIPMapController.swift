@@ -76,6 +76,11 @@ class RIPMapController: UIViewController, UIGestureRecognizerDelegate, MKMapView
         navigationController?.navigationBar.shadowImage = UIImage()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        MunchAnalytic.setScreen("/places/map")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.initViews()

@@ -26,6 +26,7 @@ target 'Munch' do
   pod 'FirebaseUI/Facebook'
   pod 'Fabric', '~> 1.9.0'
   pod 'Crashlytics', '~> 3.12.0'
+  pod 'Appsee'
 
   # UI Components Library
   pod 'KMNavigationBarTransition', '~> 1.1'
@@ -35,6 +36,7 @@ target 'Munch' do
   pod 'BEMCheckBox', '~> 1.4'
   pod 'RangeSeekSlider', '~> 1.7'
   pod 'PullToDismiss', '~> 2.1'
+
 
   # Deprecation:
   pod 'Alamofire', '~> 4.5'

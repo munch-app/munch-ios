@@ -52,6 +52,10 @@ class ProfileSavedPlaceController: UIViewController {
         }.disposed(by: disposeBag)
         // Need to validate that it doesn't crash
     }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
 }
 
 enum ProfileSavedPlaceType {

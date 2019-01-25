@@ -66,6 +66,9 @@ class FeedManager {
                         self.observer?.on(.next(self.collect()))
                         self.from = from
 
+                        MunchAnalytic.logEvent("feed_query", parameters: [
+                            "count" : (self.from ?? 0) as NSObject
+                        ])
                     case .error(let error):
                         self.observer?.on(.error(error))
                     }

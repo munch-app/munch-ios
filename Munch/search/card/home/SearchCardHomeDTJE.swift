@@ -7,7 +7,6 @@ import Foundation
 import UIKit
 import SnapKit
 
-import FirebaseAnalytics
 import UserNotifications
 
 class SearchCardHomeDTJE: SearchCardView {
@@ -369,9 +368,10 @@ fileprivate class SearchDTJESubscribeButton: UIView {
                 self.subscribeButton.text = "Subscribe"
                 self.subscribeButton.with(style: .secondary)
 
-                Analytics.logEvent("dtje_unsubscribe", parameters: [:])
+                // TODO Unsub
                 SearchCardHomeDTJE.unsubscribe(notification: .lunch)
                 SearchCardHomeDTJE.unsubscribe(notification: .dinner)
+                MunchAnalytic.logEvent("dtje_unsubscribed")
             })
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
             controller.present(alert, animated: true)
@@ -393,7 +393,7 @@ fileprivate class SearchDTJESubscribeButton: UIView {
             SearchCardHomeDTJE.subscribe(notification: .dinner)
 
             DispatchQueue.main.async {
-                Analytics.logEvent("dtje_subscribe", parameters: [:])
+                MunchAnalytic.logEvent("dtje_subscribed")
                 self.controller.alert(title: "Subscribed!", message: "You will receive a notification when the suggestions are out.")
 
                 self.subscribeButton.with(text: "Subscribed")

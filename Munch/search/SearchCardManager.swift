@@ -91,11 +91,11 @@ class SearchCardManager {
                     switch result {
                     case .success(let cards):
                         self.started = true
-
                         self.append(contents: cards)
                         self.more = !cards.isEmpty
                         self.page += 1
 
+                        MunchAnalytic.logSearchQueryAppend(searchQuery: self.searchQuery, cards: cards, page: self.page)
                     case .error(let error):
                         if let error = error as? MoyaError {
                             switch error {

@@ -74,6 +74,7 @@ class RIPDescriptionCard: RIPCard {
         let delegate = HalfModalTransitioningDelegate(viewController: controller, presentingViewController: destination)
         destination.modalPresentationStyle = .custom
         destination.transitioningDelegate = delegate
+        MunchAnalytic.logEvent("rip_click_about")
         controller.present(destination, animated: true)
     }
 }
@@ -95,6 +96,7 @@ class RIPPhoneCard: RIPCard {
     override func didSelect(data: PlaceData!, controller: RIPController) {
         let phone = data.place.phone!.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
         if let url = URL(string: "tel://\(phone)"), UIApplication.shared.canOpenURL(url) {
+            MunchAnalytic.logEvent("rip_click_phone")
             UIApplication.shared.open(url)
         }
     }
@@ -147,6 +149,7 @@ class RIPWebsiteCard: RIPCard, SFSafariViewControllerDelegate {
         alert.addAction(UIAlertAction(title: "Open", style: .default, handler: { action in
             let safari = SFSafariViewController(url: url)
             safari.delegate = self
+            MunchAnalytic.logEvent("rip_click_website")
             self.controller.present(safari, animated: true, completion: nil)
         }))
         controller.present(alert, animated: true, completion: nil)

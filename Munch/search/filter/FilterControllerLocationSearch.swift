@@ -101,6 +101,11 @@ class FilterLocationSearchController: UIViewController {
                 }.disposed(by: disposeBag)
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        MunchAnalytic.setScreen("/search/filter/locations/search")
+    }
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

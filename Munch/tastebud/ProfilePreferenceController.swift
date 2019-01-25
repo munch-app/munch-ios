@@ -42,6 +42,10 @@ class ProfilePreferenceController: UIViewController {
             maker.edges.equalTo(self.view)
         }
     }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
 }
 
 enum ProfilePreferenceType {

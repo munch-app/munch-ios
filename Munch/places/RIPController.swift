@@ -126,6 +126,7 @@ class RIPController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         self.registerCells()
         self.addTargets()
 
@@ -156,6 +157,9 @@ class RIPController: UIViewController {
 extension RIPController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        MunchAnalytic.setScreen("/places")
+        MunchAnalytic.logEvent("rip_view")
+
         NotificationCenter.default.addObserver(self, selector: #selector(onScreenshot), name: .UIApplicationUserDidTakeScreenshot, object: nil)
     }
 

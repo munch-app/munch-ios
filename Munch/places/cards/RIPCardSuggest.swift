@@ -79,6 +79,7 @@ extension RIPSuggestEditCard: SFSafariViewControllerDelegate {
 
                     let safari = SFSafariViewController(url: components.url!)
                     safari.delegate = delegate
+                    MunchAnalytic.logEvent("rip_click_suggest_edit")
                     controller.present(safari, animated: true, completion: nil)
 
                 case let .error(error):

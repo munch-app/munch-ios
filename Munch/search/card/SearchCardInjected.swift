@@ -12,7 +12,6 @@ import SnapKit
 import RxSwift
 
 import Localize_Swift
-import FirebaseAnalytics
 
 class SearchNoLocationCard: SearchCardView {
     private let titleImage = UIImageView()
@@ -56,7 +55,6 @@ class SearchNoLocationCard: SearchCardView {
         if MunchLocation.isEnabled {
             self.controller.reset()
         } else {
-            Analytics.logEvent("enable_location", parameters: [:])
             MunchLocation.requestLocation()
                     .subscribe { event in
                         switch event {

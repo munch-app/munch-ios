@@ -104,6 +104,7 @@ class AddPlaceButton: UIButton {
                         self.heartBtn.isSelected = false
                         generator.impactOccurred()
                         view.makeToast("Removed '\(place.name)' from your places.")
+                        MunchAnalytic.logEvent("rip_heart_deleted")
 
                     case .error(let error):
                         self.controller.alert(error: error)
@@ -116,6 +117,7 @@ class AddPlaceButton: UIButton {
                         self.heartBtn.isSelected = true
                         generator.impactOccurred()
                         view.makeToast("Added '\(place.name)' to your places.")
+                        MunchAnalytic.logEvent("rip_heart_saved")
 
                     case .error(let error):
                         self.controller.alert(error: error)

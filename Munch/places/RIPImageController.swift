@@ -36,10 +36,16 @@ class RIPImageController: UIPageViewController {
         self.dataSource = self
         self.delegate = self
 
+        MunchAnalytic.logEvent("rip_view_image", parameters: ["index": index as NSObject])
         let controller = RIPImageDetailController(index: index, item: loader.items[index], controller: self)
         self.setViewControllers([controller], direction: .forward, animated: true, completion: nil)
 
         self.headerView.closeButton.addTarget(self, action: #selector(actionCancel(_:)), for: .touchUpInside)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        MunchAnalytic.setScreen("/places/images")
     }
 
     @objc func actionCancel(_ sender: Any) {
@@ -109,6 +115,7 @@ extension RIPImageController: UIPageViewControllerDataSource {
             return nil
         }
 
+        MunchAnalytic.logEvent("rip_view_image", parameters: ["index": index as NSObject])
         return RIPImageDetailController(index: index, item: loader.items[index], controller: self)
     }
 
@@ -125,6 +132,7 @@ extension RIPImageController: UIPageViewControllerDataSource {
             self.loader.append()
         }
 
+        MunchAnalytic.logEvent("rip_view_image", parameters: ["index": index as NSObject])
         return RIPImageDetailController(index: index, item: loader.items[index], controller: self)
     }
 }
@@ -260,7 +268,7 @@ class RIPImageDetailController: UIViewController, SFSafariViewControllerDelegate
     }
 
     @objc func onReadMore() {
-        func alert(message: String, url: String?) {
+        func alert(message: String, url: String?, event: String) {
             guard let url = url else {
                 return
             }
@@ -273,6 +281,8 @@ class RIPImageDetailController: UIViewController, SFSafariViewControllerDelegate
             alert.addAction(UIAlertAction(title: "Open", style: .default) { action in
                 let safari = SFSafariViewController(url: link)
                 safari.delegate = self
+
+                MunchAnalytic.logEvent(event)
                 self.controller.present(safari, animated: true, completion: nil)
             })
             self.controller.present(alert, animated: true)
@@ -281,9 +291,9 @@ class RIPImageDetailController: UIViewController, SFSafariViewControllerDelegate
         switch item {
         case .image(let image):
             if let article = image.article {
-                alert(message: "Open Article?", url: article.url)
+                alert(message: "Open Article?", url: article.url, event: "rip_click_article")
             } else if let instagram = image.instagram {
-                alert(message: "Open Instagram?", url: instagram.link)
+                alert(message: "Open Instagram?", url: instagram.link, event: "rip_click_image")
             }
         }
     }

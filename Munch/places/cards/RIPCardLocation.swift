@@ -89,6 +89,7 @@ class RIPLocationCard: RIPCard {
 
     override func didSelect(data: PlaceData!, controller: RIPController) {
         let mapController = RIPMapController(controller: controller)
+        MunchAnalytic.logEvent("rip_click_map")
         self.controller.navigationController?.pushViewController(mapController, animated: true)
     }
 }

@@ -83,6 +83,8 @@ class RIPHourCard: RIPCard {
         let delegate = HalfModalTransitioningDelegate(viewController: controller, presentingViewController: destination)
         destination.modalPresentationStyle = .custom
         destination.transitioningDelegate = delegate
+
+        MunchAnalytic.logEvent("rip_click_hour")
         controller.present(destination, animated: true)
     }
 

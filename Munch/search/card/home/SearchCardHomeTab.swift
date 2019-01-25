@@ -284,6 +284,9 @@ extension SearchHomeTabCard {
     }
 
     class var name: String {
+        if !Authentication.isAuthenticated() {
+            return "Samantha"
+        }
         return UserProfile.instance?.name ?? "Samantha"
     }
 }

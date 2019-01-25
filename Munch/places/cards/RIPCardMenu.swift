@@ -34,16 +34,17 @@ class RIPMenuWebsiteCard: RIPCard {
 
 extension RIPMenuWebsiteCard: SFSafariViewControllerDelegate {
     func addTargets() {
-        button.addTarget(self, action: #selector(onCall), for: .touchUpInside)
+        button.addTarget(self, action: #selector(onClick), for: .touchUpInside)
     }
 
-    @objc func onCall() {
+    @objc func onClick() {
         guard let url = url else {
             return
         }
 
         let safari = SFSafariViewController(url: url)
         safari.delegate = self
+        MunchAnalytic.logEvent("rip_click_menu_website")
         controller.present(safari, animated: true, completion: nil)
     }
 }

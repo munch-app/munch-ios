@@ -149,6 +149,7 @@ extension RIPHeaderView: SFSafariViewControllerDelegate {
         })
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
 
+        MunchAnalytic.logEvent("rip_click_more")
         controller.present(alert, animated: true)
     }
 
@@ -164,6 +165,7 @@ extension RIPHeaderView: SFSafariViewControllerDelegate {
         if let url = URL(string: "https://www.munch.app/places/\(place.placeId)") {
             let controller = UIActivityViewController(activityItems: [place.name, url], applicationActivities: nil)
             controller.excludedActivityTypes = [.airDrop, .addToReadingList, UIActivity.ActivityType.openInIBooks]
+            MunchAnalytic.logEvent("rip_share")
             self.controller.present(controller, animated: true)
         }
     }
