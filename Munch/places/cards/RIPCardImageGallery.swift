@@ -6,6 +6,7 @@
 import Foundation
 import UIKit
 import SnapKit
+import SafariServices
 
 import NVActivityIndicatorView
 
@@ -71,15 +72,56 @@ class RIPGalleryImageCard: UICollectionViewCell {
     }
 }
 
-class RIPGalleryFooterCard: RIPCard {
+class RIPGalleryFooterCard: RIPCard, SFSafariViewControllerDelegate {
     let indicator: NVActivityIndicatorView = {
         let indicator = NVActivityIndicatorView(frame: .zero, type: .ballBeat, color: .secondary500, padding: 0)
         return indicator
     }()
 
+    let connect = RIPGalleryConnectCard()
+
+    var loading: Bool = true {
+        didSet {
+            if loading {
+                indicator.startAnimating()
+                connect.isHidden = true
+            } else {
+                indicator.stopAnimating()
+                connect.isHidden = false
+            }
+        }
+    }
+
+    override func didLoad(data: PlaceData!) {
+        self.addSubview(indicator)
+        self.addSubview(connect)
+
+        connect.button.addTarget(self, action: #selector(onConnect), for: .touchUpInside)
+
+        self.loading = true
+
+        indicator.snp.makeConstraints { maker in
+            maker.top.left.right.equalTo(self).inset(24)
+            maker.height.equalTo(36).priority(.high)
+        }
+
+        connect.snp.makeConstraints { maker in
+            maker.top.equalTo(self).inset(36)
+            maker.left.right.bottom.equalTo(self).inset(24)
+        }
+    }
+
+    @objc func onConnect() {
+        let safari = SFSafariViewController(url: URL(string: "https://partner.munch.app/instagram")!)
+        safari.delegate = self
+        controller.present(safari, animated: true, completion: nil)
+    }
+}
+
+class RIPGalleryConnectCard: UIView {
     let label = UILabel(style: .h5)
             .with(alignment: .center)
-            .with(text: "Show your images")
+            .with(text: "Join as Partner, show your images.")
 
     let button: MunchButton = {
         let button = MunchButton(style: .secondaryOutline)
@@ -87,32 +129,13 @@ class RIPGalleryFooterCard: RIPCard {
         return button
     }()
 
-    var loading: Bool = true {
-        didSet {
-
-            if loading {
-                indicator.startAnimating()
-            } else {
-                indicator.stopAnimating()
-            }
-        }
-    }
-
-    override func didLoad(data: PlaceData!) {
-        self.addSubview(indicator)
+    init() {
+        super.init(frame: .zero)
         self.addSubview(label)
         self.addSubview(button)
 
-        self.loading = true
-
-        // TODO Work in progress 0.19.0
-        label.isHidden = true
-        button.isHidden = true
-
-        indicator.snp.makeConstraints { maker in
-            maker.height.equalTo(36).priority(.high)
-            maker.edges.equalTo(self).inset(24)
-        }
+        self.layer.cornerRadius = 3
+        self.backgroundColor = .saltpan100
 
         label.snp.makeConstraints { maker in
             maker.top.left.right.equalTo(self).inset(24)
@@ -120,7 +143,12 @@ class RIPGalleryFooterCard: RIPCard {
 
         button.snp.makeConstraints { maker in
             maker.top.equalTo(label.snp.bottom).inset(-24)
+            maker.bottom.equalTo(self).inset(24)
             maker.centerX.equalTo(self)
         }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

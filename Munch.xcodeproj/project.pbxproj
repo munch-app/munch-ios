@@ -397,7 +397,7 @@
 				032F89041E82DFA300AD3818 /* LaunchScreen.storyboard */,
 				032F89071E82DFA300AD3818 /* Info.plist */,
 				B4B7378B383CC0C6448D2AB0 /* sources */,
-				B4B730682DB064058651EA33 /* tastebud */,
+				B4B730682DB064058651EA33 /* profile */,
 				B4B731FB6D67596B54B90179 /* places */,
 				B4B731BB2F1C718BE5806DF2 /* search */,
 				B4B734760A49D43FBEAB4C2C /* design */,
@@ -493,7 +493,7 @@
 			path = feed;
 			sourceTree = "<group>";
 		};
-		B4B730682DB064058651EA33 /* tastebud */ = {
+		B4B730682DB064058651EA33 /* profile */ = {
 			isa = PBXGroup;
 			children = (
 				B4B7329A88030A09DC2A5187 /* MunchUser.swift */,
@@ -503,7 +503,7 @@
 				B4B737E2C968CB42E8AB7CE1 /* ProfileHeaderView.swift */,
 				B4B73485F1D20BDC6B08630A /* ProfilePreferenceController.swift */,
 			);
-			path = tastebud;
+			path = profile;
 			sourceTree = "<group>";
 		};
 		B4B730A8C38B3F5EC15B6796 /* style */ = {
