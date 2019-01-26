@@ -45,6 +45,12 @@ class PlaceCard: UIView {
     fileprivate let disposeBag = DisposeBag()
 
     public let heartBtn = PlaceHeartButton()
+    private let noImageLabel: UILabel = {
+        let label = UILabel(style: .smallBold)
+        label.with(text: "No Image Available")
+        label.isHidden = true
+        return label
+    }()
     private let imageView: SizeShimmerImageView = {
         let width = UIScreen.main.bounds.width
         let imageView = SizeShimmerImageView(points: width, height: width)
@@ -82,9 +88,14 @@ class PlaceCard: UIView {
         self.addSubview(tagView)
         self.addSubview(locationLabel)
         self.addSubview(heartBtn)
+        self.addSubview(noImageLabel)
 
         heartBtn.snp.makeConstraints { maker in
             maker.top.right.equalTo(imageView)
+        }
+
+        noImageLabel.snp.makeConstraints { maker in
+            maker.bottom.right.equalTo(imageView).inset(8)
         }
 
         imageView.snp.makeConstraints { maker in
@@ -188,6 +199,7 @@ extension PlaceCard {
     }
 
     fileprivate func render(image place: Place) {
+        self.noImageLabel.isHidden = !place.images.isEmpty
         self.imageView.render(image: place.images.get(0))
     }
 

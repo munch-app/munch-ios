@@ -35,6 +35,12 @@ class RIPImageBannerCard: RIPCard {
         return collectionView
     }()
 
+    private let noImageLabel: UILabel = {
+        let label = UILabel(style: .smallBold)
+        label.with(text: "No Image Available")
+        label.isHidden = true
+        return label
+    }()
     private let moreButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .white
@@ -60,6 +66,7 @@ class RIPImageBannerCard: RIPCard {
         self.addSubview(collectionView)
         self.addSubview(imageGradientView)
         self.addSubview(moreButton)
+        self.addSubview(noImageLabel)
         self.addTargets()
 
         self.collectionView.dataSource = self
@@ -81,12 +88,16 @@ class RIPImageBannerCard: RIPCard {
             maker.height.equalTo(34)
         }
 
+        noImageLabel.snp.makeConstraints { maker in
+            maker.right.bottom.equalTo(collectionView).inset(8)
+        }
     }
 
     override func willDisplay(data: PlaceData!) {
         self.images = data.place.images
         if self.images.isEmpty {
             moreButton.isHidden = true
+            noImageLabel.isHidden = false
         }
     }
 }

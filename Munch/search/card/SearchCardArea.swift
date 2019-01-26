@@ -206,7 +206,7 @@ class SearchAreaClusterHeaderCard: SearchCardView {
         descriptionLabel.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(self.leftRight)
             maker.height.lessThanOrEqualTo(77).priority(.high)
-            maker.top.equalTo(imageBanner.snp.bottom).inset(-16)
+            maker.bottom.equalTo(spotLabel.snp.top).inset(-16)
         }
 
         spotLabel.snp.makeConstraints { maker in
