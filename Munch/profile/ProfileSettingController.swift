@@ -70,7 +70,7 @@ class ProfileSettingController: UIViewController, UIGestureRecognizerDelegate {
 fileprivate class ProfileSettingHeaderView: UIView {
     let backButton = UIButton()
     let titleView = UILabel(style: .navHeader)
-            .with(text: "Setting")
+            .with(text: "Settings")
             .with(alignment: .center)
 
     override init(frame: CGRect = CGRect.zero) {

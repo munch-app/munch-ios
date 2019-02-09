@@ -53,7 +53,7 @@ public class Authentication {
         }
 
         // Auto remove
-        MunchAnalytic.setUserId(userId: nil)
+        MunchAnalytic.clearUserData()
         return false
     }
 

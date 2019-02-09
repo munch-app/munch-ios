@@ -1,6 +1,5 @@
 PODS:
   - Alamofire (4.8.0)
-  - Appsee (2.4.5)
   - BEMCheckBox (1.4.1)
   - Bolts (1.9.0):
     - Bolts/AppLinks (= 1.9.0)
@@ -159,7 +158,6 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire (~> 4.5)
-  - Appsee
   - BEMCheckBox (~> 1.4)
   - Cache
   - Crashlytics (~> 3.12.0)
@@ -190,7 +188,6 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Alamofire
-    - Appsee
     - BEMCheckBox
     - Bolts
     - Cache
@@ -238,7 +235,6 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   Alamofire: 3ec537f71edc9804815215393ae2b1a8ea33a844
-  Appsee: daf5819e0e45da6166a4752854583125cc9f3910
   BEMCheckBox: 5ba6e37ade3d3657b36caecc35c8b75c6c2b1a4e
   Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
   Cache: 807c5d86d01a177f06ede9865add3aea269bbfd4
@@ -284,6 +280,6 @@ SPEC CHECKSUMS:
   SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
   Toast-Swift: e42a638589a2f95036b4bb7626cfbdde7daf0393
 
-PODFILE CHECKSUM: b44704876157c1c3746caf10f79ecf9ff73d3e91
+PODFILE CHECKSUM: 047a89f277e0fc9b2473106622f5c3d343f26bd2
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.6.0

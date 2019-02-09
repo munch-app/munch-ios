@@ -13,10 +13,9 @@ import UserNotifications
 import FirebaseMessaging
 
 import Crashlytics
+
 import FBSDKCoreKit
 import FBSDKLoginKit
-
-import Appsee
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -43,9 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         application.registerForRemoteNotifications()
 
-        Appsee.start()
-
-        // Configure FBSDK
+        // Configure Facebook
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
 
         return true

@@ -7,14 +7,22 @@ import os.log
 
 import Foundation
 import FirebaseAnalytics
+import FBSDKCoreKit
 
 class MunchAnalytic {
-    static func setUserId(userId: String?) {
-        Analytics.setUserID(userId)
-        os_log("MunchAnalytic setUserId: %@", type: .info, userId ?? "")
+    static func clearUserData() {
+        Analytics.setUserID(nil)
+        FBSDKAppEvents.clearUserData()
+        os_log("MunchAnalytic clearUserData")
     }
 
-    // Place it at view did appear
+    static func setUserId(userId: String) {
+        Analytics.setUserID(userId)
+        FBSDKAppEvents.setUserID(userId)
+        os_log("MunchAnalytic setUserId: %@", type: .info, userId)
+    }
+
+    // Only tracked in Firebase
     static func setScreen(_ name: String) {
         Analytics.setScreenName(name, screenClass: nil)
         os_log("MunchAnalytic setScreen: %@", type: .info, name)
@@ -22,6 +30,13 @@ class MunchAnalytic {
 
     static func logEvent(_ name: String, parameters: [String: Any]? = nil) {
         Analytics.logEvent(name, parameters: parameters)
+
+        if let parameters = parameters {
+            FBSDKAppEvents.logEvent(name, parameters: parameters)
+        } else {
+            FBSDKAppEvents.logEvent(name)
+        }
+
         let p = "\(parameters?.count ?? 0)"
         os_log("MunchAnalytic logEvent: %@, p: %@", type: .info, name, p)
     }
@@ -53,6 +68,14 @@ class MunchAnalytic {
     static func logSearchQuery(searchQuery: SearchQuery) {
         let parameters = searchQueryParameters(searchQuery: searchQuery)
         MunchAnalytic.logEvent("search_query", parameters: parameters)
+
+        if case .Search = searchQuery.feature {
+            if case .Between = searchQuery.filter.location.type {
+                MunchAnalytic.logEvent("search_query_eat_between", parameters: [
+                    "count": searchQuery.filter.location.points.count as NSObject
+                ])
+            }
+        }
     }
 
     static func logSearchQueryAppend(searchQuery: SearchQuery, cards: [SearchCard], page: Int) {

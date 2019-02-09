@@ -94,7 +94,9 @@ extension UserProfile {
             return nil
         }
         set(value) {
-            MunchAnalytic.setUserId(userId: value?.userId)
+            if let userId = value?.userId {
+                MunchAnalytic.setUserId(userId: userId)
+            }
             Crashlytics.sharedInstance().setUserIdentifier(value?.userId)
             Crashlytics.sharedInstance().setUserName(value?.name)
             Crashlytics.sharedInstance().setUserEmail(value?.email)
