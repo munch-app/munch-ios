@@ -118,6 +118,7 @@ extension ProfileSettingController: SFSafariViewControllerDelegate {
     }
 
     private func logout() {
+        MunchAnalytic.logEvent("profile_logout")
         Authentication.logout()
         self.navigationController?.popToRootViewController(animated: true)
     }
