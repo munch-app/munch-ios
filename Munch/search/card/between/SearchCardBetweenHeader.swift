@@ -15,7 +15,7 @@ struct SearchBetweenAnchor: Codable {
 class SearchCardBetweenHeader: SearchCardView {
     private let titleLabel = UILabel(style: .h2)
             .with(numberOfLines: 0)
-    private let shareBtn = MunchButton(style: .borderSmall)
+    private let shareBtn = MunchButton(style: .secondaryOutline)
             .with(text: "SHARE")
 
     private let editControl = UIControl()

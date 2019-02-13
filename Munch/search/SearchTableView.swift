@@ -80,6 +80,7 @@ class SearchTableView: UITableView {
         register(SearchCardLocationArea.self)
 
         register(SearchCardBetweenHeader.self)
+        register(SearchCardBetweenReferral.self)
 
         register(SearchHeaderCard.self)
         register(SearchPlaceCard.self)

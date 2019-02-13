@@ -37,7 +37,7 @@ fileprivate enum HomeTab {
 
     var hint: String {
         switch self {
-        case .Between: return "Enter Locations"
+        case .Between: return "Try EatBetween"
         case .Search: return "Search e.g. Italian in Orchard"
         case .Location: return "Search Location"
         }

@@ -100,6 +100,7 @@
 		B4B73ACEF8E7C6916823DAEF /* HalfModalPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73C290056297BBE0E128E /* HalfModalPresentationController.swift */; };
 		B4B73B10F58C84E27D808EF5 /* FeedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B737B877E6C0DDB8C12B56 /* FeedController.swift */; };
 		B4B73B64ED85D15DB8E2AEEE /* UITableView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73A6F579638D5F835DDBE /* UITableView+Extension.swift */; };
+		B4B73B728F4EBF2AF8183521 /* SearchCardBetweenReferral.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73083DACDFBDBD815B427 /* SearchCardBetweenReferral.swift */; };
 		B4B73B82338C1565A7F94BD5 /* FeedStaticCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73C4A5FD7240D7F5A8EB9 /* FeedStaticCell.swift */; };
 		B4B73B972B7D33E163095E60 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B4B73BB2757D0BE5CC888EDA /* GoogleService-Info.plist */; };
 		B4B73BB5EA282D04EAB6453A /* PlaceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732F9B4B08AB071D146BA /* PlaceService.swift */; };
@@ -216,6 +217,7 @@
 		B4B73066E127D1CD297E680D /* RIPCardArticle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPCardArticle.swift; sourceTree = "<group>"; };
 		B4B7306D542D1854D216A57E /* SearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
 		B4B7307B2B6D5C94C6592905 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		B4B73083DACDFBDBD815B427 /* SearchCardBetweenReferral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardBetweenReferral.swift; sourceTree = "<group>"; };
 		B4B730F750D918BB79FAF597 /* PlaceCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceCard.swift; sourceTree = "<group>"; };
 		B4B7312DBF1E812FF4C051CD /* RIPCardMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPCardMenu.swift; sourceTree = "<group>"; };
 		B4B7313BF6E2CF832A5EF8F5 /* SearchCardPlaceCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardPlaceCollection.swift; sourceTree = "<group>"; };
@@ -554,6 +556,7 @@
 			isa = PBXGroup;
 			children = (
 				B4B73EDAD4E1EC8164683234 /* SearchCardBetweenHeader.swift */,
+				B4B73083DACDFBDBD815B427 /* SearchCardBetweenReferral.swift */,
 			);
 			path = between;
 			sourceTree = "<group>";
@@ -1208,6 +1211,7 @@
 				B4B73A268C16DF2C89556C00 /* FilterControllerLocationBetweenSearch.swift in Sources */,
 				B4B73DDECB4D1F2993166D70 /* SearchCardBetweenHeader.swift in Sources */,
 				B4B733909D843EB60F940296 /* MunchAnalytic.swift in Sources */,
+				B4B73B728F4EBF2AF8183521 /* SearchCardBetweenReferral.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

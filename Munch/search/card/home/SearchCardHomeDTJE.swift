@@ -43,8 +43,6 @@ class SearchCardHomeDTJE: SearchCardView {
         infoView.addTarget(self, action: #selector(onInfo), for: .touchUpInside)
         subscribeButton.controller = self.controller
 
-        self.backgroundColor = .saltpan100
-
         self.addSubview(titleLabel)
         self.addSubview(subLabel)
         self.addSubview(infoView)
@@ -94,7 +92,7 @@ class SearchCardHomeDTJE: SearchCardView {
                 + 18
                 + 16
                 + SearchDTJEListView.height
-                + 16
+                + 24
                 + 40
                 + topBottom
 
@@ -118,6 +116,7 @@ class SearchCardHomeDTJE: SearchCardView {
     }
 }
 
+// MARK: Notification
 extension SearchCardHomeDTJE {
     enum Notification: String {
         case lunch = "SearchCardHomeDTJE.Notification.Lunch"
@@ -216,7 +215,7 @@ extension SearchCardHomeDTJE {
 }
 
 fileprivate class SearchDTJEListView: UIView {
-    static let height: CGFloat = SearchDTJEItem.height * 5
+    static let height: CGFloat = (SearchDTJEItem.height * 5) + 36
 
     let items = [SearchDTJEItem(), SearchDTJEItem(), SearchDTJEItem(), SearchDTJEItem(), SearchDTJEItem()]
     private let stackView: UIStackView = {
@@ -226,14 +225,22 @@ fileprivate class SearchDTJEListView: UIView {
         stackView.distribution = .equalSpacing
         return stackView
     }()
-    let overlay = UILabel(style: .regular)
+    let waitView = UIView()
+    let waitIcon = UIImageView(image: UIImage(named: "Search-Card-Home-DTJE-Pan"))
+    let waitText = UILabel(style: .regular)
             .with(numberOfLines: 0)
             .with(alignment: .center)
 
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
         self.addSubview(stackView)
-        self.addSubview(overlay)
+        self.addSubview(waitView)
+        waitView.addSubview(waitIcon)
+        waitView.addSubview(waitText)
+        waitIcon.tintColor = .black
+
+        self.backgroundColor = .peach100
+        self.layer.cornerRadius = 4
 
         for (index, item) in items.enumerated() {
             stackView.addArrangedSubview(item)
@@ -241,12 +248,23 @@ fileprivate class SearchDTJEListView: UIView {
         }
 
         stackView.snp.makeConstraints { maker in
-            maker.edges.equalTo(self)
+            maker.left.right.equalTo(self).inset(24)
+            maker.top.bottom.equalTo(self).inset(18)
         }
 
-        overlay.snp.makeConstraints { maker in
-            maker.top.bottom.equalTo(stackView)
-            maker.left.right.equalTo(stackView).inset(40)
+        waitView.snp.makeConstraints { maker in
+            maker.edges.equalTo(self).inset(16)
+
+            waitIcon.snp.makeConstraints { maker in
+                maker.width.height.equalTo(48)
+                maker.centerX.equalTo(waitView)
+                maker.top.equalTo(waitView).inset(24)
+            }
+
+            waitText.snp.makeConstraints { maker in
+                maker.top.equalTo(waitIcon.snp.bottom)
+                maker.left.right.bottom.equalTo(waitView)
+            }
         }
     }
 
@@ -260,30 +278,32 @@ fileprivate class SearchDTJEListView: UIView {
         }
 
         func render(hour name: String) {
-            overlay.isHidden = true
-            guard let list = card.decode(name: name, [String].self) as? [String] else {
+            waitView.isHidden = true
+            guard let list = card.decode(name: name, [String].self) else {
                 return
             }
             for (index, item) in list.enumerated() {
+                self.items[index].noLabel.isHidden = false
                 self.items[index].textLabel.isHidden = false
                 self.items[index].textLabel.text = item
             }
         }
 
-        func render(wait time: String) {
+        func render(wait text: String) {
             self.items.forEach { item in
+                item.noLabel.isHidden = true
                 item.textLabel.isHidden = true
             }
-            overlay.isHidden = false
-            overlay.text = "Suggestions will be out at \(time).\n\nSubscribe to receive a notification when the suggestions are out!"
+            waitView.isHidden = false
+            waitText.text = text
         }
 
         if minute < 690 {
-            render(wait: "11:30am")
+            render(wait: "Your lunch suggestions are cooking and will be ready at 11:30am.")
         } else if minute >= 690 && minute < 960 {
             render(hour: "lunch")
         } else if minute < 1080 {
-            render(wait: "6pm")
+            render(wait: "Your dinner suggestions are cooking and will be ready at 6pm.")
         } else {
             render(hour: "dinner")
         }
@@ -368,7 +388,6 @@ fileprivate class SearchDTJESubscribeButton: UIView {
                 self.subscribeButton.text = "Subscribe"
                 self.subscribeButton.with(style: .secondary)
 
-                // TODO Unsub
                 SearchCardHomeDTJE.unsubscribe(notification: .lunch)
                 SearchCardHomeDTJE.unsubscribe(notification: .dinner)
                 MunchAnalytic.logEvent("dtje_unsubscribed")
