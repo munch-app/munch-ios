@@ -68,6 +68,72 @@ extension UserSearchPreferenceService: TargetType {
     }
 }
 
+enum UserRatedPlaceService {
+    case put(UserRatedPlace)
+    case patch(UserRatedPlace)
+}
+
+extension UserRatedPlaceService: TargetType {
+    var path: String {
+        return "/users/rated/places"
+    }
+    var method: Moya.Method {
+        switch self {
+        case .put:
+            return .put
+
+        case .patch:
+            return .patch
+        }
+    }
+    var task: Task {
+        switch self {
+        case .put(let ratedPlace):
+            fallthrough
+        case .patch(let ratedPlace):
+            return .requestJSONEncodable(ratedPlace)
+        }
+    }
+}
+
+enum UserLocationService {
+    // next.sortId, size
+    case list(String?, Int)
+    case post(UserLocation)
+    case delete(String)
+}
+
+extension UserLocationService: TargetType {
+    var path: String {
+        switch self {
+        case .list, .post:
+            return "/users/locations"
+
+        case .delete(let sortId):
+            return "/users/locations/\(sortId)"
+        }
+    }
+    var method: Moya.Method {
+        switch self {
+        case .list:
+            return .get
+        case .post:
+            return .post
+        case .delete:
+            return .delete
+        }
+    }
+    var task: Task {
+        switch self {
+        case .delete, .list:
+            return .requestPlain
+
+        case .post(let location):
+            return .requestJSONEncodable(location)
+        }
+    }
+}
+
 
 struct UserProfile: Codable {
     var userId: String?
@@ -83,6 +149,106 @@ struct UserSetting: Codable {
 struct UserSearchPreference: Codable {
     var requirements: [Tag]
     var updatedMillis: Int
+}
+
+struct UserRatedPlace: Codable {
+    var userId: String
+    var placeId: String
+
+    var rating: Rating
+    var status: Status
+
+    var updatedMillis: Int?
+    var createdMillis: Int?
+
+    enum Status: String, Codable {
+        case draft
+        case published
+        case deleted
+        case other
+
+        /// Defensive Decoding
+        init(from decoder: Decoder) throws {
+            switch try decoder.singleValueContainer().decode(String.self) {
+            case "draft": self = .draft
+            case "published": self = .published
+            case "deleted": self = .deleted
+            default: self = .other
+            }
+        }
+    }
+
+    enum Rating: String, Codable {
+        case star1
+        case star2
+        case star3
+        case star4
+        case star5
+        case other
+
+        /// Defensive Decoding
+        init(from decoder: Decoder) throws {
+            switch try decoder.singleValueContainer().decode(String.self) {
+            case "star1": self = .star1
+            case "star2": self = .star2
+            case "star3": self = .star3
+            case "star4": self = .star4
+            case "star5": self = .star5
+            default: self = .other
+            }
+        }
+    }
+}
+
+struct UserLocation: Codable {
+    var userId: String
+    var sortId: String
+
+    var type: LocationType
+    var input: Input
+
+    var name: String
+    var latLng: String
+    var address: String?
+
+    var updatedMillis: Int?
+    var createdMillis: Int?
+
+    enum LocationType: String, Codable {
+        case home
+        case work
+        case saved
+        case recent
+        case other
+
+        /// Defensive Decoding
+        init(from decoder: Decoder) throws {
+            switch try decoder.singleValueContainer().decode(String.self) {
+            case "home": self = .home
+            case "work": self = .work
+            case "saved": self = .saved
+            case "recent": self = .recent
+            default: self = .other
+            }
+        }
+    }
+
+    enum Input: String, Codable {
+        case current
+        case searched
+        case history
+        case other
+
+        /// Defensive Decoding
+        init(from decoder: Decoder) throws {
+            switch try decoder.singleValueContainer().decode(String.self) {
+            case "current": self = .current
+            case "searched": self = .searched
+            case "history": self = .history
+            default: self = .other
+            }
+        }
+    }
 }
 
 extension UserProfile {
