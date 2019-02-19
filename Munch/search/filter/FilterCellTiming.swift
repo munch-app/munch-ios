@@ -95,7 +95,7 @@ extension FilterItemCellTiming: UICollectionViewDataSource, UICollectionViewDele
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         switch timings[indexPath.row] {
-        case let .now:
+        case .now:
             let cell = cell as! FilterItemCellTimingNow
             cell.render(text: "Open Now", selected: self.manager.isSelected(timing: .OpenNow))
 
@@ -107,7 +107,7 @@ extension FilterItemCellTiming: UICollectionViewDataSource, UICollectionViewDele
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch timings[indexPath.row] {
-        case let .now:
+        case .now:
             if self.manager.isSelected(timing: .OpenNow) {
                 self.manager.select(hour: nil)
             } else {

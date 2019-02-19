@@ -4,10 +4,11 @@
 //
 
 import UIKit
+import SnapKit
 
 class MHNavigationController: UINavigationController, UINavigationControllerDelegate {
 
-    required init(controller: UIViewController) {
+    init(controller: UIViewController) {
         super.init(nibName: nil, bundle: nil)
         self.viewControllers = [controller]
         self.delegate = self
@@ -45,5 +46,61 @@ class MHViewController: UIViewController, UIGestureRecognizerDelegate {
 
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
+    }
+}
+
+class MHHeaderView: UIView {
+    public let backButton: UIButton = {
+        let button = UIButton()
+        button.isUserInteractionEnabled = true
+        button.setImage(UIImage(named: "NavigationBar-Back"), for: .normal)
+        button.tintColor = .black
+        button.imageEdgeInsets.left = 18
+        button.contentHorizontalAlignment = .left
+        return button
+    }()
+    public let titleView: UILabel = {
+        let titleView = UILabel(style: .navHeader)
+                .with(alignment: .center)
+        return titleView
+    }()
+
+    override init(frame: CGRect = CGRect.zero) {
+        super.init(frame: frame)
+        self.backgroundColor = .white
+
+        self.addSubview(backButton)
+        self.addSubview(titleView)
+
+        titleView.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self).inset(52)
+            maker.height.equalTo(44)
+
+            maker.top.equalTo(self.safeArea.top)
+            maker.bottom.equalTo(self)
+        }
+
+        backButton.snp.makeConstraints { maker in
+            maker.top.equalTo(self.safeArea.top)
+            maker.bottom.equalTo(self)
+
+            maker.left.equalTo(self)
+            maker.width.equalTo(52)
+            maker.height.equalTo(44)
+        }
+    }
+
+    func with(title text: String) -> MHHeaderView {
+        self.titleView.text = text
+        return self
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.shadow(vertical: 2)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

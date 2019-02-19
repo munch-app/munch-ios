@@ -119,31 +119,37 @@ extension UILabel {
         return self
     }
 
+    @discardableResult
     func with(numberOfLines: Int) -> UILabel {
         self.numberOfLines = numberOfLines
         return self
     }
 
+    @discardableResult
     func with(alignment: NSTextAlignment) -> UILabel {
         self.textAlignment = alignment
         return self
     }
 
+    @discardableResult
     func with(color: UIColor) -> UILabel {
         self.textColor = color
         return self
     }
 
+    @discardableResult
     func with(size: CGFloat, weight: UIFont.Weight, color: UIColor) -> UILabel {
         return with(font: UIFont.systemFont(ofSize: size, weight: weight))
                 .with(color: color)
     }
 
+    @discardableResult
     func with(font: UIFont) -> UILabel {
         self.font = font
         return self
     }
 
+    @discardableResult
     func with(style: FontStyle) -> UILabel {
         return with(font: style.font)
                 .with(color: style.color)

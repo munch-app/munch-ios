@@ -162,9 +162,9 @@ extension FilterLocationBetweenController {
             return
         }
 
-        let controller = FilterLocationBetweenSearchController(point: nil) { point in
-            if let point = point {
-                self.points.append(point)
+        let controller = SearchLocationRootController { loc in
+            if let loc = loc {
+                self.points.append(SearchQuery.Filter.Location.Point(name: loc.name, latLng: loc.latLng))
                 self.dispatch()
             }
         }

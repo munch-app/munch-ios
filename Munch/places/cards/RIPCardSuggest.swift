@@ -11,6 +11,7 @@ import RxSwift
 import SafariServices
 
 class RIPSuggestEditCard: RIPCard {
+
     private let separatorLine = RIPSeparatorLine()
     let button: UIButton = {
         let button = UIButton()

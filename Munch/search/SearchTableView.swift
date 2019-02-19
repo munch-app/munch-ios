@@ -51,7 +51,7 @@ class SearchTableView: UITableView {
 
     private func registerAll() {
         func register(_ cellClass: SearchCardView.Type) {
-            self.register(cellClass as? Swift.AnyClass, forCellReuseIdentifier: cellClass.cardId)
+            self.register(cellClass, forCellReuseIdentifier: cellClass.cardId)
             cardIds[cellClass.cardId] = cellClass
         }
 

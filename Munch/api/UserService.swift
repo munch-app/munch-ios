@@ -106,7 +106,7 @@ enum UserLocationService {
 extension UserLocationService: TargetType {
     var path: String {
         switch self {
-        case .list, .post:
+        case .post, .list:
             return "/users/locations"
 
         case .delete(let sortId):
@@ -125,6 +125,11 @@ extension UserLocationService: TargetType {
     }
     var task: Task {
         switch self {
+        case let .list(next, size):
+            if let next = next {
+                return .requestParameters(parameters: ["next.nextId": next, "size": "40"], encoding: URLEncoding.default)
+            }
+            return .requestParameters(parameters: ["size": "40"], encoding: URLEncoding.default)
         case .delete, .list:
             return .requestPlain
 
@@ -248,6 +253,17 @@ struct UserLocation: Codable {
             default: self = .other
             }
         }
+    }
+}
+
+extension UserLocation {
+    static func new(type: LocationType, input: Input, name: String, latLng: String) -> UserLocation {
+        return UserLocation(
+                userId: "", sortId: "",
+                type: type, input: input,
+                name: name, latLng: latLng,
+                address: nil, updatedMillis: nil, createdMillis: nil
+        )
     }
 }
 

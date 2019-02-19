@@ -11,24 +11,46 @@ import FBSDKCoreKit
 
 class MunchAnalytic {
     static func clearUserData() {
-        Analytics.setUserID(nil)
-        FBSDKAppEvents.clearUserData()
         os_log("MunchAnalytic clearUserData")
+        guard Env.isProduction() else {
+            return
+        }
+
+        Analytics.setUserID(nil)
+        FBSDKAppEvents.clearUserID()
+        FBSDKAppEvents.clearUserData()
     }
 
     static func setUserId(userId: String) {
+        os_log("MunchAnalytic setUserId: %@", type: .info, userId)
+        guard Env.isProduction() else {
+            return
+        }
+
         Analytics.setUserID(userId)
         FBSDKAppEvents.setUserID(userId)
-        os_log("MunchAnalytic setUserId: %@", type: .info, userId)
     }
 
     // Only tracked in Firebase
     static func setScreen(_ name: String) {
-        Analytics.setScreenName(name, screenClass: nil)
         os_log("MunchAnalytic setScreen: %@", type: .info, name)
+        guard Env.isProduction() else {
+            return
+        }
+
+        Analytics.setScreenName(name, screenClass: nil)
+        FBSDKAppEvents.logEvent("setScreen", parameters: [
+        "name": name as NSObject
+        ])
     }
 
     static func logEvent(_ name: String, parameters: [String: Any]? = nil) {
+        let p = "\(parameters?.count ?? 0)"
+        os_log("MunchAnalytic logEvent: %@, p: %@", type: .info, name, p)
+        guard Env.isProduction() else {
+            return
+        }
+
         Analytics.logEvent(name, parameters: parameters)
 
         if let parameters = parameters {
@@ -36,9 +58,6 @@ class MunchAnalytic {
         } else {
             FBSDKAppEvents.logEvent(name)
         }
-
-        let p = "\(parameters?.count ?? 0)"
-        os_log("MunchAnalytic logEvent: %@, p: %@", type: .info, name, p)
     }
 
     private static func searchQueryParameters(searchQuery: SearchQuery) -> [String: Any] {

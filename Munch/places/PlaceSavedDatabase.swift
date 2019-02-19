@@ -104,7 +104,7 @@ class PlaceSavedDatabase {
                     default:
                         return
                     }
-                }.addDisposableTo(disposeBag)
+                }.disposed(by: disposeBag)
     }
 
     private func notifyObservers() {

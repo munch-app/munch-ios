@@ -186,6 +186,7 @@ fileprivate class FilterLocationBetweenSearchCell: UITableViewCell {
         }
     }
 
+    @discardableResult
     func render(with point: SearchQuery.Filter.Location.Point) -> FilterLocationBetweenSearchCell {
         titleLabel.text = point.name
         return self
