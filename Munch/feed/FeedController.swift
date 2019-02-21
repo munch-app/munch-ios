@@ -99,6 +99,7 @@ class FeedController: UIViewController {
                         return
                     }
                 }.disposed(by: disposeBag)
+        self.manager.append()
     }
 }
 

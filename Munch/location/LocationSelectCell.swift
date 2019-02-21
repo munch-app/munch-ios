@@ -37,7 +37,7 @@ class SearchLocationIconTextCell: UITableViewCell {
     private let label = UILabel(style: .regular)
             .with(numberOfLines: 1)
 
-    private let rightIcon = IconView(size: 24)
+    private let rightIcon = IconWidget(size: 24)
     private let rightView: PaddingWidget
     private var rightPressed: (() -> ())?
 

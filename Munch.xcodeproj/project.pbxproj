@@ -57,6 +57,7 @@
 		B4B733C8BC2504C159A2106C /* FeedImageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B739E25A063368B337CB55 /* FeedImageController.swift */; };
 		B4B733FC3D0CED72AAABF215 /* LocationSelectController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B730F27358D336775CEF64 /* LocationSelectController.swift */; };
 		B4B7343D95A94208BB3733D8 /* FilterCellTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73F008A9EAFCE407879A2 /* FilterCellTag.swift */; };
+		B4B734540B011E778DA84904 /* CenterWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7384ED3DFE29BCAD3F4A1 /* CenterWidget.swift */; };
 		B4B73487CEAE343636DE6A74 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B4B73BB2757D0BE5CC888EDA /* GoogleService-Info.plist */; };
 		B4B734CADB20622FE502984B /* SuggestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73376F42AA38286FD7CFB /* SuggestManager.swift */; };
 		B4B734D22634645ACBFBF487 /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732ED64723C629C4B86F2 /* Authentication.swift */; };
@@ -103,7 +104,7 @@
 		B4B73A23ABCFD5139ED0C3AC /* PaddingWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7384EE76B0FBB03988A0F /* PaddingWidget.swift */; };
 		B4B73A268C16DF2C89556C00 /* FilterControllerLocationBetweenSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73B2DC4944BD965A5CA64 /* FilterControllerLocationBetweenSearch.swift */; };
 		B4B73A27FF8C27B661FDE549 /* ReviewRatingUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732F3E55F3E605210CE9D /* ReviewRatingUtils.swift */; };
-		B4B73A290CC6CF51E15668D2 /* FlutterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73FD22760F7587E5B3C08 /* FlutterView.swift */; };
+		B4B73A290CC6CF51E15668D2 /* Widget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73FD22760F7587E5B3C08 /* Widget.swift */; };
 		B4B73A4F99622AF0D943C712 /* AccountBoardingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7347AD60C415D1700F116 /* AccountBoardingController.swift */; };
 		B4B73A7D1683FE36D7F9E61D /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B736DAC3F9C5490C07A9D3 /* IconView.swift */; };
 		B4B73A970F91F8D21B893ABF /* SearchCardHomeDTJE.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73A69C1720900C43F6E42 /* SearchCardHomeDTJE.swift */; };
@@ -292,6 +293,7 @@
 		B4B737E1E2482A53D7CB6F6B /* UICollectionView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Extension.swift"; sourceTree = "<group>"; };
 		B4B737E2C968CB42E8AB7CE1 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 		B4B737F525D72B78432937A2 /* SearchCardHomePopularPlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardHomePopularPlace.swift; sourceTree = "<group>"; };
+		B4B7384ED3DFE29BCAD3F4A1 /* CenterWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CenterWidget.swift; sourceTree = "<group>"; };
 		B4B7384EE76B0FBB03988A0F /* PaddingWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaddingWidget.swift; sourceTree = "<group>"; };
 		B4B738679F9E169693DC1515 /* Label.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Label.swift; sourceTree = "<group>"; };
 		B4B73874640BF8573F3D6DE2 /* RIPMapController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPMapController.swift; sourceTree = "<group>"; };
@@ -348,7 +350,7 @@
 		B4B73F90EE462A9E722D4F91 /* RIPCardImageBanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPCardImageBanner.swift; sourceTree = "<group>"; };
 		B4B73FAD47BB85633497CC31 /* RIPCardLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RIPCardLocation.swift; sourceTree = "<group>"; };
 		B4B73FB2BECEE948D6C474E4 /* Env.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Env.swift; sourceTree = "<group>"; };
-		B4B73FD22760F7587E5B3C08 /* FlutterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlutterView.swift; sourceTree = "<group>"; };
+		B4B73FD22760F7587E5B3C08 /* Widget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Widget.swift; sourceTree = "<group>"; };
 		B4B73FDED4A582F0D3DC8780 /* UIControl+Closure.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIControl+Closure.swift"; sourceTree = "<group>"; };
 		B4B73FF3714C69FD7C372D8C /* SearchCardInjected.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardInjected.swift; sourceTree = "<group>"; };
 		D2CE8E9F738C2A64071DD8B3 /* Pods_MunchUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MunchUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -628,7 +630,7 @@
 				B4B7391BA1D0CE49C5890B1C /* WaterfallLayout.swift */,
 				B4B73C6EE3870CAAA60898F4 /* extension */,
 				B4B73E7A02599D40CAAEF029 /* controller */,
-				B4B73950B6F5B5CCB1C08AB3 /* flutter */,
+				B4B73950B6F5B5CCB1C08AB3 /* widget */,
 			);
 			path = design;
 			sourceTree = "<group>";
@@ -701,16 +703,17 @@
 			path = CCommonCrypto;
 			sourceTree = "<group>";
 		};
-		B4B73950B6F5B5CCB1C08AB3 /* flutter */ = {
+		B4B73950B6F5B5CCB1C08AB3 /* widget */ = {
 			isa = PBXGroup;
 			children = (
 				B4B73D2BCC44D3ED2A57F5A3 /* ControlView.swift */,
 				B4B7384EE76B0FBB03988A0F /* PaddingWidget.swift */,
-				B4B73FD22760F7587E5B3C08 /* FlutterView.swift */,
+				B4B73FD22760F7587E5B3C08 /* Widget.swift */,
 				B4B736DAC3F9C5490C07A9D3 /* IconView.swift */,
 				B4B73BECD13D24EB41D3AA3C /* TapWidget.swift */,
+				B4B7384ED3DFE29BCAD3F4A1 /* CenterWidget.swift */,
 			);
-			path = flutter;
+			path = widget;
 			sourceTree = "<group>";
 		};
 		B4B739753B2B9467A9650EF5 /* location */ = {
@@ -893,7 +896,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0820;
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = "Munch Technologies";
 				TargetAttributes = {
 					032F88F71E82DFA200AD3818 = {
@@ -1272,10 +1275,11 @@
 				B4B738EA4ED298CE778BFAC2 /* UIControl+Closure.swift in Sources */,
 				B4B73FCE1ADF197CC0B59359 /* ControlView.swift in Sources */,
 				B4B73A23ABCFD5139ED0C3AC /* PaddingWidget.swift in Sources */,
-				B4B73A290CC6CF51E15668D2 /* FlutterView.swift in Sources */,
+				B4B73A290CC6CF51E15668D2 /* Widget.swift in Sources */,
 				B4B73A7D1683FE36D7F9E61D /* IconView.swift in Sources */,
 				B4B73349D0B16EAD997848EF /* MunchCrash.swift in Sources */,
 				B4B735AF1F1C38E4A589A6F3 /* TapWidget.swift in Sources */,
+				B4B734540B011E778DA84904 /* CenterWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1341,15 +1345,23 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -1391,15 +1403,23 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;

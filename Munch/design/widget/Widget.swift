@@ -12,6 +12,7 @@ open class Widget {
 
     public init(_ view: UIView) {
         self.view = view
+        self.view.isUserInteractionEnabled = false
     }
 
     // BuildContext

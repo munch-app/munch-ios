@@ -8,13 +8,14 @@ import UIKit
 import SnapKit
 
 // Convenience padding view
-open class IconView: Widget {
+open class IconWidget: Widget {
     let imageView = UIImageView()
 
     public init(size: CGFloat, image: UIImage? = nil, tintColor: UIColor = .black) {
         super.init(imageView)
         self.imageView.image = image
         self.imageView.tintColor = tintColor
+        self.imageView.contentMode = .scaleAspectFit
 
         self.imageView.snp.makeConstraints { maker in
             maker.height.width.equalTo(size)

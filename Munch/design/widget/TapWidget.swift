@@ -12,6 +12,7 @@ open class TapWidget: Widget {
     public init(_ widget: Widget, recognizer: UITapGestureRecognizer) {
         self.recognizer = recognizer
         super.init(widget.view)
+        self.view.isUserInteractionEnabled = true
         self.view.addGestureRecognizer(recognizer)
     }
 }

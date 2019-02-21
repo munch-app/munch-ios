@@ -132,7 +132,7 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
         switch self.items[indexPath.row] {
         case .current:
             return tableView.dequeue(type: SearchLocationIconTextCell.self)
-                    .render(with: (text: "Current Location", icon: .current))
+                    .render(with: (text: "Use current location", icon: .current))
                     .render(right: nil)
 
         case let .header(title):
@@ -233,7 +233,7 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
                                             input: .current,
                                             name: "Current Location",
                                             latLng: latLng
-                                    ), saved: true)
+                                    ), saved: false)
                                     return
                                 }
                             }
