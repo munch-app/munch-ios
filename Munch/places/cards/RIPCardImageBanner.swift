@@ -72,8 +72,20 @@ class RIPImageBannerCard: RIPCard {
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
 
+        if let focused = self.controller.focusedImage {
+            self.images = [focused]
+        } else {
+            self.images = data.place.images
+        }
+
+        if data.place.images.isEmpty {
+            moreButton.isHidden = true
+            noImageLabel.isHidden = false
+        }
+
+        let heightMultiplier = self.images.get(0)?.sizes.max?.heightMultiplier ?? 0.33
         collectionView.snp.makeConstraints { maker in
-            maker.height.equalTo(UIScreen.main.bounds.height * 0.33).priority(999)
+            maker.height.equalTo(UIScreen.main.bounds.width * CGFloat(heightMultiplier)).priority(999)
             maker.edges.equalTo(self).inset(UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0))
         }
 
@@ -94,11 +106,7 @@ class RIPImageBannerCard: RIPCard {
     }
 
     override func willDisplay(data: PlaceData!) {
-        self.images = data.place.images
-        if self.images.isEmpty {
-            moreButton.isHidden = true
-            noImageLabel.isHidden = false
-        }
+
     }
 }
 
@@ -118,7 +126,7 @@ extension RIPImageBannerCard {
 }
 
 
-extension RIPImageBannerCard: UICollectionViewDataSource, UICollectionViewDelegate {
+extension RIPImageBannerCard: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return images.count
     }
@@ -127,6 +135,14 @@ extension RIPImageBannerCard: UICollectionViewDataSource, UICollectionViewDelega
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BannerCell", for: indexPath) as! BannerCell
         cell.render(image: images[indexPath.row])
         return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let image = images[indexPath.row]
+        let multiplier = image.sizes.max?.heightMultiplier ?? 1
+
+        let width = UIScreen.main.bounds.width
+        return CGSize(width: width, height: width * CGFloat(multiplier))
     }
 }
 

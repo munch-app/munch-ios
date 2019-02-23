@@ -33,7 +33,7 @@ class ProfileSavedPlaceController: UIViewController {
             maker.edges.equalTo(self.view)
         }
 
-        // TODO: Reload when account change?
+        PlaceSavedDatabase.shared.reload()
         PlaceSavedDatabase.shared.observe().subscribe { event in
             switch event {
             case .next(let items):

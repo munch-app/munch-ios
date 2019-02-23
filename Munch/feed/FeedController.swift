@@ -6,6 +6,7 @@
 import Foundation
 import UIKit
 import SnapKit
+import SafariServices
 
 import RxSwift
 import RxCocoa
@@ -122,18 +123,20 @@ extension FeedController {
             if let location = location {
                 self.headerView.with(name: location.name)
                 self.manager.reset(latLng: location.latLng)
+                self.scrollToTop()
             }
         }
         self.present(controller, animated: true)
     }
 
     @objc func clearLocation() {
-        self.headerView.with(name: nil)
-        self.manager.reset()
+        self.reset()
     }
 
     func reset() {
+        self.headerView.with(name: nil)
         self.manager.reset()
+        self.scrollToTop()
     }
 
     @discardableResult
@@ -173,7 +176,7 @@ extension FeedController {
 }
 
 // MARK: Register Cells
-extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate, SFSafariViewControllerDelegate {
     func registerCells() {
         (collectionView.collectionViewLayout as! WaterfallLayout).delegate = self
         collectionView.delegate = self
@@ -184,6 +187,7 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate {
 
         collectionView.register(type: FeedCellLoading.self)
         collectionView.register(type: FeedCellNoResult.self)
+        collectionView.register(type: FeedCellEmpty.self)
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -224,7 +228,7 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate {
             return collectionView.dequeue(type: FeedCellNoResult.self, for: indexPath)
 
         default:
-            return UICollectionViewCell()
+            return collectionView.dequeue(type: FeedCellEmpty.self, for: indexPath)
         }
     }
 
@@ -237,11 +241,13 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch (indexPath.section, indexPath.row) {
         case (1, let row):
-            switch items[row] {
+            let cellItem: FeedCellItem = items[row]
+            switch cellItem {
             case let .image(item, places):
-                // TODO New RIP
-                let controller = FeedImageController(item: item, places: places)
-                self.navigationController?.pushViewController(controller, animated: true)
+                if let placeId = places.get(0)?.placeId {
+                    let controller = RIPController(placeId: placeId, focusedImage: item.image)
+                    self.navigationController?.pushViewController(controller, animated: true)
+                }
             }
 
         default:
@@ -250,7 +256,46 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate {
     }
 
     func onMoreItem(item: FeedCellItem) {
-        // TODO
+        switch item {
+        case let .image(item, places):
+            guard let place: Place = places.get(0) else {
+                return
+            }
+
+            let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            if let author = item.author, let link = item.instagram?.link, let url = URL(string: link) {
+                alert.addAction(UIAlertAction(title: "More from \(author)", style: .default) { action in
+                    let alert = UIAlertController(title: nil, message: "Open Instagram?", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+                    alert.addAction(UIAlertAction(title: "Open", style: .default) { action in
+                        let safari = SFSafariViewController(url: url)
+                        safari.delegate = self
+                        self.present(safari, animated: true, completion: nil)
+                    })
+                    self.present(alert, animated: true)
+                })
+            }
+
+            alert.addAction(UIAlertAction(title: "View place", style: .default) { action in
+                let controller = RIPController(placeId: place.placeId, focusedImage: item.image)
+                self.navigationController?.pushViewController(controller, animated: true)
+            })
+            alert.addAction(UIAlertAction(title: "Save place", style: .default) { action in
+                PlaceSavedDatabase.shared.put(placeId: place.placeId).subscribe { (event: SingleEvent<Bool>) in
+                    switch event {
+                    case .success:
+                        UIImpactFeedbackGenerator().impactOccurred()
+                        self.view.makeToast("Added '\(place.name)' to your places.")
+                        MunchAnalytic.logEvent("rip_heart_saved")
+
+                    case .error(let error):
+                        self.alert(error: error)
+                    }
+                }.disposed(by: self.disposeBag)
+            })
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            self.present(alert, animated: true)
+        }
     }
 }
 

@@ -20,6 +20,7 @@ import Toast_Swift
 
 class RIPController: UIViewController {
     let placeId: String
+    let focusedImage: Image?
     var data: PlaceData!
 
     fileprivate var headerView = RIPHeaderView(tintColor: .white, backgroundVisible: false)
@@ -47,8 +48,9 @@ class RIPController: UIViewController {
     private let recentService = MunchProvider<UserRecentPlaceService>()
     private let disposeBag = DisposeBag()
 
-    init(placeId: String) {
+    init(placeId: String, focusedImage: Image? = nil) {
         self.placeId = placeId
+        self.focusedImage = focusedImage
         Crashlytics.sharedInstance().setObjectValue(placeId, forKey: "RIPController.placeId")
         super.init(nibName: nil, bundle: nil)
 

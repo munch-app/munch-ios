@@ -95,3 +95,14 @@ class FeedCellNoResult: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+class FeedCellEmpty: UICollectionViewCell {
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        self.backgroundColor = .white
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
