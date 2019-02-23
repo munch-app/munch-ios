@@ -6,6 +6,7 @@
 import Foundation
 import UIKit
 import SnapKit
+import SafariServices
 
 class RIPImageBannerCard: RIPCard {
     private let imageGradientView: UIView = {
@@ -31,20 +32,13 @@ class RIPImageBannerCard: RIPCard {
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.alwaysBounceHorizontal = true
         collectionView.backgroundColor = UIColor.whisper100
-        collectionView.register(BannerCell.self, forCellWithReuseIdentifier: "BannerCell")
+        collectionView.register(type: BannerCell.self)
         return collectionView
     }()
-    private let creditLabel = UILabel(style: .h6)
+    private let creditLabel = UILabel(style: .small)
             .with(color: .white)
-            .with(numberOfLines: 1)
+            .with(numberOfLines: 2)
     private let creditControl = UIControl()
-
-    private let noImageLabel: UILabel = {
-        let label = UILabel(style: .smallBold)
-        label.with(text: "No Image Available")
-        label.isHidden = true
-        return label
-    }()
     private let moreButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .white
@@ -64,12 +58,13 @@ class RIPImageBannerCard: RIPCard {
 
         return button
     }()
-    var images = [Image]()
+    var image: CreditedImage? {
+        return self.controller.focusedImage
+    }
 
     override func didLoad(data: PlaceData!) {
         self.addSubview(collectionView)
         self.addSubview(imageGradientView)
-        self.addSubview(noImageLabel)
 
         self.addSubview(creditLabel)
         self.addSubview(creditControl)
@@ -83,20 +78,18 @@ class RIPImageBannerCard: RIPCard {
     }
 
     override func willDisplay(data: PlaceData!) {
-        if let focused = self.controller.focusedImage {
-            self.images = [focused]
-        } else {
-            self.images = data.place.images
-        }
-
-        if data.place.images.isEmpty {
+        if image == nil {
             moreButton.isHidden = true
-            noImageLabel.isHidden = false
+            imageGradientView.isHidden = true
+            collectionView.isHidden = true
         }
 
-        let heightMultiplier = self.images.get(0)?.sizes.max?.heightMultiplier ?? 0.33
         collectionView.snp.makeConstraints { maker in
-            maker.height.equalTo(UIScreen.main.bounds.width * CGFloat(heightMultiplier)).priority(999)
+            if let multiplier = self.image?.sizes.max?.heightMultiplier {
+                maker.height.equalTo(UIScreen.main.bounds.width * CGFloat(multiplier)).priority(999)
+            } else {
+                maker.height.equalTo(self.safeAreaInsets.top + 36).priority(999)
+            }
             maker.edges.equalTo(self).inset(UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0))
         }
 
@@ -111,12 +104,8 @@ class RIPImageBannerCard: RIPCard {
             maker.height.equalTo(34)
         }
 
-        noImageLabel.snp.makeConstraints { maker in
-            maker.right.bottom.equalTo(collectionView).inset(8)
-        }
-
-        if let name = self.images[0].profile?.name {
-            creditLabel.text = "@\(name)"
+        if let name = self.image?.name {
+            creditLabel.text = "Image by:\n\(name)"
         }
         creditLabel.snp.makeConstraints { maker in
             maker.left.bottom.equalTo(self).inset(24)
@@ -129,14 +118,14 @@ class RIPImageBannerCard: RIPCard {
     }
 }
 
-extension RIPImageBannerCard {
+extension RIPImageBannerCard: SFSafariViewControllerDelegate {
     func addTargets() {
         moreButton.addTarget(self, action: #selector(scrollTo(_:)), for: .touchUpInside)
         creditControl.addTarget(self, action: #selector(onCredit), for: .touchUpInside)
     }
 
     @objc func scrollTo(_ sender: Any) {
-        guard !self.images.isEmpty else {
+        guard self.image != nil else {
             return
         }
 
@@ -145,25 +134,34 @@ extension RIPImageBannerCard {
     }
 
     @objc func onCredit() {
-        // TODO OnCredit for Selected Image
+        guard let name = self.image?.name, let link = self.image?.link, let url = URL(string: link) else {
+            return
+        }
+
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "More from \(name)", style: .default) { action in
+            let safari = SFSafariViewController(url: url)
+            safari.delegate = self
+            self.controller.present(safari, animated: true)
+        })
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        self.controller.present(alert, animated: true)
     }
 }
 
-
 extension RIPImageBannerCard: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return images.count
+        return image != nil ? 1 : 0
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BannerCell", for: indexPath) as! BannerCell
-        cell.render(image: images[indexPath.row])
+        let cell = collectionView.dequeue(type: BannerCell.self, for: indexPath)
+        cell.render(sizes: image!.sizes)
         return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let image = images[indexPath.row]
-        let multiplier = image.sizes.max?.heightMultiplier ?? 1
+        let multiplier = image?.sizes.max?.heightMultiplier ?? 1
 
         let width = UIScreen.main.bounds.width
         return CGSize(width: width, height: width * CGFloat(multiplier))
@@ -182,8 +180,8 @@ fileprivate class BannerCell: UICollectionViewCell {
         }
     }
 
-    func render(image: Image) {
-        imageView.render(image: image)
+    func render(sizes: [Image.Size]) {
+        imageView.render(sizes: sizes)
     }
 
     required init?(coder aDecoder: NSCoder) {

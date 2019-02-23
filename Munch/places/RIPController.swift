@@ -20,8 +20,8 @@ import Toast_Swift
 
 class RIPController: UIViewController {
     let placeId: String
-    let focusedImage: Image?
     var data: PlaceData!
+    var focusedImage: CreditedImage?
 
     fileprivate var headerView = RIPHeaderView(tintColor: .white, backgroundVisible: false)
     fileprivate let footerView = RIPFooterView()
@@ -48,7 +48,7 @@ class RIPController: UIViewController {
     private let recentService = MunchProvider<UserRecentPlaceService>()
     private let disposeBag = DisposeBag()
 
-    init(placeId: String, focusedImage: Image? = nil) {
+    init(placeId: String, focusedImage: CreditedImage? = nil) {
         self.placeId = placeId
         self.focusedImage = focusedImage
         Crashlytics.sharedInstance().setObjectValue(placeId, forKey: "RIPController.placeId")
@@ -83,6 +83,18 @@ class RIPController: UIViewController {
                 }
             }.disposed(by: disposeBag)
         }
+
+        // Setting Focused Image
+        if self.focusedImage == nil, let image = data.images.get(0) {
+            if let instagram = image.instagram {
+                self.focusedImage = CreditedImage(sizes: image.sizes, name: instagram.username, link: instagram.link)
+            } else if let article = image.article {
+                self.focusedImage = CreditedImage(sizes: image.sizes, name: article.domain.name, link: article.url)
+            } else {
+                self.focusedImage = CreditedImage(sizes: image.sizes, name: nil, link: nil)
+            }
+        }
+
 
         // Data Binding
         self.data = data
@@ -436,41 +448,25 @@ extension RIPController: UIScrollViewDelegate {
     }
 
     func updateNavigationBackground(y: CGFloat) {
-        func updateTint(color: UIColor) {
-            headerView.tintColor = color
-        }
-
-        // Starts from - 20
-        if (y < -36.0) {
-            // -20 is the status bar height, another -16 is the height where it update the status bar color
-            updateTint(color: .black)
-            headerView.backgroundView.isHidden = true
-            headerView.shadowView.isHidden = true
-        } else if (155 > y) {
-            // Full Opacity
-            updateTint(color: .white)
-            headerView.backgroundView.isHidden = true
-            headerView.shadowView.isHidden = true
-        } else if (175 < y) {
-            // Full White
-            updateTint(color: .black)
+        switch self.preferredStatusBarStyle {
+        case .default:
+            headerView.tintColor = .black
             headerView.backgroundView.isHidden = false
-            headerView.backgroundView.backgroundColor = .white
             headerView.shadowView.isHidden = false
-        } else {
-            let progress = 1.0 - (175 - y) / 20.0
-            if progress > 0.5 {
-                updateTint(color: .black)
-            } else {
-                updateTint(color: .white)
-            }
-            headerView.backgroundView.isHidden = false
-            headerView.backgroundView.backgroundColor = UIColor.white.withAlphaComponent(progress)
+
+        case .lightContent:
+            headerView.tintColor = .white
+            headerView.backgroundView.isHidden = true
+            headerView.shadowView.isHidden = true
         }
         self.setNeedsStatusBarAppearanceUpdate()
     }
 
     override open var preferredStatusBarStyle: UIStatusBarStyle {
+        if self.focusedImage == nil {
+            return .default
+        }
+
         // LightContent is white, Default is Black
         // See updateNavigationBackground for reference
         let y = self.collectionView.contentOffset.y

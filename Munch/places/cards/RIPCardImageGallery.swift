@@ -121,6 +121,7 @@ class RIPGalleryFooterCard: RIPCard, SFSafariViewControllerDelegate {
 class RIPGalleryConnectCard: UIView {
     let label = UILabel(style: .h5)
             .with(alignment: .center)
+            .with(numberOfLines: 2)
             .with(text: "Join as a content partner, show your images.")
 
     let button: MunchButton = {

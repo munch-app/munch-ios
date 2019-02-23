@@ -3,6 +3,12 @@
 // Copyright (c) 2018 Munch Technologies. All rights reserved.
 //
 
+struct CreditedImage {
+    var sizes: [Image.Size]
+    var name: String?
+    var link: String?
+}
+
 struct Image: Codable {
     var imageId: String?
     var sizes: [Size]

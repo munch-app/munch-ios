@@ -233,8 +233,20 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate, 
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if indexPath.section == 2 {
+        switch (indexPath.section, indexPath.row) {
+        case (1, let row):
+            let cellItem: FeedCellItem = items[row]
+            switch cellItem {
+            case let .image(item, places):
+                MunchAnalytic.logEvent("feed_item_view", parameters: [
+                    "type": item.type as NSObject
+                ])
+            }
+        case (2, _):
             self.manager.append()
+
+        default:
+            return
         }
     }
 
@@ -244,10 +256,7 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate, 
             let cellItem: FeedCellItem = items[row]
             switch cellItem {
             case let .image(item, places):
-                if let placeId = places.get(0)?.placeId {
-                    let controller = RIPController(placeId: placeId, focusedImage: item.image)
-                    self.navigationController?.pushViewController(controller, animated: true)
-                }
+                self.onItem(item: item, places: places)
             }
 
         default:
@@ -277,8 +286,7 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate, 
             }
 
             alert.addAction(UIAlertAction(title: "View place", style: .default) { action in
-                let controller = RIPController(placeId: place.placeId, focusedImage: item.image)
-                self.navigationController?.pushViewController(controller, animated: true)
+                self.onItem(item: item, places: places)
             })
             alert.addAction(UIAlertAction(title: "Save place", style: .default) { action in
                 PlaceSavedDatabase.shared.put(placeId: place.placeId).subscribe { (event: SingleEvent<Bool>) in
@@ -296,6 +304,23 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate, 
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
             self.present(alert, animated: true)
         }
+    }
+
+    func onItem(item: FeedItem, places: [Place]) {
+        guard let sizes = item.image?.sizes, let instagram = item.instagram else {
+            return
+        }
+        guard let placeId = places.get(0)?.placeId else {
+            return
+        }
+
+        MunchAnalytic.logEvent("feed_item_click", parameters: [
+            "type": item.type as NSObject
+        ])
+
+        let image = CreditedImage(sizes: sizes, name: instagram.username, link: instagram.link)
+        let controller = RIPController(placeId: placeId, focusedImage: image)
+        self.navigationController?.pushViewController(controller, animated: true)
     }
 }
 
