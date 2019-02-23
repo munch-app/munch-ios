@@ -11,8 +11,6 @@ import SwiftRichString
 import SafariServices
 
 class FeedImageController: UIViewController, UIGestureRecognizerDelegate {
-    private let provider = MunchProvider<FeedImageService>()
-
     private let headerView = FeedImageHeaderView()
 
     private let scrollView: UIScrollView = {
@@ -28,14 +26,14 @@ class FeedImageController: UIViewController, UIGestureRecognizerDelegate {
         return stackView
     }()
 
-    private let item: ImageFeedItem
+    private let item: FeedItem
     private let places: [Place]
 
     private var place: Place? {
         return places.get(0)
     }
 
-    required init(item: ImageFeedItem, places: [Place]) {
+    required init(item: FeedItem, places: [Place]) {
         self.item = item
         self.places = places
         super.init(nibName: nil, bundle: nil)

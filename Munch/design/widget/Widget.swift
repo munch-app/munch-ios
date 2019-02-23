@@ -15,6 +15,14 @@ open class Widget {
         self.view.isUserInteractionEnabled = false
     }
 
+    var isHidden: Bool {
+        get {
+            return self.view.isHidden
+        }
+        set(value) {
+            self.view.isHidden = value
+        }
+    }
     // BuildContext
     // View hierarchy
 }

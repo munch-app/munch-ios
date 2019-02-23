@@ -20,8 +20,11 @@ struct Env {
         #endif
     }()
 
-    static func isProduction() -> Bool {
+    static var isProduction: Bool {
         return self.production
     }
 
+    static var isDevelopment: Bool {
+        return !self.production
+    }
 }

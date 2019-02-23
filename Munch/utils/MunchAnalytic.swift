@@ -12,7 +12,7 @@ import FBSDKCoreKit
 class MunchAnalytic {
     static func clearUserData() {
         os_log("MunchAnalytic clearUserData")
-        guard Env.isProduction() else {
+        guard Env.isProduction else {
             return
         }
 
@@ -23,7 +23,7 @@ class MunchAnalytic {
 
     static func setUserId(userId: String) {
         os_log("MunchAnalytic setUserId: %@", type: .info, userId)
-        guard Env.isProduction() else {
+        guard Env.isProduction else {
             return
         }
 
@@ -34,7 +34,7 @@ class MunchAnalytic {
     // Only tracked in Firebase
     static func setScreen(_ name: String) {
         os_log("MunchAnalytic setScreen: %@", type: .info, name)
-        guard Env.isProduction() else {
+        guard Env.isProduction else {
             return
         }
 
@@ -47,7 +47,7 @@ class MunchAnalytic {
     static func logEvent(_ name: String, parameters: [String: Any]? = nil) {
         let p = "\(parameters?.count ?? 0)"
         os_log("MunchAnalytic logEvent: %@, p: %@", type: .info, name, p)
-        guard Env.isProduction() else {
+        guard Env.isProduction else {
             return
         }
 

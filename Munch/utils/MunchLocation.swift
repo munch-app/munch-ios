@@ -40,19 +40,25 @@ public class MunchLocation {
         }
     }
 
-    public class func requestLocation() -> Single<String?> {
+    private class func requestPermission() -> Single<Bool> {
         if isEnabled {
-            return self.request(force: true)
+            return Single<Bool>.create { single in
+                single(.success(true))
+                return Disposables.create()
+            }
         }
 
-        return Single<String?>.create { single in
+        return Single<Bool>.create { single in
             switch Locator.state {
             case .notDetermined:
                 Locator.requestAuthorizationIfNeeded(.whenInUse)
+                single(.success(true))
+
             case .disabled:
                 if let url = URL(string: "\(UIApplicationOpenSettingsURLString)&path=LOCATION") {
                     UIApplication.shared.open(url)
                 }
+
             case .denied:
                 if let bundleId = Bundle.main.bundleIdentifier,
                    let url = URL(string: "\(UIApplicationOpenSettingsURLString)&path=LOCATION/\(bundleId)") {
@@ -61,18 +67,33 @@ public class MunchLocation {
             default: break
             }
 
+            single(.success(false))
+            return Disposables.create()
+        }
+    }
+
+    // force: Location is cached in Munch, force will reset the cache and get it from provider immediately
+    // permission: User have perform action that require location, add this flag so it will notify user asking for location
+    public class func request(force: Bool = false, permission: Bool = false) -> Single<String?> {
+        if isEnabled {
+            return requestLocation(force: force)
+        }
+
+        if permission {
+            return requestPermission().flatMap { _ -> Single<String?> in
+                return requestLocation(force: force)
+            }
+        }
+
+        return Single<String?>.create { single in
             single(.success(nil))
             return Disposables.create()
         }
     }
 
-    public class func request(force: Bool = false) -> Single<String?> {
+    private class func requestLocation(force: Bool = false) -> Single<String?> {
         return Single<String?>.create { single in
-            guard isEnabled else {
-                single(.success(nil))
-                return Disposables.create()
-            }
-
+            // Actually request the permission
             if let latLng = lastLatLng, locationExpiry > Date(), !force {
                 single(.success(latLng))
                 return Disposables.create()

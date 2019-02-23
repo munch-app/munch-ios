@@ -210,7 +210,7 @@ extension SearchLocationController: UITableViewDataSource, UITableViewDelegate {
         case .current:
             self.view.makeToastActivity(.center)
 
-            MunchLocation.request(force: true).flatMap { latLng -> Single<NamedLocation> in
+            MunchLocation.request(force: true, permission: true).flatMap { latLng -> Single<NamedLocation> in
                         guard let latLng = latLng else {
                             let error = NSError(domain: "", code: 401, userInfo: [NSLocalizedDescriptionKey: "Location not found."])
                             return .error(error)

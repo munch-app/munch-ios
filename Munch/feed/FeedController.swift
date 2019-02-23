@@ -40,6 +40,9 @@ class FeedController: UIViewController {
         collectionView.alwaysBounceHorizontal = false
         collectionView.alwaysBounceVertical = true
         collectionView.backgroundColor = .white
+
+        collectionView.contentInsetAdjustmentBehavior = .automatic
+        collectionView.contentInset.top = 56
         return collectionView
     }()
     private let refreshView: UIRefreshControl = {
@@ -71,12 +74,10 @@ class FeedController: UIViewController {
 
         headerView.snp.makeConstraints { maker in
             maker.top.left.right.equalTo(self.view)
-            maker.bottom.equalTo(self.view.safeArea.top)
         }
 
         collectionView.snp.makeConstraints { maker in
-            maker.left.right.bottom.equalTo(self.view)
-            maker.top.equalTo(headerView.snp.bottom)
+            maker.top.left.right.bottom.equalTo(self.view)
         }
 
         self.registerCells()
@@ -99,7 +100,7 @@ class FeedController: UIViewController {
                         return
                     }
                 }.disposed(by: disposeBag)
-        self.manager.append()
+        self.manager.reset()
     }
 }
 
@@ -107,6 +108,8 @@ class FeedController: UIViewController {
 extension FeedController {
     func addTargets() {
         self.refreshView.addTarget(self, action: #selector(handleRefresh(_:)), for: .valueChanged)
+        self.headerView.searchBar.addTarget(self, action: #selector(onLocation), for: .touchUpInside)
+        self.headerView.closeBtn.addTarget(self, action: #selector(clearLocation), for: .touchUpInside)
     }
 
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
@@ -114,8 +117,30 @@ extension FeedController {
         refreshControl.endRefreshing()
     }
 
-    private func reset() {
+    @objc func onLocation() {
+        let controller = SearchLocationRootController { location in
+            if let location = location {
+                self.headerView.with(name: location.name)
+                self.manager.reset(latLng: location.latLng)
+            }
+        }
+        self.present(controller, animated: true)
+    }
+
+    @objc func clearLocation() {
+        self.headerView.with(name: nil)
         self.manager.reset()
+    }
+
+    func reset() {
+        self.manager.reset()
+    }
+
+    @discardableResult
+    func scrollToTop(animated: Bool = true) -> Bool {
+        let top = self.collectionView.contentOffset.y <= 0
+        self.collectionView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+        return top
     }
 }
 
@@ -125,8 +150,7 @@ extension FeedController {
         super.viewDidAppear(animated)
         MunchAnalytic.setScreen("/feed")
 
-        let center = NotificationCenter.default
-        center.addObserver(self,
+        NotificationCenter.default.addObserver(self,
                 selector: #selector(applicationWillEnterForeground(_:)),
                 name: NSNotification.Name.UIApplicationWillEnterForeground,
                 object: nil)
@@ -134,8 +158,7 @@ extension FeedController {
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        let center = NotificationCenter.default
-        center.removeObserver(self,
+        NotificationCenter.default.removeObserver(self,
                 name: NSNotification.Name.UIApplicationWillEnterForeground,
                 object: nil)
     }
@@ -158,7 +181,9 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate {
 
         collectionView.register(type: FeedCellHeader.self)
         collectionView.register(type: FeedCellImage.self)
+
         collectionView.register(type: FeedCellLoading.self)
+        collectionView.register(type: FeedCellNoResult.self)
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -167,6 +192,8 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch section {
+        case 0:
+            return 0
         case 1:
             return items.count
 
@@ -181,14 +208,20 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate {
             return collectionView.dequeue(type: FeedCellHeader.self, for: indexPath)
 
         case (1, let row):
-            switch items[row] {
-            case let .image(item, _):
+            let cellItem: FeedCellItem = items[row]
+            switch cellItem {
+            case let .image(item, places):
                 return collectionView.dequeue(type: FeedCellImage.self, for: indexPath)
-                        .render(with: item)
+                        .render(with: item, places: places) {
+                            self.onMoreItem(item: cellItem)
+                        }
             }
 
-        case (2, _):
+        case (2, _) where manager.loading:
             return collectionView.dequeue(type: FeedCellLoading.self, for: indexPath)
+
+        case (2, _) where manager.items.isEmpty:
+            return collectionView.dequeue(type: FeedCellNoResult.self, for: indexPath)
 
         default:
             return UICollectionViewCell()
@@ -206,6 +239,7 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate {
         case (1, let row):
             switch items[row] {
             case let .image(item, places):
+                // TODO New RIP
                 let controller = FeedImageController(item: item, places: places)
                 self.navigationController?.pushViewController(controller, animated: true)
             }
@@ -213,6 +247,10 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate {
         default:
             break
         }
+    }
+
+    func onMoreItem(item: FeedCellItem) {
+        // TODO
     }
 }
 
@@ -230,11 +268,11 @@ extension FeedController: WaterfallLayoutDelegate {
     public func collectionView(_ collectionView: UICollectionView, layout: WaterfallLayout, sectionInsetFor section: Int) -> UIEdgeInsets? {
         switch section {
         case 0:
-            return UIEdgeInsets(top: 24, left: 24, bottom: 24, right: 24)
+            return UIEdgeInsets(top: 16, left: 16, bottom: 0, right: 16)
         case 1:
-            return UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+            return UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         case 2:
-            return UIEdgeInsets(top: 24, left: 24, bottom: 24, right: 24)
+            return UIEdgeInsets(top: 24, left: 16, bottom: 24, right: 16)
         default:
             return UIEdgeInsets.zero
         }
@@ -271,22 +309,60 @@ extension FeedController: WaterfallLayoutDelegate {
 // MARK: Scroll delegate
 extension FeedController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.headerView.shadow.isHidden = scrollView.contentOffset.y < 30
+//        self.headerView.shadow.isHidden = scrollView.contentOffset.y < 30
     }
 }
 
 class FeedHeaderView: UIView {
     let shadow = UIView()
+    let searchBar = UIControl()
+    let textBar = UILabel(style: .h6)
+            .with(numberOfLines: 1)
+
+    let closeBtn = ControlWidget(
+            PaddingWidget(
+                    all: 10, view: IconWidget(size: 14, image: UIImage(named: "Search-Header-Close"))
+            )
+    )
 
     required init() {
         super.init(frame: .zero)
-        self.backgroundColor = .white
-        self.addSubview(shadow)
+        self.backgroundColor = UIColor(white: 1, alpha: 0.97)
+        self.addSubview(searchBar)
+        self.addSubview(textBar)
+        self.addSubview(closeBtn)
 
-        shadow.isHidden = true
-        shadow.backgroundColor = .white
-        shadow.snp.makeConstraints { maker in
-            maker.edges.equalTo(self)
+        searchBar.backgroundColor = .whisper100
+        searchBar.layer.cornerRadius = 4
+        searchBar.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self).inset(16)
+            maker.top.equalTo(self.safeArea.top).inset(10)
+            maker.bottom.equalTo(self).inset(10)
+            maker.height.equalTo(36)
+        }
+
+        closeBtn.snp.makeConstraints { maker in
+            maker.right.equalTo(searchBar)
+            maker.centerY.equalTo(searchBar)
+        }
+
+        with(name: nil)
+        textBar.snp.makeConstraints { maker in
+            maker.left.equalTo(searchBar).inset(14)
+            maker.right.equalTo(closeBtn.snp.left).inset(14)
+            maker.centerY.equalTo(searchBar)
+        }
+    }
+
+    func with(name: String?) {
+        if let name = name {
+            self.textBar.text = name
+            self.textBar.with(color: .ba85)
+            self.closeBtn.isHidden = false
+        } else {
+            self.textBar.text = "Discover by location"
+            self.textBar.with(color: .ba60)
+            self.closeBtn.isHidden = true
         }
     }
 

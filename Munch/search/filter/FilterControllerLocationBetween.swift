@@ -393,35 +393,40 @@ fileprivate class FilterLocationBetweenPointList: UIView {
 
     var tableViewSearchBarConstraint: Constraint?
     var height8Constraint: Constraint?
-    var height100Constraint: Constraint?
+    var height80Constraint: Constraint?
     var height160Constraint: Constraint?
+    var height240Constraint: Constraint?
 
     fileprivate var onRemove: ((Int) -> Void)?
     fileprivate var points = [SearchQuery.Filter.Location.Point]() {
         didSet {
             self.tableView.reloadData()
+            if (!self.points.isEmpty) {
+                self.tableView.scrollToRow(at: .init(row: points.count - 1, section: 0), at: .bottom, animated: false)
+            }
+
+            height8Constraint?.deactivate()
+            height80Constraint?.deactivate()
+            height160Constraint?.deactivate()
+            height240Constraint?.deactivate()
 
             if self.points.isEmpty {
                 self.searchBar.isHidden = false
                 tableViewSearchBarConstraint?.activate()
                 height8Constraint?.activate()
-                height100Constraint?.deactivate()
-                height160Constraint?.deactivate()
             } else if (self.points.count < 10) {
                 self.searchBar.isHidden = false
                 tableViewSearchBarConstraint?.activate()
 
-                height8Constraint?.deactivate()
-
-                if (self.points.count < 5) {
-                    height100Constraint?.activate()
-                    height160Constraint?.deactivate()
-                } else {
-                    height100Constraint?.deactivate()
+                if self.points.count < 3 {
+                    height80Constraint?.activate()
+                } else if self.points.count < 5 {
                     height160Constraint?.activate()
+                } else {
+                    height240Constraint?.activate()
                 }
-
             } else {
+                height240Constraint?.activate()
                 self.searchBar.isHidden = true
                 tableViewSearchBarConstraint?.deactivate()
             }
@@ -439,8 +444,9 @@ fileprivate class FilterLocationBetweenPointList: UIView {
         tableView.snp.makeConstraints { maker in
             maker.top.left.right.equalTo(self)
             height8Constraint = maker.height.equalTo(8).constraint
-            height100Constraint = maker.height.equalTo(100).constraint
+            height80Constraint = maker.height.equalTo(80).constraint
             height160Constraint = maker.height.equalTo(160).constraint
+            height240Constraint = maker.height.equalTo(240).constraint
             maker.bottom.equalTo(self).priority(.high)
             tableViewSearchBarConstraint = maker.bottom.equalTo(searchBar.snp.top).constraint
         }

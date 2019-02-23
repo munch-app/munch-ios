@@ -8,26 +8,38 @@ import Moya
 import RxSwift
 
 enum FeedCellItem {
-    case image(ImageFeedItem, [Place])
+    case image(FeedItem, [Place])
+}
+
+extension FeedQuery {
+    static func create() -> FeedQuery {
+        let location = FeedQuery.Location(latLng: nil)
+        return FeedQuery(location: location)
+    }
 }
 
 class FeedManager {
-    private let provider = MunchProvider<FeedImageService>()
+    private let provider = MunchProvider<FeedQueryService>()
 
     fileprivate(set) var loading = false
-    fileprivate(set) var items = [ImageFeedItem]()
+    fileprivate(set) var items = [FeedItem]()
     fileprivate(set) var places = [String: Place?]()
     fileprivate(set) var eventDate = Date()
+
+    private var query = FeedQuery.create()
 
     private var from: Int? = 0
     private var observer: AnyObserver<[FeedCellItem]>?
     private let disposeBag = DisposeBag()
 
-    func reset() {
+    func reset(latLng: String? = nil) {
+        self.query.location.latLng = latLng
+
         self.items.removeAll()
         self.places.removeAll()
         self.from = 0
         self.loading = false
+        self.observer?.on(.next(self.collect()))
         self.append()
     }
 
@@ -40,6 +52,7 @@ class FeedManager {
 
     func append() {
         guard let from = self.from, from < 500 else {
+            self.loading = false
             return
         }
 
@@ -49,35 +62,32 @@ class FeedManager {
 
         self.loading = true
 
-        self.provider.rx.request(.query("sgp", latLng, from))
-                .map { res -> (ImageFeedResult, Int?) in
+        self.provider.rx.request(.query(self.query, from, 20))
+                .map { res throws -> ([FeedItem], [String: Place?], Int?) in
                     let from = try res.mapNext(atKeyPath: "from") as? Int
-                    let result = try res.map(data: ImageFeedResult.self)
-                    return (result, from)
+                    let items = try res.map(data: [FeedItem].self)
+                    let places = try res.map([String: Place?].self, atKeyPath: "places")
+                    return (items, places, from)
                 }
                 .subscribe { event in
                     switch event {
-                    case let .success(result, from):
+                    case let .success(items, places, from):
                         self.loading = false
-                        self.items.append(contentsOf: result.items)
-                        result.places.forEach { key, value in
+                        self.items.append(contentsOf: items)
+                        places.forEach { key, value in
                             self.places[key] = value
                         }
                         self.observer?.on(.next(self.collect()))
                         self.from = from
 
                         MunchAnalytic.logEvent("feed_query", parameters: [
-                            "count" : (self.from ?? 0) as NSObject
+                            "count": (self.from ?? 0) as NSObject
                         ])
                     case .error(let error):
                         self.observer?.on(.error(error))
                     }
                 }
                 .disposed(by: disposeBag)
-    }
-
-    private var latLng: String {
-        return MunchLocation.lastLatLng ?? "1.3521,103.8198"
     }
 
     private func collect() -> [FeedCellItem] {

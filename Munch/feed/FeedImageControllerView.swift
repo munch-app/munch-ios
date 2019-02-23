@@ -119,7 +119,7 @@ class FeedImageViewImage: UIView {
         return imageView
     }()
 
-    init(item: ImageFeedItem) {
+    init(item: FeedItem) {
         super.init(frame: .zero)
         self.addSubview(imageView)
 
@@ -127,7 +127,7 @@ class FeedImageViewImage: UIView {
         imageView.render(image: item.image)
         imageView.snp.makeConstraints { maker in
             maker.edges.equalTo(self).priority(999)
-            if let size = item.image.sizes.max {
+            if let size = item.image?.sizes.max {
                 maker.height.equalTo(imageView.snp.width).multipliedBy(size.heightMultiplier)
             }
         }
@@ -146,7 +146,7 @@ class FeedImageViewContent: UIControl {
     let username = UILabel(style: .h5)
             .with(numberOfLines: 1)
 
-    init(item: ImageFeedItem) {
+    init(item: FeedItem) {
         super.init(frame: .zero)
         self.addSubview(topLine)
         self.addSubview(botLine)

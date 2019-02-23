@@ -69,3 +69,29 @@ class FeedCellLoading: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+class FeedCellNoResult: UICollectionViewCell {
+    fileprivate let label = UILabel(style: .h5)
+            .with(alignment: .center)
+            .with(numberOfLines: 0)
+            .with(text: "Sorry! We couldn't not find anything in the provided location.")
+
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
+        self.backgroundColor = .white
+        self.addSubview(label)
+
+        label.snp.makeConstraints { maker in
+            maker.left.right.equalTo(self)
+            maker.top.equalTo(self)
+        }
+
+        snp.makeConstraints { maker in
+            maker.height.equalTo(40).priority(.high)
+        }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}

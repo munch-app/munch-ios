@@ -6,51 +6,80 @@
 import Foundation
 import Moya
 
-enum FeedImageService {
-    case query(String, String, Int)
-    case get(String)
+enum FeedQueryService {
+    // FeedQuery, next.from, size
+    case query(FeedQuery, Int?, Int)
 }
 
-extension FeedImageService: TargetType {
+extension FeedQueryService: TargetType {
     var path: String {
         switch self {
-        case let .query: return "/feed/images"
-        case let .get(itemId): return "/feed/images/\(itemId)"
+        case .query: return "/feed/query"
         }
     }
+
     var method: Moya.Method {
-        return .get
+        switch self {
+        case .query: return .post
+        }
     }
+
     var task: Task {
         switch self {
-        case let .query(country, latLng, from):
-            let parameters: [String: Any] = ["country": country, "latLng": latLng, "next.from": from]
-            return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
-
-        default:
-            return .requestPlain
+        case let .query(query, nextFrom, size):
+            var param = ["size": size]
+            if let from = nextFrom {
+                param["next.from"] = from
+            }
+            return requestJSONQueryString(query, parameters: param)
         }
 
     }
 }
 
-struct ImageFeedResult: Codable {
-    var items: [ImageFeedItem]
-    var places: [String: Place?]
+struct FeedQuery: Codable {
+    var location: Location
+
+    struct Location: Codable {
+        var latLng: String?
+    }
 }
 
-struct ImageFeedItem: Codable {
+struct FeedItem: Codable {
     var itemId: String
+    var type: ItemType
     var sort: String
 
     var country: String
     var latLng: String
 
-    var image: Image
+    var author: String?
+    var title: String?
+
+    var places: [Place]
     var createdMillis: Int
 
+    var image: Image?
     var instagram: Instagram?
-    var places: [Place]
+
+    enum ItemType: String, Codable {
+        case Article
+        case InstagramMedia
+        case Other
+
+        /// Defensive Decoding
+        init(from decoder: Decoder) throws {
+            switch try decoder.singleValueContainer().decode(String.self) {
+            case "Article": self = .Article
+            case "InstagramMedia": self = .InstagramMedia
+            default: self = .Other
+            }
+        }
+    }
+
+    struct Place: Codable {
+        var placeId: String
+    }
 
     struct Instagram: Codable {
         var accountId: String
@@ -62,9 +91,5 @@ struct ImageFeedItem: Codable {
 
         var userId: String?
         var username: String?
-    }
-
-    struct Place: Codable {
-        var placeId: String
     }
 }

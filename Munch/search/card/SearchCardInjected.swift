@@ -55,12 +55,11 @@ class SearchNoLocationCard: SearchCardView {
         if MunchLocation.isEnabled {
             self.controller.reset()
         } else {
-            MunchLocation.requestLocation()
+            MunchLocation.request(force: true, permission: true)
                     .subscribe { event in
                         switch event {
                         case .success:
-                            self.actionButton.with(text: "Refresh Search")
-                            self.actionButton.backgroundColor = .secondary500
+                            self.controller.reset()
 
                         case .error(let error):
                             self.controller.alert(error: error)

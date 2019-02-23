@@ -65,7 +65,7 @@ class SearchHomeNearbyCard: SearchCardView {
     }
 
     override func didSelect(card: SearchCard, controller: SearchController) {
-        MunchLocation.requestLocation().subscribe { event in
+        MunchLocation.request(force: true, permission: true).subscribe { event in
             guard case let .success(ll) = event, let _ = ll else {
                 return
             }

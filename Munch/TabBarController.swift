@@ -109,6 +109,15 @@ extension MunchTabBarController: UITabBarControllerDelegate {
             }
             return true
 
+        case let root as FeedRootController where self.previousController == viewController:
+            guard let controller = root.topViewController as? FeedController else {
+                return true
+            }
+
+            if (controller.scrollToTop()) {
+                controller.reset()
+            }
+            return true
         default:
             return true
         }
