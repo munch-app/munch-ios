@@ -34,6 +34,10 @@ class RIPImageBannerCard: RIPCard {
         collectionView.register(BannerCell.self, forCellWithReuseIdentifier: "BannerCell")
         return collectionView
     }()
+    private let creditLabel = UILabel(style: .h6)
+            .with(color: .white)
+            .with(numberOfLines: 1)
+    private let creditControl = UIControl()
 
     private let noImageLabel: UILabel = {
         let label = UILabel(style: .smallBold)
@@ -65,13 +69,20 @@ class RIPImageBannerCard: RIPCard {
     override func didLoad(data: PlaceData!) {
         self.addSubview(collectionView)
         self.addSubview(imageGradientView)
-        self.addSubview(moreButton)
         self.addSubview(noImageLabel)
+
+        self.addSubview(creditLabel)
+        self.addSubview(creditControl)
+
+        self.addSubview(moreButton)
+
         self.addTargets()
 
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
+    }
 
+    override func willDisplay(data: PlaceData!) {
         if let focused = self.controller.focusedImage {
             self.images = [focused]
         } else {
@@ -103,16 +114,25 @@ class RIPImageBannerCard: RIPCard {
         noImageLabel.snp.makeConstraints { maker in
             maker.right.bottom.equalTo(collectionView).inset(8)
         }
-    }
 
-    override func willDisplay(data: PlaceData!) {
+        if let name = self.images[0].profile?.name {
+            creditLabel.text = "@\(name)"
+        }
+        creditLabel.snp.makeConstraints { maker in
+            maker.left.bottom.equalTo(self).inset(24)
+        }
 
+        creditControl.snp.makeConstraints { maker in
+            maker.left.bottom.equalTo(self)
+            maker.right.top.equalTo(creditLabel).inset(-24)
+        }
     }
 }
 
 extension RIPImageBannerCard {
     func addTargets() {
         moreButton.addTarget(self, action: #selector(scrollTo(_:)), for: .touchUpInside)
+        creditControl.addTarget(self, action: #selector(onCredit), for: .touchUpInside)
     }
 
     @objc func scrollTo(_ sender: Any) {
@@ -122,6 +142,10 @@ extension RIPImageBannerCard {
 
         MunchAnalytic.logEvent("rip_click_show_images")
         controller.scrollTo(indexPath: [1, 0])
+    }
+
+    @objc func onCredit() {
+        // TODO OnCredit for Selected Image
     }
 }
 
