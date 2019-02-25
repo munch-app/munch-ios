@@ -221,7 +221,7 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate, 
                         }
             }
 
-        case (2, _) where manager.loading:
+        case (2, _) where manager.more:
             return collectionView.dequeue(type: FeedCellLoading.self, for: indexPath)
 
         case (2, _) where manager.items.isEmpty:
@@ -237,9 +237,9 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate, 
         case (1, let row):
             let cellItem: FeedCellItem = items[row]
             switch cellItem {
-            case let .image(item, places):
+            case let .image(item, _):
                 MunchAnalytic.logEvent("feed_item_view", parameters: [
-                    "type": item.type as NSObject
+                    "type": item.type.rawValue as NSObject
                 ])
             }
         case (2, _):
@@ -315,7 +315,7 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate, 
         }
 
         MunchAnalytic.logEvent("feed_item_click", parameters: [
-            "type": item.type as NSObject
+            "type": item.type.rawValue as NSObject
         ])
 
         let image = CreditedImage(sizes: sizes, name: instagram.username, link: instagram.link)

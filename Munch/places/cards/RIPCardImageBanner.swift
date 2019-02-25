@@ -35,7 +35,7 @@ class RIPImageBannerCard: RIPCard {
         collectionView.register(type: BannerCell.self)
         return collectionView
     }()
-    private let creditLabel = UILabel(style: .small)
+    private let creditLabel = UILabel(style: .smallBold)
             .with(color: .white)
             .with(numberOfLines: 2)
     private let creditControl = UIControl()

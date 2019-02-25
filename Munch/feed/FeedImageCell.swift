@@ -9,8 +9,9 @@ import SnapKit
 
 class FeedCellImage: UICollectionViewCell {
     private static let font = UIFont.systemFont(ofSize: 11, weight: .semibold)
+    private static let width: CGFloat = (UIScreen.main.bounds.width - 16 - 16 - 16) / 2
+
     private let imageView: SizeImageView = {
-        let width = (UIScreen.main.bounds.width - 16 - 16 - 16) / 2
         let imageView = SizeShimmerImageView(points: width, height: 1)
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
@@ -83,7 +84,9 @@ class FeedCellImage: UICollectionViewCell {
 
     class func size(item: FeedItem) -> CGSize {
         if let size = item.image?.sizes.max {
-            return CGSize(width: CGFloat(size.width), height: CGFloat(size.height) + labelHeight + 6 + 6)
+            let scale = CGFloat(size.width) / width
+            let labelScale: CGFloat = (labelHeight + 6 + 6) * scale
+            return CGSize(width: CGFloat(size.width), height: CGFloat(size.height) + labelScale)
         }
         return CGSize(width: 10000, height: 10000 + labelHeight)
     }

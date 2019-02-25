@@ -28,6 +28,10 @@ class FeedManager {
 
     private var query = FeedQuery.create()
 
+    var more: Bool {
+        return loading || from != nil
+    }
+
     private var from: Int? = 0
     private var observer: AnyObserver<[FeedCellItem]>?
     private let disposeBag = DisposeBag()
