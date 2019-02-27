@@ -174,6 +174,8 @@ extension RIPController {
         MunchAnalytic.setScreen("/places")
         MunchAnalytic.logEvent("rip_view")
 
+        UserDefaults.count(key: .countViewRip)
+
         NotificationCenter.default.addObserver(self, selector: #selector(onScreenshot), name: .UIApplicationUserDidTakeScreenshot, object: nil)
     }
 

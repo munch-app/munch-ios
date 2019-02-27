@@ -35,6 +35,7 @@ target 'Munch' do
   pod 'BEMCheckBox', '~> 1.4'
   pod 'RangeSeekSlider', '~> 1.7'
   pod 'PullToDismiss', '~> 2.1'
+  pod 'MaterialComponents/BottomSheet'
 
 
   # Deprecation:

@@ -118,6 +118,24 @@ PODS:
   - Kingfisher (4.10.1)
   - KMNavigationBarTransition (1.1.5)
   - Localize-Swift (2.0.0)
+  - MaterialComponents/BottomSheet (76.1.2):
+    - MaterialComponents/private/KeyboardWatcher
+    - MaterialComponents/private/Math
+    - MaterialComponents/ShapeLibrary
+    - MaterialComponents/Shapes
+  - MaterialComponents/private/Application (76.1.2)
+  - MaterialComponents/private/KeyboardWatcher (76.1.2):
+    - MaterialComponents/private/Application
+  - MaterialComponents/private/Math (76.1.2)
+  - MaterialComponents/ShadowElevations (76.1.2)
+  - MaterialComponents/ShadowLayer (76.1.2):
+    - MaterialComponents/ShadowElevations
+  - MaterialComponents/ShapeLibrary (76.1.2):
+    - MaterialComponents/private/Math
+    - MaterialComponents/Shapes
+  - MaterialComponents/Shapes (76.1.2):
+    - MaterialComponents/private/Math
+    - MaterialComponents/ShadowLayer
   - Moya (12.0.1):
     - Moya/Core (= 12.0.1)
   - Moya/Core (12.0.1):
@@ -170,6 +188,7 @@ DEPENDENCIES:
   - Kingfisher (~> 4.10)
   - KMNavigationBarTransition (~> 1.1)
   - Localize-Swift
+  - MaterialComponents/BottomSheet
   - Moya (~> 12.0)
   - Moya/RxSwift (~> 12.0)
   - NVActivityIndicatorView (~> 4.0)
@@ -214,6 +233,7 @@ SPEC REPOS:
     - Kingfisher
     - KMNavigationBarTransition
     - Localize-Swift
+    - MaterialComponents
     - Moya
     - nanopb
     - NVActivityIndicatorView
@@ -261,6 +281,7 @@ SPEC CHECKSUMS:
   Kingfisher: c148cd7b47ebde9989f6bc7c27dcaa79d81279a0
   KMNavigationBarTransition: 7a52c9bc25b39b6e3343e980b453facee1591b82
   Localize-Swift: c798ec9286494866f7068f85f7c71283ac5bdab4
+  MaterialComponents: 1aef341d47fbaed37ddb5163a01af94cb6da8506
   Moya: cf730b3cd9e005401ef37a85143aa141a12fd38f
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   NVActivityIndicatorView: ec7440a57af2450319d3a4181cca7da6fc127064
@@ -280,6 +301,6 @@ SPEC CHECKSUMS:
   SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
   Toast-Swift: e42a638589a2f95036b4bb7626cfbdde7daf0393
 
-PODFILE CHECKSUM: 047a89f277e0fc9b2473106622f5c3d343f26bd2
+PODFILE CHECKSUM: 050ee86e6cf83e977d08c212fe659543c385a46a
 
 COCOAPODS: 1.6.0

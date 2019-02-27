@@ -70,6 +70,7 @@
 		B4B7358B55C3DB9F4EF818EC /* FilterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732495DE29798E2A46696 /* FilterController.swift */; };
 		B4B735A44D406841FFDB85A8 /* LocationSelectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7343DF8F6CD2BDC4E7EB2 /* LocationSelectCell.swift */; };
 		B4B735AF1F1C38E4A589A6F3 /* TapWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73BECD13D24EB41D3AA3C /* TapWidget.swift */; };
+		B4B735D63D32DB7CD87C0D33 /* MunchBottomDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7370640699A957839F27D /* MunchBottomDialog.swift */; };
 		B4B735F60468BE3C55EEEFB2 /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B731A6341BCB2757584002 /* NavigationController.swift */; };
 		B4B7368A7EDD60CFD8561D63 /* CopyableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73A013583B2C9902370B6 /* CopyableView.swift */; };
 		B4B736B47B12B57380C86E22 /* UserPlaceCollectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7335BABC0E6BF07362781 /* UserPlaceCollectionService.swift */; };
@@ -286,6 +287,7 @@
 		B4B736C1DC599DBB26C5C9F9 /* MunchSearchTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchSearchTextField.swift; sourceTree = "<group>"; };
 		B4B736DAC3F9C5490C07A9D3 /* IconView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconView.swift; sourceTree = "<group>"; };
 		B4B7370091AA5113D21348AC /* SearchCardLocationArea.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardLocationArea.swift; sourceTree = "<group>"; };
+		B4B7370640699A957839F27D /* MunchBottomDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchBottomDialog.swift; sourceTree = "<group>"; };
 		B4B7375F54B00CC6DF37E159 /* MunchTagCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MunchTagCollectionView.swift; sourceTree = "<group>"; };
 		B4B73772ABC9B72A87038CF0 /* SearchCardCollectionHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardCollectionHeader.swift; sourceTree = "<group>"; };
 		B4B737B877E6C0DDB8C12B56 /* FeedController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedController.swift; sourceTree = "<group>"; };
@@ -631,6 +633,7 @@
 				B4B73C6EE3870CAAA60898F4 /* extension */,
 				B4B73E7A02599D40CAAEF029 /* controller */,
 				B4B73950B6F5B5CCB1C08AB3 /* widget */,
+				B4B7370640699A957839F27D /* MunchBottomDialog.swift */,
 			);
 			path = design;
 			sourceTree = "<group>";
@@ -1064,6 +1067,7 @@
 				"${BUILT_PRODUCTS_DIR}/KMNavigationBarTransition/KMNavigationBarTransition.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/Localize-Swift/Localize_Swift.framework",
+				"${BUILT_PRODUCTS_DIR}/MaterialComponents/MaterialComponents.framework",
 				"${BUILT_PRODUCTS_DIR}/Moya/Moya.framework",
 				"${BUILT_PRODUCTS_DIR}/NVActivityIndicatorView/NVActivityIndicatorView.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
@@ -1097,6 +1101,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KMNavigationBarTransition.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Localize_Swift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MaterialComponents.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Moya.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NVActivityIndicatorView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
@@ -1280,6 +1285,7 @@
 				B4B73349D0B16EAD997848EF /* MunchCrash.swift in Sources */,
 				B4B735AF1F1C38E4A589A6F3 /* TapWidget.swift in Sources */,
 				B4B734540B011E778DA84904 /* CenterWidget.swift in Sources */,
+				B4B735D63D32DB7CD87C0D33 /* MunchBottomDialog.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

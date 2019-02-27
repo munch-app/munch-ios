@@ -135,7 +135,7 @@ class LocationSelectSaveController: MHViewController {
             return
         }
 
-        var location = UserLocation.new(
+        let location = UserLocation.new(
                 type: type,
                 input: userLocation.input,
                 name: userLocation.name,

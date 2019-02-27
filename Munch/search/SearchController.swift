@@ -8,6 +8,8 @@ import UIKit
 import SnapKit
 import Localize_Swift
 
+import SafariServices
+
 import Moya
 import RxSwift
 import RxCocoa
@@ -239,10 +241,27 @@ extension SearchController: SearchTableViewDelegate {
     }
 }
 
-extension SearchController {
+extension SearchController: SFSafariViewControllerDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         MunchAnalytic.setScreen("/search")
+
+        DispatchQueue.main.async {
+            if UserDefaults.get(count: .countViewRip) > 1 || UserDefaults.get(count: .countOpenApp) > 1 {
+                UserDefaults.notify(key: .notifyShareFeedbackV1) {
+                    MunchAnalytic.logEvent("notify_show_feedback")
+
+                    self.show(title: "Feed us with feedback", message: "Take a minute to tell us how to better serve you.", buttonTitle: "Share Feedback") {
+                        // TODO: Might want to prefill this
+                        let safari = SFSafariViewController(url: URL(string: "https://airtable.com/shrp2EgmOUwshSZ3a")!)
+                        safari.delegate = self
+
+                        MunchAnalytic.logEvent("notify_click_feedback")
+                        self.present(safari, animated: true, completion: nil)
+                    }
+                }
+            }
+        }
 
         let center = NotificationCenter.default
         center.addObserver(self,
@@ -260,7 +279,7 @@ extension SearchController {
     }
 
     @objc func applicationWillEnterForeground(_ notification: NSNotification) {
-        if let date = UserDefaults.standard.object(forKey: UserDefaults.Key.globalResignActiveDate) as? Date {
+        if let date = UserDefaults.standard.object(forKey: UserDefaultsKey.globalResignActiveDate.rawValue) as? Date {
             if Date().millis - date.millis > 1000 * 60 * 60 {
                 self.reset()
             }

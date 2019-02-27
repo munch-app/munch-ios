@@ -142,7 +142,7 @@ extension FeedController {
     @discardableResult
     func scrollToTop(animated: Bool = true) -> Bool {
         let top = self.collectionView.contentOffset.y <= 0
-        self.collectionView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+        self.collectionView.setContentOffset(CGPoint(x: 0, y: -100), animated: true)
         return top
     }
 }
@@ -152,6 +152,12 @@ extension FeedController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         MunchAnalytic.setScreen("/feed")
+
+        DispatchQueue.main.async {
+            UserDefaults.notify(key: .notifyFeedWelcome) {
+                self.show(title: "Welcome to the Munch Feed!", message: "See something you like? Click on any image to find out more.")
+            }
+        }
 
         NotificationCenter.default.addObserver(self,
                 selector: #selector(applicationWillEnterForeground(_:)),
@@ -167,7 +173,7 @@ extension FeedController {
     }
 
     @objc func applicationWillEnterForeground(_ notification: NSNotification) {
-        if let date = UserDefaults.standard.object(forKey: UserDefaults.Key.globalResignActiveDate) as? Date {
+        if let date = UserDefaults.standard.object(forKey: UserDefaultsKey.globalResignActiveDate.rawValue) as? Date {
             if Date().millis - date.millis > 1000 * 60 * 60 {
                 self.reset()
             }
@@ -289,17 +295,23 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate, 
                 self.onItem(item: item, places: places)
             })
             alert.addAction(UIAlertAction(title: "Save place", style: .default) { action in
-                PlaceSavedDatabase.shared.put(placeId: place.placeId).subscribe { (event: SingleEvent<Bool>) in
-                    switch event {
-                    case .success:
-                        UIImpactFeedbackGenerator().impactOccurred()
-                        self.view.makeToast("Added '\(place.name)' to your places.")
-                        MunchAnalytic.logEvent("rip_heart_saved")
-
-                    case .error(let error):
-                        self.alert(error: error)
+                Authentication.requireAuthentication(controller: controller) { state in
+                    guard case .loggedIn = state else {
+                        return
                     }
-                }.disposed(by: self.disposeBag)
+
+                    PlaceSavedDatabase.shared.put(placeId: place.placeId).subscribe { (event: SingleEvent<Bool>) in
+                        switch event {
+                        case .success:
+                            UIImpactFeedbackGenerator().impactOccurred()
+                            self.view.makeToast("Added '\(place.name)' to your places.")
+                            MunchAnalytic.logEvent("rip_heart_saved")
+
+                        case .error(let error):
+                            self.alert(error: error)
+                        }
+                    }.disposed(by: self.disposeBag)
+                }
             })
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
             self.present(alert, animated: true)
@@ -384,7 +396,6 @@ extension FeedController: UIScrollViewDelegate {
 }
 
 class FeedHeaderView: UIView {
-    let shadow = UIView()
     let searchBar = UIControl()
     let textBar = UILabel(style: .h6)
             .with(numberOfLines: 1)
@@ -438,7 +449,6 @@ class FeedHeaderView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        shadow.shadow(vertical: 2)
     }
 
     required init?(coder aDecoder: NSCoder) {
