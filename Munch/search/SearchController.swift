@@ -251,7 +251,7 @@ extension SearchController: SFSafariViewControllerDelegate {
                 UserDefaults.notify(key: .notifyShareFeedbackV1) {
                     MunchAnalytic.logEvent("notify_show_feedback")
 
-                    self.show(title: "Feed us with feedback", message: "Take a minute to tell us how to better serve you.", buttonTitle: "Share Feedback") {
+                    self.show(title: "Feed us with feedback", message: "Take a minute to tell us how to better serve you.", buttonTitle: "Give Feedback") {
                         // TODO: Might want to prefill this
                         let safari = SFSafariViewController(url: URL(string: "https://airtable.com/shrp2EgmOUwshSZ3a")!)
                         safari.delegate = self

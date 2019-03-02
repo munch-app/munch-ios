@@ -43,8 +43,8 @@ extension CreatorContentItemService: TargetType {
     var task: Task {
         switch self {
         case let .list(_, nextItemId):
-            if let sort = sort {
-                return .requestParameters(parameters: ["next.itemId": sort, "size": "30"], encoding: URLEncoding.default)
+            if let nextItemId = nextItemId {
+                return .requestParameters(parameters: ["next.itemId": nextItemId, "size": "30"], encoding: URLEncoding.default)
             }
             return .requestParameters(parameters: ["size": "30"], encoding: URLEncoding.default)
         }
@@ -71,6 +71,7 @@ struct CreatorSeries: Codable {
         case draft
         case published
         case archived
+        case other
 
         /// Defensive Decoding
         init(from decoder: Decoder) throws {
@@ -105,6 +106,7 @@ struct CreatorContent: Codable {
         case draft
         case published
         case archived
+        case other
 
         /// Defensive Decoding
         init(from decoder: Decoder) throws {

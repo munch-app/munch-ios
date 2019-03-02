@@ -295,7 +295,7 @@ extension FeedController: UICollectionViewDataSource, UICollectionViewDelegate, 
                 self.onItem(item: item, places: places)
             })
             alert.addAction(UIAlertAction(title: "Save place", style: .default) { action in
-                Authentication.requireAuthentication(controller: controller) { state in
+                Authentication.requireAuthentication(controller: self) { state in
                     guard case .loggedIn = state else {
                         return
                     }

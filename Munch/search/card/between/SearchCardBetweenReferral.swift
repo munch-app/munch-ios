@@ -11,23 +11,20 @@ class SearchCardBetweenReferral: SearchCardView {
     private let cardView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 4
-        view.backgroundColor = .primary050
+        view.backgroundColor = .primary500
         return view
     }()
-    private let headerLabel = UILabel(style: .h2)
+    private let headerLabel = UILabel(style: .h3)
             .with(numberOfLines: 0)
-            .with(text: "Teamwork makes the dream work.")
-    private let descriptionLabel = UILabel(style: .regular)
-            .with(numberOfLines: 0)
-            .with(text: "You've done the tough part now share this with your friends and ask somebody to pick.")
-    private let shareBtn = MunchButton(style: .secondaryOutline)
+            .with(text: "Share search results with your friends")
+            .with(color: .white)
+    private let shareBtn = MunchButton(style: .primaryOutline)
             .with(text: "SHARE")
 
     override func didLoad(card: SearchCard) {
         self.addSubview(cardView)
         cardView.addSubview(shareBtn)
         cardView.addSubview(headerLabel)
-        cardView.addSubview(descriptionLabel)
 
         cardView.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(leftRight)
@@ -35,17 +32,14 @@ class SearchCardBetweenReferral: SearchCardView {
         }
 
         headerLabel.snp.makeConstraints { maker in
-            maker.top.left.right.equalTo(cardView).inset(24)
+            maker.top.equalTo(cardView).inset(16)
+            maker.left.right.equalTo(cardView).inset(20)
+            maker.bottom.equalTo(shareBtn.snp.top).inset(-16)
         }
-
-        descriptionLabel.snp.makeConstraints { maker in
-            maker.left.right.equalTo(cardView).inset(24)
-            maker.top.equalTo(headerLabel.snp.bottom).inset(-16)
-            maker.bottom.equalTo(shareBtn.snp.top).inset(-24)
-        }
-
+        
         shareBtn.snp.makeConstraints { maker in
-            maker.right.bottom.equalTo(cardView).inset(24)
+            maker.bottom.equalTo(cardView).inset(16)
+            maker.right.equalTo(cardView).inset(20)
         }
 
         self.shareBtn.addTarget(self, action: #selector(onShare), for: .touchUpInside)
@@ -55,13 +49,11 @@ class SearchCardBetweenReferral: SearchCardView {
         let paddedWidth = contentWidth - 48
 
         return topBottom +
-                24 +
-                FontStyle.h2.height(text: "Teamwork makes the dream work.", width: paddedWidth) +
                 16 +
-                FontStyle.regular.height(text: "You've done the tough part now share this with your friends and ask somebody to pick.", width: paddedWidth) +
-                24 +
+                FontStyle.h2.height(text: "Share search results with your friends", width: paddedWidth) +
+                16 +
                 MunchButtonStyle.secondaryOutline.height +
-                24 +
+                16 +
                 topBottom
     }
 
