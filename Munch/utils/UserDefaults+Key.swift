@@ -9,10 +9,13 @@ enum UserDefaultsKey: String, CaseIterable {
     case globalResignActiveDate = "global.ResignActiveDate"
 
     case notifyFeedWelcome = "notify.FeedWelcome"
-    case notifyShareFeedbackV1 = "notify.ShareFeedbackV1"
+    case notifyGiveFeedbackV1 = "notify.GiveFeedbackV1"
+    case notifyGiveFeedbackV2 = "notify.GiveFeedbackV2"
 
     case countOpenApp = "count.OpenApp"
     case countViewRip = "count.ViewRip"
+
+    case countGiveFeedback = "count.GiveFeedback"
 }
 
 extension UserDefaults {

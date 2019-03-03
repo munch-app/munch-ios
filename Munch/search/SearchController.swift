@@ -246,18 +246,32 @@ extension SearchController: SFSafariViewControllerDelegate {
         super.viewDidAppear(animated)
         MunchAnalytic.setScreen("/search")
 
+        func showGiveFeedback() {
+            MunchAnalytic.logEvent("notify_show_feedback")
+
+            self.show(title: "Feed us with feedback", message: "Take a minute to tell us how to better serve you.", buttonTitle: "Give Feedback") {
+                let safari = SFSafariViewController(url: URL(string: "https://airtable.com/shrp2EgmOUwshSZ3a")!)
+                safari.delegate = self
+
+                UserDefaults.count(key: .countGiveFeedback)
+                MunchAnalytic.logEvent("notify_click_feedback")
+                self.present(safari, animated: true, completion: nil)
+            }
+        }
+
         DispatchQueue.main.async {
-            if UserDefaults.get(count: .countViewRip) > 1 || UserDefaults.get(count: .countOpenApp) > 1 {
-                UserDefaults.notify(key: .notifyShareFeedbackV1) {
-                    MunchAnalytic.logEvent("notify_show_feedback")
+            let viewRip = UserDefaults.get(count: .countViewRip)
+            let openApp = UserDefaults.get(count: .countOpenApp)
 
-                    self.show(title: "Feed us with feedback", message: "Take a minute to tell us how to better serve you.", buttonTitle: "Give Feedback") {
-                        // TODO: Might want to prefill this
-                        let safari = SFSafariViewController(url: URL(string: "https://airtable.com/shrp2EgmOUwshSZ3a")!)
-                        safari.delegate = self
+            if viewRip > 1 || openApp > 1 {
+                UserDefaults.notify(key: .notifyGiveFeedbackV1) {
+                    showGiveFeedback()
+                }
 
-                        MunchAnalytic.logEvent("notify_click_feedback")
-                        self.present(safari, animated: true, completion: nil)
+                let countGive = UserDefaults.get(count: .countGiveFeedback)
+                if openApp > 3 && countGive == 0 {
+                    UserDefaults.notify(key: .notifyGiveFeedbackV2) {
+                        showGiveFeedback()
                     }
                 }
             }
