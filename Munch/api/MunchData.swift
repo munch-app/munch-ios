@@ -30,13 +30,19 @@ struct Place: ElasticObject, Codable {
     struct Status: Codable {
         var type: StatusType
         var moved: Moved?
-        var updatedMillis: Int?
+        var renamed: Renamed?
+        var redirected: Redirected?
 
         enum StatusType: String, Codable {
             case open
             case renovation
             case closed
+
             case moved
+            case deleted
+            case renamed
+            case redirected
+
             case other
 
             /// Defensive Decoding
@@ -46,6 +52,9 @@ struct Place: ElasticObject, Codable {
                 case "renovation": self = .renovation
                 case "closed": self = .closed
                 case "moved": self = .moved
+                case "deleted": self = .deleted
+                case "renamed": self = .renamed
+                case "redirected": self = .redirected
                 default: self = .other
                 }
             }
@@ -53,15 +62,57 @@ struct Place: ElasticObject, Codable {
             var name: String {
                 switch self {
                 case .open: return "Open"
-                case .closed: return "Perm Closed"
-                case .renovation: return "On Renovation"
-                case .moved: return "Perm Moved"
+                case .closed: return "Permanently Closed"
+                case .renovation: return "Under Renovation"
+                case .moved: return "Permanently Moved"
+                case .deleted: return "Deleted"
+                case .renamed: return "Renamed"
+                case .redirected: return "Redirected"
+
                 case .other: return ""
+                }
+            }
+
+            var title: String? {
+                switch self {
+                case .closed: return "Permanently Closed"
+                case .renovation: return "Under Renovation"
+                case .moved: return "Permanently Moved"
+                case .deleted: return "Deleted"
+                case .renamed: return "Renamed"
+                case .redirected: return "Redirected"
+
+                default:
+                    return nil
+                }
+            }
+
+            var message: String? {
+                switch self {
+                case .closed: fallthrough
+                case .renovation: fallthrough
+                case .moved:
+                    return "Know this place?"
+
+                case .deleted:
+                    return "This place has permanently closed or removed from Munch. Know this place?"
+
+                default:
+                    return nil
                 }
             }
         }
 
         struct Moved: Codable {
+            var placeId: String
+        }
+
+        struct Renamed: Codable {
+            var placeId: String
+            var name: String
+        }
+
+        struct Redirected: Codable {
             var placeId: String
         }
     }

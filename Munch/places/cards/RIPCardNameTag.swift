@@ -6,27 +6,62 @@
 import Foundation
 import UIKit
 import SnapKit
+import SafariServices
 
 import Localize_Swift
 
-class RIPCardClosed: RIPCard {
-    private let label = UILabel()
-            .with(style: .h2)
-            .with(numberOfLines: 1)
-            .with(text: "Permanently Closed".localized())
-            .with(color: .close)
+class RIPCardStatus: RIPCard, SFSafariViewControllerDelegate {
+    private let container = ContainerWidget()
+            .with(backgroundColor: .close)
+            .with(cornerRadius: 3)
+
+    private let titleLabel = UILabel()
+            .with(style: .h3)
+            .with(text: "Permanently Closed")
+            .with(color: .white)
+
+    private let messageLabel = UILabel()
+            .with(style: .h6)
+            .with(numberOfLines: 0)
+            .with(color: .white)
 
     override func didLoad(data: PlaceData!) {
-        self.addSubview(label)
+        let statusType = data.place.status.type
 
-        label.snp.makeConstraints { make in
-            make.top.bottom.equalTo(self).inset(12)
-            make.left.right.equalTo(self).inset(24)
+        self.addSubview(container) { (maker: ConstraintMaker) -> Void in
+            maker.left.right.equalTo(self).inset(24)
+            maker.top.equalTo(self).inset(8)
+            maker.bottom.equalTo(self).inset(8)
         }
+
+        titleLabel.text = statusType.title
+        self.container.add(titleLabel) { (maker: ConstraintMaker) -> Void in
+            maker.top.equalTo(container).inset(16)
+            maker.left.right.equalTo(container).inset(24)
+        }
+
+        if let message = statusType.message {
+            messageLabel.text = message + " Suggest an edit."
+            self.container.add(messageLabel) { (maker: ConstraintMaker) -> Void in
+                maker.left.right.equalTo(container).inset(24)
+                maker.top.equalTo(titleLabel.snp.bottom).inset(-8)
+                maker.bottom.equalTo(container).inset(16)
+            }
+        } else {
+            titleLabel.snp.makeConstraints { maker in
+                maker.bottom.equalTo(container).inset(16)
+            }
+        }
+
+        self.layoutIfNeeded()
     }
 
     override class func isAvailable(data: PlaceData) -> Bool {
         return data.place.status.type != .open
+    }
+
+    override func didSelect(data: PlaceData!, controller: RIPController) {
+        RIPSuggestEditCard.onSuggestEdit(place: data.place, controller: self.controller, delegate: self)
     }
 }
 

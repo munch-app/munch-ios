@@ -38,7 +38,26 @@ extension Widget {
 }
 
 extension UIView {
-    func addSubview(_ view: Widget) {
-        self.addSubview(view.view)
+    func addSubview(_ widget: Widget) {
+        self.addSubview(widget.view)
     }
+
+    func addSubview(_ widget: Widget, _ closure: (_ make: ConstraintMaker) -> Void) {
+        self.addSubview(widget.view)
+        widget.snp.makeConstraints(closure)
+    }
+
+    func addSubview(_ view: UIView, _ closure: (_ make: ConstraintMaker) -> Void) {
+        self.addSubview(view)
+        view.snp.makeConstraints(closure)
+    }
+}
+
+extension ConstraintMakerRelatable {
+
+    @discardableResult
+    public func equalTo(_ other: Widget, _ file: String = #file, _ line: UInt = #line) -> ConstraintMakerEditable {
+        return self.equalTo(other.view, file, line)
+    }
+
 }

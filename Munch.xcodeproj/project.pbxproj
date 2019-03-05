@@ -89,6 +89,7 @@
 		B4B738E9AB65A402CE6C70F0 /* SearchCardHomeNearby.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B732D6B41EA64114A0831F /* SearchCardHomeNearby.swift */; };
 		B4B738EA4ED298CE778BFAC2 /* UIControl+Closure.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73FDED4A582F0D3DC8780 /* UIControl+Closure.swift */; };
 		B4B738EA83700A1713184B9B /* RIPCardImageBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73F90EE462A9E722D4F91 /* RIPCardImageBanner.swift */; };
+		B4B738FC0A6C865CB5F62223 /* ContainerWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73825853C231BC70EE093 /* ContainerWidget.swift */; };
 		B4B73915FD94C1B77DBD5D60 /* RIPCardAward.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B734BDB7C21C04F0DCF94C /* RIPCardAward.swift */; };
 		B4B7392B5A989633BADD192D /* FeedService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B7340F0AD8271793C8BF1B /* FeedService.swift */; };
 		B4B73938651082208D57C2BA /* RIPFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B73669E03801B1ECEDF138 /* RIPFooterView.swift */; };
@@ -296,6 +297,7 @@
 		B4B737E1E2482A53D7CB6F6B /* UICollectionView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Extension.swift"; sourceTree = "<group>"; };
 		B4B737E2C968CB42E8AB7CE1 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 		B4B737F525D72B78432937A2 /* SearchCardHomePopularPlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCardHomePopularPlace.swift; sourceTree = "<group>"; };
+		B4B73825853C231BC70EE093 /* ContainerWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainerWidget.swift; sourceTree = "<group>"; };
 		B4B7384ED3DFE29BCAD3F4A1 /* CenterWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CenterWidget.swift; sourceTree = "<group>"; };
 		B4B7384EE76B0FBB03988A0F /* PaddingWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaddingWidget.swift; sourceTree = "<group>"; };
 		B4B738679F9E169693DC1515 /* Label.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Label.swift; sourceTree = "<group>"; };
@@ -725,6 +727,7 @@
 				B4B736DAC3F9C5490C07A9D3 /* IconView.swift */,
 				B4B73BECD13D24EB41D3AA3C /* TapWidget.swift */,
 				B4B7384ED3DFE29BCAD3F4A1 /* CenterWidget.swift */,
+				B4B73825853C231BC70EE093 /* ContainerWidget.swift */,
 			);
 			path = widget;
 			sourceTree = "<group>";
@@ -1298,6 +1301,7 @@
 				B4B734540B011E778DA84904 /* CenterWidget.swift in Sources */,
 				B4B735D63D32DB7CD87C0D33 /* MunchBottomDialog.swift in Sources */,
 				B4B73C3AA708E7BCE96FCD5E /* ContentService.swift in Sources */,
+				B4B738FC0A6C865CB5F62223 /* ContainerWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
