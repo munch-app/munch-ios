@@ -78,7 +78,7 @@ struct Place: ElasticObject, Codable {
                 case .closed: return "Permanently Closed"
                 case .renovation: return "Under Renovation"
                 case .moved: return "Permanently Moved"
-                case .deleted: return "Deleted"
+                case .deleted: return "Deleted from Munch"
                 case .renamed: return "Renamed"
                 case .redirected: return "Redirected"
 

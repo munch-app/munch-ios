@@ -127,10 +127,10 @@ extension UserLocationService: TargetType {
         switch self {
         case let .list(next, size):
             if let next = next {
-                return .requestParameters(parameters: ["next.nextId": next, "size": "40"], encoding: URLEncoding.default)
+                return .requestParameters(parameters: ["next.nextId": next, "size": "\(size)"], encoding: URLEncoding.default)
             }
             return .requestParameters(parameters: ["size": "40"], encoding: URLEncoding.default)
-        case .delete, .list:
+        case .delete:
             return .requestPlain
 
         case .post(let location):

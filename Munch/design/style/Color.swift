@@ -48,6 +48,7 @@ extension UIColor {
     static let ba15 = UIColor.black.withAlphaComponent(0.15)
     static let ba20 = UIColor.black.withAlphaComponent(0.20)
     static let ba40 = UIColor.black.withAlphaComponent(0.40)
+    static let ba45 = UIColor.black.withAlphaComponent(0.45)
     static let ba50 = UIColor.black.withAlphaComponent(0.50)
     static let ba60 = UIColor.black.withAlphaComponent(0.60)
     static let ba65 = UIColor.black.withAlphaComponent(0.65)
@@ -86,7 +87,7 @@ extension UIColor {
     static let athens = UIColor(hex: "F4F5F7")
 
     static let peach100 = UIColor(hex: "faf0f0")
-    static let peach200 = UIColor(hex: "f0e0e0")
+    static let peach200 = UIColor(hex: "f8d8d8")
 
     static let saltpan100 = UIColor(hex: "F1F9F1")
     static let saltpan200 = UIColor(hex: "E0F0E0")

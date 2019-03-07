@@ -71,6 +71,9 @@ class SearchController: UIViewController {
         self.searchTableView.cardDelegate = self
         self.headerView.controller = self
 
+        self.headerView.mode = .full
+        self.searchTableView.contentInset.top = SearchHeaderView.height
+
         self.push(searchQuery: SearchQuery(feature: .Home))
     }
 
@@ -107,14 +110,6 @@ class SearchController: UIViewController {
 
     private func search(searchQuery: SearchQuery) {
         self.searchTableView.scrollToTop(animated: false)
-
-        if case .Home = searchQuery.feature {
-            headerView.mode = .hidden
-            searchTableView.contentInset = .zero
-        } else {
-            headerView.mode = .full
-            searchTableView.contentInset = UIEdgeInsets(top: SearchHeaderView.height, left: 0, bottom: 0, right: 0)
-        }
         self.setNeedsStatusBarAppearanceUpdate()
 
         self.searchTableView.search(query: searchQuery)
@@ -200,44 +195,10 @@ extension SearchController: SearchTableViewDelegate {
     }
 
     func searchTableView(didScroll searchTableView: SearchTableView) {
-        guard case .Home = searchQuery.feature else {
-            return
-        }
-
-        guard searchTableView.started else {
-            return
-        }
-
-        let y = searchTableView.contentOffset.y
-        if (y > 260 || y < -80) {
-            if case .top = headerView.mode {
-                return
-            }
-            headerView.mode = .top
-        } else {
-            if case .hidden = headerView.mode {
-                return
-            }
-            headerView.mode = .hidden
-        }
-        self.setNeedsStatusBarAppearanceUpdate()
     }
 
     override open var preferredStatusBarStyle: UIStatusBarStyle {
-        guard case .Home = searchQuery.feature else {
-            return .default
-        }
-
-        guard searchTableView.started else {
-            return .default
-        }
-
-        let y = searchTableView.contentOffset.y
-        if (y > 260 || y < -80) {
-            return .default
-        } else {
-            return .lightContent
-        }
+        return .default
     }
 }
 
@@ -268,10 +229,12 @@ extension SearchController: SFSafariViewControllerDelegate {
                     showGiveFeedback()
                 }
 
-                let countGive = UserDefaults.get(count: .countGiveFeedback)
-                if openApp > 3 && countGive == 0 {
-                    UserDefaults.notify(key: .notifyGiveFeedbackV2) {
-                        showGiveFeedback()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    let countGive = UserDefaults.get(count: .countGiveFeedback)
+                    if openApp > 3 && countGive == 0 {
+                        UserDefaults.notify(key: .notifyGiveFeedbackV2) {
+                            showGiveFeedback()
+                        }
                     }
                 }
             }

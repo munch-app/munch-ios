@@ -76,6 +76,8 @@ class SearchTableView: UITableView {
         register(SearchCardHomePopularPlace.self)
         register(SearchCardHomeAwardCollection.self)
 
+        register(SearchCardSeriesList.self)
+
         register(SearchCardLocationBanner.self)
         register(SearchCardLocationArea.self)
 

@@ -97,7 +97,6 @@ struct CreatorContent: Codable {
 
     var image: Image?
     var tags: [String]
-    var platform: String
 
     var createdMillis: Int
     var updatedMillis: Int
