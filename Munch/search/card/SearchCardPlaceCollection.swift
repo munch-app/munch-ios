@@ -13,13 +13,14 @@ class SearchCardPlaceCollection: UICollectionView {
     var controller: UIViewController!
 
     init() {
-        let layout = UICollectionViewFlowLayout()
+        let layout = MunchHorizontalSnap()
         layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
         layout.itemSize = SearchCardPlaceCollectionCell.size
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 24
+        layout.minimumLineSpacing = 16
         super.init(frame: .zero, collectionViewLayout: layout)
 
+        self.decelerationRate = UIScrollViewDecelerationRateFast
         self.showsVerticalScrollIndicator = false
         self.showsHorizontalScrollIndicator = false
         self.backgroundColor = .clear
@@ -61,7 +62,7 @@ extension SearchCardPlaceCollection: UICollectionViewDataSource, UICollectionVie
 }
 
 class SearchCardPlaceCollectionCell: UICollectionViewCell {
-    public static let width = (UIScreen.main.bounds.width - 48) * 0.85
+    public static let width = (UIScreen.main.bounds.width - 48)
     public static let size = CGSize(width: width, height: PlaceCard.height(width: width))
 
     fileprivate let card = PlaceCard()

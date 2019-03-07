@@ -57,6 +57,7 @@ class PlaceCard: UIView {
         imageView.layer.cornerRadius = 3
         return imageView
     }()
+    private let overlay = PlaceCardStatusOverlay()
     private let tagView = MunchTagView()
     private let nameLabel = UILabel()
             .with(font: UIFont.systemFont(ofSize: 20, weight: .semibold))
@@ -77,6 +78,7 @@ class PlaceCard: UIView {
             self.render(name: self.place)
             self.render(tag: self.place)
             self.render(location: self.place)
+            self.overlay.render(place: self.place)
         }
     }
 
@@ -89,6 +91,7 @@ class PlaceCard: UIView {
         self.addSubview(locationLabel)
         self.addSubview(heartBtn)
         self.addSubview(noImageLabel)
+        self.addSubview(overlay)
 
         heartBtn.snp.makeConstraints { maker in
             maker.top.right.equalTo(imageView)
@@ -119,6 +122,10 @@ class PlaceCard: UIView {
             maker.bottom.left.right.equalTo(self)
             maker.height.equalTo(19)
             maker.top.equalTo(tagView.snp.bottom).inset(-6)
+        }
+
+        overlay.snp.makeConstraints { maker in
+            maker.edges.equalTo(self)
         }
 
         self.addTargets()
@@ -269,4 +276,54 @@ fileprivate struct PriceViewConfig: MunchTagViewConfig {
     let backgroundColor = UIColor.peach100
 
     let extra = CGSize(width: 16, height: 9)
+}
+
+class PlaceCardStatusOverlay: UIView {
+    private let titleLabel = UILabel(style: .h2)
+            .with(color: .white)
+            .with(alignment: .center)
+
+    private let messageLabel = UILabel(style: .h5)
+            .with(color: .white)
+            .with(text: "Place is not available anymore.")
+            .with(alignment: .center)
+
+    override required init(frame: CGRect) {
+        super.init(frame: frame)
+
+        self.layer.cornerRadius = 3
+        self.backgroundColor = .ba50
+
+        let container = ContainerWidget()
+        container.add(PaddingWidget(all: 8, view: titleLabel)) { (maker: ConstraintMaker) -> Void in
+            maker.left.right.top.equalTo(container)
+        }
+        container.add(PaddingWidget(bottom: 8, left: 8, right: 8, view: messageLabel)) { (maker: ConstraintMaker) -> Void in
+            maker.top.equalTo(titleLabel.snp.bottom).inset(-8)
+            maker.left.right.bottom.equalTo(container)
+        }
+
+        self.addSubview(container) { (maker: ConstraintMaker) -> Void in
+            maker.left.right.equalTo(self)
+            maker.centerY.equalTo(self)
+        }
+
+        self.isHidden = true
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func render(place: Place) {
+        let type = place.status.type
+
+        if case .open = type {
+            self.isHidden = true
+            return
+        }
+
+        self.isHidden = false
+        self.titleLabel.text = type.title ?? "Permanently Closed"
+    }
 }

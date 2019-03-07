@@ -221,17 +221,16 @@ extension SearchController: SFSafariViewControllerDelegate {
         }
 
         DispatchQueue.main.async {
-            let viewRip = UserDefaults.get(count: .countViewRip)
             let openApp = UserDefaults.get(count: .countOpenApp)
 
-            if viewRip > 1 || openApp > 1 {
+            if openApp > 2 {
                 UserDefaults.notify(key: .notifyGiveFeedbackV1) {
                     showGiveFeedback()
                 }
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                     let countGive = UserDefaults.get(count: .countGiveFeedback)
-                    if openApp > 3 && countGive == 0 {
+                    if openApp > 4 && countGive == 0 {
                         UserDefaults.notify(key: .notifyGiveFeedbackV2) {
                             showGiveFeedback()
                         }
