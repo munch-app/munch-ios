@@ -14,6 +14,7 @@ enum UserDefaultsKey: String, CaseIterable {
 
     case countOpenApp = "count.OpenApp"
     case countViewRip = "count.ViewRip"
+    case countViewContent = "count.ViewContent"
 
     case countGiveFeedback = "count.GiveFeedback"
 }

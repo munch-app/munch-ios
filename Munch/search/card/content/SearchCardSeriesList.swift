@@ -35,7 +35,7 @@ class SearchCardSeriesList: SearchCardView {
         if let options = card["options"] as? [String: Any] {
             self.options = options
         }
-        var series: CreatorSeries? = card.decode(name: "series", CreatorSeries.self)
+        let series: CreatorSeries? = card.decode(name: "series", CreatorSeries.self)
 
         titleLabel.text = series?.title
         self.addSubview(titleLabel) { (maker: ConstraintMaker) -> Void in
@@ -53,9 +53,9 @@ class SearchCardSeriesList: SearchCardView {
         self.addSubview(collectionView) { (maker: ConstraintMaker) -> Void in
             maker.top.equalTo(subtitleLabel.snp.bottom).inset(-24)
             maker.left.right.equalTo(self)
-            maker.bottom.equalTo(self).inset(topBottom)
+            maker.bottom.equalTo(self).inset(topBottom).priority(.high)
 
-            maker.height.equalTo(SearchSeriesContentCard.size(options: options).height).priority(.high)
+            maker.height.equalTo(SearchSeriesContentCard.size(options: options).height)
         }
 
         let horizontalSnap = collectionView.collectionViewLayout as? MunchHorizontalSnap
@@ -97,7 +97,9 @@ extension SearchCardSeriesList: UICollectionViewDataSource, UICollectionViewDele
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // TODO
+        let content = contents[indexPath.row]
+        let controller = ContentPageController(contentId: content.contentId, content: content)
+        self.controller.navigationController?.pushViewController(controller, animated: true)
     }
 }
 

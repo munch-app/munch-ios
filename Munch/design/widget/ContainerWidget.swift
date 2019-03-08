@@ -29,6 +29,22 @@ open class ContainerWidget: Widget {
     }
 
     @discardableResult
+    public func with(width: CGFloat) -> ContainerWidget {
+        self.view.snp.makeConstraints { maker in
+            maker.width.equalTo(width)
+        }
+        return self
+    }
+
+    @discardableResult
+    public func with(height: CGFloat) -> ContainerWidget {
+        self.view.snp.makeConstraints { maker in
+            maker.height.equalTo(height)
+        }
+        return self
+    }
+
+    @discardableResult
     public func add(_ widget: Widget, _ closure: (_ make: ConstraintMaker) -> Void) -> ContainerWidget {
         self.view.addSubview(widget.view)
         widget.snp.makeConstraints(closure)

@@ -50,7 +50,7 @@ class MHViewController: UIViewController, UIGestureRecognizerDelegate {
 }
 
 class MHHeaderView: UIView {
-    public let backButton: UIButton = {
+    private let backBtn: UIButton = {
         let button = UIButton()
         button.isUserInteractionEnabled = true
         button.setImage(UIImage(named: "NavigationBar-Back"), for: .normal)
@@ -59,20 +59,35 @@ class MHHeaderView: UIView {
         button.contentHorizontalAlignment = .left
         return button
     }()
-    public let titleView: UILabel = {
+    private let titleLabel: UILabel = {
         let titleView = UILabel(style: .navHeader)
                 .with(alignment: .center)
         return titleView
     }()
+    private let moreBtn: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "RIP-Header-More"), for: .normal)
+        button.tintColor = .black
+        button.imageEdgeInsets.right = 24
+        button.contentHorizontalAlignment = .right
+        return button
+    }()
+    private let backgroundView = UIView()
+    private let shadowView = UIView()
 
     override init(frame: CGRect = CGRect.zero) {
         super.init(frame: frame)
-        self.backgroundColor = .white
+        self.backgroundColor = .clear
+        self.backgroundView.backgroundColor = .white
 
-        self.addSubview(backButton)
-        self.addSubview(titleView)
+        self.addSubview(shadowView)
+        self.addSubview(backgroundView)
 
-        titleView.snp.makeConstraints { maker in
+        self.addSubview(backBtn)
+        self.addSubview(titleLabel)
+        self.addSubview(moreBtn)
+
+        titleLabel.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(52)
             maker.height.equalTo(44)
 
@@ -80,7 +95,8 @@ class MHHeaderView: UIView {
             maker.bottom.equalTo(self)
         }
 
-        backButton.snp.makeConstraints { maker in
+        backBtn.isHidden = true
+        backBtn.snp.makeConstraints { maker in
             maker.top.equalTo(self.safeArea.top)
             maker.bottom.equalTo(self)
 
@@ -88,16 +104,73 @@ class MHHeaderView: UIView {
             maker.width.equalTo(52)
             maker.height.equalTo(44)
         }
+
+        moreBtn.isHidden = true
+        moreBtn.snp.makeConstraints { maker in
+            maker.top.equalTo(self.safeArea.top)
+            maker.bottom.equalTo(self)
+
+            maker.right.equalTo(self)
+            maker.top.bottom.equalTo(backBtn)
+            maker.width.equalTo(56)
+            maker.height.equalTo(44)
+        }
+
+        backgroundView.snp.makeConstraints { maker in
+            maker.edges.equalTo(self)
+        }
+
+        shadowView.snp.makeConstraints { maker in
+            maker.edges.equalTo(self)
+        }
     }
 
-    func with(title text: String) -> MHHeaderView {
-        self.titleView.text = text
+    @discardableResult
+    func with(title text: String?) -> MHHeaderView {
+        self.titleLabel.text = text
         return self
+    }
+
+    func addTarget(back target: Any?, action: Selector) {
+        backBtn.isHidden = false
+        backBtn.addTarget(target, action: action, for: .touchUpInside)
+    }
+
+    func addTarget(more target: Any?, action: Selector) {
+        moreBtn.isHidden = false
+        moreBtn.addTarget(target, action: action, for: .touchUpInside)
+    }
+
+    var background: Bool = true {
+        didSet {
+            backgroundView.isHidden = !background
+            shadowView.isHidden = !background
+        }
+    }
+
+    var isTitleHidden: Bool = false {
+        didSet  {
+            titleLabel.isHidden = isTitleHidden
+        }
+    }
+
+    var isBlack: Bool = true{
+        didSet {
+            if isBlack {
+                self.titleLabel.textColor = .black
+                self.backBtn.tintColor = .black
+                self.moreBtn.tintColor = .black
+            } else {
+                self.titleLabel.textColor = .white
+                self.backBtn.tintColor = .white
+                self.moreBtn.tintColor = .white
+            }
+        }
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.shadow(vertical: 2)
+        shadowView.shadow(vertical: 2)
     }
 
     required init?(coder aDecoder: NSCoder) {

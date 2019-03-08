@@ -55,3 +55,11 @@ extension Date {
         return Date().millis
     }
 }
+
+extension NSUUID {
+    var data: NSData {
+        var uuid = [UInt8](repeating: 0, count: 16)
+        self.getBytes(&uuid)
+        return NSData(bytes: &uuid, length: 16)
+    }
+}

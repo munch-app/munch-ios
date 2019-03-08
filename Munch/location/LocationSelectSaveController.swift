@@ -53,8 +53,7 @@ class LocationSelectSaveController: MHViewController {
 
         self.view.addSubview(headerView)
         self.view.addSubview(bottomButton)
-
-        self.headerView.backButton.addTarget(self, action: #selector(onBackButton), for: .touchUpInside)
+        self.headerView.addTarget(back: self, action: #selector(onBackButton))
 
         self.view.addSubview(scrollView)
         scrollView.addSubview(stackView)

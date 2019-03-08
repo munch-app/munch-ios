@@ -163,7 +163,7 @@ extension RIPHeaderView: SFSafariViewControllerDelegate {
         }
 
         if let url = URL(string: "https://www.munch.app/places/\(place.placeId)") {
-            let controller = UIActivityViewController(activityItems: [place.name, url], applicationActivities: nil)
+            let controller = UIActivityViewController(activityItems: [url], applicationActivities: nil)
             controller.excludedActivityTypes = [.airDrop, .addToReadingList, UIActivity.ActivityType.openInIBooks]
             MunchAnalytic.logEvent("rip_share")
             self.controller.present(controller, animated: true)
