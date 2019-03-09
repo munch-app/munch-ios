@@ -16,7 +16,7 @@ class ContentPlace: UITableViewCell {
 
         self.addSubview(placeCard) { (maker: ConstraintMaker) -> Void in
             maker.left.right.equalTo(self).inset(24)
-            maker.top.equalTo(self).inset(24).priority(.high)
+            maker.top.equalTo(self).inset(12).priority(.high)
             maker.bottom.equalTo(self).inset(12).priority(.high)
         }
     }

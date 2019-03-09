@@ -14,7 +14,7 @@ class ContentLine: UITableViewCell {
 
         let container = ContainerWidget()
         self.addSubview(container) { (maker: ConstraintMaker) -> Void in
-            maker.top.bottom.equalTo(self).inset(8)
+            maker.top.bottom.equalTo(self).inset(12)
             maker.centerX.equalTo(self)
         }
 

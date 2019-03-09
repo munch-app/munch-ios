@@ -48,9 +48,11 @@ struct PlaceData: Codable {
     var articles: [Article]
     var images: [PlaceImage]
     var user: User?
+    var rating: PlaceRating?
 
     struct User: Codable {
         var savedPlace: UserSavedPlace?
+        var ratedPlace: UserRatedPlace?
     }
 }
 
@@ -105,5 +107,24 @@ struct PlaceImage: Codable {
 
         var link: String?
         var username: String?
+    }
+}
+
+
+struct PlaceRating: Codable {
+    var placeId: String
+    var summary: Summary
+
+    var updatedMillis: Int
+    var createdMillis: Int
+
+    struct Summary: Codable {
+        var average: Double
+        var total: Int
+        var star1: Int
+        var star2: Int
+        var star3: Int
+        var star4: Int
+        var star5: Int
     }
 }

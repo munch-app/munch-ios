@@ -66,7 +66,7 @@ class MHHeaderView: UIView {
     }()
     private let moreBtn: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "RIP-Header-More"), for: .normal)
+        button.setImage(UIImage(named: "Navigation_More"), for: .normal)
         button.tintColor = .black
         button.imageEdgeInsets.right = 24
         button.contentHorizontalAlignment = .right

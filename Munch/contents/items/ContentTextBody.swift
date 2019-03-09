@@ -40,24 +40,24 @@ class ContentTextBody: UITableViewCell {
     func getInsets(with item: [String: Any]) -> UIEdgeInsets {
         switch item["type"] as! String {
         case "title":
-            return UIEdgeInsets(top: 32, left: 24, bottom: 12, right: 24)
-        case "h1":
             return UIEdgeInsets(top: 24, left: 24, bottom: 12, right: 24)
+        case "h1":
+            return UIEdgeInsets(top: 12, left: 24, bottom: 12, right: 24)
         case "h2":
             return UIEdgeInsets(top: 12, left: 24, bottom: 12, right: 24)
         default:
-            return UIEdgeInsets(top: 4, left: 24, bottom: 32, right: 24)
+            return UIEdgeInsets(top: 0, left: 24, bottom: 12, right: 24)
         }
     }
 
     func getFont(with item: [String: Any]) -> UIFont {
         switch item["type"] as! String {
         case "title":
-            return FontStyle.h1.font
-        case "h1":
-            return FontStyle.h1.font
-        case "h2":
             return FontStyle.h2.font
+        case "h1":
+            return FontStyle.h2.font
+        case "h2":
+            return FontStyle.h3.font
         default:
             return FontStyle.regular.font
         }

@@ -78,7 +78,6 @@ extension ContentPageController: UITableViewDataSource, UITableViewDelegate {
                             self.alert(error: error)
 
                         case let .success(content):
-                            self.headerView.with(title: content.title)
                             self.content = content
                             self.appendItems(nextItemId: nil)
                         }
@@ -86,8 +85,6 @@ extension ContentPageController: UITableViewDataSource, UITableViewDelegate {
                     .disposed(by: disposeBag)
             return
         }
-
-        headerView.with(title: content?.title)
         appendItems(nextItemId: nil)
     }
 
@@ -173,10 +170,10 @@ extension ContentPageController: UITableViewDataSource, UITableViewDelegate {
 
         case "place":
             let placeId = (item["body"] as! [String: Any])["placeId"] as! String
-            let place = self.places[placeId]!
-            return tableView.dequeue(type: ContentPlace.self)
-                    .render(with: item, place: place)
-
+            if let place = self.places[placeId]! {
+                return tableView.dequeue(type: ContentPlace.self).render(with: item, place: place)
+            }
+            return UITableViewCell()
         default:
             return UITableViewCell()
         }

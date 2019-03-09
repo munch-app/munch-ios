@@ -20,8 +20,8 @@ class ContentImage: UITableViewCell {
 
         self.addSubview(contentImage) { (maker: ConstraintMaker) -> Void in
             maker.left.right.equalTo(self).inset(24)
-            maker.top.equalTo(self).priority(.high)
-            maker.bottom.equalTo(self).inset(12).priority(.high)
+            maker.top.equalTo(self).inset(12)
+            maker.bottom.equalTo(self).inset(12)
         }
     }
 
@@ -32,7 +32,7 @@ class ContentImage: UITableViewCell {
 
                 if let heightMultiplier = image.sizes.max?.heightMultiplier {
                     contentImage.snp.makeConstraints { maker in
-                        maker.height.equalTo(contentImage.snp.width).multipliedBy(heightMultiplier)
+                        maker.height.equalTo(contentImage.snp.width).multipliedBy(heightMultiplier).priority(.high)
                     }
                 }
             }

@@ -203,6 +203,7 @@ extension RIPController {
         appendTo(type: RIPCardStatus.self)
         appendTo(type: RIPCardPreference.self)
         appendTo(type: RIPNameTagCard.self)
+        appendTo(type: RIPCardRating.self)
 
         appendTo(type: RIPHourCard.self)
         appendTo(type: RIPPriceCard.self)
@@ -245,6 +246,7 @@ extension RIPController: UICollectionViewDataSource, UICollectionViewDelegate {
         collectionView.register(type: RIPNameTagCard.self)
         collectionView.register(type: RIPCardPreference.self)
         collectionView.register(type: RIPCardStatus.self)
+        collectionView.register(type: RIPCardRating.self)
 
         collectionView.register(type: RIPHourCard.self)
         collectionView.register(type: RIPPriceCard.self)

@@ -262,7 +262,7 @@ extension PlaceCard {
     }
 }
 
-fileprivate struct TagViewConfig: MunchTagViewConfig {
+struct TagViewConfig: MunchTagViewConfig {
     let font = UIFont.systemFont(ofSize: 13.0, weight: .medium)
     let textColor = UIColor.ba85
     let backgroundColor = UIColor.whisper100
@@ -270,7 +270,7 @@ fileprivate struct TagViewConfig: MunchTagViewConfig {
     let extra = CGSize(width: 16, height: 9)
 }
 
-fileprivate struct PriceViewConfig: MunchTagViewConfig {
+struct PriceViewConfig: MunchTagViewConfig {
     let font = UIFont.systemFont(ofSize: 13.0, weight: .semibold)
     let textColor = UIColor.ba85
     let backgroundColor = UIColor.peach100
