@@ -185,36 +185,3 @@ class SearchSeriesContentCard: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 }
-
-//class SearchSeriesContentCard extends StatelessWidget {
-//  final CreatorContent content;
-//  final dynamic options;
-//
-//  const SearchSeriesContentCard({
-//    Key key,
-//    this.content,
-//    this.options,
-//  }) : super(key: key);
-//
-//  double get aspectRatio {
-//    if (options != null && options['expand'] == 'height') {
-//      return 10 / 12;
-//    }
-//    return 1 / 0.6;
-//  }
-//
-//  Alignment get imageTextAlignment {
-//    if (options != null && options['expand'] == 'height') {
-//      return Alignment.bottomCenter;
-//    }
-//    return Alignment.center;
-//  }
-//
-//  TextStyle get imageTextStyle {
-//    if (options != null && options['expand'] == 'height') {
-//      return MTextStyle.h3.copyWith(color: MunchColors.white);
-//    }
-//    return MTextStyle.h2.copyWith(color: MunchColors.white);
-//  }
-//}
-

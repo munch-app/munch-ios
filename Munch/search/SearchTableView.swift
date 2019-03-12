@@ -71,7 +71,7 @@ class SearchTableView: UITableView {
         register(SearchCardHomeDTJE.self)
 
         register(SearchHomeTabCard.self)
-        register(SearchHomeNearbyCard.self)
+//        register(SearchHomeNearbyCard.self)
         register(SearchCardHomeRecentPlace.self)
         register(SearchCardHomePopularPlace.self)
         register(SearchCardHomeAwardCollection.self)
@@ -83,6 +83,8 @@ class SearchTableView: UITableView {
 
         register(SearchCardBetweenHeader.self)
         register(SearchCardBetweenReferral.self)
+
+        register(SearchCardClaimVoucher.self)
 
         register(SearchHeaderCard.self)
         register(SearchPlaceCard.self)
