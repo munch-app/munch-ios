@@ -85,8 +85,25 @@ class SearchHomeTabCard: SearchCardView {
     }
 
     override func willDisplay(card: SearchCard) {
-        createBtn.isHidden = Authentication.isAuthenticated()
         self.titleLabel.text = SearchHomeTabCard.title
+        if createBtn.isHidden == Authentication.isAuthenticated() {
+            return
+        }
+
+        collectionView.snp.remakeConstraints { maker in
+            if Authentication.isAuthenticated() {
+                createBtn.isHidden = true
+                maker.top.equalTo(titleLabel.snp.bottom).inset(-24)
+            } else {
+                createBtn.isHidden = false
+                maker.top.equalTo(createBtn.snp.bottom).inset(-24)
+            }
+
+
+            maker.left.right.equalTo(self)
+            maker.bottom.equalTo(self).inset(topBottom).priority(.high)
+            maker.height.equalTo(SearchHomeFeatureSlide.size().height).priority(.medium)
+        }
     }
 
     override class func height(card: SearchCard) -> CGFloat {

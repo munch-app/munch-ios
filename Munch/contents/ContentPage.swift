@@ -59,8 +59,8 @@ class ContentPageController: MHViewController {
             maker.left.top.right.equalTo(self.view)
         }
 
-        self.headerView.addTarget(back: self, action: #selector(onBackButton))
-        self.headerView.addTarget(more: self, action: #selector(onMore))
+        self.headerView.addTarget(left: self, action: #selector(onBackButton))
+        self.headerView.addTarget(right: self, action: #selector(onMore))
         self.loadAll()
     }
 }

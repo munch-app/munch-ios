@@ -33,6 +33,27 @@ class SearchCardClaimVoucher: SearchCardView {
         }
     }
 
+    override func didSelect(card: SearchCard, controller: SearchController) {
+        Authentication.requireAuthentication(controller: self.controller) { state in
+            guard case .loggedIn = state else {
+                return
+            }
+
+            guard let voucherId = card.string(name: "voucherId") else {
+                return
+            }
+
+            MunchAnalytic.logEvent("voucher_claim_show", parameters: [
+                "voucherId": voucherId as NSObject,
+                "from": "search_card" as NSObject,
+            ]);
+
+
+            let controller = VoucherPageController(voucherId: voucherId)
+            self.controller.navigationController?.pushViewController(controller, animated: true)
+        }
+    }
+
     override class var cardId: String {
         return "ClaimVoucher_2019-03-11"
     }

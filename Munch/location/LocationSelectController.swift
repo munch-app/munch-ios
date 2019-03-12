@@ -88,6 +88,7 @@ class SearchLocationController: MHViewController {
         }
 
         self.registerTable()
+        headerView.field.becomeFirstResponder()
     }
 
     override func viewDidAppear(_ animated: Bool) {

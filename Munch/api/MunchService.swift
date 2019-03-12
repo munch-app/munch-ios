@@ -139,9 +139,43 @@ class MunchProvider<Target>: MoyaProvider<Target> where Target: Moya.TargetType 
 struct Meta: Codable {
     var error: Error?
 
+    // A list of Munch top level Exception,
+    // Not all of them are implemented, only the user facing one are
+    //
+    // munch.restful.core.exception.AuthenticationException
+    // munch.restful.core.exception.BadRequestException
+    // munch.restful.core.exception.CodeException
+    // munch.restful.core.exception.ExceptionParser
+    // munch.restful.core.exception.ForbiddenException
+    // munch.restful.core.exception.JsonException
+    // munch.restful.core.exception.LimitException
+    // munch.restful.core.exception.OfflineException
+    // munch.restful.core.exception.ParamException
+    // munch.restful.core.exception.StructuredException
+    // munch.restful.core.exception.TimeoutException
+    // munch.restful.core.exception.UnavailableException
+    // munch.restful.core.exception.UnknownException
+    // munch.restful.core.exception.ValidationException
     struct Error: Codable {
         var type: String?
         var message: String?
+
+        var title: String? {
+            guard let type = self.type else {
+                return nil
+            }
+
+            switch type {
+            case "munch.restful.core.exception.ForbiddenException":
+                return "Forbidden (403)";
+
+            case "munch.restful.core.exception.JsonException":
+                return "Data Parsing Error (JSON)";
+
+            default:
+                return type
+            }
+        }
     }
 }
 
@@ -237,7 +271,7 @@ extension UIViewController {
     }
 
     private func alert(error: Meta.Error, moyaError: MoyaError) {
-        alert(title: error.type ?? "Unhandled Error", message: error.message ?? moyaError.localizedDescription)
+        alert(title: error.title ?? "Unhandled Error", message: error.message ?? moyaError.localizedDescription)
     }
 }
 

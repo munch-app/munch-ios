@@ -91,11 +91,11 @@ extension MunchTabBarController: UITabBarControllerDelegate {
 
         case is ProfileRootController where !Authentication.isAuthenticated():
             Authentication.requireAuthentication(controller: self) { state in
-                switch state {
-                case .loggedIn:
-                    tabBarController.selectedViewController = viewController
-                default: return
+                guard case .loggedIn = state else {
+                    return
                 }
+
+                tabBarController.selectedViewController = viewController
             }
             return false
 

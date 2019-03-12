@@ -50,7 +50,7 @@ class MHViewController: UIViewController, UIGestureRecognizerDelegate {
 }
 
 class MHHeaderView: UIView {
-    private let backBtn: UIButton = {
+    private let leftBtn: UIButton = {
         let button = UIButton()
         button.isUserInteractionEnabled = true
         button.setImage(UIImage(named: "NavigationBar-Back"), for: .normal)
@@ -64,7 +64,7 @@ class MHHeaderView: UIView {
                 .with(alignment: .center)
         return titleView
     }()
-    private let moreBtn: UIButton = {
+    private let rightBtn: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "Navigation_More"), for: .normal)
         button.tintColor = .black
@@ -83,9 +83,9 @@ class MHHeaderView: UIView {
         self.addSubview(shadowView)
         self.addSubview(backgroundView)
 
-        self.addSubview(backBtn)
+        self.addSubview(leftBtn)
         self.addSubview(titleLabel)
-        self.addSubview(moreBtn)
+        self.addSubview(rightBtn)
 
         titleLabel.snp.makeConstraints { maker in
             maker.left.right.equalTo(self).inset(52)
@@ -95,8 +95,8 @@ class MHHeaderView: UIView {
             maker.bottom.equalTo(self)
         }
 
-        backBtn.isHidden = true
-        backBtn.snp.makeConstraints { maker in
+        leftBtn.isHidden = true
+        leftBtn.snp.makeConstraints { maker in
             maker.top.equalTo(self.safeArea.top)
             maker.bottom.equalTo(self)
 
@@ -105,13 +105,13 @@ class MHHeaderView: UIView {
             maker.height.equalTo(44)
         }
 
-        moreBtn.isHidden = true
-        moreBtn.snp.makeConstraints { maker in
+        rightBtn.isHidden = true
+        rightBtn.snp.makeConstraints { maker in
             maker.top.equalTo(self.safeArea.top)
             maker.bottom.equalTo(self)
 
             maker.right.equalTo(self)
-            maker.top.bottom.equalTo(backBtn)
+            maker.top.bottom.equalTo(leftBtn)
             maker.width.equalTo(56)
             maker.height.equalTo(44)
         }
@@ -131,14 +131,20 @@ class MHHeaderView: UIView {
         return self
     }
 
-    func addTarget(back target: Any?, action: Selector) {
-        backBtn.isHidden = false
-        backBtn.addTarget(target, action: action, for: .touchUpInside)
+    @discardableResult
+    func with(right image: UIImage?) -> MHHeaderView {
+        self.rightBtn.setImage(image, for: .normal)
+        return self
     }
 
-    func addTarget(more target: Any?, action: Selector) {
-        moreBtn.isHidden = false
-        moreBtn.addTarget(target, action: action, for: .touchUpInside)
+    func addTarget(left target: Any?, action: Selector) {
+        leftBtn.isHidden = false
+        leftBtn.addTarget(target, action: action, for: .touchUpInside)
+    }
+
+    func addTarget(right target: Any?, action: Selector) {
+        rightBtn.isHidden = false
+        rightBtn.addTarget(target, action: action, for: .touchUpInside)
     }
 
     var background: Bool = true {
@@ -158,12 +164,12 @@ class MHHeaderView: UIView {
         didSet {
             if isBlack {
                 self.titleLabel.textColor = .black
-                self.backBtn.tintColor = .black
-                self.moreBtn.tintColor = .black
+                self.leftBtn.tintColor = .black
+                self.rightBtn.tintColor = .black
             } else {
                 self.titleLabel.textColor = .white
-                self.backBtn.tintColor = .white
-                self.moreBtn.tintColor = .white
+                self.leftBtn.tintColor = .white
+                self.rightBtn.tintColor = .white
             }
         }
     }

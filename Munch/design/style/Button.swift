@@ -18,6 +18,8 @@ enum MunchButtonStyle {
     case secondary
     case secondarySmall
     case secondaryOutline
+
+    case disabled
 }
 
 extension MunchButtonStyle {
@@ -50,7 +52,8 @@ extension MunchButtonStyle {
         case .border: fallthrough
         case .borderSmall: fallthrough
         case .secondaryOutline: fallthrough
-        case .primaryOutline:
+        case .primaryOutline: fallthrough
+        case .disabled:
             return 1
 
         default:
@@ -61,7 +64,8 @@ extension MunchButtonStyle {
     var borderColor: CGColor {
         switch self {
         case .border: fallthrough
-        case .borderSmall:
+        case .borderSmall: fallthrough
+        case .disabled:
             return UIColor.ba15.cgColor
 
         case .secondaryOutline:
@@ -82,7 +86,8 @@ extension MunchButtonStyle {
             return .white
 
         case .border: fallthrough
-        case .borderSmall:
+        case .borderSmall: fallthrough
+        case .disabled:
             return UIColor(hex: "FCFCFC")
 
         case .primary: fallthrough
@@ -100,6 +105,9 @@ extension MunchButtonStyle {
         case .border: fallthrough
         case .borderSmall:
             return .black
+
+        case .disabled:
+            return .ba20
 
         case .secondaryOutline:
             return .secondary500
