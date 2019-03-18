@@ -9,10 +9,10 @@ import SnapKit
 
 import Moya
 import RxSwift
+import RxCocoa
 import NVActivityIndicatorView
 
 import Toast_Swift
-import PinCodeView
 
 class VoucherPageController: MHViewController {
     let voucherId: String
@@ -140,6 +140,10 @@ extension VoucherPageController: UITableViewDataSource, UITableViewDelegate {
         case let .claim(remaining, claimed):
             return self.tableView.dequeue(type: VoucherBarCell.self)
                     .render(with: remaining, claimed: claimed) { control in
+                        // Don't allow claiming to be clicked if already claimed
+                        if claimed {
+                            return
+                        }
                         self.onShowPasscode()
                     }
         }
@@ -190,7 +194,7 @@ extension VoucherPageController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-class VoucherPasscodeController: UIViewController, PinCodeViewDelegate {
+class VoucherPasscodeController: UIViewController {
     private let titleLabel = UILabel(style: .h3)
             .with(numberOfLines: 0)
             .with(alignment: .center)
@@ -206,7 +210,18 @@ class VoucherPasscodeController: UIViewController, PinCodeViewDelegate {
             .with(right: UIImage(named: "Navigation_Cancel"))
 
     let onPasscode: ((String) -> ())
-    let pinView = PinCodeView(numberOfDigits: 4, textType: .numbers, groupingSize: 4, itemSpacing: 12)
+    let pinCodeField: UITextField = {
+        let field = UITextField()
+        field.keyboardType = .numberPad
+        field.backgroundColor = .whisper100
+        field.layer.cornerRadius = 4
+
+        field.font = FontStyle.h2.font
+        field.textColor = FontStyle.h2.color
+        field.textAlignment = .center
+        return field
+    }()
+    private let disposeBag = DisposeBag()
 
     init(onPasscode: @escaping (String) -> ()) {
         self.onPasscode = onPasscode
@@ -216,8 +231,6 @@ class VoucherPasscodeController: UIViewController, PinCodeViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
-        pinView.delegate = self
-        pinView.digitViewInit = PinCodeDigitSquareView.init
 
         header.addTarget(right: self, action: #selector(onCancel))
         self.view.addSubview(header) { maker in
@@ -234,26 +247,37 @@ class VoucherPasscodeController: UIViewController, PinCodeViewDelegate {
             maker.left.right.equalTo(self.view)
         }
 
-        self.view.addSubview(pinView) { maker in
+        self.view.addSubview(pinCodeField) { maker in
             maker.top.equalTo(subtitleLabel.snp.bottom).inset(-24)
-            maker.left.greaterThanOrEqualTo(self.view)
-            maker.right.lessThanOrEqualTo(self.view)
-            maker.centerX.equalTo(self.view)
+            maker.height.equalTo(48)
+            maker.left.right.equalTo(self.view).inset(24)
         }
+
+        pinCodeField.rx.text
+                .debounce(0.3, scheduler: MainScheduler.instance)
+                .distinctUntilChanged()
+                .subscribe { event in
+                    switch event {
+                    case let .next(text):
+                        if let text = text, text.count == 4 {
+                            self.submitPinCode(code: text)
+                        }
+
+                    case let .error(error):
+                        self.alert(error: error)
+                    case .completed:
+                        return
+                    }
+                }.disposed(by: disposeBag)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        pinView.becomeFirstResponder()
+        pinCodeField.becomeFirstResponder()
         MunchAnalytic.setScreen("/vouchers/passcode")
     }
 
-    func pinCodeView(_ view: PinCodeView, didInsertText text: String) {
-
-    }
-
-    func pinCodeView(_ view: PinCodeView, didSubmitPinCode code: String, isValidCallback callback: @escaping (Bool) -> Void) {
-        callback(true)
+    func submitPinCode(code: String) {
         onPasscode(code)
         self.dismiss(animated: true)
     }
@@ -267,55 +291,20 @@ class VoucherPasscodeController: UIViewController, PinCodeViewDelegate {
     }
 }
 
-public class PinCodeDigitSquareView: UILabel, PinCodeDigitView {
-    public var state: PinCodeDigitViewState! = .empty {
-        didSet {
-            if state != oldValue {
-                configure(withState: state)
-            }
-        }
-    }
-
-    public var digit: String? {
-        didSet {
-            guard digit != oldValue else {
-                return
-            }
-            self.state = digit != nil ? .hasDigit : .empty
-            self.text = digit
-        }
-    }
-
-    convenience required public init() {
-        self.init(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-
-        self.font = FontStyle.h1.font
-        self.textColor = FontStyle.h1.color
-        self.textAlignment = .center
-
-        self.layer.borderWidth = 2
-        self.layer.cornerRadius = 4
-        self.configure(withState: .empty)
-
-        self.snp.makeConstraints { maker in
-            maker.size.equalTo(40)
-        }
-        self.layoutIfNeeded()
-    }
-
-    public func configure(withState state: PinCodeDigitViewState) {
-        switch state {
-        case .empty:
-            layer.borderColor = UIColor.ba75.cgColor
-
-        case .hasDigit:
-            layer.borderColor = UIColor.ba75.cgColor
-
-        case .failedVerification:
-            layer.borderColor = UIColor.error.cgColor
-        }
-    }
-}
+//        self.init(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+//
+//        self.font = FontStyle.h1.font
+//        self.textColor = FontStyle.h1.color
+//        self.textAlignment = .center
+//
+//        self.layer.borderWidth = 2
+//        self.layer.cornerRadius = 4
+//        self.configure(withState: .empty)
+//
+//        self.snp.makeConstraints { maker in
+//            maker.size.equalTo(40)
+//        }
+//        self.layoutIfNeeded()
 
 enum VoucherPageItem {
     case banner(Image)

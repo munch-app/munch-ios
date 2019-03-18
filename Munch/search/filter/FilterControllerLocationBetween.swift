@@ -287,7 +287,7 @@ fileprivate class FilterLocationBetweenBottomView: UIView {
     fileprivate let applyButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 3
-        button.backgroundColor = .secondary500
+        button.backgroundColor = .primary500
         button.setTitleColor(.white, for: .normal)
         button.titleLabel!.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
         return button
@@ -327,7 +327,7 @@ fileprivate class FilterLocationBetweenBottomView: UIView {
 
             case let .count(count, points):
                 self.applyButton.setTitle(FilterManager.countTitle(count: count, postfix: "Places"), for: .normal)
-                self.applyButton.backgroundColor = .secondary500
+                self.applyButton.backgroundColor = .primary500
                 self.applyButton.setTitleColor(.white, for: .normal)
             }
         }
