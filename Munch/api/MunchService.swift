@@ -20,7 +20,7 @@ private let encoder = JSONEncoder()
 
 public extension TargetType {
     var baseURL: URL {
-        return URL(string: "https://api.munch.app/v0.21.0")!
+        return URL(string: "https://api.munch.app/v0.22.0")!
     }
 
     var sampleData: Data {

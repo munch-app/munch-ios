@@ -212,7 +212,7 @@ enum FeatureSlide {
         case .Between:
             return "Find the ideal spot for everyone with EatBetween."
         case .Nearby:
-            return "Explore places around you."
+            return "Discover nearby & explore places around you."
         }
     }
 
@@ -246,60 +246,63 @@ enum FeatureSlide {
 
 class SearchHomeFeatureSlide: UICollectionViewCell {
     private static let width = (UIScreen.main.bounds.size.width - 48)
-    private static let height = width * 0.6
 
-    private let image: SizeImageView = {
-        let imageView = SizeShimmerImageView(points: width, height: height)
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.masksToBounds = true
-        imageView.layer.cornerRadius = 3
-        return imageView
+    private let iconView: UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(named: "Map_Next")
+        view.tintColor = .black
+        return view
     }()
-
-    private let titleLabel = UILabel(style: .h4)
-            .with(font: .systemFont(ofSize: 18, weight: .semibold))
+    private let titleLabel = UILabel(style: .h6)
             .with(numberOfLines: 0)
-            .with(color: .white)
             .with(alignment: .left)
 
-    private let button = MunchButton(style: .secondary)
-            .with { button in
-                button.isUserInteractionEnabled = false
-            }
+    private let subLabel = UILabel(style: .h6)
+            .with(numberOfLines: 0)
+            .with(color: .secondary700)
+            .with(alignment: .left)
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-
-        self.addSubview(image) { (maker: ConstraintMaker) -> Void in
-            maker.edges.equalTo(self)
-        }
+        self.backgroundColor = .whisper100
+        self.layer.cornerRadius = 4
 
         self.addSubview(titleLabel) { (maker: ConstraintMaker) -> Void in
-            maker.left.equalTo(image).inset(20)
-            maker.right.equalTo(self.snp.centerX)
-            maker.top.equalTo(image).inset(16)
+            maker.left.equalTo(self).inset(20)
+            maker.right.equalTo(self).inset(32)
+            maker.top.equalTo(self).inset(16)
         }
 
-        self.addSubview(button) { maker in
-            maker.left.equalTo(self).inset(20)
+        self.addSubview(subLabel) { maker in
+            maker.left.right.equalTo(self).inset(20)
             maker.bottom.equalTo(self).inset(16)
+        }
+
+        self.addSubview(iconView) { maker in
+            maker.centerY.equalTo(self)
+            maker.right.equalTo(self).inset(12)
         }
     }
 
     func render(with feature: FeatureSlide) -> SearchHomeFeatureSlide {
-        image.image = feature.backgroundImage
         titleLabel.text = feature.title
-        button.with(style: feature.buttonStyle)
-                .with(text: feature.buttonText)
+        subLabel.text = feature.buttonText
         return self
     }
 
     static func size() -> CGSize {
+        var height: CGFloat = 0
+        height += 16
+        height += FontStyle.h6.height(text: FeatureSlide.Between.title, width: width - 52)
+        height += 12
+        height += FontStyle.h6.height(text: FeatureSlide.Between.buttonText, width: width - 40)
+        height += 16
+
         return CGSize(width: width, height: height)
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
 }
