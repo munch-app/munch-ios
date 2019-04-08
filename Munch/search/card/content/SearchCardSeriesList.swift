@@ -12,10 +12,10 @@ class SearchCardSeriesList: SearchCardView {
     var options: [String: Any] = ["expand": "width"]
 
     let titleLabel = UILabel(style: .h2)
-            .with(numberOfLines: 0)
+            .with(numberOfLines: 1)
 
     let subtitleLabel = UILabel(style: .h6)
-            .with(numberOfLines: 0)
+            .with(numberOfLines: 2)
 
     let collectionView: UICollectionView = {
         let layout = MunchHorizontalSnap()
@@ -65,14 +65,11 @@ class SearchCardSeriesList: SearchCardView {
 
     override func willDisplay(card: SearchCard) {
         let series: CreatorSeries? = card.decode(name: "series", CreatorSeries.self)
-
-        titleLabel.text = series?.title
-        subtitleLabel.text = series?.subtitle
-
         self.contents = card.decode(name: "contents", [CreatorContent].self) ?? []
         self.collectionView.reloadData()
 
-        self.layoutIfNeeded()
+        titleLabel.text = series?.title
+        subtitleLabel.text = series?.subtitle
     }
 
     override class var cardId: String {
