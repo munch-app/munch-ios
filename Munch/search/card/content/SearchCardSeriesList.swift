@@ -64,8 +64,15 @@ class SearchCardSeriesList: SearchCardView {
     }
 
     override func willDisplay(card: SearchCard) {
+        let series: CreatorSeries? = card.decode(name: "series", CreatorSeries.self)
+
+        titleLabel.text = series?.title
+        subtitleLabel.text = series?.subtitle
+
         self.contents = card.decode(name: "contents", [CreatorContent].self) ?? []
         self.collectionView.reloadData()
+
+        self.layoutIfNeeded()
     }
 
     override class var cardId: String {

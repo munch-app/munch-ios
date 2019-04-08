@@ -154,7 +154,7 @@ PODS:
   - NVActivityIndicatorView/Presenter (4.4.0)
   - Protobuf (3.6.1)
   - PullToDismiss (2.1)
-  - RangeSeekSlider (1.7.0)
+  - RangeSeekSlider (1.8.0)
   - Realm (3.12.0):
     - Realm/Headers (= 3.12.0)
   - Realm/Headers (3.12.0)
@@ -193,7 +193,7 @@ DEPENDENCIES:
   - Moya/RxSwift (~> 12.0)
   - NVActivityIndicatorView (~> 4.0)
   - PullToDismiss (~> 2.1)
-  - RangeSeekSlider (~> 1.7)
+  - RangeSeekSlider (~> 1.8)
   - RealmSwift (~> 3.12.0)
   - RxCocoa (~> 4.4)
   - RxSwift (~> 4.4)
@@ -287,7 +287,7 @@ SPEC CHECKSUMS:
   NVActivityIndicatorView: ec7440a57af2450319d3a4181cca7da6fc127064
   Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
   PullToDismiss: 5513d561c382d201d0e3fbbdab9a47196cf5d2e2
-  RangeSeekSlider: 0386c5a9aa5ebcb2fa5238e8a627280cf46c7c0a
+  RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   Realm: cdaef23c4ddb36ab1ddffed23f5a7f3332fc5585
   RealmSwift: 5576324033f0aa5ef1e0a839a3da2281dff47a7f
   Result: 7645bb3f50c2ce726dd0ff2fa7b6f42bbe6c3713
@@ -301,6 +301,6 @@ SPEC CHECKSUMS:
   SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
   Toast-Swift: e42a638589a2f95036b4bb7626cfbdde7daf0393
 
-PODFILE CHECKSUM: c9f6b5fbdfb86d2343c7de580f195e7394187302
+PODFILE CHECKSUM: bf1d5942595609b5a3453f3b7942d45e49a4e781
 
 COCOAPODS: 1.6.0

@@ -33,7 +33,7 @@ target 'Munch' do
   pod 'Toast-Swift', '~> 4.0.1'
   pod 'NVActivityIndicatorView', '~> 4.0'
   pod 'BEMCheckBox', '~> 1.4'
-  pod 'RangeSeekSlider', '~> 1.7'
+  pod 'RangeSeekSlider', '~> 1.8'
   pod 'PullToDismiss', '~> 2.1'
   pod 'MaterialComponents/BottomSheet'
 
@@ -53,13 +53,12 @@ end
 
 
 post_install do |installer|
-  # List of Pods to use as Swift 3.2
-  targetSwift32 = ['RangeSeekSlider']
+  targetSwift50 = ['RangeSeekSlider']
 
   installer.pods_project.targets.each do |target|
-    if targetSwift32.include? target.name
+    if targetSwift50.include? target.name
       target.build_configurations.each do |config|
-        config.build_settings['SWIFT_VERSION'] = '3.2'
+        config.build_settings['SWIFT_VERSION'] = '5.0'
       end
     end
   end
