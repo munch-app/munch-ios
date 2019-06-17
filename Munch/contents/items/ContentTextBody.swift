@@ -23,8 +23,8 @@ class ContentTextBody: UITableViewCell {
         let type = item["type"] as! String
         let attributedText = NSMutableAttributedString()
         if let body = item["body"] as? [String: Any], let contents = body["content"] as? [[String: Any]] {
-            contents.forEach { dictionary in
-                attributedText.append(getAttributedString(type: type, dict: dictionary))
+            contents.forEach { span in
+                attributedText.append(getAttributedString(type: type, span: span))
             }
         }
 
@@ -63,8 +63,8 @@ class ContentTextBody: UITableViewCell {
         }
     }
 
-    func getAttributedString(type: String, dict: [String: Any]) -> NSAttributedString {
-        let text = dict["text"] as? String ?? ""
+    func getAttributedString(type: String, span: [String: Any]) -> NSAttributedString {
+        let text = span["text"] as? String ?? ""
         if type == "text" {
             return text.set(style: Style {
                 $0.color = UIColor.black

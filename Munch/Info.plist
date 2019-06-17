@@ -115,6 +115,10 @@
 	<string>camera description.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Munch uses your location to help you discover the most delicious places around</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Munch uses your location to help you discover the most delicious places around</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Munch uses your location to help you discover the most delicious places around</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Munch uses your location to help you discover the most delicious places around</string>
 	<key>NSPhotoLibraryUsageDescription</key>
